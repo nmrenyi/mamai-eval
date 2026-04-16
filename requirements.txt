@@ -1,5 +1,11 @@
-ninja
+# Runtime dependencies
 llama-cpp-python
+numpy
 pandas
 openai>=1.0.0
 tqdm
+sentencepiece
+ai-edge-litert
+
+# Note: llama-cpp-python requires ninja and cmake at build time.
+# On the cluster these are installed via apt (ninja-build) before pip.
