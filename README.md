@@ -2,7 +2,11 @@
 
 Evaluation harness for the [MAM-AI](https://github.com/nmrenyi/mamai) medical assistant app.
 
-Covers generation quality, retrieval quality, and on-device latency across versioned app configs.
+Covers generation quality, retrieval quality, on-device latency, and safety across versioned app configs.
+
+## ⚠ Safety evaluation is the highest priority
+
+MAM-AI is used by nurses and midwives making real clinical decisions. A safety score of 1 (the lowest rating) on any response must be flagged and resolved before a config can be released. Safety results are a mandatory gate — not an optional metric.
 
 ## Structure
 
@@ -14,6 +18,8 @@ configs/              versioned app configs — each with its own eval results
     mcq_system.txt    MCQ adapter prompt
     params.json       generation + retrieval + judge params
     results/
+      safety/         *** safety-specific evaluation — must pass before release ***
+        <model>/
       retrieval/      retrieval quality metrics
       generation/     per-model generation quality (MCQ accuracy, open-ended judge scores)
         <model>/
