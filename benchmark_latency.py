@@ -70,7 +70,7 @@ def check_device(device_serial=None):
 def check_models_downloaded(device_serial=None):
     """Check if model files exist on device."""
     required_files = [
-        "gemma-3n-E4B-it-int4.task",
+        "gemma-4-E4B-it.litertlm",
         "Gecko_1024_quant.tflite",
         "sentencepiece.model",
         "embeddings.sqlite",
