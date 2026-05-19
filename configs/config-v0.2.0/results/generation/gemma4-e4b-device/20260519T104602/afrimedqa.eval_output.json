@@ -1,0 +1,140 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260519T184723",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 20,
+  "n_rows_done": 20,
+  "total_time_ms": 120855,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_afrimedqa_f0b8cbf9b24f",
+      "response_text": "C",
+      "inference_time_ms": 1336,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_55162fd5c276",
+      "response_text": "D",
+      "inference_time_ms": 1084,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ea0d4709851b",
+      "response_text": "A",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46310e6531bc",
+      "response_text": "A",
+      "inference_time_ms": 1105,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1c20cc924024",
+      "response_text": "A",
+      "inference_time_ms": 380,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b2fc2145cd3a",
+      "response_text": "C",
+      "inference_time_ms": 1023,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d3939380327b",
+      "response_text": "C",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9bb484028519",
+      "response_text": "B",
+      "inference_time_ms": 1067,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4942991d0f4e",
+      "response_text": "D",
+      "inference_time_ms": 1014,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_730820e6c263",
+      "response_text": "D",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_c226c1fb5fd6",
+      "response_text": "A",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1f31b194c68b",
+      "response_text": "C",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_60a533015a5e",
+      "response_text": "A",
+      "inference_time_ms": 1022,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_7c0440eeb2a7",
+      "response_text": "C",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d2a7df79738c",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46b84df0f6dd",
+      "response_text": "A",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a2d61419d073",
+      "response_text": "A",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_30ce46a558b6",
+      "response_text": "D",
+      "inference_time_ms": 981,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a0023f65ff24",
+      "response_text": "D",
+      "inference_time_ms": 1000,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_31bb186e0b74",
+      "response_text": "B",
+      "inference_time_ms": 371,
+      "error": null
+    }
+  ]
+}

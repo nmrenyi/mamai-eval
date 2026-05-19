@@ -1,0 +1,85 @@
+{
+  "system_prompt": "You are a medical expert taking a clinical exam. Answer each multiple-choice question by selecting the single best answer. Reply with ONLY the letter of the correct option (e.g., 'B'). Do not add explanations or disclaimers.",
+  "rows": [
+    {
+      "id": "mamabench_v0.2_afrimedqa_f0b8cbf9b24f",
+      "user_message": "Question: 56 years old woman has come to you with the complaints of hot flushes irritability, joint pains with lack of sleep. Most appropriate treatment would be:\nOptions:\nA. Hysterectomy.\nB. Vitamins.\nC. Combined oestrogen, progesterone preparations.\nD. Phytooestrogens.\nE. Selective estrogen receptor modulators (SERMS)."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_55162fd5c276",
+      "user_message": "Question: A newly married girl comes to gynae OPD with history of dysuria, burning, micturition and sore perineum. What is your likely diagnosis:\nOptions:\nA. Trichomonas vaginalis.\nB. Candida infection.\nC. Trauma due to coitus.\nD. Honey moon cystitis.\nE. Genital herpes."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ea0d4709851b",
+      "user_message": "Question: 28 years old woman with previous history of having baby with Down's Syndrome is now 12 weeks pregnant. Which of the following would you suggest to her: Amniocentesis.\nOptions:\nA. Obstetric ultrasound.\nB. Chorionic villus sampling.\nC. Fetal blood sampling.\nD. Wait till eighteen weeks for detailed ultrasound and amniocentesis.\nE. Obstetric ultrasound."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46310e6531bc",
+      "user_message": "Question: A 20-year-old medical student presents with five years history of weight gain, irregular periods and worsening fascial hair. What is the most likely diagnosis?\nOptions:\nA. Polycystic ovarian disease.\nB. Hypothyroidism.\nC. Obesity.\nD. Cushing's Syndrome.\nE. Nephrotic Syndrome."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1c20cc924024",
+      "user_message": "Question: A large cystic ovarian tumour is detected in a woman on routine antenatal check-up. The most common complication she can encounter is:\nOptions:\nA. Torsion.\nB. Rupture. .\nC. Haemorrhage\nD. Degeneration.\nE. Infection."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b2fc2145cd3a",
+      "user_message": "Question: A 28-year-old patient complains of amenorrhea after having dilatation and curettage. The most likely diagnosis is:\nOptions:\nA. Kallman's Syndrome.\nB. Turner's Syndrome.\nC. Asherman's Syndrome.\nD. Pelvic inflammatory disease.\nE. Anorexia nervosa."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d3939380327b",
+      "user_message": "Question: 28 years old G 3 P 2 has presented with complaints of brownish vaginal discharge, passage of vesicles and excessive vomiting. Ultrasound scan shows snowstorm appearance in uterus with no fetus. The most likely diagnosis is:\nOptions:\nA. Septic induced abortion.\nB. Twin pregnancy.\nC. Gestational trophoblastic disease.\nD. Ectopic pregnancy.\nE. Fibroid uterus."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9bb484028519",
+      "user_message": "Question: A 40 years old multiparous woman complains of involuntary loss of urine associated with coughing, or standing. The history is most laughing, lifting suggestive of:\nOptions:\nA. Fistula.\nB. Stress incontinence.\nC. Urge incontinence.\nD. Urethral diverticulum.\nE. Urinary tract infection."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4942991d0f4e",
+      "user_message": "Question: A 28 years old woman has 14 weeks size irregular uterus. She does not complain of abdominal pain or menorrhagia. Her pap smear is normal. The best next step in her management would be:\nOptions:\nA. Continued observation.\nB. Endometrial biopsy. .\nC. Hysterectomy\nD. Pelvic ultrasonography. .\nE. Laparoscopy"
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_730820e6c263",
+      "user_message": "Question: A 39 years old women Para 6 has presented with complaint of post coital bleeding for the past three months. Your first investigation should be:\nOptions:\nA. Dilatation & Curettage.\nB. Cone biopsy of cervix.\nC. Pap smear.\nD. Colposcopy.\nE. Laparoscopy."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_c226c1fb5fd6",
+      "user_message": "Question: A 43-year-old, lecturer has come to you with complaints of heavy but regular menstrual bleeding with flooding and clots. There is no anatomical reason for heavy flow. The most effective remedy for reducing her menstrual flow is:\nOptions:\nA. Tranexemic acid.\nB. Dilatation and Curettage.\nC. Depomedroxy progesterone acetate.\nD. Misoprostol.\nE. Ergometrine maleate."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1f31b194c68b",
+      "user_message": "Question: A young medical student has come to you to you with complaints of oligomenorrrhea, hirsuitism and weight gain, ultrasound reveals bulky ovaries with sub-capsular cysts. Most likely diagnosis is:\nOptions:\nA. Ovarian cancer.\nB. Cushing's syndrome.\nC. Polycystic ovarian disease.\nD. Diabetes mellitus.\nE. Pelvic inflammatory disease."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_60a533015a5e",
+      "user_message": "Question: A 25 years old school teacher Para 1 wants to use oral contraceptive pills for contraception. She is asking about the mode of action of oral contraceptive pills. The mechanism of action of oral contraceptive pills is:\nOptions:\nA. Inhibiting ovulation by suppression of serum FSH.\nB. Inducing endometrial atrophy.\nC. Increasing cervical mucous hostility.\nD. Inducing endometritis.\nE. Inhibiting prolactin."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_7c0440eeb2a7",
+      "user_message": "Question: A young girl, 23 years old is presented with complaint of abdominal pain, menorrhagia and 18 weeks size mass arising from hypogastrium. The most likely diagnosis is:\nOptions:\nA. Endometriosis.\nB. Pelvic inflammatory disease.\nC. Ovarian cyst.\nD. Fibroid uterus.\nE. Mesenteric cyst."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d2a7df79738c",
+      "user_message": "Question: A 63 years old lady presents with abdominal mass and weight loss, was diagnosed as having an ovarian tumour. The most common ovarian tumour in this woman would be:\nOptions:\nA. Epithelial tumour.\nB. Germ cell tumour.\nC. Stromal tumour.\nD. Sex cord tumour.\nE. Trophoblastic tumour"
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46b84df0f6dd",
+      "user_message": "Question: 23 years old primigravida presents with abdominal pain, syncope and vaginal spotting. Assessment reveals that she has an ectopic pregnancy. The most common site of pregnancy is: .\nOptions:\nA. Ampulla\nB. Isthmus.\nC. Fimbrial end.\nD. Abdomin.\nE. Cervix."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a2d61419d073",
+      "user_message": "Question: A couple presented in OPD with H/0 infertility since last 2 years. Husbands’ semen analysis was advised. What is WHO criterion for minimum sperm counts in normal semen?\nOptions:\nA. 10 million.\nB. 20 million.\nC. 30 million.\nD. 40 million.\nE. 70 million."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_30ce46a558b6",
+      "user_message": "Question: Which of the following is NOT one of the criteria needed for lactational amenorrhea (LAM) to be used as a contraceptive option?\nOptions:\nA. Menstrual period not returned after delivery.\nB. Exclusive breastfeeding on demand, day and night.\nC. Baby less than 6 months old.\nD. Lactational amenorrhea up to 1 year.\nE. No supplementary feeding."
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a0023f65ff24",
+      "user_message": "Question: About human chorionic gonadotropin (h CG), choose the correct statement\nOptions:\nA. Detectable rise in maternal serum and urine 6 hours after ovulatiton.\nB. Is responsible for programmed corpus luteum demise.\nC. Concentration in serum double every 2 to 3 weeks in early pregnancy.\nD. Has structural similarities to Luteinizing Hormone.\nE. Is not useful in assisted reproductive techniques"
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_31bb186e0b74",
+      "user_message": "Question: Which Leopold’s maneuver involves fundal palpation to define which fetal pole occupies the fundus\nOptions:\nA. First\nB. Second\nC. Third\nD. Fourth\nE. Fifth"
+    }
+  ]
+}
