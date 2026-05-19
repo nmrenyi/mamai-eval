@@ -17,7 +17,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from scoring import extract_letters, score_mcq
 
-MCQ_DATASETS = {"afrimedqa_mcq", "medmcqa_mcq", "medqa_usmle"}
+# Includes v0.1 names (suffixed _mcq) and v0.2 HF config names.
+# is_mcq_result also falls back to dataset_type == "mcq" so unknown names still work.
+MCQ_DATASETS = {
+    "afrimedqa_mcq", "medmcqa_mcq", "medqa_usmle",  # v0.1
+    "afrimedqa", "medmcqa",                          # v0.2
+}
 
 
 def is_mcq_result(data: dict) -> bool:
