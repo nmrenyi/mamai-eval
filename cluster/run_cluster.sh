@@ -5,17 +5,24 @@ echo "=== INSTALLING DEPENDENCIES ==="
 apt-get update && apt-get install -y python3.10 python3-pip ninja-build git > /dev/null 2>&1
 ln -sf /usr/bin/python3.10 /usr/bin/python3
 echo "=== INSTALLING PYTHON PACKAGES ==="
-CMAKE_ARGS="-DGGML_CUDA=on" FORCE_CMAKE=1 pip3 install --no-cache-dir llama-cpp-python pandas "openai>=1.0.0" tqdm > /dev/null 2>&1
+# v0.2 adds `datasets` + `huggingface_hub` (HF replaces local TSV).
+# Anthropic/Google SDKs are only needed by rescore_open_v2.py / rescore_rubric.py
+# which run post-hoc — left out here to keep generation-only jobs lean.
+CMAKE_ARGS="-DGGML_CUDA=on" FORCE_CMAKE=1 pip3 install --no-cache-dir \
+  llama-cpp-python pandas "openai>=1.0.0" tqdm datasets huggingface_hub \
+  > /dev/null 2>&1
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
 REPO_REF="${REPO_REF:-main}"
 WORKTREE="${WORKTREE:-/tmp/eval_code}"
-DATA_SOURCE_DIR="${DATA_SOURCE_DIR:-/lightscratch/users/yiren/eval_code/datasets}"
-CONFIG="${CONFIG:-config-v0.1.0}"
-MODEL="${MODEL:-gemma3n-e4b}"
+CONFIG="${CONFIG:-config-v0.2.0}"
+MODEL="${MODEL:-gemma4-e4b}"
+# Container paths (PVC `light-scratch` mounts at /lightscratch — see submit_job.sh).
+# From an SSH session on haas001 the same files live under /mnt/light/scratch/...
 MODEL_DIR="${MODEL_DIR:-/lightscratch/users/yiren/models}"
 OUTPUT_DIR="${OUTPUT_DIR:-/lightscratch/users/yiren/eval_output}"
+HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 DATASETS="${DATASETS:-all}"
 JUDGE="${JUDGE:-0}"
 JUDGE_MODEL="${JUDGE_MODEL:-}"
@@ -27,12 +34,18 @@ MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS:-500}"
 MAX_TOKENS="${MAX_TOKENS:-}"
 N_GPU_LAYERS="${N_GPU_LAYERS:-}"
 
+# Persist HF dataset cache across job runs (survives container lifecycle via PVC).
+mkdir -p "$HF_CACHE_DIR"
+export HF_HOME="$HF_CACHE_DIR"
+# Some gated datasets require auth; HF_TOKEN is passed in via submit_job.sh.
+if [ -n "${HF_TOKEN:-}" ]; then
+  export HUGGINGFACE_HUB_TOKEN="$HF_TOKEN"
+fi
+
 echo "=== CHECKOUT ==="
 rm -rf "$WORKTREE"
 git clone --branch "$REPO_REF" --depth 1 "$REPO_URL" "$WORKTREE"
 cd "$WORKTREE"
-rm -rf datasets
-ln -s "$DATA_SOURCE_DIR" datasets
 
 mkdir -p "$OUTPUT_DIR"
 if [ -z "$RUN_DIR" ]; then
@@ -46,12 +59,15 @@ fi
 mkdir -p "$LOG_DIR"
 
 if [ "$DATASETS" = "all" ]; then
+  # v0.2 default: MCQ + open-ended only. open_ended_rubric (HealthBench) configs
+  # are heavy on tokens and benefit from a dedicated job; opt in via
+  # DATASETS="healthbench_oss_eval,healthbench_consensus,healthbench_hard".
   DATASET_LIST=(
-    "afrimedqa_mcq"
+    "afrimedqa"
     "medqa_usmle"
-    "medmcqa_mcq"
-    "kenya_vignettes"
-    "whb_stumps"
+    "medmcqa"
+    "kenya"
+    "whb"
     "afrimedqa_saq"
   )
 else
@@ -90,6 +106,7 @@ echo "CONFIG=$CONFIG"
 echo "MODEL=$MODEL"
 echo "REPO_REF=$REPO_REF"
 echo "RUN_DIR=$RUN_DIR"
+echo "HF_HOME=$HF_HOME"
 echo "DATASETS=${DATASET_LIST[*]}"
 if [ -n "$RAG_DIR" ]; then
   echo "RAG_DIR=$RAG_DIR"
@@ -107,7 +124,7 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
   DATASET_ARGS=("${COMMON_ARGS[@]}" --datasets "$DS")
   if [ -n "$MAX_QUESTIONS" ]; then
     DATASET_ARGS+=(--max-questions "$MAX_QUESTIONS")
-  elif [ "$DS" = "medmcqa_mcq" ] && [ -n "$MEDMCQA_MAX_QUESTIONS" ]; then
+  elif [ "$DS" = "medmcqa" ] && [ -n "$MEDMCQA_MAX_QUESTIONS" ]; then
     DATASET_ARGS+=(--max-questions "$MEDMCQA_MAX_QUESTIONS")
   fi
 

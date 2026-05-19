@@ -11,8 +11,12 @@ set -euo pipefail
 #
 # Prerequisites:
 #   - SSH alias "light" configured for haas001
-#   - OPENAI_API_KEY stored on haas001 (in keys/openai_key.txt)
 #   - PVC permissions: chmod -R g+w /mnt/light/scratch/users/yiren/
+#   - API keys on haas001 under /mnt/light/scratch/users/yiren/keys/
+#       - openai_key.txt   (required: legacy --judge fallback + GPT-5 generation)
+#       - hf_key.txt       (required for v0.2: gated dataset auth)
+#       - gemini_key.txt   (optional: Gemini-as-generator runs)
+#       - anthropic_key.txt (optional: Claude-as-generator runs)
 
 JOB_NAME="${1:-mamai-eval-run}"
 SCRIPT_NAME="${2:-run_cluster.sh}"
@@ -36,12 +40,25 @@ fi
 # Base64 encode the script to avoid quoting issues
 B64=$(base64 < "$SCRIPT_PATH" | tr -d '\n')
 
-# Read OpenAI API key from cluster
-OPENAI_KEY=$(ssh light 'cat /mnt/light/scratch/users/yiren/keys/openai_key.txt' 2>/dev/null)
+# Read API keys from the cluster (best-effort: only OpenAI + HF are required for
+# v0.2 generation runs; the others are passed through if present).
+_read_key() {
+  ssh light "cat /mnt/light/scratch/users/yiren/keys/$1 2>/dev/null" 2>/dev/null
+}
+
+OPENAI_KEY="$(_read_key openai_key.txt)"
 if [ -z "$OPENAI_KEY" ]; then
   echo "Error: Could not read OpenAI API key from cluster"
   exit 1
 fi
+
+HF_TOKEN="$(_read_key hf_key.txt)"
+if [ -z "$HF_TOKEN" ]; then
+  echo "Warning: hf_key.txt not found on cluster — gated HF datasets will fail to load"
+fi
+
+GEMINI_KEY="$(_read_key gemini_key.txt)"
+ANTHROPIC_KEY="$(_read_key anthropic_key.txt)"
 
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 HAS_REPO_REF=0
@@ -68,6 +85,16 @@ RUNAI_ARGS=(
   --backoff-limit 0
   --run-as-gid 84257
 )
+
+if [ -n "$HF_TOKEN" ]; then
+  RUNAI_ARGS+=(-e "HF_TOKEN=$HF_TOKEN")
+fi
+if [ -n "$GEMINI_KEY" ]; then
+  RUNAI_ARGS+=(-e "GOOGLE_API_KEY=$GEMINI_KEY")
+fi
+if [ -n "$ANTHROPIC_KEY" ]; then
+  RUNAI_ARGS+=(-e "ANTHROPIC_API_KEY=$ANTHROPIC_KEY")
+fi
 
 if [ "$HAS_REPO_REF" -eq 0 ]; then
   RUNAI_ARGS+=(-e "REPO_REF=$CURRENT_BRANCH")
