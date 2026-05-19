@@ -43,7 +43,9 @@ B64=$(base64 < "$SCRIPT_PATH" | tr -d '\n')
 # Read API keys from the cluster (best-effort: only OpenAI + HF are required for
 # v0.2 generation runs; the others are passed through if present).
 _read_key() {
-  ssh light "cat /mnt/light/scratch/users/yiren/keys/$1 2>/dev/null" 2>/dev/null
+  # `|| true` so a missing key file (e.g. anthropic_key.txt) doesn't trip
+  # `set -e` via command substitution under bash 3.2 (macOS default shell).
+  ssh light "cat /mnt/light/scratch/users/yiren/keys/$1 2>/dev/null" 2>/dev/null || true
 }
 
 OPENAI_KEY="$(_read_key openai_key.txt)"
