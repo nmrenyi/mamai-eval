@@ -184,8 +184,14 @@ def _normalize_row(raw: dict, set_type: str, criteria: dict | None) -> dict | No
 
 
 def _load_dataset(name: str, revision: str, repo: str,
-                  max_questions: int | None) -> tuple[list[dict], str]:
-    """Load + normalize an HF mamabench config. Returns (rows, set_type)."""
+                  max_questions: int | None,
+                  row_ids: set[str] | None = None) -> tuple[list[dict], str]:
+    """Load + normalize an HF mamabench config. Returns (rows, set_type).
+
+    If `row_ids` is provided, keep only rows whose `id` is in that set.
+    Applied before `max_questions` so the subset is deterministic
+    irrespective of order. Used by the calibration runner.
+    """
     from datasets import load_dataset
     hf_config, set_type = HF_CONFIGS[name]
     print(f"Loading {repo}/{hf_config}@{revision}")
@@ -194,12 +200,15 @@ def _load_dataset(name: str, revision: str, repo: str,
 
     rows = []
     for raw in ds:
+        if row_ids is not None and raw.get("id") not in row_ids:
+            continue
         norm = _normalize_row(raw, set_type, criteria)
         if norm is not None:
             rows.append(norm)
         if max_questions and len(rows) >= max_questions:
             break
-    print(f"Loaded {len(rows)} rows (set_type={set_type})")
+    print(f"Loaded {len(rows)} rows (set_type={set_type}"
+          f"{', row_ids filter applied' if row_ids is not None else ''})")
     return rows, set_type
 
 
@@ -514,6 +523,11 @@ def main():
                         help="Max tokens to generate (default: from config params.json)")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit questions per dataset (for debugging)")
+    parser.add_argument("--row-ids", default=None,
+                        help="Path to a calibration manifest JSON. When set, only rows whose "
+                             "`id` appears in manifest['ids'] are evaluated. Used to run the "
+                             "same row set on both venues for the device-vs-cluster calibration "
+                             "comparison.")
     parser.add_argument("--judge", action="store_true",
                         help="(Legacy v0.1 single-judge) Inline open-ended scoring. "
                              "For v0.2 prefer rescore_open_v2.py / rescore_rubric.py.")
@@ -551,6 +565,13 @@ def main():
             if name not in HF_CONFIGS:
                 parser.error(f"Unknown dataset: {name}. Available: {list(HF_CONFIGS.keys())}")
 
+    row_ids_filter: set[str] | None = None
+    if args.row_ids:
+        manifest = json.loads(Path(args.row_ids).read_text())
+        row_ids_filter = set(manifest["ids"])
+        print(f"Row-ids filter: {len(row_ids_filter)} ids from "
+              f"{args.row_ids} ({manifest.get('name', '?')})")
+
     model = load_model(args.model, args.model_dir, n_gpu_layers=args.n_gpu_layers)
 
     judge_client, judge_model = None, None
@@ -582,7 +603,8 @@ def main():
         print(f"{'='*60}")
 
         try:
-            rows, set_type = _load_dataset(ds_name, revision, hf_repo, args.max_questions)
+            rows, set_type = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
+                                           row_ids=row_ids_filter)
         except Exception as e:
             print(f"SKIP: failed to load {ds_name}: {e}")
             continue

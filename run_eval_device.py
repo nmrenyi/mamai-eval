@@ -239,6 +239,11 @@ def main():
                              f"{','.join(n for n, (_, t) in HF_CONFIGS.items() if t == 'mcq')}")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit questions per dataset")
+    parser.add_argument("--row-ids", default=None,
+                        help="Path to a calibration manifest JSON. When set, only rows whose "
+                             "`id` appears in manifest['ids'] are evaluated. Pair with the "
+                             "same flag on run_eval.py to produce a device-vs-cluster "
+                             "calibration comparison.")
     parser.add_argument("--revision", default=None,
                         help="HF dataset revision (default: dataset.revision from params.json)")
     parser.add_argument("--hf-repo", default=None,
@@ -270,6 +275,13 @@ def main():
             parser.error(f"{name} is set_type={set_type}; run_eval_device.py currently "
                          f"supports MCQ only.")
 
+    row_ids_filter: set[str] | None = None
+    if args.row_ids:
+        manifest = json.loads(Path(args.row_ids).read_text())
+        row_ids_filter = set(manifest["ids"])
+        print(f"Row-ids filter: {len(row_ids_filter)} ids from "
+              f"{args.row_ids} ({manifest.get('name', '?')})")
+
     _check_device(args.device_serial)
     apk_info = _device_apk_info(args.device_serial)
 
@@ -283,7 +295,8 @@ def main():
         print(f"Dataset: {ds_name}  |  Config: {CONFIG_VERSION}  |  Device: {args.device_serial or 'default'}")
         print(f"{'='*60}")
 
-        rows, _ = _load_dataset(ds_name, revision, hf_repo, args.max_questions)
+        rows, _ = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
+                                row_ids=row_ids_filter)
         if not rows:
             print(f"SKIP: {ds_name} produced 0 normalized rows")
             continue

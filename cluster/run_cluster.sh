@@ -33,6 +33,7 @@ MAX_QUESTIONS="${MAX_QUESTIONS:-}"
 MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS:-500}"
 MAX_TOKENS="${MAX_TOKENS:-}"
 N_GPU_LAYERS="${N_GPU_LAYERS:-}"
+ROW_IDS="${ROW_IDS:-}"
 
 # Persist HF dataset cache across job runs (survives container lifecycle via PVC).
 mkdir -p "$HF_CACHE_DIR"
@@ -99,6 +100,13 @@ fi
 
 if [ -n "$N_GPU_LAYERS" ]; then
   COMMON_ARGS+=(--n-gpu-layers "$N_GPU_LAYERS")
+fi
+
+if [ -n "$ROW_IDS" ]; then
+  # ROW_IDS is a path inside the container — typically
+  # "$WORKTREE/configs/<cfg>/calibration/<manifest>.json", which exists
+  # because the fresh git clone above brings the committed manifest.
+  COMMON_ARGS+=(--row-ids "$ROW_IDS")
 fi
 
 echo "=== STARTING EVALUATIONS ==="
