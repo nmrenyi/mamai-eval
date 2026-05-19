@@ -1,21 +1,22 @@
 """
-Pre-compute RAG retrieval contexts for all evaluation datasets.
+Pre-compute RAG retrieval contexts for all mamabench v0.2 evaluation datasets.
 
 Embeds each question using the Gecko TFLite model and retrieves the top-k
 most similar chunks from the app's vector store. Results are saved as JSON
 files that run_eval.py can load with --rag.
 
+For HealthBench-style multi-turn rows, retrieval is run on the latest user
+turn — mirroring how the on-device app retrieves per-message.
+
 Usage:
-  python precompute_retrieval.py --config config-v0.1.0 \\
+  python precompute_retrieval.py --config config-v0.2.0 \\
       --db-path /path/to/embeddings.sqlite \\
       --gecko-model /path/to/Gecko_1024_quant.tflite \\
       --tokenizer /path/to/sentencepiece.model
 
-  python precompute_retrieval.py --config config-v0.1.0 \\
-      --db-path /path/to/embeddings.sqlite \\
-      --gecko-model /path/to/Gecko_1024_quant.tflite \\
-      --tokenizer /path/to/sentencepiece.model \\
-      --top-k 5 --datasets afrimedqa_mcq,whb_stumps
+  python precompute_retrieval.py --config config-v0.2.0 \\
+      --db-path ... --gecko-model ... --tokenizer ... \\
+      --top-k 5 --datasets afrimedqa,whb
 """
 
 import argparse
@@ -23,7 +24,6 @@ import hashlib
 import json
 import os
 import subprocess
-import sys
 
 # ── Resolve --config before any prompts imports ──────────────────────────────
 _pre = argparse.ArgumentParser(add_help=False)
@@ -35,11 +35,9 @@ os.environ["MAMAI_EVAL_CONFIG"] = _pre_args.config
 from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 from tqdm import tqdm
 
-from prompts import RETRIEVAL_TOP_K, CONFIG_VERSION
+from prompts import RETRIEVAL_TOP_K, CONFIG_VERSION, DATASET_HF_REPO, DATASET_REVISION
 from retrieval import (
     GeckoEmbedder,
     build_index,
@@ -50,14 +48,17 @@ from retrieval import (
 
 _REPO_ROOT = Path(__file__).parent
 
-# Dataset registry (same as run_eval.py)
-DATASETS = {
-    "afrimedqa_mcq": ("afrimedqa_mcq.tsv", "question_clean"),
-    "medqa_usmle": ("medqa_usmle.tsv", "question"),
-    "medmcqa_mcq": ("medmcqa_mcq.tsv", "question"),
-    "kenya_vignettes": ("kenya_vignettes.tsv", "scenario"),
-    "whb_stumps": ("whb_stumps.tsv", "question_clean"),
-    "afrimedqa_saq": ("afrimedqa_saq.tsv", "question_clean"),
+# Dataset registry: name → hf_config (set_type doesn't matter for retrieval)
+HF_CONFIGS = {
+    "medmcqa":               "medmcqa",
+    "medqa_usmle":           "medqa_usmle",
+    "afrimedqa":             "afrimedqa",
+    "kenya":                 "kenya",
+    "whb":                   "whb",
+    "afrimedqa_saq":         "afrimedqa_saq",
+    "healthbench_oss_eval":  "healthbench_oss_eval",
+    "healthbench_consensus": "healthbench_consensus",
+    "healthbench_hard":      "healthbench_hard",
 }
 
 
@@ -75,25 +76,37 @@ def _sha256(path):
 def _git_output(*args):
     try:
         return subprocess.check_output(
-            ["git", "-C", str(_REPO_ROOT), *args],
-            text=True,
+            ["git", "-C", str(_REPO_ROOT), *args], text=True,
         ).strip()
     except Exception:
         return ""
 
 
+def _question_text(question) -> str:
+    """Pick the text to embed: latest user turn for multi-turn, else the string."""
+    if isinstance(question, str):
+        return question
+    if isinstance(question, list):
+        for turn in reversed(question):
+            if isinstance(turn, dict) and turn.get("role") == "user":
+                return str(turn.get("content", ""))
+        if question and isinstance(question[-1], dict):
+            return str(question[-1].get("content", ""))
+    return str(question or "")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Pre-compute RAG retrieval contexts")
     parser.add_argument("--config", required=True,
-                        help="Config version to use (e.g. config-v0.1.0)")
-    parser.add_argument("--db-path", required=True,
-                        help="Path to embeddings.sqlite")
+                        help="Config version to use (e.g. config-v0.2.0)")
+    parser.add_argument("--db-path", required=True, help="Path to embeddings.sqlite")
     parser.add_argument("--gecko-model", required=True,
                         help="Path to Gecko TFLite model (Gecko_1024_quant.tflite)")
-    parser.add_argument("--tokenizer", required=True,
-                        help="Path to sentencepiece.model")
-    parser.add_argument("--data-dir", default="datasets",
-                        help="Directory containing dataset TSV files")
+    parser.add_argument("--tokenizer", required=True, help="Path to sentencepiece.model")
+    parser.add_argument("--revision", default=None,
+                        help="HF dataset revision (default: dataset.revision from params.json, else v0.2)")
+    parser.add_argument("--hf-repo", default=None,
+                        help="HF dataset repo (default: dataset.hf_repo from params.json)")
     parser.add_argument("--output-dir", default="rag_contexts",
                         help="Output directory for JSON context files")
     parser.add_argument("--top-k", type=int, default=RETRIEVAL_TOP_K,
@@ -109,12 +122,20 @@ def main():
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
-    context_version = args.context_version or datetime.now(timezone.utc).strftime("ragctx-%Y%m%dT%H%M%SZ")
+    context_version = args.context_version or datetime.now(timezone.utc).strftime(
+        "ragctx-%Y%m%dT%H%M%SZ"
+    )
+
+    revision = args.revision or DATASET_REVISION or "v0.2"
+    hf_repo = args.hf_repo or DATASET_HF_REPO or "nmrenyi/mamabench"
 
     if args.datasets == "all":
-        dataset_names = list(DATASETS.keys())
+        dataset_names = list(HF_CONFIGS.keys())
     else:
         dataset_names = [d.strip() for d in args.datasets.split(",")]
+        for name in dataset_names:
+            if name not in HF_CONFIGS:
+                parser.error(f"Unknown dataset: {name}. Available: {list(HF_CONFIGS.keys())}")
 
     lock_data = {}
     if args.rag_lock and Path(args.rag_lock).exists():
@@ -126,7 +147,7 @@ def main():
     manifest_path = Path(args.output_dir) / "manifest.json"
 
     run_manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "context_version": context_version,
         "config_version": CONFIG_VERSION,
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -140,6 +161,7 @@ def main():
             "chunk_count": lock_data.get("chunk_count"),
             "source_count": lock_data.get("source_count"),
         },
+        "dataset_source": {"hf_repo": hf_repo, "hf_revision": revision},
         "retrieval_config": {
             "top_k": args.top_k,
             "datasets": dataset_names,
@@ -174,40 +196,42 @@ def main():
     texts, normed_matrix = build_index(store)
     embedder = GeckoEmbedder(args.gecko_model, args.tokenizer)
 
-    for ds_name in dataset_names:
-        if ds_name not in DATASETS:
-            print(f"SKIP: unknown dataset {ds_name}")
-            continue
+    from datasets import load_dataset
 
-        filename, q_col = DATASETS[ds_name]
-        filepath = os.path.join(args.data_dir, filename)
-        if not os.path.exists(filepath):
-            print(f"SKIP: {filepath} not found")
-            continue
+    for ds_name in dataset_names:
+        hf_config = HF_CONFIGS[ds_name]
 
         print(f"\n{'='*60}")
-        print(f"Dataset: {ds_name}")
+        print(f"Dataset: {ds_name}  ({hf_repo}/{hf_config}@{revision})")
         print(f"{'='*60}")
 
-        df = pd.read_csv(filepath, sep="\t")
+        try:
+            ds = load_dataset(hf_repo, hf_config, revision=revision, split="train")
+        except Exception as e:
+            print(f"SKIP: failed to load {ds_name}: {e}")
+            continue
+
+        rows = list(ds)
         if args.max_questions:
-            df = df.head(args.max_questions)
-        print(f"Processing {len(df)} questions")
+            rows = rows[:args.max_questions]
+        print(f"Processing {len(rows)} questions")
 
         retrievals = []
-        for _, row in tqdm(df.iterrows(), total=len(df), desc=ds_name):
-            question = str(row[q_col]) if pd.notna(row[q_col]) else ""
-            if not question:
-                retrievals.append({"question": "", "chunks": [], "similarities": []})
+        for raw in tqdm(rows, total=len(rows), desc=ds_name):
+            text = _question_text(raw.get("question", ""))
+            if not text:
+                retrievals.append({"id": raw.get("id", ""), "question": "",
+                                   "chunks": [], "similarities": []})
                 continue
 
-            query_emb = embedder.embed(question)
+            query_emb = embedder.embed(text)
             results = retrieve(query_emb, texts, normed_matrix, top_k=args.top_k)
             raw_chunks = [chunk for chunk, _ in results]
             context_chunks, retrieved_docs = format_app_context_chunks(raw_chunks)
 
             retrievals.append({
-                "question": question,
+                "id": raw.get("id", ""),
+                "question": text,
                 "chunks": context_chunks,
                 "retrieved_docs": retrieved_docs,
                 "similarities": [round(score, 4) for _, score in results],
@@ -219,6 +243,8 @@ def main():
                 "config_version": CONFIG_VERSION,
                 "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "dataset": ds_name,
+                "hf_repo": hf_repo,
+                "hf_revision": revision,
             },
             "config": {
                 "context_version": context_version,
