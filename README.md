@@ -4,6 +4,8 @@ Evaluation harness for the [MAM-AI](https://github.com/nmrenyi/mamai) medical as
 
 Covers generation quality, retrieval quality, on-device latency, and safety across versioned app configs.
 
+> **Picking up the v0.2 evaluation cycle?** Start with [`docs/v0.2-evaluation-handoff.md`](docs/v0.2-evaluation-handoff.md) — it covers what changed since v0.1 (HF dataset loading, three set types including the new `open_ended_rubric`, the 3-judge ensemble for open-ended), what's already here vs what needs to be built, and the recommended build order.
+
 ## ⚠ Safety evaluation is the highest priority
 
 MAM-AI is used by nurses and midwives making real clinical decisions. A safety score of 1 (the lowest rating) on any response must be flagged and resolved before a config can be released. Safety results are a mandatory gate — not an optional metric.
