@@ -68,6 +68,16 @@ QUESTION_LABEL: str = _params["context_injection"]["question_label_en"]
 JUDGE_MODEL: str = _params["judge"]["model"]
 JUDGE_TEMPERATURE: float = _params["judge"]["temperature"]
 
+# v0.2: 3-judge ensemble for open_ended scoring and a separate single judge for
+# open_ended_rubric scoring. Both are optional so v0.1 configs still load.
+JUDGE_ENSEMBLE: list[dict] = _params["judge"].get("ensemble", [])
+JUDGE_RUBRIC: dict = _params["judge"].get("rubric", {})
+
+# --- Dataset source (v0.2: HF dataset; v0.1: local TSV) ---
+_dataset_cfg = _params.get("dataset", {})
+DATASET_HF_REPO: str | None = _dataset_cfg.get("hf_repo")
+DATASET_REVISION: str | None = _dataset_cfg.get("revision")
+
 # --- Protocol versioning ---
 
 PROTOCOL_VERSION = "app_parity_v1"
@@ -115,6 +125,19 @@ def build_open_messages(question: str) -> dict:
     }
 
 
+def build_open_messages_multiturn(turns: list[dict]) -> dict:
+    """Open-ended messages for HealthBench-style multi-turn rows.
+
+    `turns` is a list[{role, content}] taken straight from the dataset.
+    Returned shape matches the single-turn builder so the runner can decide
+    once whether to call chat-completion vs prompt-format paths.
+    """
+    return {
+        "system": OPEN_SYSTEM_PROMPT,
+        "turns": turns,
+    }
+
+
 def build_mcq_prompt(question: str, options: str) -> str:
     """Build a Gemma IT prompt for a multiple-choice question."""
     msgs = build_mcq_messages(question, options)
@@ -149,6 +172,22 @@ def build_rag_open_messages(question: str, context: str) -> dict:
             f"{QUESTION_LABEL} {question}"
         ),
     }
+
+
+def build_rag_open_messages_multiturn(turns: list[dict], context: str) -> dict:
+    """Multi-turn open-ended messages with RAG context prepended to the final user turn."""
+    if not turns:
+        return {"system": OPEN_SYSTEM_PROMPT, "turns": []}
+    rewritten = [dict(t) for t in turns]
+    # Inject context into the final user turn so retrieval is visible to the model.
+    for i in range(len(rewritten) - 1, -1, -1):
+        if rewritten[i].get("role") == "user":
+            rewritten[i]["content"] = (
+                f"{CONTEXT_LABEL}\n{context}\n\n"
+                f"{QUESTION_LABEL} {rewritten[i].get('content', '')}"
+            )
+            break
+    return {"system": OPEN_SYSTEM_PROMPT, "turns": rewritten}
 
 
 def build_rag_mcq_prompt(question: str, options: str, context: str) -> str:

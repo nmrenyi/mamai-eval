@@ -56,12 +56,12 @@ class GGUFBackend:
         return output["choices"][0]["text"].strip()
 
     def generate_chat(self, messages: dict, max_tokens: int = 512) -> str:
-        """Generate using the model's built-in chat template (for non-Gemma models)."""
+        """Generate using the model's built-in chat template (for non-Gemma models).
+
+        Accepts {system, user} for single-turn or {system, turns} for multi-turn.
+        """
         result = self.llm.create_chat_completion(
-            messages=[
-                {"role": "system", "content": messages["system"]},
-                {"role": "user", "content": messages["user"]},
-            ],
+            messages=_build_chat_messages(messages),
             max_tokens=max_tokens,
             temperature=TEMPERATURE,
             top_p=TOP_P,
@@ -85,10 +85,7 @@ class OpenAIBackend:
     def generate(self, messages: dict, max_tokens: int = 512) -> str:
         result = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "system", "content": messages["system"]},
-                {"role": "user", "content": messages["user"]},
-            ],
+            messages=_build_chat_messages(messages),
             temperature=TEMPERATURE,
         )
         content = result.choices[0].message.content
@@ -97,6 +94,19 @@ class OpenAIBackend:
             print(f"  WARNING: empty response from {self.model} (finish_reason={reason})")
             return ""
         return content.strip()
+
+
+def _build_chat_messages(messages: dict) -> list[dict]:
+    """Convert prompt-builder output into an OpenAI-style chat message list.
+
+    Supports {system, user} (single-turn) and {system, turns} (multi-turn).
+    """
+    if "turns" in messages:
+        return [{"role": "system", "content": messages["system"]}, *messages["turns"]]
+    return [
+        {"role": "system", "content": messages["system"]},
+        {"role": "user", "content": messages["user"]},
+    ]
 
 
 MODEL_REGISTRY = {
