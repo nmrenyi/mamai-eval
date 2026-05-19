@@ -1,0 +1,620 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260519T214742",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 100,
+  "n_rows_done": 100,
+  "total_time_ms": 582799,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_afrimedqa_730820e6c263",
+      "response_text": "D",
+      "inference_time_ms": 1105,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46b84df0f6dd",
+      "response_text": "A",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a2d61419d073",
+      "response_text": "A",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2ed442f6085c",
+      "response_text": "A",
+      "inference_time_ms": 421,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1839331b9e28",
+      "response_text": "A",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e57b745188bb",
+      "response_text": "E",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_52ee4b837aab",
+      "response_text": "A",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9c48bdb3cfc5",
+      "response_text": "B",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_415fdf8429c0",
+      "response_text": "C",
+      "inference_time_ms": 1041,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a6faedabfbe1",
+      "response_text": "C",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_71ccee95aed8",
+      "response_text": "B",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5c34c2071962",
+      "response_text": "C",
+      "inference_time_ms": 1027,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d373e7d0eb5f",
+      "response_text": "C",
+      "inference_time_ms": 1022,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b9a3324ef73e",
+      "response_text": "C",
+      "inference_time_ms": 1019,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_124a1dc12d93",
+      "response_text": "B",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e8bd075abcec",
+      "response_text": "B",
+      "inference_time_ms": 997,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cc8a80576049",
+      "response_text": "C",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_85b33001a125",
+      "response_text": "C",
+      "inference_time_ms": 990,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_78ee7cc76766",
+      "response_text": "B",
+      "inference_time_ms": 371,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_193fe61a16e0",
+      "response_text": "B",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_58c72667fcce",
+      "response_text": "B",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_338c68773668",
+      "response_text": "E",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_db8e2ad36b9a",
+      "response_text": "C",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1967aa2d9c87",
+      "response_text": "A",
+      "inference_time_ms": 371,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9b9d8c174ef4",
+      "response_text": "A",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_3df0f485f183",
+      "response_text": "D",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8631f4d97163",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_30aae4a9fc30",
+      "response_text": "B",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_042c9f26bca6",
+      "response_text": "D",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6ef10143038c",
+      "response_text": "E",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_bc4f3fb51e74",
+      "response_text": "E",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9ff63200ede5",
+      "response_text": "A",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1208e1d6ace1",
+      "response_text": "A",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b09040ccf632",
+      "response_text": "A",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8c2a58282b4c",
+      "response_text": "A",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_50598fb0bfda",
+      "response_text": "E",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1f72be69282b",
+      "response_text": "B",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0cd5217d0e79",
+      "response_text": "B",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f2d9dcecc576",
+      "response_text": "B",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2aefc685c77c",
+      "response_text": "B",
+      "inference_time_ms": 1025,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_177e66c56960",
+      "response_text": "C",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_673cf25a9ab5",
+      "response_text": "C",
+      "inference_time_ms": 371,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_3bd660b746ce",
+      "response_text": "C",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d0a31259751f",
+      "response_text": "A",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cda40eb972bb",
+      "response_text": "C",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a8eae1b5218d",
+      "response_text": "A",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1176a66d77bf",
+      "response_text": "C",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ef81db0f5708",
+      "response_text": "E",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_57bef3401a0c",
+      "response_text": "C",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_574d1768015a",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9290ca8e34c1",
+      "response_text": "B",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_26d1749fa5c6",
+      "response_text": "B",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_828686b35f40",
+      "response_text": "A",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_700d42be047a",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4222e278e45e",
+      "response_text": "D",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_fd1ad4ddabc5",
+      "response_text": "D",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_831d70766314",
+      "response_text": "B",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d808b208c17e",
+      "response_text": "D",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6cadcad10cd7",
+      "response_text": "B",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_36582609a22c",
+      "response_text": "B",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_14904100feb4",
+      "response_text": "E",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_dbeb830a194f",
+      "response_text": "D",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2bc99f78ee0f",
+      "response_text": "C",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d01882bf1452",
+      "response_text": "A",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d39b1dbd3961",
+      "response_text": "D",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_390c87a470ea",
+      "response_text": "E",
+      "inference_time_ms": 372,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_34f8770b69d5",
+      "response_text": "C",
+      "inference_time_ms": 1000,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6c2e8e43e60a",
+      "response_text": "A",
+      "inference_time_ms": 371,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f69a6487b574",
+      "response_text": "C",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a46047bf1063",
+      "response_text": "A",
+      "inference_time_ms": 1021,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a926a300f60a",
+      "response_text": "C",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_dcc447e0a013",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_98a79ee6ac2c",
+      "response_text": "A",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_31bcd1a11e73",
+      "response_text": "A",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_95245d5101e7",
+      "response_text": "B",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0ca1dd787a90",
+      "response_text": "B",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_47d826b9a77b",
+      "response_text": "D",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0d0fca681b0b",
+      "response_text": "E",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d058993f8a69",
+      "response_text": "C",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5d7b45ae3779",
+      "response_text": "A",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6091ae25766f",
+      "response_text": "E",
+      "inference_time_ms": 359,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_431c717a08a4",
+      "response_text": "C",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f1af7c9630e7",
+      "response_text": "B",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_51bc3b632e63",
+      "response_text": "C",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_41bf5c698de0",
+      "response_text": "D",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_93fd8d46038b",
+      "response_text": "B",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0f260c7c6a01",
+      "response_text": "A",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_279aaabb67b7",
+      "response_text": "D",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4bb74d5fe449",
+      "response_text": "E",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5866d750e7cd",
+      "response_text": "E",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d8e95fb7fc40",
+      "response_text": "C",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ab2613280f1d",
+      "response_text": "A",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8869cadc67f2",
+      "response_text": "E",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_101413f0934b",
+      "response_text": "A",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6d71f3b2083b",
+      "response_text": "B",
+      "inference_time_ms": 1001,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a59685fb8e40",
+      "response_text": "E",
+      "inference_time_ms": 999,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cefa74e67593",
+      "response_text": "E",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_c316768891da",
+      "response_text": "A",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_59c6ee49e966",
+      "response_text": "C",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e14e90474e42",
+      "response_text": "E",
+      "inference_time_ms": 366,
+      "error": null
+    }
+  ]
+}

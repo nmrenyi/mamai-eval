@@ -1,0 +1,1736 @@
+{
+  "metadata": {
+    "model": "gemma4-e4b",
+    "model_dir": "/lightscratch/users/yiren/models",
+    "dataset": "medqa_usmle",
+    "dataset_type": "mcq",
+    "hf_repo": "nmrenyi/mamabench",
+    "hf_revision": "v0.2",
+    "config_version": "config-v0.2.0",
+    "n_questions": 100,
+    "timestamp": "20260519T135246",
+    "protocol_version": "app_parity_v1",
+    "prompt_version": "v3-cd8c872e",
+    "spec_sha256": "fc3a0d7a72184985d0ed4d424768fc7e95e2883432979fb2ae2e91eb85717f6d",
+    "rag": false,
+    "generation_params": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 64,
+      "n_ctx": 4096,
+      "max_tokens": 2048
+    },
+    "total_inference_time_s": 11.7,
+    "avg_time_per_question_s": 0.12
+  },
+  "aggregate_scores": {
+    "accuracy": 0.53,
+    "correct": 53,
+    "total": 100,
+    "partial_credit_accuracy": 0.53,
+    "per_question": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true
+    ],
+    "per_question_partial": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0
+    ]
+  },
+  "results": [
+    {
+      "id": "mamabench_v0.2_medqa_usmle_399870bcb028",
+      "question": "A 31-year-old woman, gravida 2, para 1, at 32 weeks' gestation comes to the emergency department for sudden leakage of clear vaginal fluid. Her pregnancy has been uncomplicated. Her first child was born at term by vaginal delivery. She has no history of serious illness. She does not drink alcohol or smoke cigarettes. Current medications include vitamin supplements. Her temperature is 37.2°C (98.9°F), pulse is 70/min, respirations are 18/min, and blood pressure is 128/82 mm Hg. Speculum examination demonstrates clear fluid in the cervical canal. The fetal heart rate is reactive at 160/min with no decelerations. Tocometry shows uterine contractions. Nitrazine testing is positive. She is started on indomethacin. Which of the following is the most appropriate next step in management?",
+      "options": "A. Administer betamethasone, ampicillin, and proceed with cesarean section\nB. Administer ampicillin and perform amnioinfusion\nC. Administer ampicillin and test amniotic fluid for fetal lung maturity\nD. Administer betamethasone and ampicillin\nE. Administer ampicillin and progesterone\nF. Administer betamethasone, ampicillin, and proceed with induction of labor",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.58
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4eb815d0c4fe",
+      "question": "A 27-year-old woman, gravida 2, para 1, at 37 weeks' gestation is admitted to the hospital in active labor. She has received routine prenatal care, but she has not been tested for group B streptococcal (GBS) colonization. Pregnancy and delivery of her first child were complicated by an infection with GBS that resulted in sepsis in the newborn. Current medications include folic acid and a multivitamin. Vital signs are within normal limits. The abdomen is nontender and contractions are felt every 4 minutes. There is clear amniotic fluid pooling in the vagina. The fetus is in a cephalic presentation. The fetal heart rate is 140/min. Which of the following is the most appropriate next step in management?",
+      "options": "A. Obtain vaginal-rectal swab for nucleic acid amplification testing and GBS culture and intravenous penicillin administration\nB. Obtain vaginal-rectal swab for GBS culture and intravenous penicillin administration\nC. Reassurance\nD. Obtain vaginal-rectal swab for GBS culture\nE. Administer intrapartum intravenous penicillin\nF. Obtain vaginal-rectal swab for nucleic acid amplification testing and intravenous penicillin administration\nG. Obtain vaginal-rectal swab for GBS culture and nucleic acid amplification testing\nH. Obtain vaginal-rectal swab for nucleic acid amplification testing\nI. Schedule a C-section",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.19
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bf763398b165",
+      "question": "A 7-year-old boy is brought to the physician for the evaluation of sore throat for the past 2 days. During this period, he has had intermittent nausea and has vomited once. The patient has no cough, hoarseness, or rhinorrhea. He had similar symptoms at the age of 5 years that resolved spontaneously. He is otherwise healthy. His temperature is 37.9°C (100.2°F), pulse is 85/min, and blood pressure is 108/70 mm Hg. Head and neck examination shows an erythematous pharynx with grayish exudates overlying the palatine tonsils. There is no lymphadenopathy. Rapid antigen detection test for group A streptococci is negative. Which of the following is most appropriate next step in the management of this patient?",
+      "options": "A. Measurement of antistreptolysin O titer\nB. Reassurance and follow-up in two weeks\nC. Measurement of antiviral capsid antigen IgM antibody\nD. Penicillin V therapy\nE. Obtain throat culture\n\"",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.16
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c55f73cb3f7",
+      "question": "A 4-year-old boy is brought to the physician in December for episodic shortness of breath and a nonproductive cough for 3 months. These episodes frequently occur before sleeping, and he occasionally wakes up because of difficulty breathing. His mother also reports that he became short of breath while playing with his friends at daycare on several occasions. He is allergic to peanuts. He is at the 55th percentile for height and weight. Vital signs are within normal limits. Examination shows mild scattered wheezing in the thorax. An x-ray of the chest shows no abnormalities. Which of the following is the most likely diagnosis?",
+      "options": "A. Cystic fibrosis\nB. Foreign body aspiration\nC. Asthma\nD. Cardiac failure\nE. Bronchiolitis\nF. Primary ciliary dyskinesia\nG. Tracheomalacia",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8a46985eaafb",
+      "question": "A 12-year-old girl is brought to the physician for a follow-up examination. Two months ago, she was diagnosed with asthma and treatment was begun with an albuterol inhaler as needed. Since then, she has had episodic chest tightness and cough 2–3 times per week. The cough is intermittent and nonproductive; it is worse at night. She has been otherwise healthy and takes no other medications. Her vital signs are within normal limits. Pulmonary examination shows mild expiratory wheezing of all lung fields. Spirometry shows an FEV1:FVC ratio of 81% and an FEV1 of 80% of predicted; FEV1 rises to 93% of predicted after administration of a short-acting bronchodilator. Treatment with low-dose inhaled beclomethasone is begun. The patient is at greatest risk for which of the following adverse effects?",
+      "options": "A. Acneiform eruptions\nB. Oropharyngeal candidiasis\nC. Bradycardia\nD. High-pitched voice\nE. Easy bruisability\nF. Hypoglycemia",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.18
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_325c647e5140",
+      "question": "A 16-year-old girl is brought to the physician because menarche has not yet occurred. She has no history of serious illness and takes no medications. She is 162 cm (5 ft 3 in) tall and weighs 80 kg (176 lb); BMI is 31.2 kg/m2. Breast and pubic hair development is Tanner stage 4. She also has oily skin, acne, and hyperpigmentation of the intertriginous areas of her neck and axillae. The remainder of the examination, including pelvic examination, shows no abnormalities. Which of the following is the most likely explanation for this patient's amenorrhea?",
+      "options": "A. Insensitivity to androgens\nB. Elevated serum prolactin levels\nC. XO chromosomal abnormality\nD. Müllerian agenesis\nE. Elevated LH:FSH ratio\nF. Imperforate hymen\nG. Elevated β-hCG levels\nH. Elevated serum TSH levels\nI. Elevated serum cortisol levels\n\"",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "I",
+      "extracted_answer": "",
+      "extracted_answers": [],
+      "correct": false,
+      "inference_time_s": 0.16
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0dab621bc5a0",
+      "question": "A 4-year-old boy is brought to the physician by his parents because of concerns about his behavior during the past year. His parents report that he often fails to answer when they call him and has regular unprovoked episodes of crying and screaming. At kindergarten, he can follow and participate in group activities, but does not follow his teacher's instructions when these are given to him directly. He is otherwise cheerful and maintains eye contact when spoken to but does not respond when engaged in play. He gets along well with friends and family. He started walking at the age of 11 months and can speak in two-to-three-word phrases. He often mispronounces words. Which of the following is the most likely diagnosis?",
+      "options": "A. Selective mutism\nB. Hearing impairment\nC. Opposition defiant disorder\nD. Autistic spectrum disorder\nE. Attention deficit hyperactivity disorder\nF. Specific-learning disorder\nG. Conduct disorder\nH. Age-appropriate behavior",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_201b38000e67",
+      "question": "A 4-year-old African-American girl is brought to the physician because of multiple episodes of bilateral leg pain for 4 months. The pain is crampy in nature, lasts up to an hour, and occurs primarily before her bedtime. Occasionally, she has woken up crying because of severe pain. The pain is reduced when her mother massages her legs. She has no pain while attending school or playing. Her mother has rheumatoid arthritis. The patient's temperature is 37°C (98.6°F), pulse is 90/min and blood pressure is 94/60 mm Hg. Physical examination shows no abnormalities. Her hemoglobin concentration is 12.1 g/dL, leukocyte count is 10,900/mm3 and platelet count is 230,000/mm3. Which of the following is the most appropriate next best step in management?",
+      "options": "A. Antinuclear antibody\nB. Erythrocyte sedimentation rate\nC. Hemoglobin electrophoresis\nD. Pramipexole therapy\nE. Nafcillin therapy\nF. Vitamin D therapy\nG. X-ray of the lower extremities\nH. MRI of the lower extremities\nI. Reassurance",
+      "ground_truth": "I",
+      "answer_index": 8,
+      "rag_context": "",
+      "model_response": "H",
+      "extracted_answer": "H",
+      "extracted_answers": [
+        "H"
+      ],
+      "correct": false,
+      "inference_time_s": 0.18
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e0a544bfbd2d",
+      "question": "A 14-year-old boy comes to the physician because of multiple patches on his trunk and thighs that are lighter than the rest of his skin. He also has similar depigmented lesions on his hands and feet and around the mouth. The patches have gradually increased in size over the past 2 years and are not associated with itchiness, redness, numbness, or pain. His family emigrated from Indonesia 8 years ago. An image of the skin lesions is shown. What is the most likely cause of this patient's skin findings?",
+      "options": "A. Cutaneous mosaicism\nB. Malassezia globosa infection\nC. Tyrosinase deficiency\nD. Autoimmune melanocyte destruction\nE. Increased mTOR signalling\nF. Mycobacterum leprae infection\nG. Hyalinization of the dermis\nH. Postinflammatory depigmentation\n\"",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b2f9924651b3",
+      "question": "A 29-year-old woman, gravida 1, para 0, at 33 weeks' gestation comes to her doctor for a routine visit. Her pregnancy has been uncomplicated. She has systemic lupus erythematosus and has had no flares during her pregnancy. She does not smoke cigarettes, drink alcohol, or use illicit drugs. Current medications include iron, vitamin supplements, and hydroxychloroquine. Her temperature is 37.2°C (98.9°F), pulse is 70/min, respirations are 17/min, and blood pressure is 134/70 mm Hg. She appears well. Physical examination shows no abnormalities. Ultrasound demonstrates fetal rhythmic breathing for > 30 seconds, amniotic fluid with deepest vertical pocket of 1 cm, one distinct fetal body movement over 30 minutes, and no episodes of extremity extension over 30 minutes. Nonstress test is reactive and reassuring. Which of the following is the next best step in management?",
+      "options": "A. Perform cesarean delivery\nB. Discontinue hydroxychloroquine and continue close monitoring\nC. Administer corticosteroids and continue close monitoring\nD. Induction of labor\nE. Reassurance with expectant management",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bab7fad48ae1",
+      "question": "A 3080-g (6-lb 13-oz) male newborn is delivered at term to a 27-year-old woman, gravida 2, para 1. Pregnancy was uncomplicated. He appears pale. His temperature is 36.8°C (98.2°F), pulse is 167/min, and respirations are 56/min. Examination shows jaundice of the skin and conjunctivae. The liver is palpated 2–3 cm below the right costal margin, and the spleen is palpated 1–2 cm below the left costal margin. The lungs are clear to auscultation. No murmurs are heard. His hemoglobin concentration is 10.6 g/dL and mean corpuscular volume is 73 μm3. Hemoglobin DNA testing shows 3 missing alleles. Which of the following laboratory findings is most likely present in this patient?",
+      "options": "A. Low reticulocyte count\nB. Elevated HbF\nC. Increased schistocyte count\nD. Elevated red cell distribution width\nE. Low serum ferritin\nF. Increased hemoglobin Barts concentration\nG. Elevated HbA2\n\"",
+      "ground_truth": "F",
+      "answer_index": 5,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.18
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_35fccdc62e37",
+      "question": "A 14-year-old boy comes to the physician because of an itchy rash on his right arm for 1 day. The rash started as small papules, then progressed into blisters with oozing. He has had atopic dermatitis at the age of 6 years. His vital signs are within normal limits. A photograph of the patient's arm is shown. There is no lymphadenopathy. Avoidance of contact with which of the following would most likely have prevented this patient's symptoms?",
+      "options": "A. Antibiotics\nB. Cats\nC. Bees\nD. Plants\nE. Sun\nF. Gluten",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_fe798250aa92",
+      "question": "A 16-year-old girl is brought to the physician because she has not yet reached menarche. There is no personal or family history of serious illness. She is at the 20th percentile for weight and 50th percentile for height. Vital signs are within normal limits. Examination shows mild facial hair. There is no glandular breast tissue. Pubic hair is coarse and curly and extends to the inner surface of both thighs. Pelvic examination shows clitoromegaly. Ultrasound shows an absence of the uterus and ovaries. Which of the following is the most likely underlying cause for this patient's symptoms?",
+      "options": "A. 5-α reductase deficiency\nB. Sex chromosome monosomy\nC. Sex chromosome mosaicism\nD. Aromatase deficiency\nE. Mullerian duct agenesis\nF. 21-hydroxylase deficiency\nG. Complete androgen insensitivity",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "G",
+      "extracted_answer": "G",
+      "extracted_answers": [
+        "G"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0fa261ed9d17",
+      "question": "An otherwise healthy 10-day-old boy is brought to the physician by his parents because of progressively enlarging breasts bilaterally for the last 4 days. The parents report that they have sometimes noticed a discharge of small quantities of a white liquid from the left breast since yesterday. During pregnancy, the mother was diagnosed with hypothyroidism and was treated with L-thyroxine. The patient's maternal grandmother died of breast cancer. The patient currently weighs 3100-g (6.8-lb) and is 51 cm (20 in) in length. Vital signs are within normal limits. Examination shows symmetrically enlarged, nontender breasts, with bilaterally inverted nipples. The remainder of the examination shows no abnormalities. Which of the following is the most appropriate next step in the management of this patient?",
+      "options": "A. Testosterone supplementation\nB. Reassurance\nC. Breast biopsy\nD. Serum gonadotropin measurement\nE. Serum TSH measurement\nF. Chromosomal analysis\nG. Mammography\nH. Measurement of serum estrogen and testosterone\nI. Oral dicloxacillin",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "H",
+      "extracted_answer": "H",
+      "extracted_answers": [
+        "H"
+      ],
+      "correct": false,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_ac3bef8ae630",
+      "question": "A 12-year-old girl is brought to the physician because of fatigue, dyspnea, and mild chest pain on exertion for 1 week. She does not have a fever or a rash. She had an upper respiratory infection 3 weeks ago. She returned from summer camp in Colorado 3 days ago. She says they went hiking and camping as part of their activities. Her temperature is 36.9°C (98.4°F), heart rate is 96/min, and blood pressure is 106/74 mm Hg. Pulse oximetry on room air shows an oxygen saturation of 96%. Physical examination reveals jugular venous distention and 1+ pitting edema on both ankles. A few scattered inspiratory crackles are heard in the thorax and an S3 is heard at the apex. Abdominal examination is unremarkable. Her hemoglobin concentration is 11.6 g/dL, leukocyte count is 8900/mm3, and ESR is 10 mm/hr. An x-ray of the chest shows mild cardiac enlargement. Which of the following is the most likely cause of this patient's symptoms?",
+      "options": "A. Acute rheumatic fever\nB. Giant cell myocarditis\nC. Borrelia burgdorferi infection\nD. Coxsackie virus infection\nE. Respiratory syncytial virus infection\nF. Rhinovirus infection",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.19
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9345197ea836",
+      "question": "A 16-year-old girl is brought to the physician by her mother because she has not attained menarche. She has no history of serious illness. She is at 50th percentile for height and weight. Examination shows no breast glandular tissue and no pubic hair development. The remainder of the examination shows no abnormalities. A urine pregnancy test is negative. An ultrasound of the pelvis shows no abnormalities. Which of the following is the most appropriate next step in management?",
+      "options": "A. GnRH stimulation test\nB. Reassurance\nC. Progesterone challenge test\nD. MRI of the brain\nE. Serum FSH level\nF. Serum testosterone level",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9f14a5f00584",
+      "question": "A 35-year-old woman comes to the physician because of swelling of her right breast for the past 4 days. She also reports malaise and some pain with breastfeeding. Three weeks ago, she delivered a healthy 3500-g (7.7-lb) girl. She has no history of serious illness. Her mother died of breast cancer at the age of 55 years. Her only medication is a multivitamin. Her temperature is 38°C (100.4°F). Examination shows a tender, firm, swollen, erythematous right breast. Examination of the left breast shows no abnormalities. Which of the following is the most appropriate next step in management?",
+      "options": "A. Dicloxacillin and continued breastfeeding\nB. Trimethoprim-sulfamethoxazole and continued breastfeeding\nC. Continued breastfeeding, cold compresses, and ibuprofen\nD. Stop breastfeeding and perform mammography\nE. Stop breastfeeding and perform surgical drainage\nF. Continued unilateral left-sided breastfeeding\nG. Stop breastfeeding and perform breast biopsy\nH. Stop breastfeeding and switch to formula",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_87ee8d02eb14",
+      "question": "A 10-month-old girl is brought to the physician by her mother because of fever and irritability for the past 2 days. The mother says that the girl's diapers have smelled bad since the symptoms started. The patient has had some clear nasal secretions over the past week. Two months ago, she was brought to the emergency department for a simple febrile seizure. Otherwise, she has been healthy and her immunizations are up-to-date. She appears ill. She is at the 50th percentile for height and weight. Her temperature is 39.1°C (102.3°F), pulse is 138/min, respirations are 26/min, and blood pressure is 75/45 mm Hg. Oropharyngeal examination shows a mild postnasal drip. The remainder of the examination shows no abnormalities. Laboratory studies show:\nHemoglobin 12.4 g/dL\nLeukocyte count\n8,000/mm3\nSerum\nNa+ 138 mEq/L\nK+ 4.0 mEq/L\nCl- 100 mEq/L\nCreatinine 0.5 mg/dL\nUrine\nRBC 1–2/hpf\nWBC 18–20 WBCs/hpf\nNitrites positive\nBacteria gram-negative rods\nNasal swab for respiratory syncytial virus, influenza A, and influenza B antigens is negative. Urine culture grows > 105 colony forming units (CFU)/mL of E. coli. Treatment with acetaminophen and cefixime is started. Two days later, her symptoms have improved. Which of the following is the most appropriate next step in management?\"",
+      "options": "A. Obtain CT scan of the abdomen\nB. Perform renal and bladder ultrasound\nC. Perform an intravenous pyelogram (IVP)\nD. Start prophylaxis with trimethoprim-sulfamethoxazole\nE. Perform voiding cystourethrography\nF. Repeat urine cultures in 4 weeks",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.24
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c3b4f2c8aad",
+      "question": "A 24-year-old primigravid woman at 8 weeks' gestation is brought to the emergency department because of a 5-day history of nausea and vomiting. She has not been able to tolerate much food or drink. Her symptoms are worse in the morning. She has tried multiple oral antiemetics with limited relief. She has not had fevers, chills, abdominal pain, urinary symptoms, or diarrhea. She appears tired. Her temperature is 37°C (98.6°F), pulse is 105/min, and blood pressure is 108/60 mm Hg. Examination shows dry mucous membranes and cool extremities, with delayed capillary refill time. Arterial blood gas analysis on room air shows:\npH 7.56\nPCO2 40 mm Hg\nPO2 94 mm Hg\nHCO3- 30 mEq/L\nMeasurement of which of the following is the most appropriate next step in diagnosis?\"",
+      "options": "A. Serum osmolal gap\nB. Urine anion gap\nC. Serum anion gap\nD. Urine albumin to urine creatinine ratio\nE. Urine chloride concentration",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e3c8e2827846",
+      "question": "An investigator studying patients with symptoms of arthritis detects a nonenveloped virus with a single-stranded DNA genome in the serum of a pregnant patient. Fetal infection with this pathogen is most likely to cause which of the following manifestations?",
+      "options": "A. Hydrops fetalis\nB. Chorioretinitis\nC. Microcephaly\nD. Notched teeth\nE. Sensorineural deafness\nF. Vesicular rash",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e6d7767ca15d",
+      "question": "A 3086-g (6-lb) male newborn is delivered at 39 weeks' gestation to a 29-year-old woman. Initial examination shows micrognathia, a broad nasal bridge, short philtrum, and a cleft palate. Intermittent muscle spasms are seen predominantly in the hands and feet. A harsh systolic murmur is heard over the lower left sternal border. Which of the following is the most likely cause of this infant’s symptoms?",
+      "options": "A. Deletion in chromosome 7\nB. Deletion in chromosome 22\nC. Nondisjunction of chromosome 21\nD. Nondisjunction of chromosome 13\nE. Deletion in chromosome 5\nF. Nondisjunction of chromosome 18",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_53499a1dc33b",
+      "question": "An 11-year-old boy with Burkitt lymphoma is brought to the emergency department because of nausea, vomiting, flank pain, and dark urine for 1 day. Two days ago, he began induction chemotherapy with cyclophosphamide, vincristine, prednisolone, and doxorubicin. Urinalysis shows 3+ blood and abundant amber-colored, rhomboid crystals. Which of the following is most likely to have been effective in preventing this patient’s symptoms?",
+      "options": "A. Water restriction\nB. Administration of ceftriaxone\nC. Alkalinization of the urine\nD. Administration of probenecid\nE. Administration of hydrochlorothiazide\n\"",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4830fd5fb84a",
+      "question": "A 17-year-old girl comes to the physician because of a 1-week history of severe itching in the area of her genitals. She reports that the itching is most severe at night. She has been sexually active with three partners over the past year; she uses condoms for contraception. Her current sexual partner is experiencing similar symptoms. Pelvic examination shows vulvar excoriations. A photomicrograph of an epilated pubic hair is shown. Which of the following is the most likely causal organism?",
+      "options": "A. Phthirus pubis\nB. Pediculus humanus\nC. Enterobius vermicularis\nD. Epidermophyton floccosum\nE. Sarcoptes scabiei",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.16
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c9f828a4a40c",
+      "question": "An 8-year-old boy is brought to the emergency department because of a 4-day history of severe, left-sided ear pain and purulent discharge from his left ear. One week ago, he returned with his family from their annual summer vacation at a lakeside cabin, where he spent most of the time outdoors hiking and swimming. Examination shows tragal tenderness and a markedly edematous and erythematous external auditory canal. Audiometry shows conductive hearing loss of the left ear. Which of the following is the most likely cause of this patient's symptoms?",
+      "options": "A. Abnormal epithelial growth on tympanic membrane\nB. Infection with Aspergillus species\nC. Infection with Streptococcus pneumoniae\nD. Infection with varicella zoster virus\nE. Pleomorphic replacement of normal bone\nF. Infection with Pseudomonas aeruginosa\n\"",
+      "ground_truth": "F",
+      "answer_index": 5,
+      "rag_context": "",
+      "model_response": "F",
+      "extracted_answer": "F",
+      "extracted_answers": [
+        "F"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_86b8645b16af",
+      "question": "A 2-year-old boy is brought to the physician after his adoptive mother observed jerking movements of his arms and legs earlier that morning. He was adopted from an orphanage in Albania at 4 months of age. He has a history of intellectual disability. Examination shows pale skin and light blue eyes. There is a dry, eczematous, scaly rash on the extensor surfaces of the extremities. This patient is most likely deficient in which of the following enzymes?",
+      "options": "A. Phenylalanine hydroxylase\nB. α-ketoacid dehydrogenase\nC. Cystathionine synthase\nD. Ornithine transcarbamylase\nE. Tyrosinase\nF. Homogentisate oxidase",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_57f2196bbdd5",
+      "question": "An investigator is studying the growth pattern of a particular bacterial strain that caused a respiratory disease outbreak in children in rural Venezuela. The bacteria are found to be able to grow in a specialized culture that contains sheep blood, cystine, and potassium tellurite; the colonies are black and have a shining surface. The isolated bacteria are most likely which of the following?",
+      "options": "A. Mycoplasma pneumoniae\nB. Legionella pneumophila\nC. Mycobacterium tuberculosis\nD. Haemophilus influenzae\nE. Bordetella pertussis\nF. Corynebacterium diphtheriae\nG. Klebsiella pneumoniae\n\"",
+      "ground_truth": "F",
+      "answer_index": 5,
+      "rag_context": "",
+      "model_response": "G",
+      "extracted_answer": "G",
+      "extracted_answers": [
+        "G"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9ebe6f91b448",
+      "question": "A 3-week-old newborn male is brought to the physician because of increasing yellowing of his eyes and skin for 2 weeks. The mother has noticed that his stools have been paler than usual for the past week. He is exclusively formula fed, and feeds every 4 hours with a strong sucking reflux. The patient was delivered vaginally at 39 weeks' gestation to a healthy woman without any complications. Vital signs are within normal limits. He is at the 50th percentile for length and at the 65th percentile for weight. Examination shows scleral icterus and jaundice. Abdominal examination reveals a palpable liver 2 cm below the right costal margin without splenomegaly. Serum studies show:\nBilirubin\nTotal 17 mg/dL\nDirect 13.3 mg/dL\nAlkaline phosphatase 1700 U/L\nAST 53 U/L\nALT 45 U/L\nγ-Glutamyl transferase 174 U/L\nBlood group B positive\nThis patient is at increased risk of developing which of the following?\"",
+      "options": "A. Hepatocellular carcinoma\nB. Kernicterus\nC. Early liver cirrhosis\nD. Dark pigmentation on liver biopsy\nE. Hepatic encephalopathy",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.19
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4070fb2b5c3d",
+      "question": "A 28-year-old nulligravid woman comes to the physician for a routine health maintenance examination. Upon questioning, she reports that she and her husband have been trying to conceive for more than 1 year; they have unprotected sexual intercourse 3–4 times per week. Recently, she has not been enjoying sexual intercourse with her husband because of painful penetration. She also reports episodic back and pelvic pain over the past 6 months that lasts for 2–3 days; she has missed several days of work each month because of the pain. Menarche was at the age of 13 years, and menses occur at 26–28 day intervals. Pelvic examination shows a normal-appearing vulva and vagina. There is rectovaginal tenderness. Ultrasonography of the pelvis shows a retroverted normal-sized uterus. Further evaluation is most likely to show which of the following findings?",
+      "options": "A. Endometrial tisssue within the myometrium on biopsy\nB. Multiple bilateral ovarian cysts on ultrasonography\nC. Reddish-black peritoneal lesions on laparoscopy\nD. Concentric, solid myometrial tumors on MRI\nE. Intracellular organisms on endocervical culture\n\"",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6fc7736a3e67",
+      "question": "An 8-year-old girl is brought to the emergency room for a 6-hour history of fever, sore throat, and difficulty swallowing. Physical examination shows pooling of oral secretions and inspiratory stridor. Lateral x-ray of the neck shows thickening of the epiglottis and aryepiglottic folds. Throat culture with chocolate agar shows small, gram-negative coccobacilli. The patient's brother is started on the recommended antibiotic for chemoprophylaxis. Which of the following is the primary mechanism of action of this drug?",
+      "options": "A. Inhibition of DNA-dependent RNA-polymerase\nB. Inhibition of the 50S ribosomal subunit\nC. Inhibition of prokaryotic topoisomerase II\nD. Inhibition of the 30S ribosomal subunit\nE. Inhibition of peptidoglycan crosslinking",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2d1d2d97cb35",
+      "question": "An 8-year-old boy is brought to the emergency department because of shortness of breath and dry cough for 2 days. His symptoms began after he helped his father clean the basement. He is allergic to shellfish. Respirations are 26/min. Physical examination shows diffuse end-expiratory wheezing and decreased inspiratory-to-expiratory ratio. This patient's symptoms are most likely being caused by inflammation of which of the following structures?",
+      "options": "A. Pleural cavity\nB. Alveoli\nC. Respiratory bronchioles\nD. Distal trachea\nE. Terminal bronchioles",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_756d46625e62",
+      "question": "A 15-year-old girl is brought to the physician by her parents because she has not had menstrual bleeding for the past 2 months. Menses had previously occurred at irregular 15–45 day intervals with moderate to heavy flow. Menarche was at the age of 14 years. Eight months ago, she was diagnosed with bipolar disorder and treatment with risperidone was begun. Her parents report that she is very conscious of her weight and appearance. She is 168 cm (5 ft 5 in) tall and weighs 76 kg (168 lb); BMI is 26.9 kg/m2. Pelvic examination shows a normal vagina and cervix. Serum hormone studies show:\nProlactin 14 ng/mL\nFollicle-stimulating hormone 5 mIU/mL\nLuteinizing hormone 5.2 mIU/mL\nProgesterone 0.9 ng/mL (follicular N <3; luteal N >3–5)\nTestosterone 2.7 nmol/L (N <3.5)\nA urine pregnancy test is negative. Which of the following is the most likely cause of her symptoms?\"",
+      "options": "A. Primary ovarian insufficiency\nB. Anovulatory cycles\nC. Polycystic ovary syndrome\nD. Uterine leiomyomas\nE. Adverse effect of medication\nF. Self-induced vomiting",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.19
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7556e722cf85",
+      "question": "A 4-year-old boy with acute lymphoblastic leukemia is admitted to the hospital to undergo allogeneic bone marrow transplantation. Two weeks after the conditioning regimen is started, he develops a temperature of 38.5°C (101.3°F). Laboratory studies show:\nHemoglobin 8 g/dL\nLeukocyte count 1400/mm3\nSegmented neutrophils 20%\nEosinophils 0.5%\nLymphocytes 87%\nMonocytes 1%\nPlatelet count 110,000/mm3\nWhich of the following is the most appropriate pharmacotherapy for this patient?\"",
+      "options": "A. Alkylating chemotherapeutic agent\nB. Transforming growth factor-β\nC. Erythropoietin\nD. Interleukin-5\nE. Granulocyte-macrophage colony-stimulating factor\nF. Thrombopoietin\nG. Interleukin-2",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1802cd76bcd5",
+      "question": "A 15-year-old boy is brought to the physician because of progressive left leg pain for the past 2 months. The pain is worse while running and at night. Examination of the left leg shows swelling and tenderness proximal to the knee. Laboratory studies show an alkaline phosphatase level of 200 U/L. An x-ray of the left leg shows sclerosis, cortical destruction, and new bone formation in the soft tissues around the distal femur. There are multiple spiculae radiating perpendicular to the bone. This patient's malignancy is most likely derived from cells in which of the following structures?",
+      "options": "A. Periosteum\nB. Bone marrow\nC. Cartilage\nD. Epiphyseal plate\nE. Neural crest\n\"",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_711d27e205aa",
+      "question": "A 29-year-old primigravid woman at 18 weeks’ gestation comes to the physician for her first prenatal visit. She works as a paralegal and lives with her husband. Her current pregnancy was unexpected, and she did not take any prenatal medications or supplements. Physical examination shows a uterus 2 inches above the umbilicus. The concentration of α-fetoprotein in the maternal serum and concentrations of both α-fetoprotein and acetylcholinesterase in the amniotic fluid are elevated. Ultrasonography of the uterus shows an increased amniotic fluid volume. The fetus most likely has which of the following conditions?",
+      "options": "A. Holoprosencephaly\nB. Lissencephaly\nC. Spina bifida occulta\nD. Myelomeningocele\nE. Anencephaly",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3a45f271351b",
+      "question": "A 1-year-old girl is brought to the pediatrician because of a 6-month history of diarrhea. She has not received recommended well-child examinations. Her stools are foul-smelling and nonbloody. There is no family history of serious illness. She is at the 15th percentile for height and 5th percentile for weight. Physical examination shows abdominal distension. Her serum triglyceride concentration is 5 mg/dL. Genetic analysis shows a mutation in the gene that encodes microsomal triglyceride transfer protein. Which of the following is the most appropriate treatment for this patient's condition?",
+      "options": "A. Avoidance of dairy products\nB. Nicotinic acid supplementation\nC. Avoidance of dietary gluten\nD. Restriction of long-chain fatty acids\nE. Long-term antibiotic therapy\nF. Pancreatic enzyme replacement",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "F",
+      "extracted_answer": "F",
+      "extracted_answers": [
+        "F"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2981238b5182",
+      "question": "A mother brings her 4-year-old son to his pediatrician. Over the last eight months, her son has been exhibiting several \"odd\" behaviors. Most importantly, he repeatedly says that he is playing games with a friend named \"Steven,\" though she is certain that he does not exist. She has often found him acting out magical scenarios as though someone else is present, when no one is there. What is the most likely diagnosis in this patient?",
+      "options": "A. Developmental delay\nB. Schizophrenia\nC. Normal development\nD. Schizoid personality disorder\nE. Schizophreniform disorder",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_859dd8c278ee",
+      "question": "A 32-year-old woman presents to her gynecologist’s office complaining of increased vaginal discharge for one week. She describes the discharge as watery yellowish with a “bad smell.” She denies new sexual partners but reports inconsistent use of condoms with her husband. Pelvic exam is normal aside from foul-smelling discharge in the vaginal canal and some external irritation of the labial skin. Wet mount of a vaginal swabbing is shown in Figure A. Which of the following instructions should be given to the patient when prescribing the first-line treatment for this condition?",
+      "options": "A. Inquire about her husband's sexual history\nB. Prescribe the treatment to her husband\nC. Drink a 8 oz of water with the medication\nD. Avoid grapefruit juice when taking the medication\nE. Avoid alcohol when taking the medication",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1056f3ec4cb0",
+      "question": "A 5-year-old is brought into your office by his mother. His mother states that he is having 10-20 episodes per day where he stops responding to his mother and is found staring out of the window. During these periods, he blinks more frequently than normal, but returns to his normal self afterwards. These episodes last 30 to 60 seconds. His mother states that all of his milestones have been normal and he had an uncomplicated birth. His mother also denies any other recent illness. On exam, his vitals are normal. During one of these episodes in the office, his EEG shows three-per-second spike and wave discharge. What is the most likely diagnosis?",
+      "options": "A. Febrile seizure\nB. Benign focal epilepsy\nC. Juvenile myoclonic epilepsy\nD. Absence seizure\nE. Hearing deficits",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d83653be58ed",
+      "question": "A 6-year-old boy is brought to the pediatrician complaining of itchy eyes. The mother states that she has noted that he has been tearing and that both of his eyes have been red for the past 4 days. The patient denies any pain but has had a runny nose for the past week. The mother states that he has not had any sick contacts, and he has been home from school for summer vacation. She notices that his symptoms seem to improve in the evening after he showers. His temperature is 97.0°F (36.1°C), blood pressure is 100/66 mmHg, pulse is 90/min, respirations are 22/min, and oxygen saturation is 98% on room air. Physical exam is notable for the finding in Figure A. Which of the following is the most likely diagnosis?",
+      "options": "A. Allergic conjunctivitis\nB. Bacterial conjunctivitis\nC. Corneal abrasion\nD. Endophthalmitis\nE. Viral conjunctivitis",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.18
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d4d81651f0d8",
+      "question": "A 25-year-old nulligravid female presents to clinic complaining of abnormal vaginal discharge and vaginal pruritis. The patient's past medical history is unremarkable and she does not take any medications. She is sexually active with 3 male partners and does not use condoms. Pelvic examination is notable for a thick, odorless, white discharge. There is marked erythema and edema of the vulva. Vaginal pH is normal. Microscopic viewing of the discharge shows pseudohyphae and white blood cells. Which of the following is the most appropriate treatment plan?",
+      "options": "A. Oral clindamycin for the patient and her partner\nB. Oral clindamycin for the patient\nC. Oral fluconazole for the patient and her partner\nD. Oral fluconazole for the patient\nE. Topical metronidazole",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4a22ffabb197",
+      "question": "A 31-year-old female presents to her gynecologist with spotting between periods. She reports that her menses began at age 11, and she has never had spotting prior to the three months ago. Her medical history is significant for estrogen-receptor positive intraductal carcinoma of the breast, which was treated with tamoxifen. An endometrial biopsy is performed, which shows endometrial hyperplasia with atypia. She reports that she and her husband are currently trying to have children. What is the next best step?",
+      "options": "A. Total abdominal hysterectomy with bilateral salpingoopherectomy\nB. Partial, cervix-sparing hysterectomy\nC. Start combination estrogen and progestin therapy\nD. Start progestin-only therapy\nE. Observation with annual endometrial biopsies",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d51e438c05f8",
+      "question": "A 16-month-old male patient, with no significant past medical history, is brought into the emergency department for the second time in 5 days with tachypnea, expiratory wheezes and hypoxia. The patient presented to the emergency department initially due to rhinorrhea, fever and cough. He was treated with nasal suctioning and discharged home. The mother states that, over the past 5 days, the patient has started breathing faster with chest retractions. His vital signs are significant for a temperature of 100.7 F, respiratory rate of 45 and oxygen saturation of 90%. What is the most appropriate treatment for this patient?",
+      "options": "A. Humidified oxygen, racemic epinephrine and intravenous (IV) dexamethasone\nB. Albuterol, ipratropium and IV methylprednisolone\nC. Intubation and IV cefuroxime\nD. IV cefotaxime and IV vancomycin\nE. Nasal suctioning, oxygen therapy and IV fluids",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.16
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_fc9b25685df4",
+      "question": "An 18-year-old girl comes to the emergency room with abdominal pain. She states that the pain started 6 hours ago, is 8/10, and localizes to the right lower abdomen. She recalls a similar episode last month. Her older brother was hospitalized 2 years ago for perforated appendicitis. Her mother has diverticulitis. The patient got her first menstrual period at age 14. Her periods occur regularly every 28 days. Her last menstrual period was 2 weeks ago. She is sexually active with multiple partners and uses condoms inconsistently. The patient’s temperature is 99°F (37.2°C), blood pressure is 110/74 mmHg, pulse is 89/min, and respirations are 14/min with an oxygen saturation of 98% on room air. On physical exam, the patient is in moderate distress. There is lower abdominal tenderness with guarding. A pelvic examination reveals clear mucous in the vaginal introitus, a mobile uterus, and tenderness of the right adnexa. Labs are obtained, as shown below:\n\nLeukocyte count: 10,000/mm^3 with normal differential\nHemoglobin: 13.5 g/dL\nPlatelet count: 200,000/mm^3\nBeta-human chorionic gonadotropin: Pending\n\nA pelvic ultrasound demonstrates a small fluid collection in the cul-de-sac posterior to the uterus. Which of the following is the most likely diagnosis?",
+      "options": "A. Appendicitis\nB. Endometriosis\nC. Midcycle pain\nD. Pelvic inflammatory disease\nE. Ruptured ectopic pregnancy",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.21
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_161f4ead60a5",
+      "question": "A 5-year-old boy presents to his pediatrician with weakness. His father observed that his son seemed less energetic at daycare and kindergarten classes. He was becoming easily fatigued from mild play. His temperature is 98°F (37°C), blood pressure is 90/60 mmHg, pulse is 100/min, and respirations are 20/min. Physical exam reveals pale conjunctiva, poor skin turgor and capillary refill, and cervical and axillary lymphadenopathy with assorted bruises throughout his body. A complete blood count reveals the following:\n\nLeukocyte count: 3,000/mm^3\nSegmented neutrophils: 30%\nBands: 5%\nEosinophils: 5%\nBasophils: 10%\nLymphocytes: 40%\nMonocytes: 10%\n\nHemoglobin: 7.1 g/dL\nHematocrit: 22%\nPlatelet count: 50,000/mm^3\n\nThe most specific diagnostic assessment would most likely show which of the following?",
+      "options": "A. Bone marrow biopsy with > 25% lymphoblasts\nB. Flow cytometry with positive terminal deoxynucleotidyl transferase staining\nC. Fluorescence in situ hybridization analysis with 9:22 translocation\nD. Fluorescence in situ hybridization analysis with 12:21 translocation\nE. Peripheral blood smear with > 50% lymphoblasts",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_501321bc0ecd",
+      "question": "A 37-year-old G2P1001 presents to her obstetrician’s office at 31 weeks gestation for decreased fetal movement over the last day. She states that although she occasionally feels some movement, it is decreased from baseline. She denies any gush of fluid, vaginal bleeding, or painful contractions. This pregnancy has been complicated by gestational diabetes for which the patient was prescribed insulin. She reports not always taking postprandial fingersticks; therefore, she infrequently uses her insulin. She also had a urinary tract infection in the first trimester that was successfully treated with nitrofurantoin. The patient has a past medical history of obesity and rosacea, and she had an uncomplicated spontaneous vaginal delivery six years ago. At this visit, the patient’s temperature is 98.6°F (37.0°C), blood pressure is 148/71 mmHg, pulse is 75/min, and respirations are 14/min. The patient appears comfortable and has a fundal height of 33 centimeters. An initial attempt with Doppler ultrasound is unable to detect fetal heart tones. Which of the following is the best next step in management?",
+      "options": "A. Non-stress test\nB. Biophysical profile\nC. Contraction stress test\nD. Intravenous labetalol\nE. Cervical exam",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.19
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6f2d2ea9e46e",
+      "question": "A 27-year-old woman presents to her primary care physician for a concern about her pregnancy. This is her first pregnancy, and she is currently at 33 weeks gestation. She states that she has experienced diffuse swelling of her ankles and legs and is concerned that it is abnormal. Otherwise, she has no concerns. The patient has a past medical history of obesity and diabetes. Her temperature is 98.5°F (36.9°C), blood pressure is 147/92 mmHg, pulse is 80/min, respirations are 15/min, and oxygen saturation is 97% on room air. Physical exam reveals bilateral edema of the lower extremities. Which of the following is the best next step in management?",
+      "options": "A. A 24 hour urine protein\nB. Echocardiography\nC. Reassurance and followup in 1 week\nD. Spot protein to creatinine ratio\nE. Urinalysis and urine protein",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_188b9fe8ab22",
+      "question": "A 27-year-old G3P2002 presents to the clinic for follow up after her initial prenatal visit. Her last period was 8 weeks ago. Her medical history is notable for obesity, hypertension, type 2 diabetes, and eczema. Her current two children are healthy. Her current pregnancy is with a new partner after she separated from her previous partner. Her vaccinations are up to date since the delivery of her second child. Her temperature is 98°F (37°C), blood pressure is 110/60 mmHg, pulse is 85/min, and respirations are 18/min. Her physical exam is unremarkable. Laboratory results are shown below:\n\nHemoglobin: 14 g/dL\nHematocrit: 41%\nLeukocyte count: 9,000/mm^3 with normal differential\nPlatelet count: 210,000/mm^3\n\nBlood type: O\nRh status: Negative\n\nUrine:\nEpithelial cells: Rare\nGlucose: Positive\nWBC: 5/hpf\nBacterial: None\n\nRapid plasma reagin: Negative\nRubella titer: > 1:8\nHIV-1/HIV-2 antibody screen: Negative\n\nGonorrhea and Chlamydia NAAT: negative\nPap smear: High-grade squamous intraepithelial lesion (HGSIL)\n\nWhat is the best next step in management?",
+      "options": "A. Colposcopy and biopsy after delivery\nB. Colposcopy and biopsy now\nC. Cryosurgical excision\nD. Loop electrosurgical excision procedure (LEEP)\nE. Repeat Pap smear",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.21
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6aaf441a4c5b",
+      "question": "A 17-year-old male presents to the emergency department with a three-day history of sore throat. He reports that the sore throat seems to be getting worse and is starting to affect the character of his voice. He also endorses headache and decreased appetite secondary to difficulty swallowing. The patient’s past medical history is significant for infectious mononucleosis one year ago, which he reports has fully resolved. He denies any recent sexual activity. Several of his friends at school have also been ill recently. His temperature is 102.4°F (39.1°C), blood pressure is 119/83 mmHg, pulse is 107/min, and respirations are 18/min. On physical exam you note the findings in Figure A. He has cervical lymphadenopathy, and he speaks with a muffled voice. CT of the head and neck with contrast demonstrates a ring-enhancing fluid collection between the tonsillar capsule and superior pharyngeal constrictor muscle.\n\nWhich of the following is the best next step in management?",
+      "options": "A. MRI of the head and neck\nB. Incision and drainage\nC. Needle aspiration\nD. Oral antibiotics\nE. Intravenous antibiotics",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b8122364c2bf",
+      "question": "A 1-year-old boy presents to the emergency department with weakness and a change in his behavior. His parents state that they first noticed the change in his behavior this morning and it has been getting worse. They noticed the patient was initially weak in his upper body and arms, but now he won’t move his legs with as much strength or vigor as he used to. Physical exam is notable for bilateral ptosis with a sluggish pupillary response, a very weak sucking and gag reflex, and shallow respirations. The patient is currently drooling and his diaper is dry. The parents state he has not had a bowel movement in over 1 day. Which of the following is the pathophysiology of this patient’s condition?",
+      "options": "A. Antibodies against postsynaptic nicotinic cholinergic ion channels\nB. Autoantibodies against the presynaptic voltage-gated calcium channels\nC. Autoimmune demyelination of peripheral nerves\nD. Blockade of presynaptic acetylcholine release at the neuromuscular junction\nE. Lower motor neuron destruction in the anterior horn",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.17
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_106680fb085c",
+      "question": "An 8-year-old boy presents with a skin lesion on his back as shown in the picture. On physical examination, there are synchronous spasmodic movements of the neck, trunk, and extremities. The physician explains that this is likely due to a genetic condition, and further testing would be necessary to confirm the diagnosis. Which of the following genes is involved in the development of this patient’s condition?",
+      "options": "A. TSC1\nB. NF1\nC. NF2\nD. VHL\nE. GNAQ",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_308f5a31c670",
+      "question": "A 55-year-old woman comes to your office because she noticed the growth of unwanted hair on her upper lip, chin, and chest. She has also noticed an increase in blackheads and pimples on her skin. Her female partner has also recently brought to her attention the deepening of her voice, weight gain, and changes in her external genitalia that generated some personal relationship issues. The patient is frustrated as these changes have appeared over the course of the last 8 months. She claims that she was feeling completely normal before all of these physical changes started. Physical examination shows dark coarse stubbles distributed along her upper lip, chin, chest, back, oily skin, and moderately inflamed acne. Pelvic examination reveals a clitoris measuring 12 mm long, a normal sized mobile retroverted uterus, and a firm, enlarged left ovary. What is the most likely diagnosis of this patient?",
+      "options": "A. Thecoma\nB. Sertoli-Leydig cell tumour\nC. Adrenocortical carcinoma\nD. Granulosa cell tumour\nE. Polycystic ovarian syndrome (PCOS)",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c8c9663a480c",
+      "question": "A 2-year-old boy presents to the doctor with multiple skin abscesses caused by Staphylococcus aureus. He has a past history of recurrent infections with the same organism. The nitroblue tetrazolium test is performed, and the solution remains clear. Which of the following key pathophysiologic events relates to the condition that is most likely responsible for the findings in this patient?",
+      "options": "A. Deficiency of CD40L on activated T cells\nB. Tyrosine kinase deficiency blocking B cell maturation\nC. Inability to fuse lysosomes with phagosomes\nD. MHC class-II deficiency\nE. Inability to generate the microbicidal respiratory burst",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3037acd1046e",
+      "question": "A 7-year-old girl presents with a low-grade fever, lethargy, and fatigue for the past week. The patient’s mother says she also complains of leg pain for the past couple of weeks. No significant past medical history. The patient was born at term via spontaneous transvaginal delivery with no complications. On physical examination, the patient shows generalized pallor. Cervical lymphadenopathy is present. A bone marrow biopsy is performed which confirms the diagnosis of acute lymphoblastic leukemia (ALL). The patient is started on a chemotherapy regimen consisting of vincristine, daunorubicin, L-asparaginase, and prednisolone for induction, followed by intrathecal methotrexate for maintenance. Following the 4th cycle of chemotherapy, she develops bilateral ptosis. Physical examination shows a normal pupillary reflex and eye movements. She is started on pyridoxine and pyridostigmine, and, in 7 days, she has complete resolution of the ptosis. Which of the following drugs is most likely associated with this patient’s adverse reaction?",
+      "options": "A. Daunorubicin\nB. Prednisolone\nC. Methotrexate\nD. Vincristine\nE. Pyridoxine",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_35d811ea7a53",
+      "question": "A 36-year-old primigravid woman who recently immigrated to the United States presents to her gynecologist for the first time during the 28th week of her pregnancy. She hasn’t received any prenatal care or folic acid supplementation. The patient’s history reveals that she has received blood transfusions in the past due to “severe anemia.” Which of the following blood type situations would put the fetus at risk for hemolytic disease of the newborn?",
+      "options": "A. Mother is B positive, father is O negative\nB. Mother is O positive, father is B negative\nC. Mother is A negative, father is B positive\nD. Mother is AB negative, father is O negative\nE. Mother is O positive, father is AB negative",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_65732c2f3655",
+      "question": "A 3-year-old boy presents with episodic diarrhea with malodorous stools, stunted growth, occasional abdominal cramps, and an itchy rash. His mother says that these symptoms developed approximately 2 years ago. The patient was exclusively breastfed up to the age of 7 months. Supplementary feeding was started with non-starchy vegetable followed by starchy vegetables, meat, fish, eggs, and bread. Bread and cookies were the last product to be introduced at the age of 12 months. The patient’s mother tried to withdraw dairy products from the patient’s diet because she heard that lactose can cause such symptoms, but it did not help. The patient’s vital signs include: blood pressure 90/55 mm Hg, heart rate 101/min, respiratory rate 19/min, and temperature 36.3℃ (97.3℉). His weight is 11 kg (24.2 lb, -2 SD) and height is 90 cm (2 ft 11 in, -1 SD). On physical examination, the patient’s skin is pale with a papulovesicular rash on his abdomen and back. There are a few aphthous ulcers in the oral cavity. The abdomen is distended but no tenderness to palpation. No hepatosplenomegaly. An immunological assay is performed and shows positive anti-transglutaminase and anti-endomysial antibodies. Which of the following changes would you most likely expect to see on intestinal biopsy in this patient?",
+      "options": "A. Granulomas in the submucous tissue\nB. Crypt abscesses\nC. Villous atrophy and crypt hypertrophy\nD. Mucosal eosinophilia\nE. Villous hyperplasia",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_52299402ea36",
+      "question": "A 21-year-old female presents to the office after a health screening in which she was found to have high blood pressure. At the office, the blood pressure is 168/114 mm Hg. You have seen the patient in the past for amenorrhea and infertility issues, but she denies taking any medication at this time. On examination, the patient is short and normal weight but has a webbed neck. Which of the following is the most likely cause of the elevated blood pressure?",
+      "options": "A. Central fusion of the inferior poles of the kidneys\nB. Genetic predisposition to essential hypertension\nC. Neuroendocrine tumor of the adrenal gland\nD. Oral contraceptive use\nE. Chronic corticosteroid use",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2204fab687fc",
+      "question": "A 2-month-old baby boy and his mother present to his pediatrician for vaccination as per the immunization schedule. His mother denies any active complaints but mentions that he has not smiled yet. The boy was born at 39 weeks gestation via spontaneous vaginal delivery. His mother received minimal prenatal care. On physical examination, his vitals are stable, but a general examination shows the presence of generalized hypotonia. His face is characterized by upwardly slanting palpebral fissures, small dysplastic ears, and a flat face. His little fingers are short, with clinodactyly, and both palms have single palmar creases. The results of a karyotype are shown in the image. If this infant has also inherited a mutation in the GATA1 gene, for which of the following conditions is he most likely to be at increased risk?",
+      "options": "A. Acute megakaryoblastic leukemia\nB. Alzheimer’s disease\nC. Celiac disease\nD. Congenital hypothyroidism\nE. Congenital cataracts\nF. Endocardial cushion defect",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e66c77e5b499",
+      "question": "An 8-year-old boy is brought to the pediatrician’s office with his mother for a routine check-up. Although her son is doing well, the mother has some concerns with regards to his overall health. He was born at 39 weeks gestation via spontaneous vaginal birth. He is up to date on all vaccines and has met most of developmental milestones. She reports that he is shorter than his classmates and seems less developed physically than his older brother and sister when they were his age. Additionally, the boy’s teacher has some concerns regarding his learning capability not being at the level of his peers. His height and weight are at the 10th and 15th percentile respectively. He has a heart rate of 90/min, respiratory rate of 22/min, blood pressure of 110/65 mm Hg, and temperature of 37.0°C (98.6°F). At physical exam the child appears cheerful, well developed, and well nourished. He is small for his age. with upslanting palpebral fissures, flat occiput, low set ears, and a flat nose. Which of the following techniques would most likely identify the cause of this patient’s presentation?",
+      "options": "A. Punnett square\nB. LOD score\nC. Karyotype\nD. Polymerase chain reaction\nE. Gene mapping",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6a11ae8ace4b",
+      "question": "A 6-month-old infant is brought to a pediatrician for his scheduled immunizations. The parents deny any specific current complaints, but his facial features differ from those of other children in the family. During the physical examination, the pediatrician notes that the infant’s vital signs are stable. His facial features include a medial epicanthic fold, a face that appears flat, and a flat occiput with low-set ears. The pediatrician also notes a single transverse palmar crease on both hands. An echocardiogram is performed which suggests that the infant has a congenital heart disease which is the most common form of congenital heart disease seen in children with this particular genetic disorder. Which of the following congenital heart diseases does this infant most likely present with?",
+      "options": "A. Supravalvar aortic stenosis\nB. Tetralogy of Fallot\nC. Ventricular septal defect\nD. Atrial septal defect\nE. Atrioventricular septal defect",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7bbe89cb9e80",
+      "question": "A 27-year-old woman, gravida 1, para 1, presents to the obstetrics and gynecology clinic because of galactorrhea, fatigue, cold intolerance, hair loss, and unintentional weight gain for the past year. She had placenta accreta during her first pregnancy with an estimated blood loss of 2,000 mL. Her past medical history is otherwise unremarkable. Her vital signs are all within normal limits. Which of the following is the most likely cause of her symptoms?",
+      "options": "A. Addison’s disease\nB. Cushing syndrome\nC. Hashimoto thyroiditis\nD. Pituitary adenoma\nE. Sheehan’s syndrome",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_85300219677d",
+      "question": "A 6-week-old girl is brought to a pediatrician due to feeding difficulty for the last 4 days. Her mother mentions that the infant breathes rapidly and sweats profusely while nursing. She has been drinking very little breast milk and stops feeding as if she is tired, only to start sucking again after a few minutes. There is no history of cough, sneezing, nasal congestion, or fever. She was born at full term and her birth weight was 3.2 kg (7.0 lb). Her temperature is 37.0°C (98.6°F), pulse rate is 190/min, and respiratory rate is 64/min. On chest auscultation, bilateral wheezing is present. A precordial murmur starts immediately after the onset of the first heart sound (S1), reaching its maximal intensity at the end of systole, and waning during late diastole. The murmur is best heard over the second left intercostal space and radiates to the left clavicle. The first heart sound (S1) is normal, while the second heart sound (S2) is obscured by the murmur. Which of the following is the most likely diagnosis?",
+      "options": "A. Aortopulmonary window\nB. Congenital mitral insufficiency\nC. Patent ductus arteriosus\nD. Supracristal ventricular septal defect with aortic regurgitation\nE. Ruptured congenital sinus of Valsalva aneurysm",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bfbbac4f1468",
+      "question": "A 23-year-old woman visits her obstetrician for an antenatal appointment. She is at the 24th week of gestation. She has had type 1 diabetes mellitus for 5 years and is on insulin. She also has mitral stenosis, for which she has been advised to undergo a balloon valvotomy. Her temperature is 37.1°C (98.7°F), blood pressure is 120/60 mm Hg, and pulse is 90/minute. Her random blood glucose is 220 mg/dL and HbA1C is 8.5%. She wants to discuss possible complications concerning her pregnancy. Which of the following cardiac complications is her infant at high risk for?",
+      "options": "A. Hypertrophic obstructive cardiomyopathy\nB. Transient hypertrophic cardiomyopathy\nC. Tetralogy of Fallot\nD. Ebstein anomaly\nE. Mitral valve prolapse",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_f9a2a7ff48a9",
+      "question": "A 48-year-old woman with a known past medical history significant for hypertension presents for a second opinion of a left breast lesion. The lesions were characterized as eczema by the patient’s primary care physician and improved briefly after a trial of topical steroids. However, the patient is concerned that the lesions have started to grow. On physical examinations, there is an erythematous, scaly lesion involving the left breast nipple-areolar complex with weeping drainage. What is the next step in the patient’s management?",
+      "options": "A. Bilateral breast ultrasound\nB. Punch biopsy of the nipple, followed by bilateral mammography\nC. Maintain regular annual mammography appointment\nD. Oral corticosteroids\nE. Left breast MRI",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bff0e96c1242",
+      "question": "A 16-month-old girl presents for a routine examination. The patient’s mother says that the child is craving ice and often gasps for breath while walking or playing. Family history is unremarkable. The patient is afebrile, and vital signs are within normal limits. Her weight is at the 20th percentile and height is at the 35th percentile for age and sex. Conjunctival pallor is noted on physical examination. Laboratory findings are significant for the following:\nHemoglobin   9.2 g/dL\nMean corpuscular volume   72 μm3\nMean corpuscular hemoglobin 21 pg/cell\nSerum ferritin 9 ng/mL\nRed cell distribution width 16% (ref: 11.5–14.5%)\nWhich of the following additional laboratory findings would most likely be found in this patient?",
+      "options": "A. ↑ transferrin saturation\nB. ↑ total iron binding capacity (TIBC)\nC. ↑ reticulocyte count\nD. Bone marrow biopsy showing ringed sideroblasts\nE. ↑ hemoglobin A2",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_520fe4946a90",
+      "question": "A 24-year-old woman presents to the emergency department for evaluation of lower abdominal pain. She endorses 6 hours of progressively worsening pain. She denies any significant past medical history and her physical examination is positive for non-specific, diffuse pelvic discomfort. She denies the possibility of pregnancy given her consistent use of condoms with her partner. The vital signs are: blood pressure, 111/68 mm Hg; pulse, 71/min; and respiratory rate, 15/min. She is afebrile. Which of the following is the next best step in her management?",
+      "options": "A. Obtain a pelvic ultrasound\nB. Surgical consultation\nC. Abdominal CT scan\nD. Serum hCG\nE. Admission and observation",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6b877eac9efc",
+      "question": "One day after doctors helped a 28-year-old primigravid woman deliver a 4700 g (10 lb 6 oz) boy, he has bluish discoloration of his lips and fingernails. Oxygen saturation on room air is 81%. Examination shows central cyanosis. A continuous machine-like murmur is heard over the left upper sternal border. A single S2 heart sound is present. Supplemental oxygen does not improve the cyanosis. Echocardiography shows the pulmonary artery arising from the posterior left ventricle and the aorta arising from the right ventricle with active blood flow between the right and left ventricles. Further evaluation of the mother is most likely to show which of the following?",
+      "options": "A. Elevated fasting blood glucose\nB. Positive rapid plasma reagin test\nC. Prenatal alcohol use\nD. Prenatal lithium intake\nE. Prenatal phenytoin intake",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_47b1516d413e",
+      "question": "A 23-year-old woman presents to the outpatient OB/GYN clinic as a new patient who wishes to begin contraception. She has no significant past medical history, family history, or social history. The review of systems is negative. Her vital signs are: blood pressure 118/78 mm Hg, pulse 73/min, and respiratory rate 16/min. She is afebrile. Physical examination is unremarkable. She has researched multiple different contraceptive methods, and wants to know which is the most efficacious. Which of the following treatments should be recommended?",
+      "options": "A. Intrauterine device (IUD)\nB. NuvaRing\nC. Male condoms\nD. Withdrawal\nE. Diaphragm with spermicide",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_f62f399bc165",
+      "question": "A 24-year-old gravida 1 is admitted to the hospital after a tonic-clonic seizure at 37 weeks gestation. At the time of presentation, she complains of a severe headache, double vision, and nausea. Her vital signs are as follows: blood pressure, 165/90 mm Hg; heart rate, 91/min; respiratory rate, 9/min; and temperature, 37.0℃ (98.6℉). The rapid dipstick test performed on admission unit shows 3+ proteinuria. The fetal heart rate is 118/min. On examination, the patient is lethargic (GCS 12/15). There is 2+ pitting leg edema. The neurologic examination is significant for left eye deviation towards the nose, paralysis of the left conjugate gaze with a paralytic left eye, and right hemiplegia. Meningeal signs are negative. Which of the following findings would be expected if a head CT scan is performed?",
+      "options": "A. Regions of hyperdensity within the cerebellar hemispheres\nB. Hyperattenuating material in the subarachnoid space\nC. Regions of hyperdensity in the left pons\nD. Cord-like hyperattenuation in the superior sagittal sinus\nE. Subcortical hypodense region with surrounding irregular hyperdense margins",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_a2e6dae183b7",
+      "question": "A 5-month-old girl is brought to the physician with a red lesion on her scalp that was first noticed 2 months ago. The lesion has been increasing in size slowly. It is not associated with pain or pruritus. She was born at 37 weeks of gestation after an uncomplicated pregnancy and delivery. The patient’s older sister is currently undergoing treatment for fungal infection of her feet. Examination reveals a solitary, soft lesion on the vertex of the scalp that blanches with pressure. A photograph of the lesion is shown. Which of the following is the most appropriate next step in management?",
+      "options": "A. Intralesional bevacizumab\nB. Laser ablation\nC. Oral propranolol\nD. Reassurance and follow-up\nE. Topical clobetasol",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e82db0a89972",
+      "question": "A 21-year-old gravida 1 presents to her physician’s office for an antepartum visit at 11 weeks gestation. She has complaints of malaise, occasional nausea, and changes in food preferences. Her vital signs include: blood pressure 100/70 mm Hg, heart rate 90/min, respiratory rate 14/min, and temperature 36.8℃ (98.2℉). Examination reveals a systolic ejection murmur along the left sternal border. There are no changes in skin color, nails, or hair growth. No neck enlargement is noted. Blood analysis shows the following:\nErythrocyte count 3.5 million/mm3\nHb 11.9 g/dL\nHCT 35%\nReticulocyte count 0.2%\nMCV 85 fL\nPlatelet count 21,0000/mm3\nLeukocyte count 7800/mm3\nSerum iron 17 µmol/L\nFerritin 120 µg/L\nWhat is the most likely cause of the changes in the patient’s blood count?",
+      "options": "A. Decreased iron transport across the intestinal wall\nB. Increase in plasma volume\nC. Failure of synthesis of a D-aminolevulinic acid\nD. Insufficient iron intake\nE. Failure of purine and thymidylate synthesis",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2f0b9bdc7ae0",
+      "question": "A 4-year-old girl is brought to the physician with a 3-month history of progressive intermittent pain and swelling involving both knees, right ankle, and right wrist. The patient has been undergoing treatment with acetaminophen and ice packs, both of which relieved her symptoms. The affected joints feel \"stuck” and are difficult to move immediately upon waking up in the morning. However, the patient can move her joints freely after a few minutes. She also complains of occasional mild eye pain that resolves spontaneously. Five months ago, she was diagnosed with an upper respiratory tract infection that resolved without treatment. Vital signs are within normal limits. Physical examination shows swollen and erythematous joints, which are tender to touch. Slit-lamp examination shows an anterior chamber flare with signs of iris inflammation bilaterally. Laboratory studies show:\nBlood parameters\nHemoglobin 12.6 g/dL\nLeukocyte count 8,000/mm3\nSegmented neutrophils 76%\nEosinophils 1%\nLymphocytes 20%\nMonocytes 3%\nPlatelet count 360,000/mm3\nErythrocyte sedimentation rate 36 mm/hr\nSerum parameters\nAntinuclear antibodies 1:320\nRheumatoid factor negative\nWhich of the following is the most likely diagnosis?",
+      "options": "A. Acute lymphocytic leukemia\nB. Enthesitis-related arthritis\nC. Oligoarticular juvenile idiopathic arthritis\nD. Postinfectious arthritis\nE. Seronegative polyarticular juvenile idiopathic arthritis",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_24ef2ab9cc78",
+      "question": "A 10-year-old boy is brought to the pediatrician by his mother for evaluation. Last night, he was playing with his younger brother and a hot cup of coffee fell on his left shoulder. Though his skin became red and swollen, he acted as if nothing happened and did not complain of pain or discomfort. He has met all expected developmental milestones, and his vaccinations are up-to-date. Physical examination reveals a normal appearing boy with height and weight in the 56th and 64th percentiles for his age, respectively. The skin over his left shoulder is erythematous and swollen. Sensory examination reveals impaired pain and temperature sensation in a cape-like distribution across both shoulders, arms, and neck. The light touch, vibration, and position senses are preserved. The motor examination is within normal limits, and he has no signs of a cerebellar lesion. His gait is normal. Which of the following disorders is most likely associated with this patient’s condition?",
+      "options": "A. Arnold-Chiari malformation\nB. Brown-Séquard syndrome\nC. Leprosy\nD. Spina bifida occulta\nE. Transverse myelitis",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d4b5605ddfb4",
+      "question": "A 12-year-old girl is brought to the emergency department 3 hours after the sudden onset of colicky abdominal pain and vomiting. The patient also manifests symptoms of redness and swelling of the face and lips without pruritus. Her symptoms began following a tooth extraction earlier in the morning. She had a similar episode of facial swelling after a bicycle accident 1 year ago, which resolved within 48 hours without treatment. Vital signs are within normal limits. Examination shows a nontender facial edema, erythema of the oral mucosa, and an enlarged tongue. The abdomen is soft, and there is tenderness to palpation over the lower quadrants. An abdominal ultrasound shows segmental thickening of the intestinal wall. Which of the following is the most likely cause of this patient's condition?",
+      "options": "A. Autoantibody-mediated tissue damage\nB. Complement inhibitor deficiency\nC. Drug-induced bradykinin excess\nD. Leukotriene overproduction\nE. Mast-cell activation",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3573c6c772c1",
+      "question": "A 26-year-old gravida 2 para 1 presents to her physician at 12 weeks gestation. She has no complaints. Her previous pregnancy 5 years ago had an uncomplicated course with vaginal delivery of a healthy boy at 39 + 1 weeks gestation. Her weight is 75 kg (165 lb) and the height is 168 cm (5 ft 6 in). On presentation, the blood pressure is 110/70 mm Hg, the heart rate is 83/min, the respiratory rate is 14/min, and the temperature is 36.6℃ (97.9℉). The physical examination is within normal limits. The gynecologic examination demonstrates a fetal heart rate of 180/min. The uterus cannot be palpated and the ultrasound exam is benign. Blood testing showed the following:\nRBC count 3.9 million/mm3\nLeukocyte count 11,100/mm3\nHb 11.6 g/dL\nHct 32%\nMCV 87 fl\nReticulocyte count 0.4%\nThe patient’s blood type is A neg. Which testing is indicated in this patient?",
+      "options": "A. Measurement of serum iron\nB. Direct Coombs test\nC. White blood cell differential\nD. Indirect Coombs test\nE. Measurement of serum vitamin B12",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b4b709f7a976",
+      "question": "A 6-year-old refugee with delayed growth and weakness is brought to the physician. Her family has been displaced several times over the last few years, and nutrition and housing were frequently inadequate. Examination of the lower limbs shows bowing of the legs with reduced proximal muscle strength. The abdomen is protruded. Inspection of the chest shows subcostal grooving during inspiration. An image of the patient’s wrist is shown. Which of the following is the most likely cause of this patient’s condition?",
+      "options": "A. Defective collagen synthesis\nB. Insufficient protein consumption\nC. Low-calorie intake\nD. Osteoclast hyperactivity\nE. Vitamin D deficiency",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_aac2f3b12b2b",
+      "question": "Twenty-four hours after birth, a male newborn has not passed meconium. The newborn's abdomen is distended and he has had two episodes of bilious vomiting. Based on findings during physical exam of the patient (Figure A), for which other abnormalities should this patient also be evaluated?",
+      "options": "A. Vision defects\nB. Hearing defects\nC. Arteriovenous malformation\nD. Urogenital tract anomalies\nE. Bleeding disorder",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_03b82c5e997a",
+      "question": "A 37-year-old woman presents for prenatal counseling at 18 weeks gestation. The patient tells you that her sister recently had a child with Down's syndrome, and the patient would like prenatal screening for Down's in her current pregnancy.\n\nWhich of the following prenatal screening tests and results would raise concern for Down's syndrome?",
+      "options": "A. Increased AFP, normal HCG, normal unconjugated estriol\nB. Decreased AFP, increased HCG, decreased unconjugated estriol\nC. Decreased AFP, decreased HCG, decreased unconjugated estriol\nD. Normal AFP, increased HCG, decreased unconjugated estriol\nE. Normal AFP, decreased HCG, decreased unconjugated estriol",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_914913525616",
+      "question": "A 16-year-old female patient with a history of mental retardation presents to your clinic with her mother. The mother states that she wants her daughter to have a bilateral tubal ligation after she recently discovered her looking at pornographic materials. She states that her daughter is not capable of understanding the repercussions of sexual intercourse, and that she does not want her to be burdened with a child that she would not be able to raise. Upon discussions with the patient, it is clear that she is not able to understand that sexual intercourse can lead to pregnancy. What should your next step be?",
+      "options": "A. Schedule the patient for the requested surgery\nB. Wait until the patient is 18 years old, and then schedule for surgery\nC. Refuse the procedure because it violates the ethical principle of autonomy\nD. Refer the patient to a psychiatrist to get informed consent\nE. Refuse the procedure because it is unlikely that the patient will get pregnant",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c5cbbc3f482",
+      "question": "A 4-month-old is noted to have a grade 3/6, harsh, systolic ejection murmur heard at the left upper sternal border. The mother reports that the child's lips occasionally turn blue during feeding. A cardiologist recommends surgery. Later, the physician remarks that the infant's congenital abnormality was related to a failure of neural crest cell migration. Prior to surgery, which of the following was a likely finding?",
+      "options": "A. Atrial septal defect\nB. Pulmonic stenosis\nC. Triscuspid atresia\nD. Coarctation of the aorta\nE. Transposition of the great vessels",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c6f1c96d367d",
+      "question": "A 5-year-old male is brought to his pediatrician after recurrent, prolonged upper respiratory infections over a period of several months. Physical exam reveals petechiae on the patient’s legs and arms. Laboratory studies show hemoglobin: 10 g/L, platelet count: 35,000/mm^3, leukocyte count: 6,600/mm^3. A bone marrow aspiration shows an abundance of lymphoblasts indicative of acute lymphoblastic leukemia (ALL). Positive immunostaining for which of the following would support a diagnosis of precursor B-cell leukemia?",
+      "options": "A. TdT, HER-2\nB. CD2, CD8\nC. CD19, CD10\nD. CD30, CD15\nE. CD4, CD5",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_73bc6285dfce",
+      "question": "A 12-year-old male whose family recently emigrated from eastern Europe presents to the emergency room with a fever of 103.5F, a swollen neck (Figure A), difficulty breathing, and grayish-white membranes in the oropharynx (Figure B). Cultures were taken from the pharynx and the bacteria were found to be Gram-positive rods with metachromatic granules (Figure C). The toxin produced by this bacterium has which of the following mechanism of action?",
+      "options": "A. Pertussis toxin inhibits the G-protein Gi alpha subunit via ADP ribosylation\nB. Overactivates guanylate cyclase\nC. Inactivates the 60S ribosomal subunit\nD. Inactivates elongation factor 2\nE. Cleaves SNARE proteins",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b6a4ededdb78",
+      "question": "A 36-year-old G2P2 female visits her gynecologist for a follow up visit. On her previous visit, a routine Pap smear demonstrated findings which required further testing with colposcopy. During the colposcopy, the gynecologist obtains a biopsy from the ectocervix. Which of the following figures is representative of the normal epithelium found in the ectocervix?",
+      "options": "A. Figure A\nB. Figure B\nC. Figure C\nD. Figure D\nE. Figure E",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_23f14d83a7b2",
+      "question": "An 8-year-old girl presents to the psychiatrist to discuss the recent divorce of her parents. The girl explains that her mother is the most caring and loving mother anyone could ever have and that she will be spending the majority of her time with her mother. On the other hand, she exclaims that her father is an evil person and hates him. Which of the following ego defenses is best demonstrated by this girl?",
+      "options": "A. Acting out\nB. Denial\nC. Projection\nD. Regression\nE. Splitting",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_53a5042aebf8",
+      "question": "A 17-year-old male presents to your office complaining of polyuria, polydipsia, and unintentional weight loss of 12 pounds over the past 3 months. On physical examination, the patient is tachypneic with labored breathing. Which of the following electrolyte abnormalities would you most likely observe in this patient?",
+      "options": "A. Alkalemia\nB. Hyperkalemia\nC. Hypoglycemia\nD. Hypermagnesemia\nE. Hyperphosphatemia",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7bb591b34de9",
+      "question": "A 41-year-old G2P1 woman who is 15 weeks pregnant visits her OB-GYN for a routine prenatal quad screen. The results show decreased serum alpha fetal protein (AFP) and estriol, and increased serum beta human chorionic gonadotropin (hCG) and inhibin A. Subsequent ultrasound demonstrates increased nuchal translucency. The physician performs an amniocentesis to confirm these positive findings. Which of the following karyotypes is to be expected if the amniocentesis confirms the result of the quad screen?",
+      "options": "A. Figure A\nB. Figure B\nC. Figure C\nD. Figure D\nE. Figure E",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d3e574f3e4e0",
+      "question": "A 15-year-old boy with poorly controlled asthma presents to the emergency room complaining of severe shortness of breath. His mother reports that he had trouble breathing soon after he started playing soccer with some friends and was unable to use his inhaler as it was empty. His family history is notable for emphysema in his paternal uncle and cirrhosis in his maternal grandfather. The child’s temperature is 99.0°F (37.2°C), blood pressure is 130/90 mmHg, pulse is 130/min, respirations are 28/min, and oxygen saturation is 91% on room air. Physical examination demonstrates wheezing bilaterally in all lung fields. The child is started on supplemental oxygen and a nebulized bronchodilator. Which of the following is a downstream effect of this medication?",
+      "options": "A. Decreased leukotriene activity\nB. Prevention of mast cell degranulation\nC. Activation of muscarinic receptors\nD. Decreased phosphodiesterase activity\nE. Increased adenylate cyclase activity",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6f97e974bf5c",
+      "question": "An 8-year-old girl presents to her primary care provider with several months of headaches and impaired vision. Physical exam reveals a female in the 10th percentile for height and 43rd percentile for weight; cranial nerve testing demonstrates bitemporal hemianopsia. She undergoes a head CT, which shows suprasellar calcifications (Figure A). Given her likely diagnosis, which of the following are also derived from the same germ cell layer?",
+      "options": "A. Adrenal chromaffin cells, schwann cells, eccrine sweat glands, astrocytes\nB. Thyroid follicular cells, alimentary canal, trachea\nC. Muscle, bone, red blood cells\nD. Thymus, urinary bladder, colon\nE. Mesenchyme, smooth muscle, cartilage",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6efce006077b",
+      "question": "A 10-year-old boy is brought by his mother to his pediatrician for “skin growths.” His mother reports that she started noticing small lumps arising from the patient’s lips and eyelids several months ago. She also notes that he seems to suffer from frequent constipation and appears “weaker” than many of his peers. The boy’s past medical history is unremarkable. His maternal aunt, maternal uncle, and maternal grandmother have a history of colorectal cancer and his father and paternal grandmother have a history of thyroid cancer. His height and weight are in the 85th and 45th percentiles, respectively. His temperature is 99°F (37.1°C), blood pressure is 110/65 mmHg, pulse is 90/min, and respirations are 18/min. On examination, he has an elongated face with protruding lips. There are numerous sessile painless nodules on the patient’s lips, tongue, and eyelids. This patient’s condition is most strongly associated with a mutation in which of the following genes?",
+      "options": "A. c-KIT\nB. MEN1\nC. NF1\nD. NF2\nE. RET",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_28e27e091613",
+      "question": "A 10-year-old boy presents to the emergency department with a swollen and painful elbow after accidentally bumping his arm into the kitchen table. His mom notes that he seems to bruise and bleed easily, but this is the first time he has had a swollen joint. She also remembers that her uncle had a bleeding disorder, but cannot remember the diagnosis. Physical exam reveals a warm and tender elbow joint, but is otherwise unremarkable. Based on clinical suspicion, a bleeding panel is ordered with the following findings:\n\nBleeding time: 3 minutes\nProthrombin time (PT): 13 seconds\nPartial thromboplastin time (PTT): 54 seconds\n\nWhich of the following treatments would most likely be effective in preventing further bleeding episodes for this patient?",
+      "options": "A. Factor VIII replacement\nB. Intravenous immunoglobulin\nC. Platelet administration\nD. Vitamin K supplementation\nE. von Williband factor replacement",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0d1496e7f116",
+      "question": "A 9-month-old boy is brought to the pediatrician by his mother. She is very concerned and states that her son has been in poor health ever since his birth. She states that he has had frequent diarrhea and has multiple bacterial and viral infections despite appropriate treatment and hygiene. The patient's growth chart is demonstrated in Figure A. Which of the following is the most likely cause of this patient's symptoms?",
+      "options": "A. Defect in nucleotide excision repair\nB. Defect in microtubule function\nC. Defect in cell surface receptor\nD. Defect in actin cytoskeleton function\nE. Defect in cellular transport",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_87418a265522",
+      "question": "A 3-year-old boy is brought to the emergency department by ambulance after a motor vehicle accident. He is unconscious upon arrival and is found to have severe internal bleeding due to trauma. He is taken for emergency surgery and severely damaged tissues are removed. After surgery, the boy is taken into the PICU for recovery. Over the subsequent week, serial labs are drawn showing target cells, thrombocytosis, and leukocytosis. He is started on a prophylactic regimen that is continued upon discharge. Which of the following is consistent with the mechanism of action of the drug that was most likely prescribed in this case?",
+      "options": "A. 30S ribosome inhibitor\nB. 50S ribosome inhibitor\nC. Cell wall cross-linking inhibitor\nD. DNA gyrase inhibitor\nE. Folate metabolism inhibitor",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_a8635876cf52",
+      "question": "An 18-year-old male is seen for a routine physical prior to starting college. He will be moving from Ohio to California, away from his family for the first time. His temperature is 36.8 deg C (98.2 deg F), pulse is 74/min, and blood pressure is 122/68 mmHg. BMI is 24. On questioning, he reveals that he has a habit of binge eating during times of stress, particularly during exams. He then feels guilty about his behavior and attempts to compensate by going to the gym, sometimes for 4+ hours per day. He is disturbed by this behavior and feels out of control. He denies ever vomiting as a means of loosing weight. What is the most likely diagnosis?",
+      "options": "A. Anorexia nervosa\nB. Bulimia nervosa\nC. Normal behavior variant\nD. Hypomania\nE. Body dysmorphic disorder",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7c84e9ffe527",
+      "question": "A 7-year-old boy is brought to the emergency department by his parents with a 2-day history of severe fatigue. His parents say that he has no past medical history, but caught an illness that was going around his school 1 week ago. While ill, he had several days of abdominal pain and bloody diarrhea. His family history is significant for several family members who required blood transfusions, and he lives in an old house. Physical exam reveals conjunctival pallor and mild jaundice. Which of the following would most likely be seen on peripheral blood smear in this patient?",
+      "options": "A. Codocytes\nB. Degmacytes\nC. Echinocytes\nD. Schistocytes\nE. Spherocytes",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_732c9adedcf8",
+      "question": "A 14-year-old girl is brought to the clinic by her mom for an annual well-exam. The patient is concerned about her repeated ankle sprains and reports that “it has been harder to keep up in gym class.” Her mom reports that she has sprained her right ankle 4 times over the past year. The patient has otherwise been healthy with a normal birth history. Her father suffers from a “nerve disorder where his muscles shrink.” The patient denies any other concerns, pain, weight changes, fever, palpitations, or shortness of breath. Her menses are regular and without pain. A physical examination is unremarkable except for findings shown in Figure A. What is the most likely explanation for this patient’s symptoms?",
+      "options": "A. Defective protein products at the myelin sheath\nB. Deficiency of arylsulfatase A\nC. Deficiency of galactocerebrosidase\nD. Destruction of oligodendrocytes\nE. Excessive buildup of very long chain fatty acids",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b6dc9edbb799",
+      "question": "A 14-year-old previously healthy male presents to your office with complaints of two months of dull, aching pain in his right leg that has recently become worse. While he experiences the pain constantly, he notes that it is sometimes so bad at night that it awakes him from his sleep. Though an avid soccer player, he has been unable to participate this season due to the pain and difficulty running. He cannot think of any particular trauma that might have precipitated this pain. Vitals are all within normal range. Physical examination reveals localized tenderness below the knee with mild swelling and reduced range of motion. You order an X-ray of the painful limb, which is shown in Figure A. What is the most likely diagnosis?",
+      "options": "A. Osteomyelitis\nB. Ewing sarcoma\nC. Osteosarcoma\nD. Growing pains\nE. Slipped capital femoral epiphysis",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1cba33958e0e",
+      "question": "A 17-year-old man is brought by his mother to his pediatrician in order to complete medical clearance forms prior to attending college. During the visit, his mother asks about what health risks he should be aware of in college. Specifically, she recently saw on the news that some college students were killed by a fatal car crash. She therefore asks about causes of death in this population. Which of the following is true about the causes of death in college age individuals?",
+      "options": "A. More of them die from suicide than injuries\nB. More of them die from homicide than injuries\nC. More of them die from homicide than suicide\nD. More of them die from cancer than suicide\nE. More of them die from homicide than cancer",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_85caf4dbccca",
+      "question": "A 4-month-old boy with a history of multiple infections presents with muscle stiffness. On physical exam, he is found to have carpopedal spasm as well as a heart murmur. Based on your clinical suspicion you decide to obtain a chest X-ray which shows a diminished shadow in the mediastinum. A mutation in which of the following chromosomes is the most likely cause of this patient's presentation?",
+      "options": "A. Chromosome 5\nB. Chromosome 7\nC. Chromosome 17\nD. Chromosome 22\nE. Chromosome X",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bfffd16f018c",
+      "question": "A 12-year-old boy is brought to his pediatrician in order to be medically cleared for playing baseball. On presentation, the boy’s only complaint is that he has never been able to completely keep up with his classmates during gym or on the playground because he feels fatigued and short of breath. A review of his prior medical history reveals that he hit all his developmental milestones as expected and has otherwise been healthy. He lives with his parents and eats a diet consisting of mostly fast food and soda. Physical exam reveals a thin, pale boy with decreased color under his eyelids. A panel of hematologic tests are obtained with the following results:\n\nHemoglobin: 11 g/dL\nLeukocyte count: 4,250/mm^3\nPlatelet count: 185,000/mm^3\nMean corpuscular volume: 116 µm^3\nBlood smear: neutrophils with extra lobes\n\nCrystals are also found within this patient's urine. Which of the following treatments would be effective for this patient’s most likely condition?",
+      "options": "A. Administration of uridine\nB. Administration of purine\nC. Cobalamin supplementation\nD. Folate supplementation\nE. Low protein diet",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6d3e1610cc98",
+      "question": "A 26-year-old woman at 30 weeks 2 days of gestational age is brought into the emergency room following a seizure episode. Her medical records demonstrate poorly controlled gestational hypertension. Following administration of magnesium, she is taken to the operating room for emergency cesarean section. Her newborn daughter’s APGAR scores are 7 and 9 at 1 and 5 minutes, respectively. The newborn is subsequently taken to the NICU for further management and monitoring. Ten days following birth, the baby begins to refuse formula feedings and starts having several episodes of bloody diarrhea despite normal stool patterns previously. Her temperature is 102.2°F (39°C), blood pressure is 84/53 mmHg, pulse is 210/min, respirations are 53/min, and oxygen saturation is 96% on room air. A physical examination demonstrates a baby in mild respiratory distress and moderate abdominal distention. What do you expect to find in this patient?",
+      "options": "A. Absence of ganglion cells on rectal biopsy\nB. Double bubble sign on abdominal radiograph\nC. High levels of cow's milk-specific IgE\nD. Gas within the walls of the small or large intestine on radiograph\nE. Positive blood cultures of group B streptococcus",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_62266708cf5b",
+      "question": "A 44-year-old man presents to his primary care physician due to a shock-like pain in his left leg. He describes the pain as sharp and lasting a few minutes at a time. He has noticed being \"clumsy\" when walking in a dark room. Approximately 2 weeks ago, he was helping his daughter move and this required him to lift heavy boxes. He denies any trauma to the back or lower back pain. Medical history is significant for hypertension, hyperlipidemia, and type 2 diabetes mellitus. He is currently sexually active and is in a monogamous relationship with his wife. Approximately 15 years ago, he noted a painless genital lesion. On physical exam, there is a miotic pupil that does not constrict with light but constricts with convergence and accommodation. Strength, reflex, and sensory exam of the lower extremity is unremarkable. The patient has a positive Romberg test. Which of the following is most likely the cause of this patient's symptoms?",
+      "options": "A. Acute ischemic cerebellar stroke\nB. Diabetic peripheral neuropathy\nC. Lumbar disc herniation\nD. Lumbar spinal stenosis\nE. Sexually transmitted infection",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    }
+  ]
+}

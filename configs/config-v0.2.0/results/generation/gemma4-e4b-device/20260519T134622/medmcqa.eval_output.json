@@ -1,0 +1,620 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260519T220736",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 100,
+  "n_rows_done": 100,
+  "total_time_ms": 551876,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_medmcqa_02f902a4-b950-477d-9a01-c959293dbae3",
+      "response_text": "B",
+      "inference_time_ms": 359,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0bbabc5d-0953-4c69-94b8-018ca6b68f34",
+      "response_text": "D",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0de041cf-97f7-4e3c-8837-e13ee37c4bd2",
+      "response_text": "C",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0ee68dcf-42a7-4c5f-9b24-e86776afec5f",
+      "response_text": "A",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_20180ba2-aa20-4096-a756-d53a323b9468",
+      "response_text": "C",
+      "inference_time_ms": 358,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_28045483-578d-45a0-9d40-8853ba8df5ce",
+      "response_text": "A",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2a7aaf3c-4827-4b59-b1ae-737d922a2d1c",
+      "response_text": "C",
+      "inference_time_ms": 1057,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ae48d2e-f7f7-436e-87a1-24bd4c000573",
+      "response_text": "C",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2c2f09dd-e85b-4446-8734-95c861ba039b",
+      "response_text": "A",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2e31879f-e08e-416e-b946-4111a736539a",
+      "response_text": "A",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ebba0d9-caf7-4716-a958-87ca7763bde5",
+      "response_text": "D",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_40f84df1-a2ea-4167-a016-9d564791dcaf",
+      "response_text": "A",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_490653a7-1745-4eea-862d-1432c4209cb3",
+      "response_text": "A",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4adef9c7-4007-4389-8f40-1202d41ff933",
+      "response_text": "C",
+      "inference_time_ms": 362,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5801ed1a-48b9-418b-b8aa-0a932cf866f3",
+      "response_text": "A",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5aefbec0-bd30-4180-a9f5-34925945cb10",
+      "response_text": "B",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5f928542-b712-4145-bbfd-f9cb16389c53",
+      "response_text": "B",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_60129dc5-8759-4db4-a67e-37103007a398",
+      "response_text": "B",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_60ae9b46-b76a-4986-b466-f4a62dc5e33b",
+      "response_text": "C",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_621316dd-5ef8-4ba1-953c-6f214b414b56",
+      "response_text": "C",
+      "inference_time_ms": 1000,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_63452547-c264-400a-8965-239f1a377431",
+      "response_text": "A",
+      "inference_time_ms": 358,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_638de21f-85a2-48d2-869a-c6e07f74e5df",
+      "response_text": "C",
+      "inference_time_ms": 362,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_641a73af-2de7-4538-b92b-1408ce0d5b7b",
+      "response_text": "B",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_656853e5-84ee-4e79-bdb7-9eab31cda926",
+      "response_text": "D",
+      "inference_time_ms": 359,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_67d52e17-28e5-480a-a1d8-752dbd2d2147",
+      "response_text": "A",
+      "inference_time_ms": 359,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_697ef2bb-2379-4103-a636-ef683b0c99f7",
+      "response_text": "B",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6f25df77-11ce-45e1-a3c8-dc827769659a",
+      "response_text": "D",
+      "inference_time_ms": 956,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_771e0d93-33f4-473c-900d-c2a78b1c03b6",
+      "response_text": "D",
+      "inference_time_ms": 363,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_77d8e0ce-9e8e-4e5a-afc4-87543ac99909",
+      "response_text": "A",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_78049723-dad0-4136-aab3-be0d70738dc1",
+      "response_text": "C",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e2fabf1-3661-4d2e-a939-e205fa64272f",
+      "response_text": "D",
+      "inference_time_ms": 992,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e3f5b0e-13fb-4243-9596-c49bb44018c1",
+      "response_text": "C",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_853c7c17-e1a1-4ddd-b83e-ef2d6d8fa5f8",
+      "response_text": "B",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_8f464855-9284-44e0-8d9b-f7a27be9565e",
+      "response_text": "B",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_8f92483d-1783-4573-afa6-e73a73b168cd",
+      "response_text": "C",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9c95067a-7e0f-40f4-9c7b-8feb5db0706d",
+      "response_text": "B",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a1c1f211-dbe0-41b2-a0b2-728ab6437907",
+      "response_text": "D",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a362f242-175f-432b-8b1b-af6bb32d9e5c",
+      "response_text": "B",
+      "inference_time_ms": 359,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a4790139-2426-488b-90df-08396c4a3af8",
+      "response_text": "C",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a6267b47-8b12-4c03-9644-083d87fc956f",
+      "response_text": "A",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a859e97d-b5e1-41b7-9a9d-8f3672320a75",
+      "response_text": "A",
+      "inference_time_ms": 349,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_abd830c3-1915-4b85-8861-920ded87d674",
+      "response_text": "A",
+      "inference_time_ms": 358,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ac9f271c-18b7-496d-b1aa-fc78da9bf186",
+      "response_text": "A",
+      "inference_time_ms": 357,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b5a2fad9-e022-4260-a5e8-d7c2914e5584",
+      "response_text": "D",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_bf03dcdb-43e0-4464-8cfa-3ee79e2d7991",
+      "response_text": "A",
+      "inference_time_ms": 356,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c0304779-20c1-4da2-b5a5-a6fa7f24d71e",
+      "response_text": "A",
+      "inference_time_ms": 362,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c07d16c3-7e51-4b97-9360-af2e10fceeae",
+      "response_text": "A",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c33c6284-7b62-469e-8923-e4c81cdeb50e",
+      "response_text": "C",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_cc8c3c17-fda4-4c40-ae05-f82be0560cb2",
+      "response_text": "A",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d0d3eaf3-ba35-4b2b-a584-76bab8267882",
+      "response_text": "D",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d223bb09-0b18-4c0f-804e-208f19abbbba",
+      "response_text": "A",
+      "inference_time_ms": 361,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f282f31f-f13e-4b34-bc89-a366e295e3ff",
+      "response_text": "C",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f3502443-36d0-4a03-9144-cef17fa5e2ee",
+      "response_text": "A",
+      "inference_time_ms": 328,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f4a2168f-3235-4d98-aa79-661d87fcbdf0",
+      "response_text": "D",
+      "inference_time_ms": 362,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f765642e-b175-4b31-8af3-5c8dcac26c60",
+      "response_text": "B",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fa0ddcdd-0691-41a7-bc23-3317ff3bd07e",
+      "response_text": "B",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0c732eae-6337-4d27-ad81-7297c4284cec",
+      "response_text": "A",
+      "inference_time_ms": 993,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0ec8042e-973a-4d15-8fda-08cb20df17c8",
+      "response_text": "B",
+      "inference_time_ms": 417,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_14489a75-1d62-4d80-8146-99c915a9b485",
+      "response_text": "C",
+      "inference_time_ms": 1136,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_1553de3b-5a58-46dd-8518-2fc6d6334628",
+      "response_text": "C",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_19fd6b2f-3cc3-49cd-bd92-a8a67a7b19d2",
+      "response_text": "B",
+      "inference_time_ms": 374,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_1e9edf03-ee3a-48d3-9d07-1ce1fac819cd",
+      "response_text": "C",
+      "inference_time_ms": 375,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_20d2c7b6-f5f1-4922-8e71-111f17478f4d",
+      "response_text": "A",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2445bd18-c326-4ad4-9c59-3c014317d19d",
+      "response_text": "B",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_24a9caad-cdcc-43bc-a058-d26ed3470bcf",
+      "response_text": "B",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ea05c64-8249-4be9-83aa-f91f09164452",
+      "response_text": "A",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_330f620a-c684-4e52-bbc1-69eb4c0fa054",
+      "response_text": "C",
+      "inference_time_ms": 373,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_38fd710f-c0b5-457e-84aa-9809848ad3f1",
+      "response_text": "A",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_3f6e2e06-91a2-4241-92e1-7b18db0f9d02",
+      "response_text": "D",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_3f78f687-67e9-4927-b0d5-2abac1a4e9a6",
+      "response_text": "C",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_47465d28-195f-4050-a6d5-a9f24bc73000",
+      "response_text": "B",
+      "inference_time_ms": 374,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4a9c89b7-15e3-4c25-b01c-f2c6b56d168e",
+      "response_text": "C",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4e1b7526-e1b6-442e-9153-05d3950c5249",
+      "response_text": "B",
+      "inference_time_ms": 372,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_63ba2249-5630-48af-bd50-cb30fcccc7e1",
+      "response_text": "A",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6779b8fb-46cb-4039-81d6-d19496baf060",
+      "response_text": "D",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_696f33b4-9e5e-43d7-bd3d-dab5c987c0c4",
+      "response_text": "C",
+      "inference_time_ms": 370,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6f1ec6fd-8b24-4d77-9946-b5589ae694a0",
+      "response_text": "A",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6fe64e43-894c-435b-8c0c-a129252057ab",
+      "response_text": "B",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_78f061f0-e8f5-4223-994f-6e21e1f04eb3",
+      "response_text": "A",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_79499169-9b69-4f00-a7fa-73e37ae76c3e",
+      "response_text": "B",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7a603add-33a7-4a96-a9a9-f72b482cb41c",
+      "response_text": "B",
+      "inference_time_ms": 369,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7c8d6ec0-81f1-4a03-9350-0d10623423ea",
+      "response_text": "A",
+      "inference_time_ms": 367,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e221978-9183-49ab-b5f3-3b57293ecda2",
+      "response_text": "A",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_83898b29-bcd9-41dc-a4ce-81a5b699c021",
+      "response_text": "A",
+      "inference_time_ms": 363,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9338f2cd-5515-4768-ac9f-03bc735974ad",
+      "response_text": "B",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_990ff464-3550-487d-a657-f580f286007e",
+      "response_text": "C",
+      "inference_time_ms": 368,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9b01ee36-e217-4836-b015-22287b4a15c4",
+      "response_text": "A",
+      "inference_time_ms": 968,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a4a9dd72-0b53-4edc-aa1f-55245e027b4d",
+      "response_text": "A",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ac4c06a7-1a5b-4030-bd92-26233a223dcb",
+      "response_text": "A",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_acaabba5-d58e-427a-b935-e64df8cb4eff",
+      "response_text": "B",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b3fd8ae3-c58a-4280-adca-d02122f6918c",
+      "response_text": "B",
+      "inference_time_ms": 365,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b67961e9-233c-4b0d-879e-302663efd6a9",
+      "response_text": "B",
+      "inference_time_ms": 360,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ce36e860-95ba-4700-8fd4-00d9f80f8933",
+      "response_text": "A",
+      "inference_time_ms": 366,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d0a68884-f053-48e3-bed5-944618616376",
+      "response_text": "D",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_e26fc57a-f006-41ba-8128-865c5e044ad2",
+      "response_text": "A",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_e56729e2-530b-43ed-af40-494523280bc1",
+      "response_text": "A",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f72f0acc-180a-496a-8d04-68b05ac0493f",
+      "response_text": "A",
+      "inference_time_ms": 364,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fc6bfd8d-6af8-4b0a-b6a3-bcc287942069",
+      "response_text": "A",
+      "inference_time_ms": 362,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fe5664f2-b770-4ecc-8401-f633ad9b132c",
+      "response_text": "D",
+      "inference_time_ms": 363,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fe5ef759-244d-43b9-9270-f98ed1c1f872",
+      "response_text": "C",
+      "inference_time_ms": 365,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,1738 @@
+{
+  "metadata": {
+    "model": "gemma4-e4b",
+    "model_dir": "/lightscratch/users/yiren/models",
+    "dataset": "afrimedqa",
+    "dataset_type": "mcq",
+    "hf_repo": "nmrenyi/mamabench",
+    "hf_revision": "v0.2",
+    "config_version": "config-v0.2.0",
+    "n_questions": 100,
+    "timestamp": "20260519T135246",
+    "protocol_version": "app_parity_v1",
+    "prompt_version": "v3-cd8c872e",
+    "spec_sha256": "fc3a0d7a72184985d0ed4d424768fc7e95e2883432979fb2ae2e91eb85717f6d",
+    "rag": false,
+    "generation_params": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 64,
+      "n_ctx": 4096,
+      "max_tokens": 2048
+    },
+    "total_inference_time_s": 10.6,
+    "avg_time_per_question_s": 0.11
+  },
+  "aggregate_scores": {
+    "accuracy": 0.42,
+    "correct": 42,
+    "total": 100,
+    "partial_credit_accuracy": 0.42,
+    "per_question": [
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ],
+    "per_question_partial": [
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "results": [
+    {
+      "id": "mamabench_v0.2_afrimedqa_730820e6c263",
+      "question": "A 39 years old women Para 6 has presented with complaint of post coital bleeding for the past three months. Your first investigation should be:",
+      "options": "A. Dilatation & Curettage.\nB. Cone biopsy of cervix.\nC. Pap smear.\nD. Colposcopy.\nE. Laparoscopy.",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.42
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_46b84df0f6dd",
+      "question": "23 years old primigravida presents with abdominal pain, syncope and vaginal spotting. Assessment reveals that she has an ectopic pregnancy. The most common site of pregnancy is: .",
+      "options": "A. Ampulla\nB. Isthmus.\nC. Fimbrial end.\nD. Abdomin.\nE. Cervix.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a2d61419d073",
+      "question": "A couple presented in OPD with H/0 infertility since last 2 years. Husbands’ semen analysis was advised. What is WHO criterion for minimum sperm counts in normal semen?",
+      "options": "A. 10 million.\nB. 20 million.\nC. 30 million.\nD. 40 million.\nE. 70 million.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2ed442f6085c",
+      "question": "What is the most common complication of the bottom up single-incision retropubic tape procedure?",
+      "options": "A. Bladder perforation\nB. De novo urinary urgency\nC. Retention\nD. Tape erosion\nE. Voiding dysfunction",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1839331b9e28",
+      "question": "A patient undergoes a challenging hysterectomy. A drain is left in the pelvis. You are called to review the patient eight hours later as the nurses have noted a high serous drain output and poor urinary output. What finding would identify if the drain fluid is urine (suggestive of a bladder/ureteric injury) or normal peritoneal fluid?",
+      "options": "A. Peritoneal creatinine urine nitrogen\nB. Peritoneal urea > urine urea\nC. Serum creatinine à peritoneal creatinine\nD. Serum nitrogen > drain fluid nitrogen levels\nE. Urine nitrogen > peritoneal nitrogen",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e57b745188bb",
+      "question": "With regard to Turner syndrome the following statements are true except which one?",
+      "options": "A. It may present with menorrhagia.\nB. It is associated with gonadal dysgenesis.\nC. It has karyotype 45X0.\nD. It is associated with coarctation of aorta.\nE. It is possible to conceive and have children",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.04
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_52ee4b837aab",
+      "question": "With regard to neonatal HSV infection, which one of the following is false?",
+      "options": "A. Is a common condition in the UK.\nB. It can present with disseminated herpes in the neonate.\nC. Infant mortality is decreased with treatment in localized disease of skin, eyes and mouth infection\nD. Disseminated herpes in the neonate is associated with very high mortality if untreated\nE. If treated, disseminated herpes is associated with 30% neonatal mortality.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9c48bdb3cfc5",
+      "question": "With respect to the management of gestational hypertension in a G 2 para 1 woman with a blood of 145/96 mmHg and no proteinuria at 35 weeks' gestation, which one of the following is the correct next step of management?",
+      "options": "A. Admission to hospital\nB. Weekly BP monitoring\nC. Oral labetalol\nD. Weekly blood tests\nE. Induction of labour at 37 weeks' gestation",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_415fdf8429c0",
+      "question": "A 28-year-old 62 para 1 at 28 weeks' gestation attends the antenatal clinic to discuss vaginal birth after caesarean section (VBAC). She had a previous emergency caesarean section 3 years ago for undiagnosed breech in labour. Which one of the following is true concerning VBAC?",
+      "options": "A. Intermittent monitoring during labour is recommended.\nB. Risk of uterine rupture is 2%.\nC. It is contraindicated in women with previous classical caesarean section.\nD. The chances of successful vaginal birth is around 50%.\nE. The risk of uterine rupture is 10 times higher if the labour is induced or augmented",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a6faedabfbe1",
+      "question": "A 28-year-old Asian woman presents to her GP as she had come in close contact, 3 days previously, with her nephew, who had chickenpox. She is currently 32 weeks' pregnant and feels feverish. Examination does not reveal any rash on the body. The GP prescribes her paracetamol and warns her not to come in contact with other pregnant women. Her booking bloods are negative for varicella IgG antibodies. What should be her next step of management?",
+      "options": "A. Oral acyclovir\nB. Intravenous acyclovir\nC. Intravenous varicella Immunoglobulin (IVIG)\nD. Emergency caesarean section\nE. Oral vanciclovir",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_71ccee95aed8",
+      "question": "A 36-year-old HIV-positive woman on highly active anti-retroviral therapy (HAART) comes to see you after a positive pregnancy test. Which one of the following statements is not true with regard to her management?",
+      "options": "A. Advise her to continue to take HAART throughout the pregnancy and postpartum.\nB. Vaginal delivery is not recommended for women on HAART.\nC. Screening for genital infections at booking and at 28 weeks' gestation.\nD. Screening for Hepatitis C should be performed at booking.\nE. Avoidance of breastfeeding reduces the risk of mother to child transmission.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5c34c2071962",
+      "question": "A 29-year-old woman presents to the emergency department by ambulance with a history of a severe headache for 3 days and focal seizures. Two months prior to this, she presented to her GP with menorrhagia of 10 months' duration. She was offered LNG-IUS but she declined. She was prescribed tranexamic acid to be taken during her periods. Her medications box reveals that she has taken tranexamic acid for the whole previous month. There is no history of any viral illness recently. What is the likely diagnosis in her case?",
+      "options": "A. Subarachnoid haemorrhage\nB. Intracerebral haemorrhage\nC. Cerebral sinus thrombosis\nD. Drug-induced psychosis\nE. Intracranial tumour",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.06
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d373e7d0eb5f",
+      "question": "With regard to the management of pregnant women with obesity (BMI 30), which one of the following statements is false?",
+      "options": "A. Glucose tolerance test should be offered during pregnancy.\nB. Folic acid 5 mg daily supplementation prior to and during pregnancy to minimize the risk of neural tube defects.\nC. Induction of labour at 39 weeks is recommended.\nD. They should have continuous electronic monitoring of the fetal heart during labour.\nE. Active management of the third stage is recommended to minimize the risk of postpartum haemorrhage",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.05
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b9a3324ef73e",
+      "question": "A 30-year-old para 2 woman with a BMI of 45 attends the antenatal clinic at 10 weeks gestation. One of the following is incorrect with respect to the associated risks and counselling?",
+      "options": "A. lncreased risk of venous thromboembolism\nB. Increased risk of pre-eclampsia\nC. Folic acid 5 mg once a day supplementation\nD. Vitamin D 100 micrograms daily supplementation during pregnancy\nE. Increased risk of gestational diabetes",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_124a1dc12d93",
+      "question": "A woman is admitted in first stage of active labour, with cervical dilatation at 5 cm. You plot a cervical dilatation on which part of partograph",
+      "options": "A. Alert line\nB. Action line\nC. Between alert and action\nD. Left to the alert line\nE. Right to the action line",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e8bd075abcec",
+      "question": "Respective care at birth includes these except:",
+      "options": "A. Speaking kindly to the woman\nB. Do not let the laboring woman drink or eat in case she vomits\nC. Allowing the laboring woman to drink or eat\nD. Allowing the laboring woman to deliver in any position she wants\nE. Allow the laboring woman a companion of her choice.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cc8a80576049",
+      "question": "Regarding chronic pelvic pain",
+      "options": "A. Colposcopy has a great role in evaluation\nB. Is best managed with opioids\nC. Avoidance/conflict related to sex and intimacy is a common co- symptom\nD. These patients should be sent for psychotherapy while awaiting investigations\nE. Identification of pelvic pathology excludes a psychogenic cause",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_85b33001a125",
+      "question": "Concerning maternal mortality",
+      "options": "A. Kenya has almost attained the MDG target\nB. Death from HIV in pregnancy is a direct maternal death\nC. The big five causes of direct maternal deaths in Kenya are haemorrhage sepsis hypertensive disease abortion and obstructed labour\nD. Maternal mortality fate and ratio are the same\nE. The target of MDGS is to reduce maternal mortality ratio by 50% by 2015",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_78ee7cc76766",
+      "question": "Regarding normal deliveries",
+      "options": "A. Posterior shoulder is delivered before anterior\nB. Restitution is alignment of fetal head with shoulders\nC. Brow is easily delivered vaginally\nD. The engaging diameter of fetal head is 10.5 cm\nE. Extension precedes flexion",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_193fe61a16e0",
+      "question": "The following is not true of endometriosis",
+      "options": "A. Infertility is a common association\nB. Haematuria or haematochezia may occur\nC. It is in multiparous women\nD. May occur in distant organs like the lungs.\nE. The commonest sites are visceral peritoneal surfaces of pelvic organ",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_58c72667fcce",
+      "question": "One day after unprotected casual sex encounter with a man recently diagnosed as HIV infected, a young lady undergoes an antibody-based HIV test that returns negative. What is the earliest time to reschedule a repeat HIV antibody test;",
+      "options": "A. Two weeks\nB. Six weeks\nC. Three weeks\nD. Nine weeks\nE. Twelve weeks",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_338c68773668",
+      "question": "The indicators of infective process in reproductive health practice includes the following except;",
+      "options": "A. ESR of more than 30mm/hr. (winthrobe)\nB. C-reactive protein >15mg/all\nC. Basophilia of more than 3% in differential count\nD. Lymphocytes consisting 45% in the differential count\nE. Total white blood cell counts of 17* 10/91",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_db8e2ad36b9a",
+      "question": "Which of the following is the best definition of evidence-based medicine (practice)",
+      "options": "A. Making medical decisions only when there is adequate evidence to support them\nB. Adhering strictly to the scientific evidence, despite patients’ preference\nC. The conscientious, explicit and judicious best evidence in making decisions about the care of the individual patient\nD. Making medical decisions that are consistent with grade A evidence\nE. a and b",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1967aa2d9c87",
+      "question": "The following can be used to effectively suppress lactation for HIV mothers opting not to breastfeed after delivery.",
+      "options": "A. Depo provera\nB. Progestion\nC. Frusemide\nD. Carbergeline\nE. Estriol",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9b9d8c174ef4",
+      "question": "A para 6+0 mother develops postpartum haemerrhage immediately after delivery. All the following are correct concerning her management except;",
+      "options": "A. Take her immediately for emergency hysterectomy\nB. Start oxytocin drip\nC. Cytotec use is beneficial\nD. Massage of uterus is beneficial\nE. Examination without anaesthesia should inform examination with anaesthesia",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_3df0f485f183",
+      "question": "Which of the following is true regarding oval combined contraceptives;",
+      "options": "A. Contains estradiol and estrone\nB. Skipping four pills warrants introduction of emergency contraception(postinor)\nC. Is administered for 28 days then after menses start\nD. Confers antifertility effects through inhibition of ovulation\nE. About 10% of users will develop hypertention.",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8631f4d97163",
+      "question": "A 30-year-old underweight a cardiotocograph (CTG) due to induction for reduced fetal movements. A drop in the fetal heart rate was observed only during the contractions and both were mirror images. This phenomenon is referred to as;",
+      "options": "A. Early deceleration\nB. Late deceleration\nC. Variable deceleration\nD. Early acceleration\nE. Late acceleration",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_30aae4a9fc30",
+      "question": "The Jadelle implant confers contraception after insertion for a duration of;",
+      "options": "A. Three years\nB. Four years\nC. Two years\nD. Five years\nE. Eight years",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_042c9f26bca6",
+      "question": "A mother at 36 weeks gestation is confirmed to have fetal growth restriction. The management will be;",
+      "options": "A. Start mother on parenteral feeds\nB. Increase the dose of maternal nutritional supplements\nC. Administer high-calorie diet to the mother for the next four weeks\nD. Deliver the baby\nE. None of the above",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.07
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6ef10143038c",
+      "question": "A 32-year-old Para 2+1 presents with one year history amenorrhea following evacuation of the uterus due to septic incomplete abortion. Her hormonal profile is normal. What is the likely diagnosis",
+      "options": "A. Premature menopause\nB. latrogenic ovarian failure\nC. Hypothalamic pituitary amenorrhea\nD. Sheehan's syndrome\nE. Asherman's syndrome",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_bc4f3fb51e74",
+      "question": "During fetal surveillance:-",
+      "options": "A. In late decelerations of fetal heart rate, the peak of the contraction occurs after the nadir of the deceleration\nB. Fetal heart rate increases with increasing gestation\nC. Placental grading is one of the markers of the biophysical profile (BPP)\nD. Fetal heart rate accelerations of 15 bpm above baseline rate are a nonreassuring finding\nE. An early deceleration of the fetal heart rate is a normal finding",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9ff63200ede5",
+      "question": "When a patient presents with cord prolapse, which of the following statements is INCORRECT?",
+      "options": "A. Funic presentation refers to the cord being below the presenting part, with intact membranes and not palpable on digital vaginal exam.\nB. If the cord is pulsatile, a rapid cesarean section is the best management for overt prolapse.\nC. Occult prolapse may be overcome by appropriate positioning of the patient\nD. A full bladder may avert bad outcomes,\nE. Avoiding early ARM in patients with high presenting part is advised to prevent cord prolapse.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1208e1d6ace1",
+      "question": "Violet, a 36-year-old para 0+2 presents with symptoms innkeeping with Hyperemesis gravidarum. Investigations reveal a uterine snow-storm appearance and hyperthyroidism. Which of the following will explain her presentation?",
+      "options": "A. Complete Molar pregnancy\nB. Partial molar pregnancy\nC. Grave's disease\nD. Hashimoto's disease\nE. None of the above",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_b09040ccf632",
+      "question": "Which of the following statements is correct concerning operative abdominal delivery?",
+      "options": "A. A hemogram, renal function test and grouping/crossmatch are mandatory tests before a caesarian section is done\nB. Maternal morbidity and mortality from a caesarian section is not higher than vaginal\nC. There is documented evidence that a classical uterine incision is better than a lower uterine segment transverse incision\nD. There is no role in prophylactic antibiotics in elective caesarian sections\nE. The sub-umbilical midline incision is the most popular abdominal entry technique in JOORTH",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8c2a58282b4c",
+      "question": "Which one of the following is not a risk factor for cervical cancer?",
+      "options": "A. A. Smoking\nB. History of genital warts\nC. diabetes\nD. micronutrient deficiency\nE. HIV",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_50598fb0bfda",
+      "question": "Which of the following metabolic disorders may occur in Polycystic ovary syndrome?",
+      "options": "A. Dyslipidaemia\nB. Hyperinsulinemia\nC. Cardiovascular disease\nD. Insulin resistance\nE. All the above",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1f72be69282b",
+      "question": "Nausea, anxiety and palpitations in a pregnant woman with diabetes",
+      "options": "A. Should be regarded as normal pregnancy symptoms\nB. Requires an ECG test\nC. C Should be treated with anti-emetics\nD. Should be treated with Insulin\nE. E Requires a random blood sugar test",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0cd5217d0e79",
+      "question": "A probable significant aetiology of congenital anomalies in diabetic pregnancies is:",
+      "options": "A. A Fetal insulin\nB. Hyperglycaemia\nC. Hyperketonaemia\nD. Transplacental passage of insulin\nE. E Genetic factors",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.08
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f2d9dcecc576",
+      "question": "Which of the following is true regarding sickle cell disease in pregnancy? i Maintaining an sp 02 of at least 90% is required throughout pregnancy ii There is a lower risk of sickle cell crisis during the puerperium iii Vaginal delivery is permissible",
+      "options": "A. I, II and III\nB. I and Ill only\nC. Il and Ill only\nD. iii only\nE. i only",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2aefc685c77c",
+      "question": "Which of the following statements is not true regarding pathophysiology of stress incontinence",
+      "options": "A. A Loss of the vaginal backboard support to the urethra leads to urethral hypermobility\nB. B Loss of the vaginal backboard support to the urethra leads to intrinsic sphincter deficiency\nC. C Damage to the striated urogenital sphincter and/or the vascular submucosal tissues causes intrinsic sphincter deficiency\nD. D The anterior vaginal wall gains stability through its lateral attachment to the levator ani muscles and the arcus tendinous fasciae pelvis (ATFP)\nE. E Urinary continence requires a well vascularized urethral submucosal tissue, a functioning straited urogenital sphincter and an intact vaginal wall support.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_177e66c56960",
+      "question": "The following predispose to developing ovarian hyperstimulation except",
+      "options": "A. young age\nB. previous OHSS\nC. SLE\nD. PCOS\nE. obesity",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_673cf25a9ab5",
+      "question": "Assisted reproductive technology include the following except",
+      "options": "A. a in-vitro fertilization\nB. intrauterine insermination\nC. c gamete intrafallopian transfer\nD. preimplantation genetics\nE. e zygote intrafallopian transfer",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.1
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_3bd660b746ce",
+      "question": "Regarding surrogacy",
+      "options": "A. a the fetus and surrogate must have the same blood group\nB. b. traditional surrogacy is a common practice in ghana\nC. c the surrogate and the fetus are not genetically related\nD. d is ilegal in ghana\nE. e delivery is through ceasarean section",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d0a31259751f",
+      "question": "The following are accepted indications for induction of labour",
+      "options": "A. Macrosomia\nB. Previous caesarean section\nC. intratuterine fetal death\nD. History of precipitate labour\nE. Maternal request",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cda40eb972bb",
+      "question": "Choose the correct statement regarding the most important indicator of effective ventilation and response to resuscitative interventions in the newborn",
+      "options": "A. A rise in Heart rate\nB. An improvement in colour\nC. An improvement in the oxygen saturation\nD. Chest expansion\nE. An improvement in muscle tone",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a8eae1b5218d",
+      "question": "The following features of a normal or reactive antepartum CTG includes all the following except;",
+      "options": "A. a) At least two fetal movements within 20 minute\nB. At least 2 accelerations of more than 15 beats per minute over the baseline rate and lasting at least 15 seconds within 20 minutes\nC. Normal baseline variability of 6-25 beats per minute\nD. Normal baseline rate of 110-160 beats per minute\nE. No late or variable decelerations",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_1176a66d77bf",
+      "question": "Which of the following is the commonest presentation of gestational trophoblastic neoplasia?",
+      "options": "A. A Seizures\nB. hemoptysis\nC. uterine bleeding\nD. hemoperitoneum\nE. none of the above",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ef81db0f5708",
+      "question": "Which of the following is/are true about twin pregnancies with symptoms of preterm birth?",
+      "options": "A. Most women will deliver within a week.\nB. Insufficient data are available to make evidence-based recommendations.\nC. The accuracy of cervical length measurement is higher than for asymptomatic women\nD. The accuracy of cervical length measurement is higher than for asymptomatic women\nE. Fetal fibronectin has high negative predictive value",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_57bef3401a0c",
+      "question": "A marked reduction occurs in multiple pregnancies after double embryo transfer (DET) compared with triple embryo transfer.",
+      "options": "A. A marked reduction occurs in multiple pregnancies after double embryo transfer (DET) compared with triple embryo transfer.\nB. Pregnancy rates per fresh in-vitro fertilisation cycle after elective single-embryo transfer are lower compared with DET.\nC. Pregnancy rates per fresh in-vitro fertilisation cycle after elective single-embryo transfer are lower compared with DET.\nD. Multiple pregnancy rates are similar after single-embryo transfer and DET.\nE. An effective cryopreservation programme is essential for widespread use of single-embryo transfer",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_574d1768015a",
+      "question": "The following is a relative contraindication to the use of the combined hormonal contraceptive",
+      "options": "A. a History of vascular disease (thromboembolism)\nB. Systemic diseases e.g. SLE, DM with retinopathy or nephropathy\nC. Smoking female less than 35 years\nD. Undiagnosed uterine bleeding\nE. Severe Hyperlipidemia bleeding is caused by:",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.1
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_9290ca8e34c1",
+      "question": "Fibroids are treated conservatively:",
+      "options": "A. During pregnancy.\nB. . If they are asymptomatic\nC. . If they are asymptomatic\nD. In postmenopausal women.\nE. All of the above",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.1
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_26d1749fa5c6",
+      "question": "In obstetric haemorrhage I. colloids are preferred to crystalloids in fluid replacement II. Anti-D prophylaxis is required when an Rh Negative woman receives Rh Positive FFP III Whole blood is superior to blood components in preventing acute kidney Injury",
+      "options": "A. . I only\nB. . II only\nC. III Only\nD. . II and III\nE. . I, II and III",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_828686b35f40",
+      "question": "According to the modified World Health Organization Prognostic Scoring System, the entire category of low-risk gestational trophoblastic neoplasia is represented by which range of scores?",
+      "options": "A. 0-2\nB. 1-4\nC. 0 - 6\nD. 1-10\nE. 11–15",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_700d42be047a",
+      "question": "Which of the following is correct concerning hypertensive disorders in pregnancy?",
+      "options": "A. Significant proteinuria is diagnosed when serum protein 2300mg over 24 hours\nB. Gestational hypertension is commonly diagnosed when BP >140/90 mmHg prior to 20 weeks\nC. Eclampsia commonly occurs in the absence of hypertension\nD. Urinary protein-creatinine ratio >30 mg/nmol is considered significant.\nE. Eclamptic patients are best delivered with 24 hours",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4222e278e45e",
+      "question": "Which of the following best describes the treatment of preeclampsia with severe features?",
+      "options": "A. Phenytoin and Magnesium sulphate are equally effective in preventing recurrent seizures\nB. Phenytoin and Magnesium sulphate are equally effective in preventing recurrent seizures\nC. Midazolam has no place in modern management of severe preeclampsia\nD. Hydralazine is used in preference to labetalol to control severe hypertension\nE. Hydralazine and Nifedipine may cause fetal distress more than Labetalol",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_fd1ad4ddabc5",
+      "question": "The main advantage of Diagnostic ultrasound over other imaging modalities is",
+      "options": "A. Can be directed in a beam\nB. Can be converted to analogue or digital signals for image production\nC. Can be converted to analogue or digital signals for image production\nD. No radiation exposure\nE. Non Invasive",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_831d70766314",
+      "question": "The first test to distinguish between a vesicovaginal and ureterovaginal fistula is",
+      "options": "A. IVP\nB. Retrograde filling of bladder with methylene blue\nC. Computed tomography (CT)\nD. Retrograde pyelogram\nE. Triple swab test",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d808b208c17e",
+      "question": "Which of the following is MOST important in the pathogenesis of Ovarian Hyperstimulation syndrome (OHSS)?",
+      "options": "A. Prostaglandin F-d\nB. Inhibin\nC. Activin\nD. Vascular Endothelial Growth Factor (VEGF)\nE. Interleukin-6 (Pi * 6)",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6cadcad10cd7",
+      "question": "The incidence of Gestational Trophoblastic Disease",
+      "options": "A. . in West Africa is between 0.87 to 4.88 per 1000 deliveries\nB. in West Africa is between 0.6 to 11 per 1000 deliveries\nC. Is higher in Europe than in Japan\nD. Is higher in North America than in Japan\nE. Is the same in Japan and Europe",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_36582609a22c",
+      "question": "In the management of obstetric haemorrhage, one of the most important vital signs to be monitored is",
+      "options": "A. Hemoglobin level\nB. BP\nC. O2 SAT\nD. HB\nE. urine output",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_14904100feb4",
+      "question": "Which of the following conditions can result in significant consumptive coagulation?",
+      "options": "A. Abruptio placentae\nB. Amniotic fluid embolism\nC. Pre Eclampsia with severe features\nD. Gram-negative bacterial sepsis\nE. All of the above",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_dbeb830a194f",
+      "question": "1. The decision to transfuse blood in pregnancy should exclude consideration of the",
+      "options": "A. Stage of pregnancy\nB. Evidence of cardiac failure\nC. Haemoglobin level\nD. Evidence of Sheehan's syndrome\nE. Presence of acute infections",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_2bc99f78ee0f",
+      "question": "The following invasive diagnostic procedures can be used in the first trimester",
+      "options": "A. Amniocentesis\nB. Cordocentesis\nC. Chorionic villous sampling\nD. Fetal skin sampling\nE. Fetoscopy",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d01882bf1452",
+      "question": "Fibroids in pregnancy:",
+      "options": "A. Are a recognized cause of obstructed labour\nB. Should be removed by myomectomy during pregnancy\nC. Should be removed by myomectomy at caesarean section\nD. Are likely to regress after the pregnancy\nE. May cause acute abdominal pain",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d39b1dbd3961",
+      "question": "During normal pregnancy:",
+      "options": "A. Estradiol is the principal circulating oestrogen\nB. The blood pressure falls in the second trimester\nC. Blood flow to the liver and kidneys increases by over 25%\nD. The pressure of the uterus on the diaphragm reduces the tidal volume and causes dyspnoea\nE. The ureters dilate due to obstruction and increased intraluminal pressure",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_390c87a470ea",
+      "question": "The following are absolute contraindication to invasive testing",
+      "options": "A. Anticoagulants treatment\nB. Maternal alloimmunization e.g Rh Neg women\nC. Human immunodeficiency virus (HIV)\nD. Spotting PV\nE. Placenta previa",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_34f8770b69d5",
+      "question": "Carcinoma of the vulva:",
+      "options": "A. Does not ulcerate until it is advanced\nB. Is usually histologically anaplastic\nC. Spreads initially to iliac nodes via vaginal lymphatics\nD. Seldom involves lymph nodes at the time of presentation\nE. none of the above",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6c2e8e43e60a",
+      "question": "The following associations are appropriate",
+      "options": "A. Presentation: Occipito-posterior\nB. Attitude: At the level of the ischial spines\nC. Station: Longitudinal\nD. Engagement: Two-fifth palpable per abdomen\nE. Position: Mento-vertical",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f69a6487b574",
+      "question": "Androgen insensitivity syndrome is associated with:",
+      "options": "A. existence of ovarian and testicular tissues\nB. ambigous genitalia\nC. 47, XX karyotype\nD. hypoplastic breast\nE. early onset of gonadal tumours",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a46047bf1063",
+      "question": "With regard to the investigation of the infertile couple, which of the following statement is true?",
+      "options": "A. A full hormone profile, tubal patency testing and semen analysis should be completed on all couples attending a referral for primary infertility.\nB. A mid-luteal progesterone 0.25 nmol/L confirms ovulation.\nC. A semen analysis should be performed prior to laparoscopy and dye to test for tubal patency.\nD. Hysterosalpingogram, and laparoscopy and dye insufflation will gain similar information and either can be used to assess tubal patency in all patients.\nE. A single semen analysis with a volume of 1 mL, a concentration of 10 million/mL and 30 per cent reduced motility confirms oligozoospermia, and serum testosterone, gonadotrophins and prolactin analysis should be performed.",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C.",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.21
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a926a300f60a",
+      "question": "Which of the following is correct regarding hyperthyroidism in pregnancy?",
+      "options": "A. Should be treated surgically rather than with carbimazole.\nB. Can be diagnosed by total T4 measurements.\nC. More than half are due to Grave’s disease.\nD. The main complications for the fetus include growth restriction and fetal bradycardia.\nE. Therapy should maintain free T4 and T3 levels in the low normal range.",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_dcc447e0a013",
+      "question": "In eclampsia:",
+      "options": "A. Large doses of intravenous sedation are given\nB. Caesarean section must be performed whether the fetus is dead or alive\nC. Hypotensive drugs should not be used\nD. Ergometrine should be avoided in the third stage of labour\nE. Urinary output is increased",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_98a79ee6ac2c",
+      "question": "A 36 year-old woman presents with vaginal bleeding at 8 weeks 3 days’ gestation. She has never been pregnant before. The bright red ’spotting’ started 3 days ago with no abdominal pain. Vaginal examination revealed a closed cervix. Which of the following is helpful in the diagnosis of this condition?",
+      "options": "A. Transvaginal ultrasound scan\nB. Full blood count\nC. Urine pregnancy test\nD. Blood pregnancy test\nE. Chromosomal studies",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_31bcd1a11e73",
+      "question": "Management of an 89-year old woman with ischaemic heart disease who is not sexually active but presents with a procidentia of the uterus is:",
+      "options": "A. Shelf pessary.\nB. Pelvic floor exercises.\nC. Vaginal hysterectomy.\nD. Hysteroscopy.\nE. Total vaginal mesh procedure.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_95245d5101e7",
+      "question": "Choose the best option with regard to a non-immune pregnant woman with an exposure to chickenpox:",
+      "options": "A. Should be given the varicella zoster vaccine as soon as possible after exposure.\nB. Should be given varicella zoster immunoglobulin as soon as possible after exposure.\nC. Does not need intervention unless symptoms of chickenpox occur.\nD. Should not be treated with acyclovir in the third trimester.\nE. Has a 15 per cent risk of having a baby with fetal varicella syndrome.",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0ca1dd787a90",
+      "question": "Which of the following is not an increased risk in multiple pregnancy?",
+      "options": "A. Placenta praevia.\nB. Diabetes mellitus.\nC. Pre-eclampsia.\nD. Malpresentation.\nE. Intrauterine growth restriction (IUGR).",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_47d826b9a77b",
+      "question": "An infant is delivered at 27/40 and taken to the neonatal unit. Which problem is most likely to be experienced?",
+      "options": "A. Incomplete formation of the epidermis from the mesoderm.\nB. Excessive vernix formation\nC. Lanugo shedding.\nD. Thermoregulation due to thin skin.\nE. Lack of hair follicle development.",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.1
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0d0fca681b0b",
+      "question": "A woman is found to have oligohydramnios at 30/40. Which of the following is the most likely cause?",
+      "options": "A. Duodenal atresia.\nB. Placental chorioangioma.\nC. Diabetes.\nD. Oesophageal atresia.\nE. Renal agenesis.",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d058993f8a69",
+      "question": "Management of a cervical smear showing moderate dyskaryosis is:",
+      "options": "A. Repeat smear in six months.\nB. HPV vaccination.\nC. Colposcopy and biopsy.\nD. LLETZ procedure.\nE. Wertheim’s hysterectomy.",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5d7b45ae3779",
+      "question": "Which of the statements does not describe sex cord tumours:",
+      "options": "A. All granulosa cell tumours are malignant, but are usually confined to the ovary and have a good prognosis.\nB. Call–Exner bodies are pathognomonic of theca cell tumours.\nC. Many theca cell tumours cause post-menopausal bleeding and endometrial carcinoma.\nD. Meigs’ syndrome is the combination of fibroma, ascites and pleural effusions.\nE. Virilization is seen in 75 per cent of Sertoli–Leydig cell tumours.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6091ae25766f",
+      "question": "Which of the following is not associated with molar pregnancy?",
+      "options": "A. Dermoid cysts.\nB. Large for dates.\nC. Hyperemesis.\nD. Pre-eclampsia.\nE. Diploidy.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_431c717a08a4",
+      "question": "A woman underwent a surgical evacuation of the uterus following a failed intrauterine pregnancy. Histological analysis of products of conception showed complete molar pregnancy. She was subsequently treated with single agent chemotherapy. She returns after completion of treatment and wishes to conceive again, how long should she wait?",
+      "options": "A. 1 month\nB. 3 months\nC. 6 months\nD. 12 months\nE. 18 months",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_f1af7c9630e7",
+      "question": "A 24-year old woman has had three first-trimester spontaneous miscarriges. Which of the following statements concerning chromosomal aberrations in abortions is true?",
+      "options": "A. 45x is more prevalent in chromosomally abnormal term babies than in spontaneously aborted pregnancies\nB. Approximately 20% of first trimester spontaneous miscarriages have chromosomal abnormalities\nC. Trisomy 21 is the most common trisomy in abortuses\nD. Despite the relatively high frequency of Down syndrome at term, most Down foetuses abort spontaneously.\nE. Stillbirths have twice the incidence of chromosomal abnormalities as live births",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_51bc3b632e63",
+      "question": "A 20-year old female and her partner, a 20-year-old man presents for counselling for sexual dysfunction. Prior to their relationship, neither had been sexually active. Both deny any medical problems. Which type of male/female sexual dysfunction has the lowest cure rate?",
+      "options": "A. Premature ejaculation\nB. Vaginismus\nC. Primary impotence\nD. Secondary impotence\nE. Female orgasmic dysfunction",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_41bf5c698de0",
+      "question": "Post-patum haemorrhage is one of the leading causes of maternal mortality world wide. Causes of secondary postpartum haemorrhage include:",
+      "options": "A. Uterine atony\nB. Hypofibrinogenaemia\nC. Choriocarcinoma\nD. Vaginal and perineal laceration\nE. Acute puerperal inversion",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_93fd8d46038b",
+      "question": "Components of Manchester Repair include the following except?",
+      "options": "A. Posterior colpoperineuraphy\nB. Cervical amputation\nC. Fixation of the cardinal ligament\nD. Anterior colpoperineurraphy\nE. Anterior colporrhaphy",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_0f260c7c6a01",
+      "question": "A pregnant woman with gestational diabetes asks you about the increased risks to her fetus. You describe all of the following except:",
+      "options": "A. Hypermagnesaemia.\nB. Traumatic delivery.\nC. Neonatal jaundice.\nD. Polycythaemia.\nE. Hypoglycaemia.",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_279aaabb67b7",
+      "question": "Considering the fetal skull, the following are true except?",
+      "options": "A. The anterior fontanelle is diamond shaped.\nB. The sutures of the vault are soft unossified membranes.\nC. The vertex presentation longitudinal diameter is sub-occipito-frontal diameter.\nD. The occipito-mental diameter is normally too large to pass through the maternal pelvis.\nE. Moulding of the fetal skull is a normal physiological process.",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_4bb74d5fe449",
+      "question": "The following are risk factors for the development of cervical cancer except?",
+      "options": "A. Multiple sexual partners.\nB. HPV types 16 and 18.\nC. Early Coitarche.\nD. Exposure to Diethylstilbestrol\nE. Use of IUD",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_5866d750e7cd",
+      "question": "Regarding carcinoma of the ovary, which of the following is true?",
+      "options": "A. It is most common in developing countries.\nB. The incidence is similar to carcinoma of the endometrium with similar prognosis.\nC. The peak age is 80–90 years old.\nD. The mainstay of treatment is surgery and radiotherapy combined\nE. The majority are epithelial in origin.",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.11
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_d8e95fb7fc40",
+      "question": "A 30-year-old girl presents with mid-cycle pain on a regular monthly basis. She is sexually active and does not take any contraception. The pain resolves after 24 hours. She has a regular 28-day cycle. The likely cause of the pain is?",
+      "options": "A. Adenomyosis\nB. Mittelschmertz syndrome\nC. Endometriosis.\nD. PID.\nE. Polycystic ovaries.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.15
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_ab2613280f1d",
+      "question": "Ante-partum haemorrhage",
+      "options": "A. Is defined as “bleeding from the genital tract in pregnancy”\nB. May be complicated by hypofibrinogenaemia\nC. Requires assessment by vaginal examination\nD. May be caused by carcinoma insitu of the cervix\nE. Is always painless.",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_8869cadc67f2",
+      "question": "Routine antenatal tests include the following:",
+      "options": "A. Fasting blood sugar\nB. HBAiC\nC. Cervical culture\nD. Thyroid profile\nE. HIV test",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.09
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_101413f0934b",
+      "question": "Triple test",
+      "options": "A. AFP + Estriol + HCG\nB. AFP + Inhibin A + Progesterone\nC. AFP + Inhibin B + PAPP-A\nD. Estriol + HCG + Activin Inhibin A\nE. Estriol + Ihibin B + placental protein 13",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.12
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_6d71f3b2083b",
+      "question": "A 21-year old woman presents with left lower quadrant pain. A 7-cm firm adnexal mass is palpated. Ultrasound confirms a complex adnexal mass with solid components that appears to contain a tooth. What type of ovarian tumour is this?",
+      "options": "A. Dysgerminoma\nB. Matured teratoma\nC. cystadenoma\nD. brenners tumour\nE. meigs tumour",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_a59685fb8e40",
+      "question": "which of the following pairings is true:",
+      "options": "A. Obstructive azoospermia: high FSH, LH\nB. kartagener syndrome : ectopic pregnancy\nC. Metromenorhagia: ovarian fibroma\nD. Retrograde ejaculation : diabetes mellitus\nE. Hyperprolactinemia : impotence",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": false,
+      "inference_time_s": 0.1
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_cefa74e67593",
+      "question": "Concerning placenta morphometry, which of this is not true",
+      "options": "A. Has about 15-20 cotyledons\nB. Weighs between 500-600gms or 1/6th of the baby weight\nC. The syncytiotrophoblast leads the trophoblastic invasion\nD. The nitabuchs layer is not well formed in mid trimester\nE. The basal plate relates to the fetus and the chorionic plate with the mother",
+      "ground_truth": "E",
+      "answer_index": 4,
+      "rag_context": "",
+      "model_response": "E",
+      "extracted_answer": "E",
+      "extracted_answers": [
+        "E"
+      ],
+      "correct": true,
+      "inference_time_s": 0.14
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_c316768891da",
+      "question": "Which of the following Is not a screening method for gestational Diabetes Mellitus?",
+      "options": "A. HbA1C\nB. Fasting Blood Glucose\nC. OGTT\nD. Urinalysis\nE. Random blood sugar",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_59c6ee49e966",
+      "question": "Elective cervical cerclage is indicated in which of the following",
+      "options": "A. Three spontaneous first – trimester abortions\nB. Spontaneous twin conception\nC. Three second – trimester pregnancy losses without evidence of labour or abruption\nD. History of loop electrosurgical excision procedure for cervical dysplasia\nE. Cervical length of 15 mm by ultrasound at 14 weeks",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.13
+    },
+    {
+      "id": "mamabench_v0.2_afrimedqa_e14e90474e42",
+      "question": "This is not a part of Biophysical profile",
+      "options": "A. Amniotic fluid volume\nB. Gross body movement\nC. Fetal umbilical Doppler velocimetry\nD. Fetal tone\nE. CTG",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.08
+    }
+  ]
+}

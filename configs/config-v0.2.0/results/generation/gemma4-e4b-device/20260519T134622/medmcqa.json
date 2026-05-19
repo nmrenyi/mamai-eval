@@ -1,0 +1,1859 @@
+{
+  "metadata": {
+    "model": "gemma4-e4b-device",
+    "inference_venue": "device",
+    "device_serial": "default",
+    "device_payload": {
+      "eval_version": 1,
+      "device": {
+        "manufacturer": "OnePlus",
+        "model": "OPD2413",
+        "device": "OP615EL1",
+        "hardware": "qcom",
+        "board": "sun",
+        "soc": "SM8750P",
+        "android_version": "15",
+        "sdk_int": 35,
+        "abi": "arm64-v8a"
+      },
+      "total_time_ms": 551876,
+      "n_rows_reported": 100
+    },
+    "apk_info": {
+      "version_name": "0.1.0",
+      "version_code": "1"
+    },
+    "dataset": "medmcqa",
+    "dataset_type": "mcq",
+    "hf_repo": "nmrenyi/mamabench",
+    "hf_revision": "v0.2",
+    "config_version": "config-v0.2.0",
+    "n_questions": 100,
+    "timestamp": "20260519T134622",
+    "protocol_version": "app_parity_v1",
+    "prompt_version": "v3-cd8c872e",
+    "spec_sha256": "fc3a0d7a72184985d0ed4d424768fc7e95e2883432979fb2ae2e91eb85717f6d",
+    "rag": false,
+    "generation_params": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 64,
+      "n_ctx": 4096,
+      "max_tokens_note": "on-device max set by runtime_config.json engine.max_num_tokens"
+    },
+    "total_inference_time_s": 552.0,
+    "avg_time_per_question_s": 5.52
+  },
+  "aggregate_scores": {
+    "accuracy": 0.57,
+    "correct": 57,
+    "total": 100,
+    "partial_credit_accuracy": 0.57,
+    "per_question": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false
+    ],
+    "per_question_partial": [
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0
+    ]
+  },
+  "results": [
+    {
+      "id": "mamabench_v0.2_medmcqa_02f902a4-b950-477d-9a01-c959293dbae3",
+      "question": "Fetal response to Treponema pallidum occurs at which week of pregnancy?",
+      "options": "A. 4th week\nB. 8th week\nC. 18th week\nD. 28th week",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0bbabc5d-0953-4c69-94b8-018ca6b68f34",
+      "question": "Treatment of gynaecomastia is all except :",
+      "options": "A. Hormonal therapy\nB. Simple mastectomy\nC. Subcutaneous liposuction mastectomy\nD. None",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0de041cf-97f7-4e3c-8837-e13ee37c4bd2",
+      "question": "One of the following features can be used to define contracted pelvis:",
+      "options": "A. Transverse diameter of inlet is 10 cm\nB. AP diameter of inlet is 12 cm\nC. Platypelloid pelvis\nD. Gynaecoid pelvis",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0ee68dcf-42a7-4c5f-9b24-e86776afec5f",
+      "question": "Cystitis is most commonly caused by",
+      "options": "A. E. coli\nB. Pseudomonas\nC. Proteus mirabilis\nD. Neisseria gonorrhea",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_20180ba2-aa20-4096-a756-d53a323b9468",
+      "question": "Investigation of choice to detect Hydatiform mole is :",
+      "options": "A. X-ray abdomen\nB. USG\nC. Serum HCG level\nD. Gravindex",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_28045483-578d-45a0-9d40-8853ba8df5ce",
+      "question": "LH : FSH ratio in women with polycystic ovarian disease is",
+      "options": "A. 1:02\nB. 2:01\nC. 1:01\nD. 3:01",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2a7aaf3c-4827-4b59-b1ae-737d922a2d1c",
+      "question": "In a sagittal cross section of the pelvis",
+      "options": "A. The urethra lies anterior to the upper third of the vagina\nB. The urethra lies posterior to the lower third of the vagina\nC. The bladder when empty lies above and anterior to the uterine body\nD. The bladder when empty lies parallel and anterior to the uterine body",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 1.06,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ae48d2e-f7f7-436e-87a1-24bd4c000573",
+      "question": "A lady presented with a creamy white vaginal discharge having fishy odour. What is the drug of choice of this condition?",
+      "options": "A. Doxycycline\nB. Ofloxacin\nC. Metronidazole\nD. Clindamycin",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2c2f09dd-e85b-4446-8734-95c861ba039b",
+      "question": "Which is not true about cephalohaematoma?:",
+      "options": "A. Not limited by sutures\nB. Swelling subsides in 3 months\nC. Caused by periosteal injury of skull\nD. None",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2e31879f-e08e-416e-b946-4111a736539a",
+      "question": "Ideal contraceptive for lactating mothers is:",
+      "options": "A. Barrier method\nB. Combined OCP\nC. Lactational amenorrhoea\nD. Progesterone only pill",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ebba0d9-caf7-4716-a958-87ca7763bde5",
+      "question": "All are seen in Rokitansky Hauser syndrome except :",
+      "options": "A. Absent uterus\nB. Anovulation\nC. Absent vagina\nD. 46 XX karyotype",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_40f84df1-a2ea-4167-a016-9d564791dcaf",
+      "question": "Barr body is seen in :",
+      "options": "A. Turners syndrome\nB. Klinefelters syndromeTesticular feminisation\nC. Tesiicular leminisation syndrome\nD. 46 XY",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_490653a7-1745-4eea-862d-1432c4209cb3",
+      "question": "Causes of vulval pain are due to all except:",
+      "options": "A. Neuralgia of the genitofernoral nerve\nB. Herpes\nC. Vulval vestibulitis syndrome\nD. Lichen sclerosus",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4adef9c7-4007-4389-8f40-1202d41ff933",
+      "question": "Commonest complication of diabetes, complicating pregnancy is :",
+      "options": "A. VSD\nB. ASD\nC. Sacral agenesis\nD. Anencephaly",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5801ed1a-48b9-418b-b8aa-0a932cf866f3",
+      "question": "All are true about centchroman except :",
+      "options": "A. Anti oestrogenic\nB. Not a teratogen\nC. Long acting pill\nD. Failure is 10 per 100 women years",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5aefbec0-bd30-4180-a9f5-34925945cb10",
+      "question": "According to WHO classification of ovarian tumors, Brenner's tumor of ovary belongs to :",
+      "options": "A. Epithelial tumours\nB. Sex cord stromal tumors\nC. Germ cell tumours\nD. Metastatic tumours",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_5f928542-b712-4145-bbfd-f9cb16389c53",
+      "question": "Banana and lemon sign is seen in which fetal anomalies?",
+      "options": "A. Neural tube defect\nB. Hydrops fetalis\nC. Twins\nD. IUD",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_60129dc5-8759-4db4-a67e-37103007a398",
+      "question": "A pregnant 35 yrs old patient is at highest risk for the concurrent development of which of the following malignancies?",
+      "options": "A. Cervix\nB. Ovary\nC. Uterus\nD. Vagina",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_60ae9b46-b76a-4986-b466-f4a62dc5e33b",
+      "question": "Most commonly this tumour is due to carcinoma of",
+      "options": "A. Stomach\nB. Breast\nC. Colon\nD. Uterus",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_621316dd-5ef8-4ba1-953c-6f214b414b56",
+      "question": "A woman with 20 weeks pregnancy presents with bleeding per vaginum. On speculum examination, the os is open but no products have comes t. The most likely diagnosis is:",
+      "options": "A. Incomplete aboion\nB. Complete aboion\nC. Inevitable aboion\nD. Missed aboion",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_63452547-c264-400a-8965-239f1a377431",
+      "question": "Which of the following is the BEST indicator of ovarian reserve?",
+      "options": "A. FSH\nB. Estradiol\nC. LH\nD. FSH/LH ratio",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_638de21f-85a2-48d2-869a-c6e07f74e5df",
+      "question": "Barr body is present in all except",
+      "options": "A. Klinefelter syndrome\nB. Turner syndrome\nC. Mullerian agenesis\nD. Congenital adrenal hyperplasia",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_641a73af-2de7-4538-b92b-1408ce0d5b7b",
+      "question": "Patient diagnosed as squamous cell intraepithelial lesion which of the following has the highest risk for progression to carcinoma:",
+      "options": "A. Low grade squamous intraepithelial neoplasia\nB. High grade squamous intraepithelial neoplasia\nC. Squamous intraepithelial associated with HPV 16\nD. Squamous intraepithelial neoplasia associated with HIV",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_656853e5-84ee-4e79-bdb7-9eab31cda926",
+      "question": "Most common cause of hirsutism in a teenage girl:",
+      "options": "A. Ovarian disease\nB. Pheochromocytoma\nC. Obesity\nD. Adrenogenital syndrome",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_67d52e17-28e5-480a-a1d8-752dbd2d2147",
+      "question": "which is one of the following is not an operation for uterine inversion",
+      "options": "A. O sullivan\nB. Haultain\nC. spinelli\nD. Fentoni",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_697ef2bb-2379-4103-a636-ef683b0c99f7",
+      "question": "Maximum dose of radiation exposure during pregnancy is",
+      "options": "A. 0.5 rad\nB. 1 rad\nC. 1.5 rad\nD. 5 rad",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6f25df77-11ce-45e1-a3c8-dc827769659a",
+      "question": "Regarding neuroimaging in neonatal period all are true except",
+      "options": "A. Sonographic studies are generally normal on the day of birth.\nB. Decreased density in thalamus or Basal ganglia is seen after 24 hours and persists for 5 to 7 days on CT.\nC. CT scans are usually normal on first day of life in term infants.\nD. MRI can't detect abnormalities on first day of life.",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.96,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_771e0d93-33f4-473c-900d-c2a78b1c03b6",
+      "question": "A teenage girl presented in OPD with moderate acne and history of irregular menses. What treatment will you give?",
+      "options": "A. Oral isotretinoin\nB. Oral acitretin\nC. Oral minocycline\nD. Cyproterone acetate",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_77d8e0ce-9e8e-4e5a-afc4-87543ac99909",
+      "question": "Bih is defined as",
+      "options": "A. The complete expulsion or extraction from the mother of a fetus after 20 weeks gestation\nB. The complete expulsion or extraction from the mother of a fetus after 28 weeks gestation\nC. The complete expulsion or extraction from the mother of a fetus after 38 weeks gestation\nD. The complete expulsion or extraction from the mother of a fetus after 40 weeks gestation",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_78049723-dad0-4136-aab3-be0d70738dc1",
+      "question": "During a routine return OB visit, an 18-year-old G1P0 patient at 23 weeks gestational age undergoes a urinalysis. The dipstick done by the nurse indicates the presence of trace glucosuria. All other parameters of the urine test are normal. Which of the following is the most likely etiology of the increased sugar detected in the urine?",
+      "options": "A. The patient has diabetes\nB. The patient has a urine infection\nC. The patient's urinalysis is consistent with normal pregnancy\nD. The patient's urine sample is contaminated",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e2fabf1-3661-4d2e-a939-e205fa64272f",
+      "question": "Which of the following strategy has been recommended to reduce the heredity risk for ovarian cancer in women with BRCA -1 and BRCA-2 mutations :",
+      "options": "A. Use of oral contraceptive pills\nB. Screening with transvaginal ultrasound\nC. Sreening with CA -125\nD. Prophylactic oophorectomy",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.99,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e3f5b0e-13fb-4243-9596-c49bb44018c1",
+      "question": "The Kleihauer Betke test for detecting foetal erythrocytes is based on the fact that",
+      "options": "A. Adult erythrocytes are larger than those of foetus\nB. HbA has higher oxygen affinity than HbF\nC. HbF is more resistant acid elution than HbA\nD. HbA takes up erythrosin stain less than HbF",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_853c7c17-e1a1-4ddd-b83e-ef2d6d8fa5f8",
+      "question": "Which of the following about lymphatlcs of vulva is true :",
+      "options": "A. Do not cross the labiocrural lold\nB. Traverse labia from medial to lateral\nC. Drain directly into deep femoral glands\nD. Do not traely communicale with each other",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_8f464855-9284-44e0-8d9b-f7a27be9565e",
+      "question": "Uterine aery is a branch of",
+      "options": "A. External iliac aery\nB. Anterior division of internal iliac aery\nC. Posterior division of internal iliac aery\nD. Ovarian aery",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_8f92483d-1783-4573-afa6-e73a73b168cd",
+      "question": "True about Femur length used as fetal biometric measure is all except",
+      "options": "A. Femur length used for gestational age estimation has variation of 7 to 11 days in second trimester\nB. Foreshortend femur length suggests evaluation for skeletal dysplasia\nC. Femur length doesn't correlate well with BPD and gestational age\nD. Femur length is measured excluding the epiphysis",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9c95067a-7e0f-40f4-9c7b-8feb5db0706d",
+      "question": "All of the following are done in case of VVF except",
+      "options": "A. Methylene blue 3 swab test\nB. Urine culture\nC. Cystoscopy\nD. MRI",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a1c1f211-dbe0-41b2-a0b2-728ab6437907",
+      "question": "Prolactinoma in pregnancy, all are true except -",
+      "options": "A. Most common pituitary tumor but rarely symptomatic\nB. Increase in prolactin levels worse prognosis\nC. Macroadenoma > 1 cm is associated with bad prognosis\nD. Regular visual checkup",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a362f242-175f-432b-8b1b-af6bb32d9e5c",
+      "question": "A woman with previous history of Neural tube defects in her first baby, becomes pregnant again ,what is the recommended folic acid dosage for her?",
+      "options": "A. 400 mcg\nB. 4 mg\nC. 1mg\nD. 100 mcg",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a4790139-2426-488b-90df-08396c4a3af8",
+      "question": "AG2P1 to female has a history of previous preterm bih at 32 weeks. The percentage chances of preterm bih in this pregnancy are:",
+      "options": "A. 5%\nB. 10%\nC. 15%\nD. 25%",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a6267b47-8b12-4c03-9644-083d87fc956f",
+      "question": "Which or face presentation?",
+      "options": "A. Anencephaly\nB. Contracted pelvis\nC. Placenta prae\nD. Thyroid swelling",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a859e97d-b5e1-41b7-9a9d-8f3672320a75",
+      "question": "Endometrial sampling for abnormal uterine bleeding is done if all except",
+      "options": "A. Aged > 45 years\nB. Irregular menstrual bleeding\nC. Failed medical therapy\nD. Multiple sexual partners",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.35,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_abd830c3-1915-4b85-8861-920ded87d674",
+      "question": "Weight of normal uterus is :",
+      "options": "A. 30 -- 45 gms\nB. 45 -- 60 gms\nC. 60 -- 70 gms\nD. 80 -- 100 gms",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ac9f271c-18b7-496d-b1aa-fc78da9bf186",
+      "question": "Cervix carcinoma arises from :",
+      "options": "A. Squamo-columnar junction\nB. Isthmus\nC. Cervical lip\nD. Internal os",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b5a2fad9-e022-4260-a5e8-d7c2914e5584",
+      "question": "Which of the following antiretroviral therapy is contraindicated in pregnancy",
+      "options": "A. Nevirapine\nB. Efavirenz\nC. Lamivudine\nD. Stavudine",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_bf03dcdb-43e0-4464-8cfa-3ee79e2d7991",
+      "question": "Virus responsible for non immune hydrops fetalis is",
+      "options": "A. Cytomegalovirus\nB. Herpes simplex virus\nC. Hepatitis B virus\nD. Parvovirus",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c0304779-20c1-4da2-b5a5-a6fa7f24d71e",
+      "question": "Increased nuchal translucency at 14 weeks is suggestive of:",
+      "options": "A. Down's syndrome\nB. Esophageal atresia\nC. Trisomy 18\nD. Foregut duplication cyst",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c07d16c3-7e51-4b97-9360-af2e10fceeae",
+      "question": "Acetylcholine esterase levels are highly specific for:",
+      "options": "A. Omphalocele\nB. Gastroschisis\nC. Open spina bifida\nD. Sacrococcygeal teratoma",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_c33c6284-7b62-469e-8923-e4c81cdeb50e",
+      "question": "Best gas used for creating pneumoperitonium at laparoscopy is:",
+      "options": "A. N2\nB. O2\nC. CO2\nD. N20",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_cc8c3c17-fda4-4c40-ae05-f82be0560cb2",
+      "question": "Which of the following is most likely the diagnosis of 27years old obese woman presenting with Oligomenorrhea, infeility and hirsutism",
+      "options": "A. Polycystic ovaries\nB. Endometriosis\nC. Pelvic inflammatory disease\nD. Turner's syndrome",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d0d3eaf3-ba35-4b2b-a584-76bab8267882",
+      "question": "45 year old patient came to the Gynecology OPD with history of Postcoital bleeding. She underwent the procedure shown below, Name the instruments used.",
+      "options": "A. Ayre's spatula, Cusco's speculum\nB. Cervical pipette, Sim's speculum\nC. Endocervical brush, Sim's speculum\nD. Cusco's speculum , Endocervical brush,",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d223bb09-0b18-4c0f-804e-208f19abbbba",
+      "question": "True statement regarding this fetal parameter is?",
+      "options": "A. Best parameter for dating pregnancy\nB. Can be measured till 10 weeks only\nC. Accuracy for gestational age estimation is (+-) 7 to 10 days\nD. Fetus is measured from head to toe",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f282f31f-f13e-4b34-bc89-a366e295e3ff",
+      "question": "Pap smear of Lelawati 45 years female shows CIN grade III. Which of the following is the next step in management :",
+      "options": "A. Punch biopsy\nB. Large loop excision\nC. Colposcopy directed biopsy\nD. Cone biopsy",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f3502443-36d0-4a03-9144-cef17fa5e2ee",
+      "question": "Late hyperglycemia in pregnancy is associated with/ can cause which of the following ?",
+      "options": "A. Macrosomia\nB. IUGR\nC. Postmaturity\nD. Congenital malformation",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.33,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f4a2168f-3235-4d98-aa79-661d87fcbdf0",
+      "question": "False about vagina is :",
+      "options": "A. Paly or wholly derived from urogenital sinus\nB. Rich in glands\nC. Lined by stratified epithelium\nD. Posterior fornix longer than anterior fornix",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f765642e-b175-4b31-8af3-5c8dcac26c60",
+      "question": "A patient with chronic pelvic pain undergoes a hysterectomy. The resected uterus is filled with nodules composed of benign smooth muscle cells. Which of the following terms best describes these nodules?",
+      "options": "A. Angiosarcoma\nB. Leiomyoma\nC. Leiomyosarcoma\nD. Rhabdomyoma",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fa0ddcdd-0691-41a7-bc23-3317ff3bd07e",
+      "question": "Increased nuchal translucency at 14 weeks of gestation is seen in:",
+      "options": "A. Turner's syndrome\nB. Down's syndrome\nC. Esophageal atresia\nD. Klinefelter's syndrome",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0c732eae-6337-4d27-ad81-7297c4284cec",
+      "question": "Microcephaly is defined as a:",
+      "options": "A. Head circumference more than 2 SD above the mean for age and sex\nB. Head circumference more than 3SD above the mean for age and sex\nC. Head circumference more than 10th percentile above the mean for age and sex\nD. Head circumference more than 15th percentile above the mean for age and sex",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.99,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_0ec8042e-973a-4d15-8fda-08cb20df17c8",
+      "question": "Most dangerous Osteogenesis Imperfecta (OI) in utero foetus",
+      "options": "A. Type 1 OI\nB. Type 2 OI\nC. Type 3 OI\nD. Type 4 OI",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.42,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_14489a75-1d62-4d80-8146-99c915a9b485",
+      "question": "A term neonate was delivered by cesarean section. He presents with mild respiratory distress soon after birth. Chest X-ray shows the typical findings. How is this condition managed",
+      "options": "A. Oxygen delivery by CPAP\nB. Surfactant provided by InSuRE technique\nC. Supportive care as it resolves spontaneously\nD. Oxygen delivery by endotracheal intubation",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 1.14,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_1553de3b-5a58-46dd-8518-2fc6d6334628",
+      "question": "Newborn loses how much weight in first week?",
+      "options": "A. 5-10%\nB. 1-2%\nC. 10-20%\nD. None",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_19fd6b2f-3cc3-49cd-bd92-a8a67a7b19d2",
+      "question": "Most impoant determinant in Fallot&;s tetralogy is",
+      "options": "A. RVH\nB. Sub-pulmonic stenosis\nC. Pan systolic murmur\nD. Enlargement of hea",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_1e9edf03-ee3a-48d3-9d07-1ce1fac819cd",
+      "question": "Flag sign and flaky paint dermatitis are characteristically seen in",
+      "options": "A. Kwashiorkar\nB. Marasmus\nC. Pellagra\nD. Nutritional dwarf",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.38,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_20d2c7b6-f5f1-4922-8e71-111f17478f4d",
+      "question": "The most common pathogenic organism causing pyogenic liver abscess in children is:",
+      "options": "A. Staphylococcus aureus\nB. H Influenzae\nC. Entamoeba Histolytica\nD. Klebsiella",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2445bd18-c326-4ad4-9c59-3c014317d19d",
+      "question": "How much time later should ROP screening be done for a 2 week old baby being treated in NICU for sepsis, who was born at 28 wk gestation?",
+      "options": "A. 2 weeks\nB. 4 weeks\nC. 6 weeks\nD. 8 weeks",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_24a9caad-cdcc-43bc-a058-d26ed3470bcf",
+      "question": "Patent truncus arteriosus leads to -",
+      "options": "A. Both ventricular hypertrophy\nB. Pulmonary oligemia\nC. Ductus dependant flow\nD. CCF at birth",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_2ea05c64-8249-4be9-83aa-f91f09164452",
+      "question": "Average gain of height in first year is ?",
+      "options": "A. 25 cm\nB. 50 cm\nC. 75 cm\nD. 100cm",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_330f620a-c684-4e52-bbc1-69eb4c0fa054",
+      "question": "All the following are major criteria for diagnosis of rheumatic fever (RF) except",
+      "options": "A. Carditis\nB. Polyahritis\nC. Fever\nD. Erythema marginatum",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_38fd710f-c0b5-457e-84aa-9809848ad3f1",
+      "question": "The most common type of total anomalous pulmonary venous connection is",
+      "options": "A. Supracardiac\nB. Infracardiac\nC. Mixed\nD. Cardiac",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_3f6e2e06-91a2-4241-92e1-7b18db0f9d02",
+      "question": "Laurence moon biedl syndrome is associated with",
+      "options": "A. Polydactyly\nB. Mental retardation\nC. Retinitis pigmentosa\nD. All of the above",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_3f78f687-67e9-4927-b0d5-2abac1a4e9a6",
+      "question": "Most common cause of thyrotoxicosis in childhood ?",
+      "options": "A. Toxic nodular goitre\nB. Toxic adenoma\nC. Graves disease\nD. Thryotoxicosis factitia",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_47465d28-195f-4050-a6d5-a9f24bc73000",
+      "question": "A premature infant born at 34 weeks presented with acute onset lethargy and cessation of feeding. The imaging modality of choice to screen for intraventricular haemorrhage is",
+      "options": "A. NCCT\nB. Transcranial USG\nC. MRI\nD. Plain radiograph",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4a9c89b7-15e3-4c25-b01c-f2c6b56d168e",
+      "question": "Which of the following is not useful in management of meconium aspiration syndrome: March 2011",
+      "options": "A. Oxygen\nB. Ventilatory suppo\nC. Coicosteroids\nD. Antibiotics",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_4e1b7526-e1b6-442e-9153-05d3950c5249",
+      "question": "Drug which may lead to hemolysis in a child with G6PD deficiency is -",
+      "options": "A. Penicillin\nB. Primaquine\nC. Ceftriaxone\nD. Erythromycin",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_63ba2249-5630-48af-bd50-cb30fcccc7e1",
+      "question": "A 2 year old child presents with scattered lesions in the skull. Biopsy revealed Langerhans giant cells. The most commonly associated is marker with this candition will be",
+      "options": "A. CD 1a\nB. CD 57\nC. CD 3\nD. CD 68",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6779b8fb-46cb-4039-81d6-d19496baf060",
+      "question": "Delayed dentition is seen in:",
+      "options": "A. Down syndrome\nB. Congenital hypothyroidism\nC. Rickets\nD. All of the above",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_696f33b4-9e5e-43d7-bd3d-dab5c987c0c4",
+      "question": "Which of the following condition is associated with precocious pubey?",
+      "options": "A. Hypehyroidism\nB. Addison's disease\nC. McCune Albright syndrome\nD. Neuroblastoma",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6f1ec6fd-8b24-4d77-9946-b5589ae694a0",
+      "question": "True about measles –a) Rash appear first on legb) Koplik spots are seen in retinac) Long term complication follows in form of SSPEd) Caused by RNA viruse) IP–IS 2–3 day",
+      "options": "A. cd\nB. bc\nC. bd\nD. ac",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_6fe64e43-894c-435b-8c0c-a129252057ab",
+      "question": "Neuroblastoma is-",
+      "options": "A. Associated with mild hypeension\nB. Rare tumour to undergo regression\nC. Commonest tumour of adrenal coex\nD. All",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_78f061f0-e8f5-4223-994f-6e21e1f04eb3",
+      "question": "A child presents with brown coloured urine and oliguria for last 3 days. He has mild facial and pedal edema. His blood pressure is 126/90. He has +3 proteinuria with 100 red cell and a few granular casts. His creatinine is 0.9, urea is 56. What is his diagnosis?",
+      "options": "A. PSGN\nB. Nephrolithiasis\nC. ESGN\nD. Infection associated glomerulonephritis",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_79499169-9b69-4f00-a7fa-73e37ae76c3e",
+      "question": "The indication of using adrenaline in neonatal resuscitation is:",
+      "options": "A. Heart rate <100 beats/min\nB. Heart rate <60 beats/min despite chest compressions and ventilation\nC. Heart rate <75 beats/min\nD. Heart rate <50 beats/min",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7a603add-33a7-4a96-a9a9-f72b482cb41c",
+      "question": "How much is the probable bilirubin level of this neonate?",
+      "options": "A. 6 mg/dl\nB. 9 mg/dl\nC. 12 mg/dl\nD. 18 mg/dl",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7c8d6ec0-81f1-4a03-9350-0d10623423ea",
+      "question": "Treatment of choice of this 3-year-old child with an irreducible lump in right scrotum with trans- illuminance positive.",
+      "options": "A. Jaboulay's procedure\nB. Lord's plication\nC. Sclerotherapy\nD. None",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_7e221978-9183-49ab-b5f3-3b57293ecda2",
+      "question": "All of the following can occur in a neonate for heat production except",
+      "options": "A. Shivering\nB. Breakdown of brown fat with adrenaline secretion\nC. Universal flexion like a fetus\nD. Cutaneous vasoconstriction",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_83898b29-bcd9-41dc-a4ce-81a5b699c021",
+      "question": "Holt oram syndrome is characterised by",
+      "options": "A. ASD\nB. Pulmonary stenosis\nC. TGA\nD. TAPVC",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9338f2cd-5515-4768-ac9f-03bc735974ad",
+      "question": "Early adolescent age is -",
+      "options": "A. 8-11 years\nB. 10-13 years\nC. 14 - 15 years\nD. 16 - 19 years",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_990ff464-3550-487d-a657-f580f286007e",
+      "question": "TRUE statement regarding childhood malignancy is-",
+      "options": "A. Wilm's tumour is the commonest\nB. AML is the most common malignancy\nC. Neuroblastoma arises in the first 4 years\nD. None of the above",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": true,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_9b01ee36-e217-4836-b015-22287b4a15c4",
+      "question": "Microcephaly is defined as",
+      "options": "A. Head circumference < -3SD below the mean for age and sex\nB. Head circumference < -2SD below the mean for age and sex\nC. Head circumference below 10th percentile the mean for age and sex\nD. Head circumference below 15th percentile the mean for age and sex",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.97,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_a4a9dd72-0b53-4edc-aa1f-55245e027b4d",
+      "question": "Retinoblastoma gene is located on –",
+      "options": "A. Chromosome 5\nB. Chromosome 8\nC. Chromosome 13\nD. Chromosome 16",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ac4c06a7-1a5b-4030-bd92-26233a223dcb",
+      "question": "A 2 yr old child is brought to emergency at 3 am with fever, barking cough and stridor only while crying. The child was able to drink normally. On examination, respiratory rate is 36/min and temperature is 39.6C. What will be your next step",
+      "options": "A. Racemic epinephrine nebulisation\nB. Dexamethasone\nC. Nasal wash for influenza or respiratory syncytial virus\nD. Antibiotics and blood culture",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_acaabba5-d58e-427a-b935-e64df8cb4eff",
+      "question": "All of the following have autosomal dominant pattern of inheritance except:",
+      "options": "A. Huntington's chorea\nB. Hemophilia A\nC. Tuberosis sclerosis\nD. Marfan's syndrome",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b3fd8ae3-c58a-4280-adca-d02122f6918c",
+      "question": "By what age a child can make tower of 3 cubes?",
+      "options": "A. 15 months\nB. 18 months\nC. 24 months\nD. 28 months",
+      "ground_truth": "B",
+      "answer_index": 1,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_b67961e9-233c-4b0d-879e-302663efd6a9",
+      "question": "Treatment of Rolandic epilepsy is",
+      "options": "A. Phenytoin\nB. Lamotrigine\nC. Carbamazepine\nD. ACTH",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "B",
+      "extracted_answer": "B",
+      "extracted_answers": [
+        "B"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_ce36e860-95ba-4700-8fd4-00d9f80f8933",
+      "question": "A child is suffering from dry skin and is mentally retarded-diagnosis ?",
+      "options": "A. Vit A deficiency\nB. Crebral palsy\nC. Hypothyroidism\nD. All above",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 0.37,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_d0a68884-f053-48e3-bed5-944618616376",
+      "question": "All of the following nutritional assessment methods indicate inadequate nutrition except -",
+      "options": "A. Hb < 11.5 g/dl during 3rd trimester of pregnancy\nB. Increased 1-4 year moality rate\nC. Bih weight < 2500 gm\nD. Decreased weight for height",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": false,
+      "inference_time_s": 1.01,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_e26fc57a-f006-41ba-8128-865c5e044ad2",
+      "question": "Normal body temperature of a neonate is:",
+      "options": "A. 36.5degC to 37.5degC\nB. 35.5degC to 36degC\nC. 36.5degC to 37degC\nD. 37.5degC to 38degC",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 1.0,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_e56729e2-530b-43ed-af40-494523280bc1",
+      "question": "A 5-year-old boy is brought into the ER immediately after an unfortunate altercation with a neighbor's immunized Chihuahua that occurred while the child was attempting to dress the dog as a superhero. The fully immunized child has a small, irregular, superficial laceration on his right forearm that has stopped bleeding. His neuromuscular examination is completely normal, and his perfusion is intact. Management should include which of the following?",
+      "options": "A. Irrigation and antimicrobial prophylaxis\nB. Tetanus booster immunization and tetanus toxoid in the wound\nC. Copious irrigation\nD. Primary rabies vaccination for the child",
+      "ground_truth": "C",
+      "answer_index": 2,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": false,
+      "inference_time_s": 1.02,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_f72f0acc-180a-496a-8d04-68b05ac0493f",
+      "question": "10 year old boy with gross hematuria, loin pain, diarrhoea urine examination is normal. Serum C3 levels are normal diagnosis is ?",
+      "options": "A. Berger's disease\nB. PSGN\nC. Microangiopathic hemolytic anemia\nD. None of the above",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fc6bfd8d-6af8-4b0a-b6a3-bcc287942069",
+      "question": "Extremely low bih weight is defined as weight of an infant below: March 2013 (b, f)",
+      "options": "A. 1000 gm\nB. 1200 gm\nC. 1500 gm\nD. 2500 gm",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "A",
+      "extracted_answer": "A",
+      "extracted_answers": [
+        "A"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fe5664f2-b770-4ecc-8401-f633ad9b132c",
+      "question": "Laurence moon biedle syndrome-Associated with?",
+      "options": "A. Polydactyly\nB. Mental retardation\nC. Retinitis pigmentosa\nD. All of above",
+      "ground_truth": "D",
+      "answer_index": 3,
+      "rag_context": "",
+      "model_response": "D",
+      "extracted_answer": "D",
+      "extracted_answers": [
+        "D"
+      ],
+      "correct": true,
+      "inference_time_s": 0.36,
+      "device_error": null
+    },
+    {
+      "id": "mamabench_v0.2_medmcqa_fe5ef759-244d-43b9-9270-f98ed1c1f872",
+      "question": "Meningomyelocele with progressive hydrocephalus is commonly seen in",
+      "options": "A. Arnold chiari II\nB. Choroid plexus papilloma\nC. Dandy walker malformation\nD. Vein of Galen malformation",
+      "ground_truth": "A",
+      "answer_index": 0,
+      "rag_context": "",
+      "model_response": "C",
+      "extracted_answer": "C",
+      "extracted_answers": [
+        "C"
+      ],
+      "correct": false,
+      "inference_time_s": 0.36,
+      "device_error": null
+    }
+  ]
+}

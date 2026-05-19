@@ -1,0 +1,620 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260519T215728",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 100,
+  "n_rows_done": 100,
+  "total_time_ms": 603137,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_medqa_usmle_399870bcb028",
+      "response_text": "F",
+      "inference_time_ms": 1046,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4eb815d0c4fe",
+      "response_text": "A",
+      "inference_time_ms": 1022,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bf763398b165",
+      "response_text": "E",
+      "inference_time_ms": 1039,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c55f73cb3f7",
+      "response_text": "C",
+      "inference_time_ms": 1026,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8a46985eaafb",
+      "response_text": "B",
+      "inference_time_ms": 1033,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_325c647e5140",
+      "response_text": "I",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0dab621bc5a0",
+      "response_text": "D",
+      "inference_time_ms": 1016,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_201b38000e67",
+      "response_text": "B",
+      "inference_time_ms": 1039,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e0a544bfbd2d",
+      "response_text": "C",
+      "inference_time_ms": 1027,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b2f9924651b3",
+      "response_text": "E",
+      "inference_time_ms": 1025,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bab7fad48ae1",
+      "response_text": "B",
+      "inference_time_ms": 1014,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_35fccdc62e37",
+      "response_text": "D",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_fe798250aa92",
+      "response_text": "G",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0fa261ed9d17",
+      "response_text": "H",
+      "inference_time_ms": 1016,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_ac3bef8ae630",
+      "response_text": "C",
+      "inference_time_ms": 1032,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9345197ea836",
+      "response_text": "E",
+      "inference_time_ms": 994,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9f14a5f00584",
+      "response_text": "A",
+      "inference_time_ms": 1022,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_87ee8d02eb14",
+      "response_text": "B",
+      "inference_time_ms": 1018,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c3b4f2c8aad",
+      "response_text": "C",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e3c8e2827846",
+      "response_text": "B",
+      "inference_time_ms": 1001,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e6d7767ca15d",
+      "response_text": "C",
+      "inference_time_ms": 1008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_53499a1dc33b",
+      "response_text": "C",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4830fd5fb84a",
+      "response_text": "A",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c9f828a4a40c",
+      "response_text": "F",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_86b8645b16af",
+      "response_text": "A",
+      "inference_time_ms": 996,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_57f2196bbdd5",
+      "response_text": "B",
+      "inference_time_ms": 1001,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_9ebe6f91b448",
+      "response_text": "C",
+      "inference_time_ms": 1019,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4070fb2b5c3d",
+      "response_text": "C",
+      "inference_time_ms": 1016,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6fc7736a3e67",
+      "response_text": "B",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2d1d2d97cb35",
+      "response_text": "C",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_756d46625e62",
+      "response_text": "E",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7556e722cf85",
+      "response_text": "E",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1802cd76bcd5",
+      "response_text": "A",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_711d27e205aa",
+      "response_text": "D",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3a45f271351b",
+      "response_text": "D",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2981238b5182",
+      "response_text": "E",
+      "inference_time_ms": 1001,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_859dd8c278ee",
+      "response_text": "A",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1056f3ec4cb0",
+      "response_text": "D",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d83653be58ed",
+      "response_text": "A",
+      "inference_time_ms": 1016,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d4d81651f0d8",
+      "response_text": "C",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_4a22ffabb197",
+      "response_text": "D",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d51e438c05f8",
+      "response_text": "A",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_fc9b25685df4",
+      "response_text": "E",
+      "inference_time_ms": 1033,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_161f4ead60a5",
+      "response_text": "A",
+      "inference_time_ms": 1026,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_501321bc0ecd",
+      "response_text": "A",
+      "inference_time_ms": 1018,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6f2d2ea9e46e",
+      "response_text": "E",
+      "inference_time_ms": 1023,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_188b9fe8ab22",
+      "response_text": "B",
+      "inference_time_ms": 1035,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6aaf441a4c5b",
+      "response_text": "B",
+      "inference_time_ms": 1018,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b8122364c2bf",
+      "response_text": "A",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_106680fb085c",
+      "response_text": "C",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_308f5a31c670",
+      "response_text": "B",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c8c9663a480c",
+      "response_text": "E",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3037acd1046e",
+      "response_text": "D",
+      "inference_time_ms": 1020,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_35d811ea7a53",
+      "response_text": "C",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_65732c2f3655",
+      "response_text": "C",
+      "inference_time_ms": 1053,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_52299402ea36",
+      "response_text": "A",
+      "inference_time_ms": 1011,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2204fab687fc",
+      "response_text": "A",
+      "inference_time_ms": 1019,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e66c77e5b499",
+      "response_text": "C",
+      "inference_time_ms": 1031,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6a11ae8ace4b",
+      "response_text": "E",
+      "inference_time_ms": 1017,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7bbe89cb9e80",
+      "response_text": "D",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_85300219677d",
+      "response_text": "C",
+      "inference_time_ms": 1021,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bfbbac4f1468",
+      "response_text": "A",
+      "inference_time_ms": 1023,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_f9a2a7ff48a9",
+      "response_text": "B",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bff0e96c1242",
+      "response_text": "B",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_520fe4946a90",
+      "response_text": "A",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6b877eac9efc",
+      "response_text": "B",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_47b1516d413e",
+      "response_text": "A",
+      "inference_time_ms": 1006,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_f62f399bc165",
+      "response_text": "E",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_a2e6dae183b7",
+      "response_text": "D",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_e82db0a89972",
+      "response_text": "D",
+      "inference_time_ms": 1029,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_2f0b9bdc7ae0",
+      "response_text": "C",
+      "inference_time_ms": 1027,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_24ef2ab9cc78",
+      "response_text": "B",
+      "inference_time_ms": 1023,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d4b5605ddfb4",
+      "response_text": "A",
+      "inference_time_ms": 1017,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_3573c6c772c1",
+      "response_text": "D",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b4b709f7a976",
+      "response_text": "E",
+      "inference_time_ms": 1014,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_aac2f3b12b2b",
+      "response_text": "C",
+      "inference_time_ms": 1000,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_03b82c5e997a",
+      "response_text": "B",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_914913525616",
+      "response_text": "C",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_8c5cbbc3f482",
+      "response_text": "B",
+      "inference_time_ms": 1003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_c6f1c96d367d",
+      "response_text": "C",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_73bc6285dfce",
+      "response_text": "A",
+      "inference_time_ms": 1014,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b6a4ededdb78",
+      "response_text": "A",
+      "inference_time_ms": 1010,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_23f14d83a7b2",
+      "response_text": "E",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_53a5042aebf8",
+      "response_text": "A",
+      "inference_time_ms": 1004,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7bb591b34de9",
+      "response_text": "A",
+      "inference_time_ms": 1005,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_d3e574f3e4e0",
+      "response_text": "A",
+      "inference_time_ms": 1017,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6f97e974bf5c",
+      "response_text": "A",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6efce006077b",
+      "response_text": "A",
+      "inference_time_ms": 1024,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_28e27e091613",
+      "response_text": "A",
+      "inference_time_ms": 1023,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_0d1496e7f116",
+      "response_text": "A",
+      "inference_time_ms": 1009,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_87418a265522",
+      "response_text": "A",
+      "inference_time_ms": 1007,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_a8635876cf52",
+      "response_text": "B",
+      "inference_time_ms": 1014,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_7c84e9ffe527",
+      "response_text": "D",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_732c9adedcf8",
+      "response_text": "C",
+      "inference_time_ms": 1016,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_b6dc9edbb799",
+      "response_text": "C",
+      "inference_time_ms": 1015,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_1cba33958e0e",
+      "response_text": "A",
+      "inference_time_ms": 1012,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_85caf4dbccca",
+      "response_text": "A",
+      "inference_time_ms": 1002,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_bfffd16f018c",
+      "response_text": "A",
+      "inference_time_ms": 1013,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_6d3e1610cc98",
+      "response_text": "D",
+      "inference_time_ms": 1022,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_medqa_usmle_62266708cf5b",
+      "response_text": "A",
+      "inference_time_ms": 1017,
+      "error": null
+    }
+  ]
+}
