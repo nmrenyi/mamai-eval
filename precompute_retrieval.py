@@ -206,7 +206,7 @@ def main():
         print(f"{'='*60}")
 
         try:
-            ds = load_dataset(hf_repo, hf_config, revision=revision, split="train")
+            ds = load_dataset(hf_repo, hf_config, revision=revision, split="test")
         except Exception as e:
             print(f"SKIP: failed to load {ds_name}: {e}")
             continue

@@ -100,7 +100,7 @@ def _load_rubric_criteria(repo: str, revision: str) -> dict:
     rows: list[dict] = []
     try:
         from datasets import load_dataset
-        ds = load_dataset(repo, "healthbench_criteria", revision=revision, split="train")
+        ds = load_dataset(repo, "healthbench_criteria", revision=revision, split="test")
         rows = list(ds)
     except Exception as e:
         print(f"  load_dataset(healthbench_criteria) failed ({e}); trying raw side_tables file")
@@ -189,7 +189,7 @@ def _load_dataset(name: str, revision: str, repo: str,
     from datasets import load_dataset
     hf_config, set_type = HF_CONFIGS[name]
     print(f"Loading {repo}/{hf_config}@{revision}")
-    ds = load_dataset(repo, hf_config, revision=revision, split="train")
+    ds = load_dataset(repo, hf_config, revision=revision, split="test")
     criteria = _load_rubric_criteria(repo, revision) if set_type == "open_ended_rubric" else None
 
     rows = []
