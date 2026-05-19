@@ -74,12 +74,17 @@ for ENV_PAIR in "${EXTRA_ENV[@]}"; do
   fi
 done
 
+# Node pool. `default` is the A100-80GB pool on light cluster; override via
+# NODE_POOL env var (e.g. NODE_POOL=h100, NODE_POOL=h200) for larger GPUs.
+NODE_POOL="${NODE_POOL:-default}"
+
 RUNAI_ARGS=(
   runai submit
   --name "$JOB_NAME"
   --image nvidia/cuda:12.4.1-devel-ubuntu22.04
   --pvc light-scratch:/lightscratch
   --large-shm
+  --node-pool "$NODE_POOL"
   -e "OPENAI_API_KEY=$OPENAI_KEY"
   --gpu 1
   --backoff-limit 0
