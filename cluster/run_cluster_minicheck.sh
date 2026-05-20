@@ -18,12 +18,14 @@ apt-get update && apt-get install -y python3.10 python3-pip git > /dev/null 2>&1
 ln -sf /usr/bin/python3.10 /usr/bin/python3
 
 echo "=== INSTALLING PYTHON PACKAGES ==="
-# The `minicheck` package is not on PyPI — install from GitHub (Liyan06/MiniCheck).
-# vllm is required by the Bespoke-MiniCheck-7B variant under the hood.
+# We call Bespoke-MiniCheck-7B directly via transformers — the upstream
+# `minicheck` package isn't on PyPI and its GitHub pyproject.toml is missing
+# a `name` field, breaking pip installs. Direct transformers also drops the
+# vllm dependency entirely; per-call latency on A100 is ~100ms which is fine
+# for the ~2.7K-call scale of this stage.
 # stderr/stdout intentionally NOT silenced so install errors surface in logs.
 pip3 install --no-cache-dir \
-    'minicheck @ git+https://github.com/Liyan06/MiniCheck.git' \
-    vllm tqdm
+    torch transformers accelerate huggingface_hub tqdm
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"

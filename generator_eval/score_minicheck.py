@@ -74,6 +74,98 @@ def _save(output_path: Path, metadata: dict, results: list[dict]) -> None:
     )
 
 
+# ── Scorer ──────────────────────────────────────────────────────────────────
+#
+# We call the Bespoke-MiniCheck-7B model directly via transformers instead of
+# the `minicheck` package — that package isn't on PyPI and its GitHub
+# pyproject.toml is missing a `name` field, breaking `pip install git+…`.
+# Direct invocation also means no vllm dependency, which keeps the cluster
+# install lean. The model is a Llama-3-8B fine-tune with a chat template that
+# emits a single Yes/No token; we read P(Yes) from its first-token logits.
+
+_PROMPT_TEMPLATE = (
+    "Determine whether the provided claim is consistent with the corresponding "
+    "document. Consistency in this context implies that all information presented "
+    "in the claim is substantiated by the document. If not, it should be considered "
+    "inconsistent.\n\n"
+    "Document:\n{document}\n\n"
+    "Claim:\n{claim}\n\n"
+    "Please assess the claim's consistency with the document by responding with "
+    "either \"yes\" or \"no\"."
+)
+
+
+class _BespokeMiniCheckScorer:
+    """Thin wrapper around bespokelabs/bespoke-minicheck-7b on HF transformers.
+
+    Returns P(supported) ∈ [0, 1] computed as softmax over the {yes, no} token
+    logits at the first generated position. Single-call (no batching) — the
+    chat-template plus variable-length premises make batched padding awkward,
+    and per-call latency on A100 for a 7B model + ~2K input tokens is ≈ 100ms,
+    so 2,659 calls ≈ 5 min, well within budget for stage 3.
+    """
+
+    HF_MODEL_NAME = "bespokelabs/bespoke-minicheck-7b"
+
+    def __init__(self, model_id: str, cache_dir: str | None = None):
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        resolved = self._resolve_model_id(model_id)
+        print(f"  Loading tokenizer/model from {resolved}")
+        self.tok = AutoTokenizer.from_pretrained(resolved, cache_dir=cache_dir)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            resolved,
+            torch_dtype=torch.bfloat16,
+            device_map="auto",
+            cache_dir=cache_dir,
+        )
+        self.model.eval()
+
+        # Bespoke's training data uses lowercase "yes"/"no". Get the first
+        # token id for each — both should be single tokens for Llama-3.
+        self.yes_id = self._first_token_id("yes")
+        self.no_id = self._first_token_id("no")
+        # Sanity backstop: if for some reason the lowercase mapping looks
+        # broken (e.g. tokenizer treats "yes" as multi-token), fall back to
+        # "Yes"/"No" — better than silently scoring against garbage tokens.
+        if self.yes_id is None or self.no_id is None:
+            self.yes_id = self._first_token_id("Yes")
+            self.no_id = self._first_token_id("No")
+        print(f"  yes_id={self.yes_id}  no_id={self.no_id}")
+
+    @classmethod
+    def _resolve_model_id(cls, name: str) -> str:
+        # Accept either the friendly name 'Bespoke-MiniCheck-7B' (legacy) or
+        # the HF repo id directly.
+        if name.lower().startswith("bespoke-minicheck"):
+            return cls.HF_MODEL_NAME
+        return name
+
+    def _first_token_id(self, text: str) -> int | None:
+        ids = self.tok.encode(text, add_special_tokens=False)
+        return ids[0] if ids else None
+
+    def score(self, document: str, claim: str) -> float:
+        import torch
+
+        prompt = _PROMPT_TEMPLATE.format(document=document, claim=claim)
+        messages = [{"role": "user", "content": prompt}]
+        input_text = self.tok.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+        inputs = self.tok(input_text, return_tensors="pt").to(self.model.device)
+        with torch.inference_mode():
+            outputs = self.model(**inputs)
+        last_logits = outputs.logits[0, -1, :]
+        yes_no = torch.stack([last_logits[self.yes_id], last_logits[self.no_id]])
+        probs = torch.softmax(yes_no.float(), dim=0)
+        return float(probs[0].item())
+
+    def score_batch(self, documents: list[str], claims: list[str]) -> list[float]:
+        return [self.score(d, c) for d, c in zip(documents, claims)]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -122,10 +214,8 @@ def main():
     print(f"  Pending: {len(pending)}")
 
     print(f"\nLoading MiniCheck: {args.minicheck_model}")
-    from minicheck.minicheck import MiniCheck
-    scorer = MiniCheck(model_name=args.minicheck_model,
-                       cache_dir=args.cache_dir or "./ckpts",
-                       enable_prefix_caching=False)
+    scorer = _BespokeMiniCheckScorer(model_id=args.minicheck_model,
+                                     cache_dir=args.cache_dir)
     print("MiniCheck loaded.\n")
 
     metadata = {
@@ -160,7 +250,7 @@ def main():
                 try:
                     sub_docs = [docs[j] for j in valid_idx]
                     sub_claims = [claims[j] for j in valid_idx]
-                    _, raw_probs, _, _ = scorer.score(docs=sub_docs, claims=sub_claims)
+                    raw_probs = scorer.score_batch(sub_docs, sub_claims)
                     for j, p in zip(valid_idx, raw_probs):
                         batch_probs[j] = float(p)
                 except Exception as e:
