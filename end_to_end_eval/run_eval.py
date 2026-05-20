@@ -395,7 +395,7 @@ def main():
                         help="Fixed output dir (reused across restarts for auto-resume).")
     args = parser.parse_args()
 
-    from prompts import _params as _active_params
+    from shared.prompts import _params as _active_params
     max_tokens = args.max_tokens or _active_params["generation"]["max_tokens"]
     judge_model_name = args.judge_model or JUDGE_MODEL
     revision = args.revision or DATASET_REVISION or "v0.2"

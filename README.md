@@ -13,25 +13,31 @@ MAM-AI is used by nurses and midwives making real clinical decisions. A safety s
 ## Structure
 
 ```
-configs/              versioned app configs — each with its own eval results
+configs/                  versioned app configs — each with its own eval results
   config-v0.x.y/
-    system_en.txt     English system prompt (same text as deployed app)
-    system_sw.txt     Swahili system prompt
-    mcq_system.txt    MCQ adapter prompt
-    params.json       generation + retrieval + judge params
+    system_en.txt         English system prompt (same text as deployed app)
+    system_sw.txt         Swahili system prompt
+    mcq_system.txt        MCQ adapter prompt
+    params.json           generation + retrieval + judge params
+    calibration/          row-id manifests for device-vs-cluster runs
     results/
-      safety/         *** safety-specific evaluation — must pass before release ***
-        <model>/
-      retrieval/      retrieval quality metrics
-      generation/     per-model generation quality (MCQ accuracy, open-ended judge scores)
-        <model>/
-      latency/        on-device latency benchmarks
-        <model>/
-  exp/                experimental configs — never released
+      safety/             *** safety-specific evaluation — must pass before release ***
+      retrieval/          retrieval quality metrics
+      generation/         per-model generation quality (MCQ accuracy, open-ended judge scores)
+      latency/            on-device latency benchmarks
+    reports/              human-readable summary writeups
+  exp/                    experimental configs — never released
 
-datasets/             benchmark datasets (TSV)
-cluster/              RunAI cluster submission scripts
+end_to_end_eval/          track 1: whole-system runners + scorers (MCQ/open/rubric/safety)
+retrieval_eval/           track 2: precompute retrieval + retrieval-quality metrics
+generator_eval/           track 3: generator (Gemma) faithfulness vs retrieved context
+latency_eval/             track 4: on-device latency benchmark via ADB
+
+shared/                   cross-cutting: model backends, prompts, scoring, HF loader
+calibration/              device-vs-cluster comparison tools
+cluster/                  RunAI cluster submission scripts
 tests/
+docs/                     handoff + refactor + design docs
 ```
 
 ## Config versioning
@@ -44,9 +50,27 @@ Experimental work goes under `configs/exp/`.
 
 ## Running eval
 
+End-to-end generation runs are invoked as modules from the repo root:
+
 ```bash
-python run_eval.py --config config-v0.1.0 --model gemma4-e4b --datasets afrimedqa_mcq
-python run_eval.py --config config-v0.1.0 --model gpt-5 --datasets all --judge
+# MCQ on cluster GPU (one of the v0.2 configs):
+python -m end_to_end_eval.run_eval --config config-v0.2.0 --model gemma4-e4b \
+    --datasets afrimedqa,medqa_usmle,medmcqa
+
+# On the connected Android device (requires ADB + the eval-mode APK):
+python -m end_to_end_eval.run_eval_device --config config-v0.2.0 \
+    --datasets afrimedqa --max-questions 20
+
+# RAG context precompute (needed before any +RAG eval):
+python -m retrieval_eval.precompute_retrieval --config config-v0.2.0 \
+    --db-path ... --gecko-model ... --tokenizer ... \
+    --datasets afrimedqa,medqa_usmle,medmcqa
+
+# Post-hoc rescoring on saved result JSONs:
+python -m end_to_end_eval.rescore_mcq      configs/config-v0.2.0/results/generation/<model>/<ts>/
+python -m end_to_end_eval.rescore_open_v2  configs/config-v0.2.0/results/generation/<model>/<ts>/
+python -m end_to_end_eval.rescore_rubric   configs/config-v0.2.0/results/generation/<model>/<ts>/
 ```
 
-Results are written to `configs/<config>/results/generation/<model>/`.
+Results land under `configs/<config>/results/generation/<model>/<ts>/`. For the full
+file-layout rationale see [`docs/refactor-plan-tracks.md`](docs/refactor-plan-tracks.md).
