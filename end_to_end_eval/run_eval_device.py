@@ -43,15 +43,14 @@ _pre_args, _ = _pre.parse_known_args()
 os.environ["MAMAI_EVAL_CONFIG"] = _pre_args.config
 # ─────────────────────────────────────────────────────────────────────────────
 
-from prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, PROMPT_VERSION,
-                     PROTOCOL_VERSION, SPEC_SHA256, DATASET_HF_REPO,
-                     DATASET_REVISION, TEMPERATURE, TOP_P, TOP_K, N_CTX,
-                     _params as _active_params)
-from scoring import _parse_answer_set, extract_letters, score_mcq
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-# Cross-import the v0.2 HF dataset loader from run_eval.py.
-sys.path.insert(0, str(Path(__file__).parent))
-from run_eval import HF_CONFIGS, _load_dataset
+from shared.prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, PROMPT_VERSION,
+                            PROTOCOL_VERSION, SPEC_SHA256, DATASET_HF_REPO,
+                            DATASET_REVISION, TEMPERATURE, TOP_P, TOP_K, N_CTX,
+                            _params as _active_params)
+from shared.scoring import _parse_answer_set, extract_letters, score_mcq
+from shared.dataset_loader import HF_CONFIGS, _load_dataset
 
 PACKAGE = "com.example.app"
 ACTIVITY = f"{PACKAGE}/.BenchmarkActivity"

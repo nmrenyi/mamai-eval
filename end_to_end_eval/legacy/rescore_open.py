@@ -14,8 +14,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
-from scoring import JUDGE_DIMENSIONS, _compute_weighted_score, create_judge_client, judge_response
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from shared.scoring import JUDGE_DIMENSIONS, _compute_weighted_score, create_judge_client, judge_response
 
 OPEN_DATASETS = {"kenya_vignettes", "afrimedqa_saq", "whb_stumps"}
 CHECKPOINT_EVERY = 10

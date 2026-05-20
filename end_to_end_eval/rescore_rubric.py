@@ -33,7 +33,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 RUBRIC_DATASETS = {"healthbench_oss_eval", "healthbench_consensus", "healthbench_hard"}
 CHECKPOINT_EVERY = 10
@@ -269,7 +269,7 @@ def _load_judge(judge_override: str | None) -> tuple[str, str]:
         path = Path(judge_override)
         cfg = json.loads(path.read_text()) if path.exists() else json.loads(judge_override)
     else:
-        from prompts import JUDGE_RUBRIC  # noqa: WPS433
+        from shared.prompts import JUDGE_RUBRIC  # noqa: WPS433
         cfg = JUDGE_RUBRIC
     if not cfg or not cfg.get("model"):
         return "", ""

@@ -17,15 +17,15 @@ sys.path.insert(0, str(Path(__file__).parents[1]))
 
 
 def test_scoring_importable():
-    import scoring  # noqa: F401
+    from shared import scoring  # noqa: F401
 
 
 def test_prompts_importable():
-    import prompts  # noqa: F401
+    from shared import prompts  # noqa: F401
 
 
 def test_scoring_exports_expected_symbols():
-    import scoring
+    from shared import scoring
     assert callable(scoring.extract_letters)
     assert callable(scoring.extract_letter)
     assert callable(scoring.score_mcq)
@@ -33,7 +33,7 @@ def test_scoring_exports_expected_symbols():
 
 
 def test_prompts_exports_expected_symbols():
-    import prompts
+    from shared import prompts
     assert isinstance(prompts.APP_SYSTEM_PROMPT, str) and prompts.APP_SYSTEM_PROMPT
     assert isinstance(prompts.MCQ_SYSTEM_PROMPT, str) and prompts.MCQ_SYSTEM_PROMPT
     assert isinstance(prompts.PROTOCOL_VERSION, str) and prompts.PROTOCOL_VERSION
@@ -44,13 +44,13 @@ def test_prompts_exports_expected_symbols():
 
 
 def test_prompts_system_prompt_nonempty():
-    import prompts
+    from shared import prompts
     assert len(prompts.APP_SYSTEM_PROMPT) > 50, "APP_SYSTEM_PROMPT looks suspiciously short"
     assert len(prompts.MCQ_SYSTEM_PROMPT) > 50, "MCQ_SYSTEM_PROMPT looks suspiciously short"
 
 
 def test_prompts_build_functions_return_strings():
-    import prompts
+    from shared import prompts
     mcq = prompts.build_mcq_prompt("What is the treatment?", "A. Drug1 | B. Drug2")
     assert isinstance(mcq, str) and "<start_of_turn>" in mcq
 
@@ -59,7 +59,7 @@ def test_prompts_build_functions_return_strings():
 
 
 def test_prompts_rag_builders_inject_context():
-    import prompts
+    from shared import prompts
     ctx = "Malaria is treated with artemisinin."
     mcq = prompts.build_rag_mcq_prompt("What is the treatment?", "A. Drug1 | B. Drug2", ctx)
     assert ctx in mcq

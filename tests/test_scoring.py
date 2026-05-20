@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
-from scoring import extract_letters
+from shared.scoring import extract_letters
 
 
 # ── Existing rules (regression) ──────────────────────────────────────────────

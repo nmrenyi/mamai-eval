@@ -6,7 +6,7 @@ Generation parameters are loaded from the active config version via prompts.py.
 
 import os
 
-from prompts import TEMPERATURE, TOP_P, TOP_K, N_CTX
+from shared.prompts import TEMPERATURE, TOP_P, TOP_K, N_CTX
 
 
 def _detect_gpu_layers() -> int:

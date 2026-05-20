@@ -140,7 +140,7 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
   fi
 
   LOG_PATH="$LOG_DIR/eval_${MODEL}_${DS}.log"
-  python3 run_eval.py "${DATASET_ARGS[@]}" > "$LOG_PATH" 2>&1 &
+  python3 -m end_to_end_eval.run_eval "${DATASET_ARGS[@]}" > "$LOG_PATH" 2>&1 &
   PID="$!"
   PIDS+=("$PID")
   echo "Started $DS (PID $PID) -> $LOG_PATH"

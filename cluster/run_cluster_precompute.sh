@@ -110,7 +110,7 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
   fi
 
   echo "Processing $DS..."
-  python3 precompute_retrieval.py "${DATASET_ARGS[@]}"
+  python3 -m retrieval_eval.precompute_retrieval "${DATASET_ARGS[@]}"
 done
 
 echo "=== PRECOMPUTE COMPLETE ==="

@@ -14,8 +14,8 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
-from scoring import extract_letters, score_mcq
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from shared.scoring import extract_letters, score_mcq
 
 # Includes v0.1 names (suffixed _mcq) and v0.2 HF config names.
 # is_mcq_result also falls back to dataset_type == "mcq" so unknown names still work.

@@ -19,7 +19,7 @@ RUN CMAKE_ARGS="-DGGML_CUDA=on" FORCE_CMAKE=1 \
     pip3 install --no-cache-dir -r requirements.txt
 
 # Evaluation code and data (not models — those mount from PVC)
-COPY prompts.py inference.py scoring.py run_eval.py ./
-COPY datasets/ ./datasets/
+COPY shared/ ./shared/
+COPY end_to_end_eval/ ./end_to_end_eval/
 
-ENTRYPOINT ["python3", "run_eval.py"]
+ENTRYPOINT ["python3", "-m", "end_to_end_eval.run_eval"]

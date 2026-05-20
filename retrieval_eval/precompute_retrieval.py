@@ -38,8 +38,11 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from prompts import RETRIEVAL_TOP_K, CONFIG_VERSION, DATASET_HF_REPO, DATASET_REVISION
-from retrieval import (
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from shared.prompts import RETRIEVAL_TOP_K, CONFIG_VERSION, DATASET_HF_REPO, DATASET_REVISION
+from retrieval_eval.retrieval import (
     GeckoEmbedder,
     build_index,
     format_app_context_chunks,
@@ -47,7 +50,7 @@ from retrieval import (
     retrieve,
 )
 
-_REPO_ROOT = Path(__file__).parent
+_REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # Dataset registry: name → hf_config (set_type doesn't matter for retrieval)
 HF_CONFIGS = {

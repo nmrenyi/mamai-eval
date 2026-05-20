@@ -28,11 +28,13 @@ if not _CONFIG_VERSION:
         "before importing prompts. Entry point scripts set this automatically via --config."
     )
 
-_CONFIG_DIR = Path(__file__).parent / "configs" / _CONFIG_VERSION
+# Repo root is one level above shared/. configs/ lives there.
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_CONFIG_DIR = _REPO_ROOT / "configs" / _CONFIG_VERSION
 if not _CONFIG_DIR.exists():
     raise FileNotFoundError(
         f"Config version '{_CONFIG_VERSION}' not found at {_CONFIG_DIR}. "
-        f"Available versions: {[d.name for d in (Path(__file__).parent / 'configs').iterdir() if d.is_dir() and d.name != 'exp']}"
+        f"Available versions: {[d.name for d in (_REPO_ROOT / 'configs').iterdir() if d.is_dir() and d.name != 'exp']}"
     )
 
 _params = json.loads((_CONFIG_DIR / "params.json").read_text())

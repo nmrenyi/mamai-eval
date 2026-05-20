@@ -42,7 +42,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 OPEN_DATASETS = {"kenya", "whb", "afrimedqa_saq",
                  "kenya_vignettes", "whb_stumps"}  # v0.2 + legacy v0.1
@@ -433,7 +433,7 @@ def _load_judge_specs(judges_override: str | None) -> list[JudgeSpec]:
         path = Path(judges_override)
         cfg = json.loads(path.read_text()) if path.exists() else json.loads(judges_override)
     else:
-        from prompts import JUDGE_ENSEMBLE  # noqa: WPS433 — config-driven import
+        from shared.prompts import JUDGE_ENSEMBLE  # noqa: WPS433 — config-driven import
         cfg = JUDGE_ENSEMBLE
     specs = []
     for entry in cfg or []:
