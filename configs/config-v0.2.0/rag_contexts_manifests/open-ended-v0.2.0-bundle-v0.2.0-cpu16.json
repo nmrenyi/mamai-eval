@@ -1,0 +1,51 @@
+{
+  "schema_version": 2,
+  "context_version": "open-ended-v0.2.0-bundle-v0.2.0-cpu16",
+  "config_version": "config-v0.2.0",
+  "created_at_utc": "2026-05-20T09:51:58Z",
+  "repo_ref": "feat/open-ended-rag-precompute-20260520",
+  "repo_commit": "88b05c6cbd4199d75e4f3e493b5980b8e21233f8",
+  "source_lock": {
+    "bundle_version": null,
+    "manifest_sha256": null,
+    "producer_repo": null,
+    "producer_commit": null,
+    "chunk_count": null,
+    "source_count": null
+  },
+  "dataset_source": {
+    "hf_repo": "nmrenyi/mamabench",
+    "hf_revision": "v0.2"
+  },
+  "retrieval_config": {
+    "top_k": 3,
+    "datasets": [
+      "afrimedqa_saq",
+      "kenya",
+      "whb"
+    ],
+    "max_questions": null
+  },
+  "artifacts": {
+    "db_path": "/lightscratch/users/yiren/rag_assets/embeddings.sqlite",
+    "db_sha256": "c7f7d3d4c0be77055bcee16467734699952db3c7ceeb9aabf293b624623bb6cd",
+    "gecko_model_path": "/lightscratch/users/yiren/rag_assets/Gecko_1024_quant.tflite",
+    "gecko_model_sha256": "2334395c8192ea6466093dc39177c524535ba8318c876232096d023518d323e6",
+    "tokenizer_path": "/lightscratch/users/yiren/rag_assets/sentencepiece.model",
+    "tokenizer_sha256": "839ffa4b9afae8d77834a88b87781849aa021975d6063dec6085633fcaf7171c"
+  },
+  "datasets": {
+    "kenya": {
+      "n_questions": 312,
+      "output_file": "kenya.json"
+    },
+    "whb": {
+      "n_questions": 20,
+      "output_file": "whb.json"
+    },
+    "afrimedqa_saq": {
+      "n_questions": 37,
+      "output_file": "afrimedqa_saq.json"
+    }
+  }
+}
