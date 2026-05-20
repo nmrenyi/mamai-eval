@@ -83,6 +83,10 @@ NODE_POOL="${NODE_POOL:-default}"
 # CPU-heavy workloads (e.g. multiprocessed precompute) need explicit headroom.
 CPU_REQUEST="${CPU_REQUEST:-4}"
 MEMORY_REQUEST="${MEMORY_REQUEST:-16G}"
+# Number of GPUs. Defaults to 1 (the eval/generation workload needs one A100).
+# Set GPU_REQUEST=0 for CPU-only work (e.g. RAG context precompute) — frees the
+# A100 for other users and lets us land on whatever node has free CPU.
+GPU_REQUEST="${GPU_REQUEST:-1}"
 
 RUNAI_ARGS=(
   runai submit
@@ -92,7 +96,7 @@ RUNAI_ARGS=(
   --large-shm
   --node-pool "$NODE_POOL"
   -e "OPENAI_API_KEY=$OPENAI_KEY"
-  --gpu 1
+  --gpu "$GPU_REQUEST"
   --cpu "$CPU_REQUEST"
   --cpu-limit "$CPU_REQUEST"
   --memory "$MEMORY_REQUEST"
