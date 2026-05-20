@@ -79,6 +79,10 @@ done
 # Node pool. `default` is the A100-80GB pool on light cluster; override via
 # NODE_POOL env var (e.g. NODE_POOL=h100, NODE_POOL=h200) for larger GPUs.
 NODE_POOL="${NODE_POOL:-default}"
+# CPU + memory requests. RunAI's silent defaults are stingy (~4 CPU / 16G);
+# CPU-heavy workloads (e.g. multiprocessed precompute) need explicit headroom.
+CPU_REQUEST="${CPU_REQUEST:-4}"
+MEMORY_REQUEST="${MEMORY_REQUEST:-16G}"
 
 RUNAI_ARGS=(
   runai submit
@@ -89,6 +93,10 @@ RUNAI_ARGS=(
   --node-pool "$NODE_POOL"
   -e "OPENAI_API_KEY=$OPENAI_KEY"
   --gpu 1
+  --cpu "$CPU_REQUEST"
+  --cpu-limit "$CPU_REQUEST"
+  --memory "$MEMORY_REQUEST"
+  --memory-limit "$MEMORY_REQUEST"
   --backoff-limit 0
   --run-as-gid 84257
 )

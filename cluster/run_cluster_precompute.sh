@@ -30,6 +30,7 @@ TOP_K="${TOP_K:-3}"
 MAX_QUESTIONS="${MAX_QUESTIONS:-}"
 MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS-500}"
 ROW_IDS="${ROW_IDS:-}"
+N_WORKERS="${N_WORKERS:-1}"
 
 # Persist HF dataset cache across job runs (survives container lifecycle via PVC).
 mkdir -p "$HF_CACHE_DIR"
@@ -102,6 +103,10 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
     # Same path discipline as run_cluster.sh's ROW_IDS — typically points at a
     # committed manifest like $WORKTREE/configs/<cfg>/calibration/<manifest>.json.
     DATASET_ARGS+=(--row-ids "$ROW_IDS")
+  fi
+
+  if [ "$N_WORKERS" -gt 1 ]; then
+    DATASET_ARGS+=(--n-workers "$N_WORKERS")
   fi
 
   echo "Processing $DS..."

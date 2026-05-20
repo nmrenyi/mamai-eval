@@ -22,6 +22,7 @@ Usage:
 import argparse
 import hashlib
 import json
+import multiprocessing as mp
 import os
 import subprocess
 
@@ -95,6 +96,48 @@ def _question_text(question) -> str:
     return str(question or "")
 
 
+# ── Multiprocessing worker globals ────────────────────────────────────────────
+#
+# TFLite Interpreter holds C++ state that isn't picklable. Each worker process
+# constructs its own GeckoEmbedder + index via the initializer below, then the
+# row-level worker function reuses those module-level globals.
+#
+# Output is *bit-exact* identical to the single-threaded path because every
+# worker runs the same TFLite kernels (same `Gecko_1024_quant.tflite`) on the
+# same int8 weights — multiprocessing only changes scheduling, not numerics.
+_W_EMBEDDER = None
+_W_TEXTS = None
+_W_NORMED = None
+_W_TOP_K = None
+
+
+def _init_worker(db_path: str, gecko_model: str, tokenizer: str, top_k: int) -> None:
+    global _W_EMBEDDER, _W_TEXTS, _W_NORMED, _W_TOP_K
+    store = load_vector_store(db_path)
+    _W_TEXTS, _W_NORMED = build_index(store)
+    _W_EMBEDDER = GeckoEmbedder(gecko_model, tokenizer)
+    _W_TOP_K = top_k
+
+
+def _embed_and_retrieve(task):
+    """Worker entry: embed one question, retrieve top-k. (idx, row_id, text)
+    is the smallest serialisable unit so pickling between processes is cheap."""
+    idx, row_id, text = task
+    if not text:
+        return idx, {"id": row_id, "question": "", "chunks": [], "similarities": []}
+    query_emb = _W_EMBEDDER.embed(text)
+    results = retrieve(query_emb, _W_TEXTS, _W_NORMED, top_k=_W_TOP_K)
+    raw_chunks = [chunk for chunk, _ in results]
+    context_chunks, retrieved_docs = format_app_context_chunks(raw_chunks)
+    return idx, {
+        "id": row_id,
+        "question": text,
+        "chunks": context_chunks,
+        "retrieved_docs": retrieved_docs,
+        "similarities": [round(score, 4) for _, score in results],
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Pre-compute RAG retrieval contexts")
     parser.add_argument("--config", required=True,
@@ -115,6 +158,12 @@ def main():
                         help="Comma-separated dataset names, or 'all'")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit questions per dataset")
+    parser.add_argument("--n-workers", type=int, default=1,
+                        help="Number of parallel CPU workers (default 1 = sequential). "
+                             "Each worker holds its own GeckoEmbedder + index (~400 MB) "
+                             "and runs the same TFLite kernels, so output is bit-exact "
+                             "identical to single-thread. Set to roughly the number of "
+                             "CPU cores available to the container.")
     parser.add_argument("--context-version", default=None,
                         help="Version label for this retrieval context set")
     parser.add_argument("--rag-lock", default=None,
@@ -192,9 +241,20 @@ def main():
                 set(existing_requested) | set(dataset_names)
             )
 
-    store = load_vector_store(args.db_path)
-    texts, normed_matrix = build_index(store)
-    embedder = GeckoEmbedder(args.gecko_model, args.tokenizer)
+    # Load the store + embedder in the parent only when running sequential.
+    # Multiprocessing workers each construct their own (TFLite Interpreter is
+    # not picklable, so we share via the initializer instead).
+    if args.n_workers <= 1:
+        store = load_vector_store(args.db_path)
+        texts, normed_matrix = build_index(store)
+        embedder = GeckoEmbedder(args.gecko_model, args.tokenizer)
+        store_len = len(store)
+    else:
+        # Cheap-load just to record the chunk count in metadata; throw away after.
+        # Avoids holding a redundant copy in the parent while N workers also have one.
+        _scout_store = load_vector_store(args.db_path)
+        store_len = len(_scout_store)
+        del _scout_store
 
     from datasets import load_dataset
 
@@ -216,26 +276,46 @@ def main():
             rows = rows[:args.max_questions]
         print(f"Processing {len(rows)} questions")
 
-        retrievals = []
-        for raw in tqdm(rows, total=len(rows), desc=ds_name):
-            text = _question_text(raw.get("question", ""))
-            if not text:
-                retrievals.append({"id": raw.get("id", ""), "question": "",
-                                   "chunks": [], "similarities": []})
-                continue
-
-            query_emb = embedder.embed(text)
-            results = retrieve(query_emb, texts, normed_matrix, top_k=args.top_k)
-            raw_chunks = [chunk for chunk, _ in results]
-            context_chunks, retrieved_docs = format_app_context_chunks(raw_chunks)
-
-            retrievals.append({
-                "id": raw.get("id", ""),
-                "question": text,
-                "chunks": context_chunks,
-                "retrieved_docs": retrieved_docs,
-                "similarities": [round(score, 4) for _, score in results],
-            })
+        if args.n_workers <= 1:
+            # Sequential path — preserves original single-thread behaviour.
+            retrievals = []
+            for raw in tqdm(rows, total=len(rows), desc=ds_name):
+                text = _question_text(raw.get("question", ""))
+                if not text:
+                    retrievals.append({"id": raw.get("id", ""), "question": "",
+                                       "chunks": [], "similarities": []})
+                    continue
+                query_emb = embedder.embed(text)
+                results = retrieve(query_emb, texts, normed_matrix, top_k=args.top_k)
+                raw_chunks = [chunk for chunk, _ in results]
+                context_chunks, retrieved_docs = format_app_context_chunks(raw_chunks)
+                retrievals.append({
+                    "id": raw.get("id", ""),
+                    "question": text,
+                    "chunks": context_chunks,
+                    "retrieved_docs": retrieved_docs,
+                    "similarities": [round(score, 4) for _, score in results],
+                })
+        else:
+            # Multiprocessing path — N workers each running an independent
+            # GeckoEmbedder + index. Output is reordered by index after
+            # gather; final `retrievals` matches the sequential path exactly.
+            tasks = [
+                (i, raw.get("id", ""), _question_text(raw.get("question", "")))
+                for i, raw in enumerate(rows)
+            ]
+            with mp.Pool(
+                processes=args.n_workers,
+                initializer=_init_worker,
+                initargs=(args.db_path, args.gecko_model, args.tokenizer, args.top_k),
+            ) as pool:
+                results_unordered = list(tqdm(
+                    pool.imap_unordered(_embed_and_retrieve, tasks, chunksize=8),
+                    total=len(tasks),
+                    desc=f"{ds_name} (x{args.n_workers})",
+                ))
+            results_unordered.sort(key=lambda x: x[0])
+            retrievals = [r for _, r in results_unordered]
 
         output = {
             "metadata": {
@@ -250,8 +330,9 @@ def main():
                 "context_version": context_version,
                 "top_k": args.top_k,
                 "embedding_model": "Gecko_1024_quant",
-                "n_chunks_in_store": len(store),
+                "n_chunks_in_store": store_len,
                 "n_questions": len(retrievals),
+                "n_workers": args.n_workers,
             },
             "retrievals": retrievals,
         }
