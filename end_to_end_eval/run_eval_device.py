@@ -255,13 +255,13 @@ def main():
     parser.add_argument("--timeout-s", type=int, default=3600,
                         help="Max wall-clock seconds to wait for a device run")
     parser.add_argument("--output-dir", default=None,
-                        help="Output dir (default: configs/<config>/results/generation)")
+                        help="Output dir (default: configs/<config>/results/end_to_end_eval)")
     args = parser.parse_args()
 
     revision = args.revision or DATASET_REVISION or "v0.2"
     hf_repo = args.hf_repo or DATASET_HF_REPO or "nmrenyi/mamabench"
     output_dir = args.output_dir or str(
-        Path(__file__).parent / "configs" / args.config / "results" / "generation"
+        Path(__file__).resolve().parents[1] / "configs" / args.config / "results" / "end_to_end_eval"
     )
     os.makedirs(output_dir, exist_ok=True)
 

@@ -26,7 +26,7 @@ Usage:
     python rescore_open_v2.py path/to/dataset.json --judges-override judges.json
 
 If no paths are given, scores all open_ended result JSONs under
-configs/*/results/generation.
+configs/*/results/end_to_end_eval.
 
 Skips rows that already have `judge_ensemble.aggregate`. Rewrites files
 in-place.

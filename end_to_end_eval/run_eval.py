@@ -4,7 +4,7 @@ Batch evaluation pipeline for mamabench (v0.2 schema).
 Reads benchmark rows from the HuggingFace dataset configured in
 params.json (`dataset.hf_repo` + `dataset.revision`), runs model
 inference, and writes per-row results to
-configs/<config>/results/generation/<model>/<run-id>/<dataset>.json.
+configs/<config>/results/end_to_end_eval/<model>/<run-id>/<dataset>.json.
 
 Open-ended judging is no longer done inline — use rescore_open_v2.py
 (3-judge ensemble) or rescore_rubric.py (HealthBench-style) on the
@@ -386,7 +386,7 @@ def main():
                         help="GPU layers for GGUF (-1 = all, 0 = CPU, default: auto-detect)")
     parser.add_argument("--output-dir", default=None,
                         help="Directory for output JSON files "
-                             "(default: configs/<config>/results/generation)")
+                             "(default: configs/<config>/results/end_to_end_eval)")
     parser.add_argument("--rag", default=None,
                         help="Path to pre-computed RAG contexts dir (from precompute_retrieval.py)")
     parser.add_argument("--resume", default=None,
@@ -402,7 +402,7 @@ def main():
     hf_repo = args.hf_repo or DATASET_HF_REPO or "nmrenyi/mamabench"
 
     output_dir = args.output_dir or str(
-        Path(__file__).parent / "configs" / args.config / "results" / "generation"
+        Path(__file__).resolve().parents[1] / "configs" / args.config / "results" / "end_to_end_eval"
     )
     os.makedirs(output_dir, exist_ok=True)
 
