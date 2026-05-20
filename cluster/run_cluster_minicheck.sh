@@ -19,7 +19,9 @@ ln -sf /usr/bin/python3.10 /usr/bin/python3
 
 echo "=== INSTALLING PYTHON PACKAGES ==="
 # minicheck pulls torch/transformers; vllm is required by Bespoke-MiniCheck-7B.
-pip3 install --no-cache-dir minicheck vllm tqdm > /dev/null 2>&1
+# stderr/stdout are NOT silenced here on purpose — first-time install of this
+# stack has failed before with opaque exit codes and we want the error visible.
+pip3 install --no-cache-dir minicheck vllm tqdm
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
