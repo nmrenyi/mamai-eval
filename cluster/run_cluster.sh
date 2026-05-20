@@ -30,7 +30,10 @@ RAG_DIR="${RAG_DIR:-}"
 RUN_DIR="${RUN_DIR:-}"
 LOG_DIR="${LOG_DIR:-}"
 MAX_QUESTIONS="${MAX_QUESTIONS:-}"
-MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS:-500}"
+# Drop the colon: `:-` defaults on both unset AND empty, which made
+# `MEDMCQA_MAX_QUESTIONS=` (intentional uncap) silently re-apply the 500 cap.
+# With `-`, unset → 500 (v0.1 convention); empty string → empty (no cap).
+MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS-500}"
 MAX_TOKENS="${MAX_TOKENS:-}"
 N_GPU_LAYERS="${N_GPU_LAYERS:-}"
 ROW_IDS="${ROW_IDS:-}"
