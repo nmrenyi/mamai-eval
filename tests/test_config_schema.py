@@ -102,8 +102,14 @@ def test_prompt_files_nonempty():
 # ── Results directory structure ───────────────────────────────────────────────
 
 def test_results_subdirs_exist():
+    # Naming convention differs between v0.1 (per-metric: safety/generation/retrieval/latency)
+    # and v0.2 (per-track: end_to_end_eval/retrieval_eval/generator_eval/latency_eval).
+    # v0.1 is frozen by release tag, so we check each version against its own convention.
+    v01_subdirs = ("safety", "generation", "retrieval", "latency")
+    v02_subdirs = ("end_to_end_eval", "retrieval_eval", "generator_eval", "latency_eval")
     for cfg in _versioned_configs():
         results = cfg / "results"
         assert results.exists(), f"{cfg.name}/results/ directory is missing"
-        for subdir in ("safety", "generation", "retrieval", "latency"):
+        expected = v02_subdirs if cfg.name.startswith("config-v0.2") else v01_subdirs
+        for subdir in expected:
             assert (results / subdir).exists(), f"{cfg.name}/results/{subdir}/ directory is missing"

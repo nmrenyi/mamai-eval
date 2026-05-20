@@ -6,8 +6,8 @@ the two runtimes agree.
 
 Usage:
     python compare_calibration.py \
-        --cluster configs/config-v0.2.0/results/generation/gemma4-e4b/<ts>/ \
-        --device configs/config-v0.2.0/results/generation/gemma4-e4b-device/<ts>/ \
+        --cluster configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/<ts>/ \
+        --device configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b-device/<ts>/ \
         --manifest configs/config-v0.2.0/calibration/mcq_300.json \
         --output configs/config-v0.2.0/reports/calibration-mcq-<date>.md
 """
