@@ -23,9 +23,15 @@ echo "=== INSTALLING PYTHON PACKAGES ==="
 # a `name` field, breaking pip installs. Direct transformers also drops the
 # vllm dependency entirely; per-call latency on A100 is ~100ms which is fine
 # for the ~2.7K-call scale of this stage.
+#
+# torch is pulled from PyTorch's own CDN (cu124 index) so we get a single
+# wheel with CUDA libs baked in — avoids the slow nvidia-cublas-13.* /
+# nvidia-cudnn-* downloads from PyPI that have repeatedly read-timed-out.
+# --timeout 600 / --retries 5 add headroom for any remaining slow mirror.
 # stderr/stdout intentionally NOT silenced so install errors surface in logs.
-pip3 install --no-cache-dir \
-    torch transformers accelerate huggingface_hub tqdm
+PIP_OPTS="--no-cache-dir --timeout 600 --retries 5"
+pip3 install $PIP_OPTS --index-url https://download.pytorch.org/whl/cu124 torch
+pip3 install $PIP_OPTS transformers accelerate huggingface_hub tqdm
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
