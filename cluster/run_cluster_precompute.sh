@@ -5,41 +5,56 @@ echo "=== INSTALLING DEPENDENCIES ==="
 apt-get update && apt-get install -y python3.10 python3-pip git > /dev/null 2>&1
 ln -sf /usr/bin/python3.10 /usr/bin/python3
 echo "=== INSTALLING PYTHON PACKAGES ==="
-pip3 install --no-cache-dir numpy pandas tqdm sentencepiece ai-edge-litert > /dev/null 2>&1
+# v0.2 adds `datasets` + `huggingface_hub` (HF replaces local TSV) and keeps
+# `ai-edge-litert` for the Gecko embedder and `sentencepiece` for the tokenizer.
+pip3 install --no-cache-dir \
+  numpy pandas tqdm sentencepiece ai-edge-litert datasets huggingface_hub \
+  > /dev/null 2>&1
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
 REPO_REF="${REPO_REF:-main}"
 WORKTREE="${WORKTREE:-/tmp/eval_code}"
-DATA_SOURCE_DIR="${DATA_SOURCE_DIR:-/lightscratch/users/yiren/eval_code/datasets}"
-CONFIG="${CONFIG:-config-v0.1.0}"
-DB_PATH="${DB_PATH:-/lightscratch/users/yiren/model_backup/embeddings.sqlite}"
-GECKO_MODEL="${GECKO_MODEL:-/lightscratch/users/yiren/model_backup/Gecko_1024_quant.tflite}"
-TOKENIZER="${TOKENIZER:-/lightscratch/users/yiren/model_backup/sentencepiece.model}"
+CONFIG="${CONFIG:-config-v0.2.0}"
+# Container paths (PVC `light-scratch` mounts at /lightscratch — see submit_job.sh).
+# RAG assets are scp'd from the local mamai/device_push/ tree by the submitter.
+DB_PATH="${DB_PATH:-/lightscratch/users/yiren/rag_assets/embeddings.sqlite}"
+GECKO_MODEL="${GECKO_MODEL:-/lightscratch/users/yiren/rag_assets/Gecko_1024_quant.tflite}"
+TOKENIZER="${TOKENIZER:-/lightscratch/users/yiren/rag_assets/sentencepiece.model}"
 OUTPUT_ROOT="${OUTPUT_ROOT:-/lightscratch/users/yiren/eval_output/rag_contexts}"
 CONTEXT_VERSION="${CONTEXT_VERSION:-ragctx-$(date -u +%Y%m%dT%H%M%SZ)}"
 OUTPUT_DIR="${OUTPUT_DIR:-$OUTPUT_ROOT/$CONTEXT_VERSION}"
+HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 DATASETS="${DATASETS:-all}"
 TOP_K="${TOP_K:-3}"
 MAX_QUESTIONS="${MAX_QUESTIONS:-}"
-MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS:-500}"
+MEDMCQA_MAX_QUESTIONS="${MEDMCQA_MAX_QUESTIONS-500}"
+ROW_IDS="${ROW_IDS:-}"
+
+# Persist HF dataset cache across job runs (survives container lifecycle via PVC).
+mkdir -p "$HF_CACHE_DIR"
+export HF_HOME="$HF_CACHE_DIR"
+if [ -n "${HF_TOKEN:-}" ]; then
+  export HUGGINGFACE_HUB_TOKEN="$HF_TOKEN"
+fi
 
 echo "=== CHECKOUT ==="
 rm -rf "$WORKTREE"
 git clone --branch "$REPO_REF" --depth 1 "$REPO_URL" "$WORKTREE"
 cd "$WORKTREE"
-rm -rf datasets
-ln -s "$DATA_SOURCE_DIR" datasets
 
 mkdir -p "$OUTPUT_DIR"
 
 if [ "$DATASETS" = "all" ]; then
+  # v0.2 default: MCQ + open-ended only. open_ended_rubric configs (HealthBench)
+  # are multi-turn and quite different — opt in explicitly if you want their
+  # contexts precomputed.
   DATASET_LIST=(
-    "afrimedqa_mcq"
+    "afrimedqa"
     "medqa_usmle"
-    "medmcqa_mcq"
-    "kenya_vignettes"
-    "whb_stumps"
+    "medmcqa"
+    "kenya"
+    "whb"
     "afrimedqa_saq"
   )
 else
@@ -51,6 +66,7 @@ echo "CONFIG=$CONFIG"
 echo "REPO_REF=$REPO_REF"
 echo "CONTEXT_VERSION=$CONTEXT_VERSION"
 echo "OUTPUT_DIR=$OUTPUT_DIR"
+echo "HF_HOME=$HF_HOME"
 echo "TOP_K=$TOP_K"
 echo "DATASETS=${DATASET_LIST[*]}"
 
@@ -61,7 +77,7 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
   fi
 
   if [ -f "$OUTPUT_DIR/${DS}.json" ]; then
-    echo "SKIP $DS: already exists"
+    echo "SKIP $DS: already exists at $OUTPUT_DIR/${DS}.json"
     continue
   fi
 
@@ -78,8 +94,14 @@ for RAW_DS in "${DATASET_LIST[@]}"; do
 
   if [ -n "$MAX_QUESTIONS" ]; then
     DATASET_ARGS+=(--max-questions "$MAX_QUESTIONS")
-  elif [ "$DS" = "medmcqa_mcq" ] && [ -n "$MEDMCQA_MAX_QUESTIONS" ]; then
+  elif [ "$DS" = "medmcqa" ] && [ -n "$MEDMCQA_MAX_QUESTIONS" ]; then
     DATASET_ARGS+=(--max-questions "$MEDMCQA_MAX_QUESTIONS")
+  fi
+
+  if [ -n "$ROW_IDS" ]; then
+    # Same path discipline as run_cluster.sh's ROW_IDS — typically points at a
+    # committed manifest like $WORKTREE/configs/<cfg>/calibration/<manifest>.json.
+    DATASET_ARGS+=(--row-ids "$ROW_IDS")
   fi
 
   echo "Processing $DS..."
