@@ -134,7 +134,17 @@ if [ "${#EXTRA_ENV[@]}" -gt 0 ]; then
   echo "Extra env:"
   printf '  %s\n' "${EXTRA_ENV[@]}"
 fi
-ssh light "$REMOTE_CMD"
+
+# Submission mode: if RUNAI_LOCAL=1 is set, invoke `runai submit` directly from
+# this host (Mac) instead of SSHing to light. Useful when light's runai login
+# session has gone stale (oauth refresh-token expired) but the operator's
+# local runai is healthy. Logs/describes still go via `ssh light` afterwards.
+if [ "${RUNAI_LOCAL:-0}" = "1" ]; then
+  echo "RUNAI_LOCAL=1 → running runai submit locally (skipping ssh light)"
+  "${RUNAI_ARGS[@]}"
+else
+  ssh light "$REMOTE_CMD"
+fi
 
 echo ""
 echo "Monitor with:"
