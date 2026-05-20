@@ -113,12 +113,17 @@ class _BespokeMiniCheckScorer:
 
         resolved = self._resolve_model_id(model_id)
         print(f"  Loading tokenizer/model from {resolved}")
-        self.tok = AutoTokenizer.from_pretrained(resolved, cache_dir=cache_dir)
+        # trust_remote_code is required: bespoke-minicheck-7b is an
+        # internlm2-architecture model and ships custom modeling code on HF.
+        self.tok = AutoTokenizer.from_pretrained(
+            resolved, cache_dir=cache_dir, trust_remote_code=True
+        )
         self.model = AutoModelForCausalLM.from_pretrained(
             resolved,
             torch_dtype=torch.bfloat16,
             device_map="auto",
             cache_dir=cache_dir,
+            trust_remote_code=True,
         )
         self.model.eval()
 

@@ -31,7 +31,10 @@ echo "=== INSTALLING PYTHON PACKAGES ==="
 # stderr/stdout intentionally NOT silenced so install errors surface in logs.
 PIP_OPTS="--no-cache-dir --timeout 600 --retries 5"
 pip3 install $PIP_OPTS --index-url https://download.pytorch.org/whl/cu124 torch
-pip3 install $PIP_OPTS transformers accelerate huggingface_hub tqdm
+# Pin transformers to <5: bespoke-minicheck-7b's internlm2 custom modeling
+# code was authored against transformers 4.x and is not yet validated on v5
+# (default pip pulled 5.8.1, which printed an architecture-mismatch warning).
+pip3 install $PIP_OPTS 'transformers>=4.45,<5.0' accelerate huggingface_hub tqdm
 echo "=== DEPS DONE ==="
 
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
