@@ -19,7 +19,7 @@ This is **not a deployment failure** — MCQ tests a different distribution than
 | **RAG context source** | `mcq-v0.2.0-bundle-v0.2.0-cpu32` precompute against the v0.2.0 chunk bundle (87 sources / 63,650 chunks, maternal-neonatal-obstetric guidelines) |
 | **RAG top_k** | 3 |
 | **MCQ adapter prompt** | `configs/config-v0.2.0/mcq_system.txt` ("Reply with ONLY the letter of the correct option") |
-| **Run dirs** | no-RAG: `results/generation/gemma4-e4b/20260520T032705-cluster-norag/`<br>+RAG:   `results/generation/gemma4-e4b/20260520T082028-cluster-rag/` |
+| **Run dirs** | no-RAG: `results/end_to_end_eval/gemma4-e4b/20260520T032705-cluster-norag/`<br>+RAG:   `results/end_to_end_eval/gemma4-e4b/20260520T082028-cluster-rag/` |
 | **Wall-clock** | no-RAG: 19 min  ·  +RAG: 58 min (longer prompts ⇒ slower prefill) |
 
 ## Aggregate accuracy
