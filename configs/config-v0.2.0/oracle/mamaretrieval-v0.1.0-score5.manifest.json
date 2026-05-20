@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "name": "mamaretrieval-v0.1.0-score5",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.1.0"
+  },
+  "threshold": 5,
+  "created_at_utc": "2026-05-20T07:56:17Z",
+  "data_file": "mamaretrieval-v0.1.0-score5.jsonl",
+  "counts": {
+    "n_queries_total": 3185,
+    "n_queries_with_oracle": 2659,
+    "n_qc_pairs": 7343,
+    "chunks_per_query_histogram": {
+      "1": 692,
+      "2": 683,
+      "3": 522,
+      "4": 369,
+      "5": 214,
+      "6": 111,
+      "7": 48,
+      "8": 11,
+      "9": 7,
+      "10": 2
+    }
+  }
+}
