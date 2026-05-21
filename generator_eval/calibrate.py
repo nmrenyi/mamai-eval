@@ -66,10 +66,7 @@ Edge guidance:
 
 Output one JSON object per case:
   {"query_id": "...", "verdict": "PASS | FAIL",
-   "failure_type": "contradiction | unsupported_addition | none",
-   "reasoning": "one or two sentences",
-   "is_incomplete": true/false, "is_refusal": true/false}
-`failure_type` is `none` when the verdict is PASS.
+   "reasoning": "one or two sentences"}
 """
 
 
@@ -160,7 +157,7 @@ def cmd_sample(run_dir: Path) -> None:
     print(f"  Run an independent judge over {blind_path.name} using the rubric")
     print(f"  in {rubric_path.name} — a second model OR a human. It must emit a")
     print("  JSON array, one object per case (keys: query_id, verdict,")
-    print("  failure_type, reasoning, is_incomplete, is_refusal) to:")
+    print("  reasoning) to:")
     print(f"      {run_dir / 'calibration_verdicts.json'}")
     print("  Then run:  calibrate score <run-dir> --verdicts <that file>")
 
