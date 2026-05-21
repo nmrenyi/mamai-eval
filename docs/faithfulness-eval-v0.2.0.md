@@ -114,11 +114,14 @@ Confusion matrix (n=100):
 2. **Estimated true hallucination rate ≈ 0.3–2.6%** depending on judge; the
    independent calibration puts it near the bottom of that range. Gemma 4 E4B
    is, on this evidence, **highly faithful to oracle context**.
-3. **Self-contradictory oracle context.** ~20 of the 145 FAILs trace to oracle
-   chunks that contain conflicting figures (e.g. 50 vs 56 cm cord length); the
-   answer picks one valid figure and Lynx faults it against the other. This is
-   a **mamaretrieval / corpus data-quality issue**, not a model failure, and
-   affects any eval using that oracle.
+3. **Self-contradictory oracle context.** **6** of the 145 FAILs (verified by
+   per-case audit, quotes substring-checked against the raw context) are
+   *false* FAILs: the oracle context contains two chunks stating conflicting
+   clinical facts (e.g. misoprostol 13–22 wk — table "every 3 h" vs prose
+   "every 4–6 h"); the answer matches one chunk, Lynx faults it against the
+   other. A **mamaretrieval / guideline-corpus data-quality issue**, not a
+   model failure. Full audit with verbatim passages and chunk IDs:
+   [`oracle-self-contradictions-v0.1.0.md`](oracle-self-contradictions-v0.1.0.md).
 4. **17 refusals** — the model declines clinically answerable questions
    ("consult a doctor", "out of scope") even when the oracle fully answers
    them. Not hallucination, but a real usefulness/product issue worth its own
@@ -155,7 +158,9 @@ Not "5.45% hallucination rate." Report tiered:
 3. **Stability (§3.2)** — paraphrase sensitivity, run-to-run variance, greedy
    vs sampled.
 4. **Deployment integrity (§3.3)** — citation-existence + guideline-contradiction set.
-5. **Upstream** — report the self-contradictory-context finding to mamaretrieval.
+5. **Upstream** — the self-contradictory-context finding is filed against
+   mamaretrieval (see `oracle-self-contradictions-v0.1.0.md`); prose-vs-table
+   conflicts may also need a guideline-corpus fix.
 
 ## Artifacts
 
