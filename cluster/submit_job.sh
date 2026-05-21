@@ -125,8 +125,6 @@ done
 
 RUNAI_ARGS+=(--command -- bash -c "echo $B64 | base64 -d | bash")
 
-printf -v REMOTE_CMD '%q ' "${RUNAI_ARGS[@]}"
-
 echo "Submitting job: $JOB_NAME"
 echo "Script: $SCRIPT_NAME"
 echo "Repo ref: ${EFFECTIVE_REPO_REF}"
@@ -134,12 +132,30 @@ if [ "${#EXTRA_ENV[@]}" -gt 0 ]; then
   echo "Extra env:"
   printf '  %s\n' "${EXTRA_ENV[@]}"
 fi
-ssh light "$REMOTE_CMD"
+
+# Submit target. Default: run `runai` on haas001 over SSH. Set RUNAI_LOCAL=1 to
+# run `runai` on this machine instead — useful when the cluster-side RunAI
+# session has expired but the local CLI is authenticated to the same cluster.
+# API keys are still read from the cluster over SSH either way.
+RUNAI_LOCAL="${RUNAI_LOCAL:-0}"
+if [ "$RUNAI_LOCAL" = "1" ]; then
+  echo "Submit mode: local runai CLI"
+  "${RUNAI_ARGS[@]}"
+else
+  echo "Submit mode: ssh light"
+  printf -v REMOTE_CMD '%q ' "${RUNAI_ARGS[@]}"
+  ssh light "$REMOTE_CMD"
+fi
 
 echo ""
 echo "Monitor with:"
-echo "  ssh light 'runai logs $JOB_NAME -f'"
-echo "  ssh light 'runai describe job $JOB_NAME -p light-yiren'"
+if [ "$RUNAI_LOCAL" = "1" ]; then
+  echo "  runai logs $JOB_NAME -f"
+  echo "  runai describe job $JOB_NAME -p light-yiren"
+else
+  echo "  ssh light 'runai logs $JOB_NAME -f'"
+  echo "  ssh light 'runai describe job $JOB_NAME -p light-yiren'"
+fi
 echo ""
 echo "Download results:"
 echo "  scp -r 'light:/mnt/light/scratch/users/yiren/eval_output/*' ~/Downloads/mamai-eval/results/"
