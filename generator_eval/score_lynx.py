@@ -285,7 +285,7 @@ def main():
             if i not in gen_by_idx:
                 results.append({
                     "query_id": m["query_id"],
-                    "score": None, "passed": False,
+                    "score": None,
                     "reasoning": None, "n_input_tokens": m["n_input_tokens"],
                     "note": f"input {m['n_input_tokens']} tok exceeds budget {input_budget}",
                 })
@@ -295,7 +295,6 @@ def main():
             row = {
                 "query_id": m["query_id"],
                 "score": score,
-                "passed": score == "PASS",
                 "reasoning": reasoning,
                 "n_input_tokens": m["n_input_tokens"],
                 "note": parse_note,
