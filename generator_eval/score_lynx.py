@@ -321,6 +321,12 @@ def main():
                 for r in results if r["score"] in ("PASS", "FAIL")]
     n_pass = sum(verdicts)
     n_scored = len(verdicts)
+    # `note` is always present on a row but is None on a clean parse — so
+    # coerce to "" before string ops (dict.get's default only covers a
+    # missing key, not a present-but-None value).
+    def _note(r: dict) -> str:
+        return r.get("note") or ""
+
     if n_scored:
         ci = _bootstrap_ci([float(v) for v in verdicts])
         metadata["aggregate"] = {
@@ -328,13 +334,21 @@ def main():
             "n_pass": n_pass,
             "n_fail": n_scored - n_pass,
             "n_scored": n_scored,
-            "n_parse_errors": sum(1 for r in results if r["score"] is None
-                                  and r.get("note", "").startswith(("no JSON", "SCORE", "unexpected"))),
-            "n_oversize": sum(1 for r in results if r.get("note", "").startswith("input ")),
+            # A parse error = no verdict recovered at all.
+            "n_parse_errors": sum(1 for r in results if r["score"] is None),
+            # Reasoning recovered via the delimiter fallback (verdict fine,
+            # malformed literal) — informational, not an error.
+            "n_reasoning_recovered": sum(
+                1 for r in results if "delimiter extraction" in _note(r)),
+            "n_oversize": sum(1 for r in results if _note(r).startswith("input ")),
             "bootstrap_95_ci_pass_rate": [round(x, 4) for x in ci],
         }
     else:
-        metadata["aggregate"] = {"error": "no valid verdicts recorded"}
+        metadata["aggregate"] = {
+            "error": "no valid verdicts recorded",
+            "n_parse_errors": sum(1 for r in results if r["score"] is None),
+            "n_oversize": sum(1 for r in results if _note(r).startswith("input ")),
+        }
 
     _save(output_path, metadata, results)
     agg = metadata["aggregate"]
@@ -343,6 +357,7 @@ def main():
     print(f"  PASS rate:     {agg.get('pass_rate')}  ({agg.get('n_pass')} PASS / {agg.get('n_fail')} FAIL)")
     print(f"  95% CI:        {agg.get('bootstrap_95_ci_pass_rate')}")
     print(f"  parse errors:  {agg.get('n_parse_errors')}")
+    print(f"  reasoning recovered (delimiter): {agg.get('n_reasoning_recovered')}")
     print(f"  oversize:      {agg.get('n_oversize')}")
     print(f"  total wall:    {elapsed:.1f}s")
 
