@@ -1,0 +1,802 @@
+[
+  {
+    "query_id": "q_02393",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Reports dose 10-25 mg q8h, that vitamin B6 supplementation is not recommended, and refuses to over-commit; all consistent with context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01762",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Oral and IV tramadol doses and maximums, plus safety guidance, all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00603",
+    "verdict": "FAIL",
+    "failure_type": "unsupported_addition",
+    "reasoning": "Context only states MEOWS includes four vital assessments (temperature being one) but never defines them; the answer fabricates a M-E-O-W-S acronym with specific components not in the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00725",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Causes of bleeding and the oxytocin/ergometrine doses and steps all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01165",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "All listed signs and symptoms of puerperal sepsis appear in the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02783",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "All claims about follow-up after EHC are supported; omits the ~3-week timing but that is only incompleteness.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02912",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "0.5% chlorine solution, 10-minute soak, pre-cleaning and rinsing all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03067",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Asks for clarification then gives the aftercare steps verbatim from context; no false claims.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02828",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Ranitidine 150mg, 6h fasting, sodium citrate 30mL and preparation steps all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01348",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Declines the question as out of scope; asserts no false clinical claim.",
+    "is_incomplete": false,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_00169",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Definitions of internal rotation (one-eighth circle) and crowning match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02152",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Asks for clarifying details rather than asserting; no false claim made.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_02863",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Speculum removal and post-exam steps match the context; 'proper documentation' is a mild closing remark not a contradiction.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00579",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Midwife responsibilities listed all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01449",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "D0/D1 IV fluids and catheter removal criteria match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01434",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Symptoms and management of baby blues, and the 10-14 day reassessment, all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00236",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Indications for induction and dynamic dystocia correction all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01150",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Maternal and infant signs of tongue-tie all appear in the context table.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01276",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Monitoring parameters and midwifery care steps all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01039",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Last-resort manoeuvres and cautions match the context; clavicular fracture is omitted but that is only incompleteness.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00180",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Recognition (5/7 min clotting) and prevention (IV fluids, treat cause, blood products) all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01610",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Declines as out of scope; asserts no false claim.",
+    "is_incomplete": false,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_01379",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Apgar timing (1,5,10 min) and breastfeeding initiation in first hour match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02201",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Benefits of skin-to-skin (prevent hypothermia, promote breastfeeding) match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01857",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "All psychiatric symptoms listed appear in the context's history components.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01433",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Escalation criteria and management steps for obstructed labour match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00147",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Predisposing factors for pre-eclampsia/eclampsia all match the context list.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02487",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Correctly reports the four-grade scheme and notes the context cites NICE not RCOG; no false claim.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01877",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "States it lacks specific guidance and advises escalation for bleeding/pain/shock; no false claim asserted.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_02784",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Consent and parental involvement steps all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02186",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Immediate management steps for cord prolapse (note time, discontinue oxytocin, replace cord, oxygen 4 L/min, prepare CS) match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00734",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Pre-birth checks and second-stage points for breech birth all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02619",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Mentions blood film, platelet count, coagulation studies which are in the context; no false claim, partly a refusal.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_01660",
+    "verdict": "FAIL",
+    "failure_type": "unsupported_addition",
+    "reasoning": "Context describes the first-consultation exam but does not mention any genital/vaginal examination; the answer asserts a vaginal exam is done to check for infection and assess reproductive health, which is not supported.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00456",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Oxytocin 20 IU in 1 L over 2 hours plus 5-10 IU slow IV (max 60 IU) for atony matches one of the protocols in the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03066",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Lists the rights from the context; calling them the Respectful Maternity Care Charter mirrors the query and asserts no false clinical claim.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01910",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Prominent ischial spines, subpubic angle >90 degrees, ischial tuberosity distance all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02420",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Do-not-burn gloves, marked leakproof containers, bleach soak for cloth all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02440",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Max 20 minutes suction, release at delivery of head, 2 suction breaks, 30-minute delivery all appear in the context (which contains varying figures).",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00507",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Coagulopathy after fetal death and its other triggers match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01736",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Asks for clarification then lists the inspection equipment and medications verbatim from context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01867",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Mucus checking method matches the context's TwoDay Method description.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00707",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Context says HR slower than 100, or slower than 120 for several minutes, is concerning; the answer's guidance to monitor closely in the 100-120 range and follow slow-heartbeat steps if it drops is consistent and not contradictory.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01212",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Arrest 4h active phase, descent 2h multipara/3h primipara at complete dilation all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00487",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Description of asymmetrical tonic neck and need for medical consultation if strong all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00536",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Assessment of fundus position/tone and management (massage if soft, teach woman, record loss) match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02340",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Patient preparation steps for tear repair all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00679",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Equipment and labeling details for blood specimen collection all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00315",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Manual cleaning steps match the context procedure.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03160",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "ACE inhibitors and ARBs contraindicated, no abrupt stopping, labetalol neonatal monitoring, BP thresholds all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02626",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Premonitory symptoms of eclampsia all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00643",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "States lacking specific guidance, advises escalation, and accurately references MVA/D&C from context; no false claim.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_00897",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "States it lacks specific guidance but the general statement that cannula size relates to gestational age/dilation matches the context; refusal with no false claim.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_00886",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Declines complications and gives only a generic statement about third-stage management; no false claim asserted.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_01121",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Preparatory steps for MVA all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00244",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Indications for urine culture and sensitivity all match the context list.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00812",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Contraindications for amniotomy match the context's contraindications list.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00883",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Vulval toilet steps match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02289",
+    "verdict": "FAIL",
+    "failure_type": "unsupported_addition",
+    "reasoning": "Context attributes epidemics to meningococcal meningitis; the answer incorrectly states tubercular meningitis 'can sometimes be seen in epidemics,' an unsupported claim.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02044",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "General management and BP thresholds match the context; defers specific dosing rather than asserting wrong doses.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00037",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Cleaning and soiled-linen handling steps all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01738",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Principles of physiological third stage and non-intervention criteria match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00508",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Steps to assess/support birth attendant choice all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00957",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "pH below 6.9 and base deficit >12 mmol/L as highest risk match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02204",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Pharmacological and procedural options for major PPH all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01825",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Asks for clarification then describes forceps positioning steps matching the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02829",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Multi-professional team, obstetric anaesthetist, bespoke care plan and training together all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01991",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Referral criteria (RR>30, retractions, O2<95%, cyanosis) and the 2h consultant review all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00009",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Declines to provide treatment and advises consulting a doctor; asserts no false claim.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_00138",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Indications for caesarean section all match the context list.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01864",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Oral aciclovir 800mg 5x daily 7 days, within 24h of rash, IV for severe chickenpox all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01876",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "First and second trimester signs match the context; the third-trimester 'uterus continues to grow' is a reasonable extension and not contradicted.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03144",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Context contains multiple figures; the answer uses the LCG pulse alert (>=120) and the moderate range 91-130, both supported by the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03121",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "POM prescribing requirements and documentation items all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03129",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Polyglycolic sutures preferred over chromic catgut, with strength and infection benefits, matches the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00482",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Community midwife's role (keeper of normality, diabetes, woman's voice, coordination) matches the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01515",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Deceleration definition (15 bpm, 15 s) and early deceleration interpretation match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00154",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "IV fluid rate (1 L in 15-20 min) and transfusion thresholds (Hb <=5 g/100ml, Hct <=15%) match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01140",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Signs of infection after IUD insertion and need for review/removal match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01124",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Asks for clarifying details (fetal status, dilation, station) without asserting any false claim.",
+    "is_incomplete": true,
+    "is_refusal": true
+  },
+  {
+    "query_id": "q_00647",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Baseline rate 110-160, variability categories, acceleration criteria all match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00416",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "5% bleach used undiluted, 1:1 for weaker, mix daily, no ammonia all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00535",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Cleaning, sterilizing internal tools, and the warning all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00868",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Risk factors for uterine rupture (classical incision, 2+ CS, obstructed labour, grand multipara, excess uterotonic, prior surgery) all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01454",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Psychosocial support principles match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01990",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Calcium gluconate 1g (10mL 10%) IV slowly and ventilation methods match the context; magnesium toxicity attribution is supported by context phrasing.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01450",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Warning signs (sideways baby, unusual bleeding, FHR <100) requiring immediate help match the context.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_03061",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Steps to assist rolling in bed match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00338",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Major and minor risk factors and the 1 major / 3 minor criterion all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01325",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Episiotomy indications match the context; does not contradict the timing/placement guidance.",
+    "is_incomplete": true,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00761",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Retained placenta: 30 min active / 60 min physiological matches the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01194",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "BP 140/90 for pre-eclampsia, sudden 15-point drop for bleeding, pulse >100 for infection/dehydration all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02484",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Benzathine penicillin G 50,000 IU/kg single IM dose matches the context (benzathine benzylpenicillin is the equivalent name).",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01920",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Risk-assessment factors for pregnant workers (position, arm reach, load location, movement) match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00318",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Cervical/vaginal inspection steps match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01782",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Risk factors for pre-eclampsia and eclampsia all match the context's two lists.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_00833",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Steps to remove the posterior arm match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01982",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Correctly observes primiparity is not in the exclusion criteria list for home birth; no false claim.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_01036",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Mediolateral episiotomy start at fourchette, diagonal direction, 45-60 degree angle, one large cut all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  },
+  {
+    "query_id": "q_02721",
+    "verdict": "PASS",
+    "failure_type": "none",
+    "reasoning": "Preparation for neonatal resuscitation (staff training, equipment checked, assistance plan, minimize separation) all match the context.",
+    "is_incomplete": false,
+    "is_refusal": false
+  }
+]

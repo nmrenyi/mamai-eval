@@ -1,0 +1,502 @@
+[
+  {
+    "query_id": "q_02393",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01762",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00603",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_00725",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_01165",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02783",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_02912",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_03067",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02828",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01348",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_00169",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02152",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_02863",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00579",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01449",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01434",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_00236",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01150",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01276",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01039",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_00180",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01610",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_01379",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02201",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01857",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_01433",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00147",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02487",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_01877",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_02784",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02186",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00734",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02619",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_01660",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_00456",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_03066",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_01910",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_02420",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_02440",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_00507",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_01736",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_01867",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_00707",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_01212",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00487",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00536",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02340",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00679",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_00315",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_03160",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_02626",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00643",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_00897",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_00886",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_01121",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_00244",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_00812",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00883",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_02289",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_02044",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_00037",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01738",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00508",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00957",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_02204",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01825",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_02829",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01991",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00009",
+    "lynx_score": "FAIL",
+    "lynx_category": "refusal"
+  },
+  {
+    "query_id": "q_00138",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01864",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01876",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_03144",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_03121",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_03129",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00482",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01515",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_00154",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_01140",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01124",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00647",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00416",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00535",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00868",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_01454",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_01990",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_01450",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_03061",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00338",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_01325",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_00761",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  },
+  {
+    "query_id": "q_01194",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_02484",
+    "lynx_score": "FAIL",
+    "lynx_category": "unclear"
+  },
+  {
+    "query_id": "q_01920",
+    "lynx_score": "FAIL",
+    "lynx_category": "unsupported_addition"
+  },
+  {
+    "query_id": "q_00318",
+    "lynx_score": "FAIL",
+    "lynx_category": "omission"
+  },
+  {
+    "query_id": "q_01782",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_00833",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01982",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_01036",
+    "lynx_score": "PASS",
+    "lynx_category": null
+  },
+  {
+    "query_id": "q_02721",
+    "lynx_score": "FAIL",
+    "lynx_category": "contradiction"
+  }
+]
