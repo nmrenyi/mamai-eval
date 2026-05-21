@@ -29,6 +29,7 @@ INPUT_DIR="${INPUT_DIR:-/lightscratch/users/yiren/eval_output/generator/gemma4-e
 LYNX_MODEL="${LYNX_MODEL:-PatronusAI/Llama-3-Patronus-Lynx-70B-Instruct}"
 TENSOR_PARALLEL="${TENSOR_PARALLEL:-2}"
 MAX_QUESTIONS="${MAX_QUESTIONS:-}"
+OVERWRITE="${OVERWRITE:-}"     # set to 1 to ignore stale output (smoke iterations)
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 
 mkdir -p "$HF_CACHE_DIR"
@@ -54,6 +55,9 @@ CMD_ARGS=(
 )
 if [ -n "$MAX_QUESTIONS" ]; then
   CMD_ARGS+=(--max-questions "$MAX_QUESTIONS")
+fi
+if [ -n "$OVERWRITE" ]; then
+  CMD_ARGS+=(--overwrite)
 fi
 
 echo "=== STARTING LYNX SCORING ==="

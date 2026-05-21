@@ -140,6 +140,9 @@ def main():
                         help="Max tokens for the reasoning+verdict (model card: 600).")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit to N responses for smoke testing.")
+    parser.add_argument("--overwrite", action="store_true",
+                        help="Ignore any existing output file and score from scratch "
+                             "(default: resume from it). Use for smoke iterations.")
     args = parser.parse_args()
 
     input_path = _resolve_input(Path(args.input))
@@ -154,10 +157,12 @@ def main():
     )
     print(f"Output: {output_path}")
 
-    # Resume from prior output if present.
+    # Resume from prior output if present (unless --overwrite).
     done_ids: set[str] = set()
     resume_results: list[dict] = []
-    if output_path.exists():
+    if output_path.exists() and args.overwrite:
+        print("  --overwrite: ignoring existing output, scoring from scratch")
+    elif output_path.exists():
         prev = json.loads(output_path.read_text())
         resume_results = prev.get("results", [])
         done_ids = {r["query_id"] for r in resume_results}
