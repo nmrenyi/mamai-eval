@@ -244,8 +244,8 @@ def main():
                 "n_input_tokens": m["n_input_tokens"],
                 "note": parse_note,
             }
-            if score is None:  # keep raw text only when parsing failed
-                row["raw_output"] = raw[:2000]
+            if note is not None:  # keep raw text whenever parsing was imperfect
+                row["raw_output"] = raw[:3000]
             results.append(row)
 
         _save(output_path, metadata, results)
