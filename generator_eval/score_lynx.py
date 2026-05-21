@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import ast
 import hashlib
 import json
 import re
@@ -94,32 +95,82 @@ def _save(output_path: Path, metadata: dict, results: list[dict]) -> None:
     )
 
 
+def _extract_bullets(list_text: str) -> list[str]:
+    """Pull bullet strings out of a REASONING list literal.
+
+    Tolerates Lynx's malformed output — single-quoted items with
+    UNescaped inner apostrophes (e.g. 'a newborn's ears'). The real item
+    delimiter is a quote followed by `, <quote>` or the closing `]`; a
+    lookahead anchors on that so an inner apostrophe doesn't end an item.
+    """
+    items = re.findall(
+        r"""(['"])(.*?)\1(?=\s*,\s*['"]|\s*\])""",
+        list_text, re.DOTALL,
+    )
+    return [content.strip() for _quote, content in items]
+
+
 def _parse_lynx_output(text: str) -> tuple[str | None, object, str | None]:
     """Extract (score, reasoning, parse_note) from Lynx's raw generation.
 
-    score is normalised to "PASS"/"FAIL"/None. reasoning is whatever the
-    REASONING field held (list or str), or None. parse_note flags trouble.
+    Lynx does NOT emit strict JSON despite the prompt asking for it. Its
+    actual output is a Python-dict-ish literal:
+
+        {"REASONING": ['bullet one', "bullet two"], "SCORE": PASS}
+
+    Problems vs json.loads: single-quoted strings, a BARE (unquoted)
+    verdict, and sometimes unescaped apostrophes inside single-quoted
+    bullets. Strategy, most-to-least structured:
+
+      SCORE — always recovered by regex (`PASS`/`FAIL` near "SCORE"),
+              works whether or not it is quoted. This is the metric, so
+              it must never be lost.
+      REASONING — try json.loads then ast.literal_eval on the {...} block
+              (with the bare verdict quoted); if that fails, fall back to
+              delimiter-aware bullet extraction so a malformed literal
+              still yields a clean bullet list.
+
+    Returns (score in {"PASS","FAIL"} or None, reasoning list/str/None,
+    parse_note describing any deviation or None on a clean parse).
     """
-    # Find the outermost {...} block — tolerates markdown fences / prose.
     m = re.search(r"\{.*\}", text, re.DOTALL)
-    if m:
-        try:
-            obj = json.loads(m.group(0))
-            score = obj.get("SCORE")
-            reasoning = obj.get("REASONING")
-            if isinstance(score, str):
-                norm = score.strip().upper()
-                if norm in ("PASS", "FAIL"):
-                    return norm, reasoning, None
-                return None, reasoning, f"unexpected SCORE value: {score!r}"
-            return None, reasoning, "SCORE missing or non-string"
-        except json.JSONDecodeError:
-            pass  # fall through to regex
-    # Fallback: regex straight for the verdict.
+    block = m.group(0) if m else text
+
+    # SCORE — regex, tolerant of quoted or bare verdict.
     sm = re.search(r'"?SCORE"?\s*:?\s*"?(PASS|FAIL)\b', text, re.IGNORECASE)
-    if sm:
-        return sm.group(1).upper(), None, "recovered SCORE via regex (no valid JSON)"
-    return None, None, "no JSON and no SCORE found"
+    score = sm.group(1).upper() if sm else None
+
+    # REASONING — structured parse first.
+    normalised = re.sub(
+        r'("SCORE"\s*:\s*)(PASS|FAIL)\b',
+        lambda mm: f'{mm.group(1)}"{mm.group(2).upper()}"',
+        block, flags=re.IGNORECASE,
+    )
+    obj = None
+    for parser in (json.loads, ast.literal_eval):
+        try:
+            obj = parser(normalised)
+            break
+        except (json.JSONDecodeError, ValueError, SyntaxError):
+            continue
+
+    reasoning: object = None
+    note: str | None = None
+    if isinstance(obj, dict) and isinstance(obj.get("REASONING"), list):
+        reasoning = obj["REASONING"]
+    else:
+        # Structured parse failed (malformed literal) — extract bullets.
+        rm = re.search(r'"REASONING"\s*:\s*(\[.*\])\s*,\s*"SCORE"', text, re.DOTALL)
+        if rm:
+            bullets = _extract_bullets(rm.group(1))
+            reasoning = bullets if bullets else rm.group(1)
+            note = "reasoning recovered via delimiter extraction (malformed literal)"
+        else:
+            note = "REASONING field not found"
+
+    if score is None:
+        return None, reasoning, (note or "") + " | no parseable SCORE"
+    return score, reasoning, note
 
 
 def main():
