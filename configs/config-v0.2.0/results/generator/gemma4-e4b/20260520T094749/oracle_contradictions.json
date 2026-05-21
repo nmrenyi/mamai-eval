@@ -1,0 +1,72 @@
+{
+  "confirmed": [
+    {
+      "query_id": "q_00410",
+      "query_text": "What is the management for mild pre-eclampsia with diastolic blood pressure 90–110mmHg?",
+      "topic": "monitoring frequency for mild pre-eclampsia / PIH at gestation <37 weeks",
+      "passage_A": "The woman is usually managed as an outpatient and followed up weekly at home or at a local clinic",
+      "passage_B": "see the woman twice a week to monitor blood pressure, urine (for proteinuria) and fetal condition",
+      "conflict": "A says the woman is managed as an outpatient with weekly follow-up, while B says she should be seen twice a week.",
+      "answer_excerpt": "You must follow up with her **weekly**."
+    },
+    {
+      "query_id": "q_01073",
+      "query_text": "What is the immediate treatment protocol for a neonate born to a mother with genital herpes?",
+      "topic": "immediate management of neonate exposed to maternal genital herpes",
+      "passage_A": "Immediately apply one dose of 3% aciclovir (b) eye ointment in each eye at birth. Observe for 5 days: If the neonate becomes symptomatic: refer to neonatal care unit for IV aciclovir treatment. If the neonate remains asymptomatic: discharge",
+      "passage_B": "Immediately apply one dose of 3% aciclovir (a) eye ointment in each eye at birth. Refer to neonatal care unit for IV aciclovir treatment.",
+      "conflict": "A says observe for 5 days and refer to neonatal care for IV aciclovir only if symptomatic (discharge if asymptomatic), while B says refer to neonatal care for IV aciclovir treatment immediately and unconditionally.",
+      "answer_excerpt": "Observe the newborn for **5 days**.\n*   If the neonate becomes symptomatic during this time, refer to the **neonatal care unit** for IV aciclovir treatment."
+    },
+    {
+      "query_id": "q_01302",
+      "query_text": "What are the clinical criteria for diagnosing prolonged labour?",
+      "topic": "cervical dilation threshold defining prolonged active first stage of labour",
+      "passage_A": "Prolonged active first stage (>5cm dilated)62",
+      "passage_B": "Prolonged active first stage (>6cm dilated)",
+      "conflict": "A defines prolonged active first stage as >5cm dilated, while B defines it as >6cm dilated.",
+      "answer_excerpt": "If the woman is **more than 5 cm dilated** and there is **no cervical change for 4 hours**."
+    },
+    {
+      "query_id": "q_01618",
+      "query_text": "What is the misoprostol regimen and admission criteria for pregnancy expulsion between 13 and 22 weeks?",
+      "topic": "misoprostol dosing frequency for expulsion between 13 and 22 weeks LMP",
+      "passage_A": "misoprostol sublingually or vaginally: 400 micrograms every 3 hours until foetal and placental",
+      "passage_B": "400 micrograms sublingually or intravaginally (into the posterior fornix), every 4 to 6 hours until labour starts",
+      "conflict": "A (Protocol table 12.2.2) says misoprostol 400 micrograms every 3 hours, while B (prose regimen) says misoprostol 400 micrograms every 4 to 6 hours.",
+      "answer_excerpt": "Give this dose every 3 hours until the foetus and placenta are expelled."
+    },
+    {
+      "query_id": "q_02317",
+      "query_text": "What is the misoprostol dosage for inducing foetal and placental expulsion before 13 weeks versus 13-22 weeks?",
+      "topic": "misoprostol dosing frequency for expulsion between 13 and 22 weeks LMP",
+      "passage_A": "misoprostol sublingually or vaginally: 400 micrograms every 3 hours until foetal and placental",
+      "passage_B": "400 micrograms sublingually or intravaginally (into the posterior fornix), every 4 to 6 hours until labour starts",
+      "conflict": "A (Protocol table 12.2.2) says misoprostol 400 micrograms every 3 hours, while B (prose regimen) says misoprostol 400 micrograms every 4 to 6 hours.",
+      "answer_excerpt": "**Misoprostol** should be given 400 micrograms, sublingually or vaginally, every 3 hours until expulsion starts"
+    },
+    {
+      "query_id": "q_02878",
+      "query_text": "When should post-operative dressings and non-absorbable skin sutures be removed?",
+      "topic": "timing for removal of non-absorbable skin sutures after surgery",
+      "passage_A": "For non-absorbable sutures: remove the stitches between the 5 and 8 day",
+      "passage_B": "Remove skin sutures (if not absorbable) on D7",
+      "conflict": "A says remove non-absorbable sutures between day 5 and day 8, while B says remove them on day 7 (a third passage adds 'often 4–5 days after the surgery').",
+      "answer_excerpt": "Remove the stitches between **Day 5 and Day 8**."
+    }
+  ],
+  "uncertain": [
+    {
+      "query_id": "q_01949",
+      "why": "Context gives ceftriaxone 'slow IV injection (over 3 minutes) or infusion (over 30 minutes)' — these are two alternative routes for the same drug, not conflicting facts; the answer's '(over 30 minutes)' picks one option. Not a true self-contradiction."
+    },
+    {
+      "query_id": "q_02598",
+      "why": "Context has misoprostol 'every 3 hours' (for >=14 weeks) and elsewhere 'up to 2 times, 24 hours apart' (a different source/scenario for incomplete abortion). These describe different gestational scenarios rather than the same fact, and Lynx faulted the answer for omitted routes, not for the timing — cannot cleanly isolate a conflict relevant to this FAIL."
+    },
+    {
+      "query_id": "q_01515",
+      "why": "One passage lists deceleration types as 'early, variable, typical, atypical, and late' and another as 'early, variable, or late'; the shorter list is a subset of the longer one rather than a genuine conflicting claim, so this is incompleteness, not contradiction."
+    }
+  ]
+}
