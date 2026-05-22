@@ -29,46 +29,24 @@ from pathlib import Path
 CATEGORIZE_RUBRIC = """\
 Categorize WHY each faithfulness FAIL failed.
 
-A medical assistant (Gemma 4) was given clinical-guideline context and
-answered a clinical question. A judge model (Patronus Lynx) marked the answer
-FAIL with bullet-point reasoning. For each case you are given: query_id,
-query_text, context (the guideline text the model was given), answer (the
-model's response), lynx_reasoning (Lynx's reasoning bullets).
+A medical assistant (Gemma 4) was given clinical-guideline context and answered a clinical question. A judge model (Patronus Lynx) marked the answer FAIL with bullet-point reasoning. For each case you are given: query_id, query_text, context (the guideline text the model was given), answer (the model's response), lynx_reasoning (Lynx's reasoning bullets).
 
 Assign exactly one PRIMARY category:
 
-1. contradiction       — the answer asserts something that conflicts with /
-                         is inconsistent with the context (wrong dose, wrong
-                         threshold, states X where the context says Y).
-                         A genuine faithfulness failure.
-2. unsupported_addition — the answer introduces clinical claims NOT present in
-                         the context ("information beyond the document").
-                         A genuine faithfulness failure.
-3. omission            — the answer is correct as far as it goes but leaves
-                         out content the context contains; Lynx faults it as
-                         incomplete. NOT a hallucination.
-4. refusal             — the answer declines to give clinical substance
-                         ("I cannot provide a treatment", "consult a doctor")
-                         when the context did contain relevant info.
-                         NOT a hallucination.
-5. unclear             — Lynx's reasoning does not let you confidently
-                         determine the failure type.
+1. contradiction — the answer asserts something that conflicts with / is inconsistent with the context (wrong dose, wrong threshold, states X where the context says Y). A genuine faithfulness failure.
+2. unsupported_addition — the answer introduces clinical claims NOT present in the context ("information beyond the document"). A genuine faithfulness failure.
+3. omission — the answer is correct as far as it goes but leaves out content the context contains; Lynx faults it as incomplete. NOT a hallucination.
+4. refusal — the answer declines to give clinical substance ("I cannot provide a treatment", "consult a doctor") when the context did contain relevant info. NOT a hallucination.
+5. unclear — Lynx's reasoning does not let you confidently determine the failure type.
 
 Rules:
-- Judge by what Lynx's reasoning actually says is wrong, cross-checked against
-  the answer and the context.
-- A case may have multiple issues — pick the PRIMARY one (usually the operative
-  reason in Lynx's concluding bullet); list any others in `secondary`.
-- `contradiction` and `unsupported_addition` are the two TRUE faithfulness
-  failures; the other three are not.
+- Judge by what Lynx's reasoning actually says is wrong, cross-checked against the answer and the context.
+- A case may have multiple issues — pick the PRIMARY one (usually the operative reason in Lynx's concluding bullet); list any others in `secondary`.
+- `contradiction` and `unsupported_addition` are the two TRUE faithfulness failures; the other three are not.
 - Also judge whether Lynx's FAIL verdict itself looks `sound` or `questionable`.
 
 Output one JSON object per case:
-  {"query_id": "...", "category": "<one of the five>",
-   "secondary": ["...other issues, or empty..."],
-   "justification": "one sentence",
-   "lynx_verdict": "sound | questionable",
-   "lynx_verdict_note": "one sentence if questionable, else empty"}
+{"query_id": "...", "category": "<one of the five>", "secondary": ["...other issues, or empty..."], "justification": "one sentence", "lynx_verdict": "sound | questionable", "lynx_verdict_note": "one sentence if questionable, else empty"}
 """
 
 VALID_CATEGORIES = ["contradiction", "unsupported_addition",

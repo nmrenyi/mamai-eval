@@ -25,12 +25,19 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+# Repo root on path so this sibling-module import resolves whether the script
+# is run via `python -m generator_eval.calibrate` or directly.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from generator_eval.analyze_lynx_fails import VALID_CATEGORIES
+
 # ── Sampling parameters — frozen for reproducibility ─────────────────────────
 SAMPLE_SEED = 42
 N_PASS_SAMPLE = 50
 N_PER_FAIL_CATEGORY = 10
-FAIL_CATEGORIES = ["contradiction", "unsupported_addition",
-                   "omission", "refusal", "unclear"]
+# The FAIL-category taxonomy used for stratified sampling is the single source
+# of truth in analyze_lynx_fails.VALID_CATEGORIES — imported above, not
+# re-declared here. Its order is reproducibility-critical (it fixes the RNG
+# call sequence in cmd_sample).
 
 # ── Pinned calibration rubric ────────────────────────────────────────────────
 # The exact instruction the independent judge must be given. Frozen so the
@@ -38,35 +45,23 @@ FAIL_CATEGORIES = ["contradiction", "unsupported_addition",
 CALIBRATION_RUBRIC = """\
 Independently judge whether each answer is FAITHFUL to its context.
 
-A medical assistant (Gemma 4) was given clinical-guideline context and answered
-a clinical question. Judge from first principles — do NOT try to match any
-other model's verdict. For each case you are given: query_id, query_text,
-context, answer.
+A medical assistant (Gemma 4) was given clinical-guideline context and answered a clinical question. Judge from first principles — do NOT try to match any other model's verdict. For each case you are given: query_id, query_text, context, answer.
 
 Judge FAIL if and ONLY if the answer does one of these:
-- contradiction        — asserts something that conflicts with the context
-                         (wrong dose, wrong threshold, states X where the
-                         context says Y).
-- unsupported addition — asserts a clinical claim NOT supported by the context
-                         (information introduced beyond the document).
+- contradiction — asserts something that conflicts with the context (wrong dose, wrong threshold, states X where the context says Y).
+- unsupported addition — asserts a clinical claim NOT supported by the context (information introduced beyond the document).
 
-Judge PASS in every other case. These are NOT faithfulness failures and must
-be PASS:
-- The answer is incomplete — correct as far as it goes but omits things the
-  context contains. Incompleteness is not unfaithfulness.
-- The answer declines / refuses ("consult a doctor", "I cannot provide this",
-  "out of scope"). A refusal asserts no false claim, so it is faithful (PASS).
+Judge PASS in every other case. These are NOT faithfulness failures and must be PASS:
+- The answer is incomplete — correct as far as it goes but omits things the context contains. Incompleteness is not unfaithfulness.
+- The answer declines / refuses ("consult a doctor", "I cannot provide this", "out of scope"). A refusal asserts no false claim, so it is faithful (PASS).
 
 Edge guidance:
-- Trivial paraphrase / equivalent wording ("≥50%" vs "50% or more"; a drug's
-  two valid names) is NOT a contradiction.
-- If the context itself contains conflicting figures and the answer picks one
-  of them, that is PASS — the answer is supported by the context.
+- Trivial paraphrase / equivalent wording ("≥50%" vs "50% or more"; a drug's two valid names) is NOT a contradiction.
+- If the context itself contains conflicting figures and the answer picks one of them, that is PASS — the answer is supported by the context.
 - Judge only against the provided context, not outside medical knowledge.
 
 Output one JSON object per case:
-  {"query_id": "...", "verdict": "PASS | FAIL",
-   "reasoning": "one or two sentences"}
+{"query_id": "...", "verdict": "PASS | FAIL", "reasoning": "one or two sentences"}
 """
 
 
@@ -117,7 +112,7 @@ def cmd_sample(run_dir: Path) -> None:
     for qid, c in cats.items():
         by_cat.setdefault(c["category"], []).append(qid)
     fail_sample: list[str] = []
-    for cat in FAIL_CATEGORIES:
+    for cat in VALID_CATEGORIES:
         ids = sorted(by_cat.get(cat, []))
         pick = sorted(rng.sample(ids, min(N_PER_FAIL_CATEGORY, len(ids))))
         fail_sample += pick
@@ -208,7 +203,7 @@ def cmd_score(run_dir: Path, verdicts_path: Path) -> None:
 
     # Per-category confirmation within the FAIL stratum.
     per_cat = {}
-    for cat in FAIL_CATEGORIES:
+    for cat in VALID_CATEGORIES:
         qs = [q for q in fail_stratum if key[q]["lynx_category"] == cat]
         per_cat[cat] = {
             "n": len(qs),
@@ -252,7 +247,7 @@ def cmd_score(run_dir: Path, verdicts_path: Path) -> None:
           f"= {est_total/n_total:.2%}")
     print(f"  per FAIL category (confirmed/n): "
           + ", ".join(f"{c} {per_cat[c]['confirmed_fail']}/{per_cat[c]['n']}"
-                      for c in FAIL_CATEGORIES))
+                      for c in VALID_CATEGORIES))
 
 
 def main() -> None:
