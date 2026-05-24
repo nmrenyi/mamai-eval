@@ -52,9 +52,11 @@ rm -rf "$WORKTREE"
 git clone --branch "$REPO_REF" --depth 1 "$REPO_URL" "$WORKTREE"
 cd "$WORKTREE"
 
-# Default oracle: committed file from the checked-out tree.
+# Default oracle: committed file from the checked-out tree (v0.2.0 top-20
+# union, score>=5 — the current canonical revision). To rerun on v0.1.0,
+# pass ORACLE=…/mamaretrieval-v0.1.0-score5.jsonl explicitly.
 if [ -z "$ORACLE" ]; then
-  ORACLE="$WORKTREE/configs/$CONFIG/oracle/mamaretrieval-v0.1.0-score5.jsonl"
+  ORACLE="$WORKTREE/configs/$CONFIG/oracle/mamaretrieval-v0.2.0-score5.jsonl"
 fi
 if [ ! -f "$ORACLE" ]; then
   echo "ERROR: oracle file not found at $ORACLE"
