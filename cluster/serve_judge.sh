@@ -92,9 +92,15 @@ mkdir -p "$OUTPUT_DIR"
 VLLM_LOG="$OUTPUT_DIR/vllm.log"
 VERDICTS="$OUTPUT_DIR/verdicts.jsonl"
 
+# vLLM's engine-startup timeout defaults to 600s; the 253B Nemotron and 400G
+# Maverick FP8 checkpoints both take well over that to load from PVC HF
+# cache. Raise to 30 min so big models can finish weight loading.
+export VLLM_ENGINE_READY_TIMEOUT_S="${VLLM_ENGINE_READY_TIMEOUT_S:-1800}"
+
 echo "=== STARTING vLLM SERVER ==="
 echo "  MODEL=$MODEL  TP=$TP_SIZE  PORT=$PORT"
 echo "  EXTRA_VLLM_FLAGS=$EXTRA_VLLM_FLAGS"
+echo "  VLLM_ENGINE_READY_TIMEOUT_S=$VLLM_ENGINE_READY_TIMEOUT_S"
 echo "  log -> $VLLM_LOG"
 
 VLLM_ARGS=(
