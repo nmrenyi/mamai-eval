@@ -1,0 +1,6 @@
+# Cached HF download of obgyn_meta_eval.jsonl — fetchable on demand, not committed.
+data/
+# Per-candidate judge verdict caches.
+verdicts/
+# Generated metric reports (per-candidate, regenerated from verdicts).
+reports/
