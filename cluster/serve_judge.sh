@@ -51,9 +51,29 @@ apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git curl > /
 ln -sf /usr/bin/python3.10 /usr/bin/python3
 
 echo "=== INSTALLING PYTHON PACKAGES (vllm + openai) ==="
-# vLLM ships prebuilt CUDA wheels; ~3-5 min on first install of a job.
-pip3 install --no-cache-dir -q --upgrade pip > /dev/null
-pip3 install --no-cache-dir -q vllm openai huggingface_hub > /dev/null
+# vLLM ships prebuilt CUDA wheels. Use --extra-index-url so torch resolves
+# to a CUDA-12.4 build consistent with the transformers vllm pulls in
+# (we've seen transformers latest need torch>=2.6's torch.distributed.tensor
+# .device_mesh — fails Llama-4 Maverick model load if torch is older).
+# --retries 10 handles the slow EPFL <-> PyPI link (seen mid-wheel timeouts).
+pip3 install --no-cache-dir -q --retries 10 --upgrade pip > /dev/null
+pip3 install --no-cache-dir -q --retries 10 \
+  --extra-index-url https://download.pytorch.org/whl/cu124 \
+  vllm openai huggingface_hub > /dev/null
+
+# Sanity-check the install BEFORE we try to serve — fail fast with a clean
+# error if a partial / net-interrupted install left things broken.
+python3 - <<'PY'
+import sys
+try:
+    import vllm, torch, transformers
+    print(f"  torch={torch.__version__} transformers={transformers.__version__} vllm={vllm.__version__}")
+    # The exact import chain that broke Maverick's job:
+    from transformers.models.auto.image_processing_auto import ImageProcessingMixin  # noqa: F401
+except Exception as e:
+    print(f"DEP-CHECK FAILED: {type(e).__name__}: {e}", file=sys.stderr)
+    sys.exit(1)
+PY
 echo "=== DEPS DONE ==="
 
 # Persist HF model cache across job runs via PVC.
@@ -78,11 +98,14 @@ echo "  EXTRA_VLLM_FLAGS=$EXTRA_VLLM_FLAGS"
 echo "  log -> $VLLM_LOG"
 
 VLLM_ARGS=(
-  serve "$MODEL"
+  --model "$MODEL"
   --tensor-parallel-size "$TP_SIZE"
   --host 0.0.0.0
   --port "$PORT"
   --gpu-memory-utilization "$GPU_MEMORY_UTIL"
+  # Required for Nemotron-Ultra (custom modeling code on the HF repo);
+  # safe / no-op for the other candidates from official orgs.
+  --trust-remote-code
 )
 if [ -n "$MAX_MODEL_LEN" ]; then
   VLLM_ARGS+=(--max-model-len "$MAX_MODEL_LEN")
@@ -90,7 +113,10 @@ fi
 # shellcheck disable=SC2206
 VLLM_ARGS+=($EXTRA_VLLM_FLAGS)
 
-vllm "${VLLM_ARGS[@]}" > "$VLLM_LOG" 2>&1 &
+# Use module form rather than `vllm serve`: partial pip installs occasionally
+# don't place the `vllm` console-scripts entry in PATH (e.g. after a mid-wheel
+# network timeout, which we hit on the first attempt for this bake-off).
+python3 -m vllm.entrypoints.openai.api_server "${VLLM_ARGS[@]}" > "$VLLM_LOG" 2>&1 &
 VLLM_PID=$!
 
 cleanup() {
