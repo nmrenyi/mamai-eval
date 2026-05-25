@@ -137,12 +137,18 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-echo "=== WAITING FOR vLLM /health (up to 20 min) ==="
+# Wait cap must exceed VLLM_ENGINE_READY_TIMEOUT_S (1800s). Nemotron-Ultra
+# and Maverick observed: ~13 min shard load + CUDA graph warmup → ~25-35 min
+# to /health. 60 min cap leaves margin and matches vLLM's own timeout policy.
+HEALTH_WAIT_S="${HEALTH_WAIT_S:-3600}"
+HEALTH_POLL_S=10
+HEALTH_MAX_ITERS=$(( HEALTH_WAIT_S / HEALTH_POLL_S ))
+echo "=== WAITING FOR vLLM /health (up to $(( HEALTH_WAIT_S / 60 )) min) ==="
 HEALTHY=0
-for i in $(seq 1 120); do
+for i in $(seq 1 "$HEALTH_MAX_ITERS"); do
   if curl -sf "http://localhost:$PORT/health" > /dev/null 2>&1; then
     HEALTHY=1
-    echo "vLLM healthy after ~$((i*10))s"
+    echo "vLLM healthy after ~$((i*HEALTH_POLL_S))s"
     break
   fi
   if ! kill -0 "$VLLM_PID" 2>/dev/null; then
@@ -150,10 +156,10 @@ for i in $(seq 1 120); do
     tail -80 "$VLLM_LOG" || true
     exit 1
   fi
-  sleep 10
+  sleep "$HEALTH_POLL_S"
 done
 if [ "$HEALTHY" -ne 1 ]; then
-  echo "ERROR: vllm did not become healthy within 20 min"
+  echo "ERROR: vllm did not become healthy within $(( HEALTH_WAIT_S / 60 )) min"
   tail -80 "$VLLM_LOG" || true
   exit 1
 fi
