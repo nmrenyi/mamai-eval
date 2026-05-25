@@ -31,6 +31,14 @@ def cmd_fetch(args: argparse.Namespace) -> int:
     return 0
 
 
+def _resolve_response_format(spec: str | None) -> dict | None:
+    if not spec:
+        return None
+    if spec == "criterion_verdict":
+        return judge.CRITERION_VERDICT_SCHEMA
+    return json.loads(spec)
+
+
 def cmd_judge(args: argparse.Namespace) -> int:
     cal_path = Path(args.input) if args.input else fetch.fetch_calibration()
     rows = metrics.load_rows(cal_path)
@@ -38,6 +46,7 @@ def cmd_judge(args: argparse.Namespace) -> int:
         rows = rows[: args.limit]
 
     extra_body = json.loads(args.extra_body) if args.extra_body else None
+    response_format = _resolve_response_format(args.json_schema)
     grader = judge.make_openai_grader(
         base_url=args.base_url,
         model=args.model,
@@ -45,6 +54,8 @@ def cmd_judge(args: argparse.Namespace) -> int:
         temperature=args.temperature,
         max_tokens=args.max_tokens,
         extra_body=extra_body,
+        seed=args.seed,
+        response_format=response_format,
     )
     n = judge.run_judge(
         rows, args.output, grader, args.model,
@@ -115,11 +126,19 @@ def build_parser() -> argparse.ArgumentParser:
                     help="Override calibration JSONL path")
     pj.add_argument("--api-key", default="EMPTY")
     pj.add_argument("--temperature", type=float, default=0.0)
-    pj.add_argument("--max-tokens", type=int, default=judge.DEFAULT_MAX_TOKENS)
+    pj.add_argument("--max-tokens", type=int, default=None,
+                    help="Output (completion) token cap. UNSET (default) lets "
+                         "vLLM use the remaining context — safer for reasoning "
+                         "models since max_tokens caps reasoning+final together.")
+    pj.add_argument("--seed", type=int, default=None,
+                    help="Sampling seed for reproducibility.")
+    pj.add_argument("--json-schema", default=None,
+                    help='Built-in preset "criterion_verdict" (recommended), '
+                         'or an inline JSON dict for response_format.')
     pj.add_argument("--max-workers", type=int, default=judge.DEFAULT_MAX_WORKERS)
     pj.add_argument("--extra-body", default=None,
                     help='JSON dict forwarded to OpenAI extra_body, e.g. '
-                         '{"reasoning_effort":"medium"} for gpt-oss.')
+                         '{"reasoning_effort":"high"} for gpt-oss.')
     pj.add_argument("--limit", type=int, default=None,
                     help="Only judge first N rows (for smoke tests)")
     pj.set_defaults(func=cmd_judge)

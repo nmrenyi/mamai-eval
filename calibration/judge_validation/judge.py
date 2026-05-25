@@ -34,6 +34,29 @@ DEFAULT_MAX_TOKENS = 1024
 DEFAULT_MAX_WORKERS = 20
 
 
+# Strict JSON-schema for the rubric verdict. Pass as `response_format` to the
+# OpenAI/vLLM endpoint to force every reply to be parseable structured output —
+# eliminates the ~1.5% parse-error rate we saw on the first gpt-oss-120b run.
+# Reasoning models with `--enable-reasoning + --reasoning-parser <name>` apply
+# this schema to the FINAL channel only; the reasoning channel stays free-form.
+CRITERION_VERDICT_SCHEMA = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "criterion_verdict",
+        "strict": True,
+        "schema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["explanation", "criteria_met"],
+            "properties": {
+                "explanation": {"type": "string"},
+                "criteria_met": {"type": "boolean"},
+            },
+        },
+    },
+}
+
+
 # ── Graders (callable: prompt -> raw text) ───────────────────────────────────
 
 
@@ -42,26 +65,42 @@ def make_openai_grader(
     model: str,
     api_key: str = "EMPTY",
     temperature: float = DEFAULT_TEMPERATURE,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
+    max_tokens: int | None = None,
     extra_body: dict | None = None,
+    seed: int | None = None,
+    response_format: dict | None = None,
 ):
     """Build a grader that posts to an OpenAI-compatible endpoint (vLLM).
 
     `extra_body` is forwarded to OpenAI SDK's `extra_body` kwarg — use it for
     vLLM/reasoning-model specifics (e.g. {"reasoning_effort": "medium"} on
     gpt-oss; {"chat_template_kwargs": {"enable_thinking": True}} on Nemotron).
+
+    `max_tokens=None` (default) omits the field from the request so vLLM uses
+    the remaining context window (--max-model-len minus input). Safer for
+    reasoning models since max_tokens caps reasoning+final combined; setting
+    it too tight truncates the JSON.
+
+    `response_format` accepts an OpenAI-style structured-output spec (e.g.
+    CRITERION_VERDICT_SCHEMA above). Strongly recommended — guarantees
+    parseable JSON every call.
     """
     from openai import OpenAI
 
     client = OpenAI(base_url=base_url, api_key=api_key)
 
     def grader(prompt: str) -> str:
-        kw = {
+        kw: dict = {
             "model": model,
             "messages": [{"role": "user", "content": prompt}],
             "temperature": temperature,
-            "max_tokens": max_tokens,
         }
+        if max_tokens is not None:
+            kw["max_tokens"] = max_tokens
+        if seed is not None:
+            kw["seed"] = seed
+        if response_format is not None:
+            kw["response_format"] = response_format
         if extra_body:
             kw["extra_body"] = extra_body
         r = client.chat.completions.create(**kw)

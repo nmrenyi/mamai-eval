@@ -32,7 +32,12 @@ TP_SIZE="${TP_SIZE:?required: tensor parallel size}"
 EXTRA_BODY="${EXTRA_BODY:-}"
 EXTRA_VLLM_FLAGS="${EXTRA_VLLM_FLAGS:-}"
 JUDGE_TEMP="${JUDGE_TEMP:-0.0}"
-JUDGE_MAX_TOKENS="${JUDGE_MAX_TOKENS:-1024}"
+# JUDGE_MAX_TOKENS unset/empty => omit --max-tokens; vLLM uses (max-model-len
+# minus input) which is safer for reasoning models (max_tokens caps
+# reasoning+final combined and too-tight truncates the JSON output).
+JUDGE_MAX_TOKENS="${JUDGE_MAX_TOKENS-}"
+JUDGE_SEED="${JUDGE_SEED-}"
+JUDGE_JSON_SCHEMA="${JUDGE_JSON_SCHEMA-}"
 JUDGE_WORKERS="${JUDGE_WORKERS:-20}"
 # vLLM serves the model's full context by default, which on Nemotron-Ultra
 # (128K) and Maverick (1M) eats so much GPU memory for KV cache that the
@@ -170,19 +175,27 @@ curl -s "http://localhost:$PORT/v1/models" | head -200 || true
 echo
 
 echo "=== RUNNING BAKE-OFF JUDGE ==="
-EXTRA_BODY_ARGS=()
+JUDGE_ARGS=(
+  --base-url "http://localhost:$PORT/v1"
+  --model "$MODEL"
+  --output "$VERDICTS"
+  --temperature "$JUDGE_TEMP"
+  --max-workers "$JUDGE_WORKERS"
+)
+if [ -n "$JUDGE_MAX_TOKENS" ]; then
+  JUDGE_ARGS+=(--max-tokens "$JUDGE_MAX_TOKENS")
+fi
+if [ -n "$JUDGE_SEED" ]; then
+  JUDGE_ARGS+=(--seed "$JUDGE_SEED")
+fi
+if [ -n "$JUDGE_JSON_SCHEMA" ]; then
+  JUDGE_ARGS+=(--json-schema "$JUDGE_JSON_SCHEMA")
+fi
 if [ -n "$EXTRA_BODY" ]; then
-  EXTRA_BODY_ARGS=(--extra-body "$EXTRA_BODY")
+  JUDGE_ARGS+=(--extra-body "$EXTRA_BODY")
 fi
 
-python3 -m calibration.judge_validation judge \
-  --base-url "http://localhost:$PORT/v1" \
-  --model "$MODEL" \
-  --output "$VERDICTS" \
-  --temperature "$JUDGE_TEMP" \
-  --max-tokens "$JUDGE_MAX_TOKENS" \
-  --max-workers "$JUDGE_WORKERS" \
-  "${EXTRA_BODY_ARGS[@]}"
+python3 -m calibration.judge_validation judge "${JUDGE_ARGS[@]}"
 
 echo "=== COMPUTING METRICS ==="
 python3 -m calibration.judge_validation metrics \
