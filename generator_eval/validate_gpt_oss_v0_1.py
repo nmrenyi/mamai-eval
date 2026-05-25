@@ -124,9 +124,14 @@ def gate_calibration(claude_verdicts: list[dict],
                  f"→ {'pass' if agree_pass else 'FAIL'}")
     lines.append(f"  Disagreement breakdown:")
     cm = Counter((claude_by_id.get(q), gptoss_by_id.get(q)) for q in sample_ids)
-    for (c, g), n in sorted(cm.items()):
+    for (c, g), n in sorted(cm.items(), key=lambda kv: (str(kv[0][0]), str(kv[0][1]))):
         marker = "  " if c == g else " *"
         lines.append(f"   {marker} claude={c} / gpt-oss={g}: {n}")
+    missing_claude = sum(1 for q in sample_ids if q not in claude_by_id)
+    missing_gptoss = sum(1 for q in sample_ids if q not in gptoss_by_id)
+    if missing_claude or missing_gptoss:
+        lines.append(f"  WARNING: missing verdicts — claude={missing_claude}, "
+                     f"gpt-oss={missing_gptoss}")
     lines.append(f"  Claude precision={cl_prec:.2%}  miss={cl_miss:.2%}  "
                  f"rate={cl_rate:.4f} ({cl_rate*100:.2f}%)")
     lines.append(f"  gpt-oss precision={go_prec:.2%}  miss={go_miss:.2%}  "
