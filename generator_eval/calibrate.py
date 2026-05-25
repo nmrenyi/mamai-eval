@@ -95,7 +95,7 @@ def cmd_sample(run_dir: Path) -> None:
     lynx = {r["query_id"]: r
             for r in _load(run_dir / "lynx_scores.json")["results"]}
     cats = {r["query_id"]: r
-            for r in _load(run_dir / "lynx_fail_analysis.json")}
+            for r in _load(run_dir / "lynx_fail_categories.json")}
     oracle = {r["query_id"]: r
               for r in _load(run_dir / "oracle_responses.json")["results"]}
 
