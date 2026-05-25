@@ -34,7 +34,12 @@ EXTRA_VLLM_FLAGS="${EXTRA_VLLM_FLAGS:-}"
 JUDGE_TEMP="${JUDGE_TEMP:-0.0}"
 JUDGE_MAX_TOKENS="${JUDGE_MAX_TOKENS:-1024}"
 JUDGE_WORKERS="${JUDGE_WORKERS:-20}"
-MAX_MODEL_LEN="${MAX_MODEL_LEN:-}"
+# vLLM serves the model's full context by default, which on Nemotron-Ultra
+# (128K) and Maverick (1M) eats so much GPU memory for KV cache that the
+# engine refuses to start (saw: KV cache needs 8 GiB but only 0.95 GiB free).
+# The judge calls are ~1-2K input + ~150 output, so capping at 16K is safe
+# and leaves plenty of KV headroom for batching. Override via env if needed.
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-16384}"
 GPU_MEMORY_UTIL="${GPU_MEMORY_UTIL:-0.92}"
 PORT="${PORT:-8000}"
 
