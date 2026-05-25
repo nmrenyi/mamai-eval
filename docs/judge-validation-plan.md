@@ -148,9 +148,27 @@ approval; judging cost becomes GPU time already available (8× H100, or
 Two families are excluded up front:
 
 - **Gemma** — the model under test is Gemma 4 E4B; a Gemma judge introduces
-  self-preference bias (judges favour their own family).
-- **Qwen** — already the OBGYN classifier family; kept off the judge side to
-  keep the pipeline decorrelated.
+  self-preference bias. Judges have a documented ~10% preference for their
+  own family's generations (Panickssery et al., arXiv:2404.13076), driven by
+  stylistic familiarity with their own decoding distribution. A Gemma judge
+  scoring Gemma's responses would systematically inflate every Gemma headline.
+- **Qwen** — the mamabench v0.2 SAQ key facts (kenya / whb / afrimedqa_saq,
+  738 rows across the ±RAG arms) were authored by **Qwen3.5-397B-A17B-FP8**
+  at dataset build time with Qwen3+ thinking mode on (per
+  `mamabench/docs/keyfact_extractor.md`). A Qwen judge reading those
+  Qwen-styled key facts would have stylistic and conceptual alignment with
+  the criteria it is grading against — implicitly knowing "what was meant"
+  because the same family wrote them. Bias direction: **systematically
+  inflates `key_fact_recall`** on the SAQ track, which is the deployment-
+  relevant headline metric.
+
+  Critically, the calibration set in this plan (`obgyn_meta_eval.jsonl`)
+  uses **physician-written rubric criteria**, not the Qwen-extracted key
+  facts. So a Qwen judge could pass the calibration at the 77.6% human
+  baseline and **still inflate `key_fact_recall`** on SAQ — the calibration
+  has no ground truth that would bound the alignment effect. Excluding Qwen
+  removes the alignment by construction, since the SAQ side has no
+  independent way to detect it after the fact.
 
 Three candidates for this round:
 
