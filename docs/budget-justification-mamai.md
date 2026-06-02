@@ -1,15 +1,17 @@
 # LLM Judge API Budget — MAM-AI v0.2 HealthBench
 
-Two budget items for the HealthBench rubric track of the v0.2 evaluation, both via the closed-source Batch API. *(Separate smaller asks of $30 each cover the SAQ rescore and the faithfulness judge.)*
+Two budget items for the HealthBench rubric track of the v0.2 evaluation, both via the closed-source Batch API. **Starting model: `gpt-5-mini`** — the smallest OpenAI option, used as a low-cost feasibility check before committing to larger spend. *(Separate smaller asks of $30 each cover the SAQ rescore and the faithfulness judge.)*
 
 | Phase | Purpose | Estimated batch cost | **Ask** |
 |---|---|---:|---:|
-| **A. Calibration** | Validate `gpt-5.5` as LLM judge against physician ground truth | $96 | **$120** |
-| **B. Production rescore** | Score 38,308 model responses on the HealthBench rubric track | $533 | **$600** |
+| **A. Calibration** | Validate `gpt-5-mini` as LLM judge against physician ground truth | $6 | **$15** |
+| **B. Production rescore** | Score 38,308 model responses on the HealthBench rubric track | $33 | **$50** |
 
-**Current ask total: $720.** A further ~$600 covers 2 anticipated retrieval-module iterations (see Forward-looking section) — filed separately when each triggers, not part of this approval. Full project envelope across v0.2 + 2 iterations: **~$1,320**.
+**Current ask total: $65** (gpt-5-mini batch). A further ~$50 covers 2 anticipated retrieval-module iterations (see Forward-looking section) — filed separately when each triggers, not part of this approval. **Full project envelope at gpt-5-mini: ~$115.**
 
-Phase A validates `gpt-5.5` as the judge against physician ground truth before Phase B uses it on production data. Both phases are required: the open-source bake-off (see Background) showed that open-weight judges over-rate "met" on a meaningful fraction of physician-not-met rows — biasing the deployment-headline rubric metric in the wrong direction — so a frontier closed-source judge is necessary for the final v0.2 evaluation.
+Strategy: gpt-5-mini is the cheapest plausible OpenAI judge. Phase A produces a metric report directly comparable to the open-weight bake-off (Background) on the same 6,853 physician-labeled triples. If gpt-5-mini materially beats the open-weight not-met agreement (67.9%), we run Phase B at gpt-5-mini for the full v0.2 report. If not, we escalate to a higher-tier closed-source judge (gpt-5.4, gpt-5.5, or alternatives — see "Escalation options" below). Either way, Phase A is the empirical gate.
+
+Open-weight judges over-rate "met" on a meaningful fraction of physician-not-met rows (Background), biasing the deployment-headline rubric metric in the wrong direction — so a closed-source judge is necessary for the final v0.2 evaluation. The question Phase A answers is which closed-source tier suffices.
 
 ---
 
@@ -25,20 +27,20 @@ MAM-AI v0.2's open-ended evaluation tracks use an LLM judge to score Gemma 4 E4B
 
 The pinned candidate (gpt-oss-120b medium) is the **best** of the three. We also confirmed higher reasoning effort doesn't fix it: gpt-oss-120b at `reasoning_effort=high` improved not-met agreement by only 1.7 pp (67.9% → 69.6%) while degrading other metrics — the task is not reasoning-bound. **Bigger ≠ better either**: the two heavier candidates score worse, not better.
 
-A judge that over-rates inflates the rubric headline metric (`weighted_met`) — the exact direction we don't want for a deployment story. We've exhausted the obvious open-source levers (3 models, 2 reasoning settings on the best one) and the bias persists across all of them. **The final evaluation requires a frontier closed-source judge**: we need to calibrate `gpt-5.5` against the same physician-labeled set (Phase A), confirm it materially improves the not-met agreement, and then run it over the production rubric track (Phase B).
+A judge that over-rates inflates the rubric headline metric (`weighted_met`) — the exact direction we don't want for a deployment story. We've exhausted the obvious open-source levers (3 models, 2 reasoning settings on the best one) and the bias persists across all of them. **The final evaluation requires a closed-source judge.** We start with the cheapest plausible option — `gpt-5-mini` — and use Phase A to test whether it materially beats the open-weight baseline on the not-met-agreement metric. If yes, Phase B runs at gpt-5-mini. If no, we escalate (see "Escalation options").
 
 ---
 
-## Phase A — Calibration (`gpt-5.5` vs physician ground truth)
+## Phase A — Calibration (`gpt-5-mini` vs physician ground truth)
 
 ### Task
-Run `gpt-5.5` over the OBGYN-scoped HealthBench grader meta-evaluation set (`mamabench@v0.2.1/calibration/obgyn_meta_eval.jsonl`) — **6,853 physician-labeled `(prompt, completion, criterion)` triples**. Compute a 4-metric report: LLM↔single-human agreement, LLM↔consensus, judge met-rate vs physician met-rate, and per-class agreement (rubber-stamp detector).
+Run `gpt-5-mini` over the OBGYN-scoped HealthBench grader meta-evaluation set (`mamabench@v0.2.1/calibration/obgyn_meta_eval.jsonl`) — **6,853 physician-labeled `(prompt, completion, criterion)` triples**. Compute a 4-metric report: LLM↔single-human agreement, LLM↔consensus, judge met-rate vs physician met-rate, and per-class agreement (rubber-stamp detector).
 
 ### Why necessary
-The Background section establishes that open-weight judges over-rate "met" on physician-not-met rows. Before committing the Phase B spend, Phase A validates that `gpt-5.5` is the upgrade we expect — by running it over the same 6,853 physician-labeled triples and producing a side-by-side metric report against the open-weight bake-off. The output is a precondition for trusting any production Phase B verdicts.
+The Background section establishes that open-weight judges over-rate "met" on physician-not-met rows. Before committing the Phase B spend, Phase A validates that `gpt-5-mini` materially improves on this metric — by running it over the same 6,853 physician-labeled triples and producing a side-by-side report against the open-weight bake-off. If gpt-5-mini doesn't pass (i.e., not-met agreement isn't materially above 67.9%), the result still has value: it tells us closed-source mini-tier is insufficient and we'd escalate to a higher tier. Phase A is the empirical gate that decides which model goes into Phase B.
 
 ### Cost calculation
-Pricing: `gpt-5.5` Batch = $2.50 / 1M input · $15 / 1M output (50% off the standard $5 / $30).
+Pricing: `gpt-5-mini` Batch = $0.125 / 1M input · $1.00 / 1M output (50% off the standard $0.25 / $2.00).
 
 Token volume (measured from actual calibration data):
 
@@ -49,10 +51,10 @@ Token volume (measured from actual calibration data):
 
 | Component | Batch cost |
 |---|---:|
-| Input: 9.33 M × $2.50/M | $23.33 |
-| Output: 4.80 M × $15/M | $72.00 |
-| **Estimated total** | **$96** |
-| **Ask** (with ~25% buffer for output-token overruns) | **$120** |
+| Input: 9.33 M × $0.125/M | $1.17 |
+| Output: 4.80 M × $1.00/M | $4.80 |
+| **Estimated total** | **$6** |
+| **Ask** (rounded up for safety margin on a small dollar amount) | **$15** |
 
 ---
 
@@ -69,7 +71,7 @@ This **is** the published HealthBench evaluation methodology. Without it, the v0
 - Compare ±RAG on the rubric track (key for the RAG deployment claim).
 - Compare against the published HealthBench leaderboard.
 
-A frontier closed-source judge is required because the open-weight bake-off (see Background) showed every open candidate biases the headline metric upward by over-rating "met." The validated `gpt-5.5` judge from Phase A is the one that goes into production here.
+A closed-source judge is required because the open-weight bake-off (see Background) showed every open candidate biases the headline metric upward by over-rating "met." The judge tier validated in Phase A is the one that goes into production here. Starting tier is `gpt-5-mini`; the cost calc below uses gpt-5-mini batch pricing. If Phase A flags gpt-5-mini as insufficient, Phase B's cost shifts to the chosen escalation tier (see "Escalation options" for tier-specific Phase B totals).
 
 ### Cost calculation
 
@@ -90,12 +92,12 @@ Token volume:
 | Input | ~1,361 | **52.14 M** |
 | Output at `reasoning_effort=medium` | ~700 | **26.82 M** |
 
-| Component | Batch cost |
+| Component | Batch cost (`gpt-5-mini`) |
 |---|---:|
-| Input: 52.14 M × $2.50/M | $130.35 |
-| Output: 26.82 M × $15/M | $402.30 |
-| **Estimated total** | **$533** |
-| **Ask** (with ~13% buffer for output-token variance) | **$600** |
+| Input: 52.14 M × $0.125/M | $6.52 |
+| Output: 26.82 M × $1.00/M | $26.82 |
+| **Estimated total** | **$33** |
+| **Ask** (with ~50% buffer for output-token variance) | **$50** |
 
 ---
 
@@ -103,29 +105,31 @@ Token volume:
 
 The asks above cover **one full v0.2 evaluation of the current MAM-AI app**. Over the coming months, planned retrieval-module improvements will trigger re-runs of the **+RAG arm only** — the no-RAG baseline doesn't change because it doesn't use retrieval.
 
-Each retrieval improvement re-runs roughly *half* of Phase B (one arm of 19,154 criterion calls instead of both arms' 38,308), plus a small SAQ re-run:
+Each retrieval improvement re-runs roughly *half* of Phase B (one arm of 19,154 criterion calls instead of both arms' 38,308), plus a small SAQ re-run. Cost at the starting `gpt-5-mini` tier:
 
 | Per improvement | Calls | Batch cost |
 |---|---:|---:|
-| HealthBench rubric, +RAG arm only | 19,154 | ~$267 |
-| SAQ, +RAG arm only | 369 | ~$10 |
-| **Per-improvement total** | | **~$277** |
+| HealthBench rubric, +RAG arm only | 19,154 | ~$17 |
+| SAQ, +RAG arm only | 369 | ~$1 |
+| **Per-improvement total** | | **~$18** |
 
 Anticipating **2 retrieval-module improvements** over the coming months:
 
 | | Cost |
 |---|---:|
-| Per improvement | ~$277 |
-| × 2 improvements | ~$554 |
-| **Forward-looking estimate (with ~10% buffer)** | **~$600** |
+| Per improvement | ~$18 |
+| × 2 improvements | ~$36 |
+| **Forward-looking estimate (with buffer)** | **~$50** |
 
-This is not part of the current ask — each improvement would be a separately approved follow-up. It is provided so the supervisor has visibility into the full retrieval-iteration roadmap: ~$720 for the current v0.2 evaluation, then ~$300 per retrieval improvement.
+This is not part of the current ask — each improvement would be a separately approved follow-up. Visibility into the full retrieval-iteration roadmap at gpt-5-mini: ~$65 for the current v0.2 evaluation, then ~$25 per retrieval improvement. (If we escalate to a higher tier after Phase A, these forward-looking numbers scale up proportionally — see "Escalation options" for per-tier project totals.)
 
 ---
 
-## Total budget across closed-source judge candidates
+## Escalation options if `gpt-5-mini` calibration falls short
 
-Token volumes are fixed regardless of vendor or tier (the workload is the same); only price-per-token differs. **Reference token volumes** for all calculations below:
+If Phase A shows gpt-5-mini doesn't materially beat the open-weight baseline (67.9% not-met agreement), we escalate to a higher-tier closed-source judge. The table below is the reference for the new ask we'd file in that case — Phase A is re-run at the escalation tier (~$15–$120 depending on tier), and Phase B runs at the same tier.
+
+Token volumes are fixed regardless of vendor or tier (the workload is the same); only price-per-token differs:
 
 | Phase | Calls | Input tokens | Output tokens (at `reasoning_effort=medium`) |
 |---|---:|---:|---:|
@@ -139,25 +143,22 @@ Grouped by vendor (OpenAI → Anthropic → Google). Prices per 1 M tokens. **Al
 
 | Vendor / Tier | Input $/M | Output $/M | **Project total** | **+~12% buffer** |
 |---|---:|---:|---:|---:|
-| **OpenAI gpt-5.5** | $2.50 | $15.00 | **$1,181** | **~$1,320** |
-| **OpenAI gpt-5.4** | $1.25 | $7.50 | **$590** | **~$660** |
+| **OpenAI gpt-5-mini** *(starting point)* | $0.125 | $1.00 | **$74** | **~$85** |
+| **OpenAI gpt-5.4-mini** | $0.375 | $2.25 | **$177** | **~$200** |
 | **OpenAI gpt-5** | $0.625 | $5.00 | **$369** | **~$420** |
+| **OpenAI gpt-5.4** | $1.25 | $7.50 | **$590** | **~$660** |
+| **OpenAI gpt-5.5** | $2.50 | $15.00 | **$1,181** | **~$1,320** |
 | **Claude Opus 4.7** | $2.50 | $12.50 | **$1,031** | **~$1,160** |
 | **Claude Sonnet 4.6** | $1.50 | $7.50 | **$618** | **~$700** |
 | **Gemini 3.1 Pro Preview** | $1.00 | $6.00 | **$471** | **~$530** |
 
-### Recommendation
+### Escalation recommendation
 
-Three paths, depending on how aggressively cost is a binding constraint.
+If gpt-5-mini's Phase A result is **insufficient**, the natural escalation order is:
 
-**Path 1 — No compromise on capability.** Pick either:
-- **OpenAI gpt-5.5** (~$1,320 with buffer) — OpenAI's top-tier reasoning model.
-- **Claude Opus 4.7** (~$1,160 with buffer) — Anthropic's frontier. Comparable capability, slightly cheaper.
+1. **OpenAI gpt-5.4-mini** (~$200 full project) — next step up in the mini tier; double the cost, materially more capable. Best first escalation if mini failed by a small margin.
+2. **OpenAI gpt-5** (~$420 full project) — older base flagship, still recognizable as a "frontier OpenAI" name. Best if 5.4-mini is also insufficient and you want to stay in the OpenAI lineage.
+3. **OpenAI gpt-5.5** (~$1,320) or **Claude Opus 4.7** (~$1,160) — frontier-tier; pick if all the mid-tier options fail the not-met threshold.
+4. **Gemini 3.1 Pro Preview** as a $0-out-of-pocket alternative — frontier-class Google model; new Google Cloud accounts get $300 in free credits each on sign-up, so stacking 2 fresh accounts covers the ~$530 project cost entirely. Tradeoff is logistical (multiple new accounts with separate credit cards), not financial.
 
-The asks in earlier sections of this doc ($120 + $600 + $600) anchor on gpt-5.5.
-
-**Path 2 — Keep OpenAI recognition, keep cost low.** Pick **OpenAI gpt-5** (~$420 with buffer). Still a recognized OpenAI flagship — the methods section reads "OpenAI's reasoning model" — at roughly **a third** the cost of gpt-5.5. Tradeoff: weaker reasoning capacity than 5.5/5.4, so the "frontier" defense in the methods section is softer.
-
-**Path 3 — Save every penny.** Pick **Gemini 3.1 Pro Preview**. Frontier-class capability from Google. API charges would be ~$530 with buffer, but **new Google Cloud accounts receive $300 free credits each on sign-up** (credit-card-linked) — stacking 2 fresh accounts covers the full spend, **net $0 out-of-pocket**. Tradeoff is logistical, not financial: requires onboarding multiple fresh Google Cloud accounts with separate credit cards.
-
-The mid-tier options (gpt-5.4, Sonnet 4.6) sit between Paths 1 and 2 and can be considered if none of the three fit.
+In all cases, each escalation would be a separate ask filed after Phase A produces the data justifying it.
