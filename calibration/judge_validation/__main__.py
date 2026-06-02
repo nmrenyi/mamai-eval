@@ -47,20 +47,46 @@ def cmd_judge(args: argparse.Namespace) -> int:
 
     extra_body = json.loads(args.extra_body) if args.extra_body else None
     response_format = _resolve_response_format(args.json_schema)
-    grader = judge.make_openai_grader(
-        base_url=args.base_url,
-        model=args.model,
-        api_key=args.api_key,
-        temperature=args.temperature,
-        max_tokens=args.max_tokens,
-        extra_body=extra_body,
-        seed=args.seed,
-        response_format=response_format,
-    )
-    n = judge.run_judge(
-        rows, args.output, grader, args.model,
-        max_workers=args.max_workers,
-    )
+
+    if args.batch:
+        # Closed-source path: OpenAI Batch API, async, 50% off.
+        from . import batch as batchmod
+        # When user passes --extra-body containing reasoning_effort, prefer
+        # the explicit --reasoning-effort flag and strip it from extra_body
+        # so we don't double-set it.
+        reasoning_effort = args.reasoning_effort
+        if extra_body and "reasoning_effort" in extra_body:
+            reasoning_effort = extra_body.pop("reasoning_effort")
+        api_key = args.api_key if args.api_key != "EMPTY" else None
+        base_url = args.base_url if args.base_url else None
+        n = batchmod.run_judge_batch(
+            rows, args.output, args.model,
+            api_key=api_key,
+            base_url=base_url,
+            response_format=response_format,
+            seed=args.seed,
+            reasoning_effort=reasoning_effort,
+            max_completion_tokens=args.max_tokens,
+            extra_body=extra_body if extra_body else None,
+            completion_window=args.batch_completion_window,
+            poll_interval=args.batch_poll_interval,
+        )
+    else:
+        grader = judge.make_openai_grader(
+            base_url=args.base_url,
+            model=args.model,
+            api_key=args.api_key,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+            extra_body=extra_body,
+            seed=args.seed,
+            response_format=response_format,
+        )
+        n = judge.run_judge(
+            rows, args.output, grader, args.model,
+            max_workers=args.max_workers,
+        )
+
     summary = judge.count_verdicts(args.output)
     print(json.dumps({"new_verdicts_written": n, **summary}, indent=2))
     return 0
@@ -116,29 +142,46 @@ def build_parser() -> argparse.ArgumentParser:
     pf.set_defaults(func=cmd_fetch)
 
     pj = sub.add_parser("judge", help="Run a candidate judge over the calibration set")
-    pj.add_argument("--base-url", required=True,
-                    help="vLLM OpenAI-compatible endpoint, e.g. http://host:8000/v1")
+    pj.add_argument("--base-url", default=None,
+                    help="OpenAI-compatible endpoint (vLLM URL or "
+                         "https://api.openai.com/v1). Omit for OpenAI default.")
     pj.add_argument("--model", required=True,
                     help="Model name as known to the endpoint")
     pj.add_argument("--output", required=True,
                     help="JSONL path for per-row verdicts (append-only, resumable)")
     pj.add_argument("--input", default=None,
                     help="Override calibration JSONL path")
-    pj.add_argument("--api-key", default="EMPTY")
-    pj.add_argument("--temperature", type=float, default=0.0)
+    pj.add_argument("--api-key", default="EMPTY",
+                    help='"EMPTY" for vLLM; for OpenAI use the env-loaded key '
+                         "(this flag is then ignored; pass nothing).")
+    pj.add_argument("--temperature", type=float, default=0.0,
+                    help="Sync mode only. Ignored in --batch mode (closed "
+                         "reasoning models lock temperature at 1).")
     pj.add_argument("--max-tokens", type=int, default=None,
                     help="Output (completion) token cap. UNSET (default) lets "
-                         "vLLM use the remaining context — safer for reasoning "
-                         "models since max_tokens caps reasoning+final together.")
+                         "the server use remaining context — safer for reasoning "
+                         "models since this caps reasoning+final together.")
     pj.add_argument("--seed", type=int, default=None,
                     help="Sampling seed for reproducibility.")
     pj.add_argument("--json-schema", default=None,
                     help='Built-in preset "criterion_verdict" (recommended), '
                          'or an inline JSON dict for response_format.')
-    pj.add_argument("--max-workers", type=int, default=judge.DEFAULT_MAX_WORKERS)
+    pj.add_argument("--max-workers", type=int, default=judge.DEFAULT_MAX_WORKERS,
+                    help="Sync mode only; ignored under --batch.")
     pj.add_argument("--extra-body", default=None,
-                    help='JSON dict forwarded to OpenAI extra_body, e.g. '
-                         '{"reasoning_effort":"high"} for gpt-oss.')
+                    help='JSON dict of extra request fields, e.g. '
+                         '{"reasoning_effort":"medium"}.')
+    pj.add_argument("--reasoning-effort", default=None,
+                    help='Convenience flag for reasoning_effort (low/medium/high). '
+                         'Equivalent to --extra-body \'{"reasoning_effort":"X"}\'.')
+    pj.add_argument("--batch", action="store_true",
+                    help="Submit via OpenAI Batch API (50%% off; async, up to "
+                         "24h SLA). Use for closed-source api.openai.com runs.")
+    pj.add_argument("--batch-completion-window", default="24h",
+                    help='Batch completion window (default "24h"; only value '
+                         "currently accepted by OpenAI).")
+    pj.add_argument("--batch-poll-interval", type=int, default=15,
+                    help="Seconds between batch status polls (default 15).")
     pj.add_argument("--limit", type=int, default=None,
                     help="Only judge first N rows (for smoke tests)")
     pj.set_defaults(func=cmd_judge)
