@@ -138,11 +138,37 @@ def download_output(client, file_id: str) -> str:
 # ── Parse batch output → standard verdict records ────────────────────────────
 
 
+def _extract_usage(body: dict) -> dict | None:
+    """Pull the OpenAI usage block (incl. reasoning_tokens for GPT-5 family)
+    into a compact dict suitable for our JSONL. Returns None if absent."""
+    u = body.get("usage")
+    if not isinstance(u, dict):
+        return None
+    out = {
+        "prompt_tokens": u.get("prompt_tokens"),
+        "completion_tokens": u.get("completion_tokens"),
+        "total_tokens": u.get("total_tokens"),
+    }
+    ctd = u.get("completion_tokens_details")
+    if isinstance(ctd, dict):
+        rt = ctd.get("reasoning_tokens")
+        if rt is not None:
+            out["reasoning_tokens"] = rt
+    ptd = u.get("prompt_tokens_details")
+    if isinstance(ptd, dict):
+        ct = ptd.get("cached_tokens")
+        if ct:
+            out["cached_tokens"] = ct
+    return out
+
+
 def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
     """Parse batch output JSONL into our standard verdict records.
 
-    Output format matches what judge.run_judge writes — so the metrics
-    pipeline doesn't need to know which path produced the verdicts.
+    Output format matches what judge.run_judge writes — plus two
+    diagnostic fields per row (finish_reason, usage) since this is the
+    closed-source-spend path where token visibility actually matters.
+    The metrics pipeline ignores anything beyond `criteria_met`/`error`.
     """
     verdicts: list[dict] = []
     for line in jsonl_content.splitlines():
@@ -165,15 +191,20 @@ def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
                 "criteria_met": None,
                 "explanation": "",
                 "error": f"batch_error: status={status_code} err={api_error}",
+                "finish_reason": None,
+                "usage": None,
             })
             continue
 
         body = resp.get("body", {}) or {}
         choices = body.get("choices") or []
         content = ""
+        finish_reason = None
         if choices:
             msg = choices[0].get("message", {}) or {}
             content = (msg.get("content") or "").strip()
+            finish_reason = choices[0].get("finish_reason")
+        usage = _extract_usage(body)
 
         if not content:
             verdicts.append({
@@ -181,7 +212,9 @@ def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
                 "judge_model": judge_model,
                 "criteria_met": None,
                 "explanation": "",
-                "error": "empty_content",
+                "error": f"empty_content (finish_reason={finish_reason})",
+                "finish_reason": finish_reason,
+                "usage": usage,
             })
             continue
 
@@ -193,6 +226,8 @@ def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
                 "criteria_met": bool(parsed.get("criteria_met")),
                 "explanation": parsed.get("explanation", ""),
                 "error": None,
+                "finish_reason": finish_reason,
+                "usage": usage,
             })
         except Exception as e:  # noqa: BLE001
             verdicts.append({
@@ -201,6 +236,8 @@ def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
                 "criteria_met": None,
                 "explanation": "",
                 "error": f"parse_failed: {type(e).__name__}: {e}",
+                "finish_reason": finish_reason,
+                "usage": usage,
             })
     return verdicts
 
