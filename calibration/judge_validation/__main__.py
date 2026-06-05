@@ -49,24 +49,41 @@ def cmd_judge(args: argparse.Namespace) -> int:
     response_format = _resolve_response_format(args.json_schema)
 
     if args.batch:
-        # Closed-source path: OpenAI Batch API, async, 50% off.
+        # Closed-source path: OpenAI Responses API + Batch (50% off).
+        # The batch path uses a built-in minimal schema (criteria_met only)
+        # and surfaces the model's reasoning via reasoning.summary rather
+        # than an explanation field — see batch.py module docstring.
         from . import batch as batchmod
-        # When user passes --extra-body containing reasoning_effort, prefer
-        # the explicit --reasoning-effort flag and strip it from extra_body
-        # so we don't double-set it.
-        reasoning_effort = args.reasoning_effort
+        reasoning_effort = args.reasoning_effort or "medium"
         if extra_body and "reasoning_effort" in extra_body:
             reasoning_effort = extra_body.pop("reasoning_effort")
+        if args.json_schema:
+            print(
+                "note: --json-schema is ignored under --batch (Responses-API path "
+                "uses a built-in minimal schema; reasoning is captured via "
+                "reasoning.summary, not an explanation field).",
+                file=sys.stderr,
+            )
+        if args.max_tokens is not None:
+            print(
+                "note: --max-tokens is ignored under --batch (Responses-API path "
+                "lets the server decide; capping risks truncating reasoning+output).",
+                file=sys.stderr,
+            )
+        if args.seed is not None:
+            print(
+                "note: --seed is ignored under --batch (Responses API does not "
+                "accept it; reasoning is non-deterministic anyway).",
+                file=sys.stderr,
+            )
         api_key = args.api_key if args.api_key != "EMPTY" else None
         base_url = args.base_url if args.base_url else None
         n = batchmod.run_judge_batch(
             rows, args.output, args.model,
             api_key=api_key,
             base_url=base_url,
-            response_format=response_format,
-            seed=args.seed,
             reasoning_effort=reasoning_effort,
-            max_completion_tokens=args.max_tokens,
+            reasoning_summary=args.reasoning_summary,
             extra_body=extra_body if extra_body else None,
             completion_window=args.batch_completion_window,
             poll_interval=args.batch_poll_interval,
@@ -173,10 +190,18 @@ def build_parser() -> argparse.ArgumentParser:
                          '{"reasoning_effort":"medium"}.')
     pj.add_argument("--reasoning-effort", default=None,
                     help='Convenience flag for reasoning_effort (low/medium/high). '
-                         'Equivalent to --extra-body \'{"reasoning_effort":"X"}\'.')
+                         'Equivalent to --extra-body \'{"reasoning_effort":"X"}\'. '
+                         'Under --batch this becomes Responses-API reasoning.effort '
+                         "(default 'medium' under --batch).")
+    pj.add_argument("--reasoning-summary", default="auto",
+                    choices=["auto", "concise", "detailed"],
+                    help="Responses-API reasoning.summary mode (default 'auto'). "
+                         "Only applies under --batch. Captures OpenAI's natural-"
+                         "language summary of the model's internal CoT.")
     pj.add_argument("--batch", action="store_true",
-                    help="Submit via OpenAI Batch API (50%% off; async, up to "
-                         "24h SLA). Use for closed-source api.openai.com runs.")
+                    help="Submit via OpenAI Responses-API Batch (50%% off; async, "
+                         "up to 24h SLA). Uses a minimal {criteria_met} schema and "
+                         "captures reasoning.summary instead of an explanation field.")
     pj.add_argument("--batch-completion-window", default="24h",
                     help='Batch completion window (default "24h"; only value '
                          "currently accepted by OpenAI).")
