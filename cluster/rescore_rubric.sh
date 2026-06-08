@@ -22,6 +22,11 @@
 #   EXTRA_VLLM_FLAGS   extra flags appended to `vllm serve` (e.g. reasoning
 #                      parser, if/when needed for a new model)
 #   HEALTH_WAIT_S      max seconds to wait for /health (default: 3600)
+#   RUBRIC_DIRS_OVERRIDE  space-separated list of files/dirs to score, replaces
+#                      the default two-arm sweep. Use for probe runs:
+#                      RUBRIC_DIRS_OVERRIDE=path/to/one/healthbench_hard.json
+#                      Each entry may be a single .json file (smallest unit)
+#                      or a directory (rescores every healthbench_*.json in it).
 #
 # Output layout on PVC:
 #   $OUTPUT_DIR/vllm.log                — vLLM server logs
@@ -179,10 +184,18 @@ export MAMAI_EVAL_CONFIG="$CONFIG"
 # The two ±RAG arms with Gemma 4 E4B's HealthBench responses.
 # Each directory holds three result JSONs: healthbench_{oss_eval,consensus,hard}.json.
 # rescore_rubric.py writes scored verdicts in-place into each JSON.
-RUBRIC_DIRS=(
-  configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T122626-cluster-rag-rubric
-  configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T123051-cluster-norag-rubric
-)
+# Override at submission time via RUBRIC_DIRS_OVERRIDE for probe runs.
+if [ -n "${RUBRIC_DIRS_OVERRIDE:-}" ]; then
+  # shellcheck disable=SC2206
+  RUBRIC_DIRS=($RUBRIC_DIRS_OVERRIDE)
+  echo "=== RUBRIC_DIRS overridden — probe / partial run ==="
+  printf '  %s\n' "${RUBRIC_DIRS[@]}"
+else
+  RUBRIC_DIRS=(
+    configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T122626-cluster-rag-rubric
+    configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T123051-cluster-norag-rubric
+  )
+fi
 
 # Dry-run first: confirms the judge config resolves to the pinned model +
 # extra_body, and reports the unscored row count. Cheap, surfaces config
@@ -204,10 +217,20 @@ python3 -m end_to_end_eval.rescore_rubric --config "$CONFIG" \
 echo
 echo "=== COPYING SCORED FILES TO $OUTPUT_DIR ==="
 for d in "${RUBRIC_DIRS[@]}"; do
-  arm=$(basename "$d")
-  mkdir -p "$OUTPUT_DIR/$arm"
-  # Only the actual result JSONs; skip eval_input.json / eval_output.json if any.
-  cp "$d"/healthbench_*.json "$OUTPUT_DIR/$arm/"
+  if [ -f "$d" ]; then
+    # Single-file entry (probe mode): preserve its arm-dir as the bucket name.
+    arm=$(basename "$(dirname "$d")")
+    mkdir -p "$OUTPUT_DIR/$arm"
+    cp "$d" "$OUTPUT_DIR/$arm/"
+  elif [ -d "$d" ]; then
+    # Directory entry (full sweep): copy out all healthbench_*.json,
+    # skipping any eval_input.json / eval_output.json side-files.
+    arm=$(basename "$d")
+    mkdir -p "$OUTPUT_DIR/$arm"
+    cp "$d"/healthbench_*.json "$OUTPUT_DIR/$arm/"
+  else
+    echo "WARN: $d is neither file nor dir; skipping copy-out"
+  fi
 done
 
 echo "=== DONE ==="
