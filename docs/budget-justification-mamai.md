@@ -1,5 +1,25 @@
 # LLM Judge API Budget — MAM-AI v0.2 HealthBench
 
+> **POST-RESULTS UPDATE — 2026-06-08**
+>
+> Phase A is complete. Based on the empirical data, **the final pinned judge for Phase B is `gpt-oss-120b @ reasoning_effort=medium`** (open-weight, served on the EPFL cluster). **Phase B API spend will be $0** — the projected $50 OpenAI ask is unspent.
+>
+> **What changed.** The escalation-ladder argument in this doc (gpt-5-mini → 5.4-mini → 5 → 5.5 etc.) was empirically invalidated. The detailed reasoning is in [`judge-validation-phase-a-result-20260608.html`](./judge-validation-phase-a-result-20260608.html):
+> - All three OpenAI candidates (gpt-5-mini, gpt-5, and by extrapolation gpt-5.4-mini) systematically *under*-rate the headline metric — capability moves the judge further from physician calibration, not toward it
+> - Maverick and Nemotron's rubber-stamping pattern does **not** generalize to gpt-oss-120b: gpt-oss-120b's net headline shift (−3.8 pp) is the smallest of any judge tested across both families
+> - gpt-oss-120b wins 4 of 5 decision factors (LLM↔consensus 81.6%, MET-row 84.0%, headline calibration −3.8 pp, $0 API cost); loses only NOT-MET-row agreement (67.9%, below human-human 77.6%)
+>
+> **Actual Phase A spend: $42.23** against a $65 approved ask. Breakdown:
+> - gpt-5-mini Phase A (Responses API + Batch, 6,853 rows): **$4.84**
+> - gpt-5 Phase A (exploratory escalation test, 6,853 rows): **$37.39**
+> - gpt-5.4-mini Phase A (cancelled at 98.9% complete after the gpt-oss-120b decision; partial spend ≈$5)
+>
+> **$23 unspent of the $65 approval, plus the entire $50 Phase B ask is unneeded.** The supervisor approved $65 closed-source API spend; actual outturn will be ~$42, with Phase B running for free on the cluster.
+>
+> The rest of this document is preserved as the historical record of what was approved and the reasoning at the time. The Background section's open-weight bake-off table and the Escalation Options pricing reference remain accurate; the *decision logic* layered over them no longer applies.
+>
+> ---
+
 Two budget items for the HealthBench rubric track of the v0.2 evaluation, both via the closed-source Batch API. **Starting model: `gpt-5-mini`** — the smallest OpenAI option, used as a low-cost feasibility check before committing to larger spend. *(Separate smaller asks of $30 each cover the SAQ rescore and the faithfulness judge.)*
 
 | Phase | Purpose | Estimated batch cost | **Ask** |
