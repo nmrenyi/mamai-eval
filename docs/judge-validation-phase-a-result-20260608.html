@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Phase A Judge Calibration — Results & Decision</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --muted: #555;
+    --soft: #666;
+    --rule: #d9d9d9;
+    --bg: #fafafa;
+    --good: #117a3b;
+    --good-bg: #e6f4ec;
+    --mid: #9a5a00;
+    --mid-bg: #fcf3e1;
+    --bad: #9c2727;
+    --bad-bg: #fbe7e7;
+    --baseline: #1a4e8a;
+    --baseline-bg: #e8f0fa;
+    --accent: #444;
+  }
+  body {
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    max-width: 920px;
+    margin: 32px auto;
+    padding: 0 24px;
+    background: #fff;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 10px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+  h3 { font-size: 14.5px; margin: 18px 0 6px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin: 8px 0; }
+  small.meta { color: var(--muted); }
+  .tldr {
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 16px 0;
+  }
+  .tldr p { margin: 6px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: right;
+    border-bottom: 1px solid var(--rule);
+  }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { background: #f4f4f4; font-weight: 600; border-bottom: 2px solid #bbb; }
+  tbody tr.section-row td { background: #fafafa; font-weight: 600; font-style: italic; color: var(--muted); padding-top: 6px; padding-bottom: 6px; }
+  .cell-good { background: var(--good-bg); color: var(--good); font-weight: 600; }
+  .cell-mid  { background: var(--mid-bg);  color: var(--mid);  font-weight: 600; }
+  .cell-bad  { background: var(--bad-bg);  color: var(--bad);  font-weight: 600; }
+  .cell-ref  { background: var(--baseline-bg); color: var(--baseline); font-weight: 600; }
+  .cell-baseline { background: #f1f1f1; color: var(--muted); font-style: italic; }
+  th.baseline-header { background: #ececec !important; color: var(--muted); font-style: italic; font-weight: 500; }
+  .legend { font-size: 12.5px; color: var(--muted); margin: -8px 0 16px; }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin: 0 4px 2px 12px; border-radius: 2px; }
+  .judge-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .judge-card {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 12px 14px;
+    background: #fff;
+  }
+  .judge-card h4 { margin: 0 0 4px; font-size: 14px; }
+  .judge-card .bias { font-size: 12px; color: var(--muted); }
+  .judge-card .stat-line { margin-top: 8px; font-size: 12.5px; color: var(--ink); }
+  .judge-card .stat-line span.k { color: var(--muted); }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+  .badge.over  { background: var(--bad-bg);  color: var(--bad); }
+  .badge.under { background: var(--mid-bg);  color: var(--mid); }
+  .badge.heavy { background: var(--bad-bg);  color: var(--bad); }
+  svg { display: block; margin: 14px auto; }
+  .axis-label { font-size: 11px; fill: var(--muted); }
+  .judge-label { font-size: 12px; font-weight: 600; }
+  .key-list { margin: 8px 0 0 0; padding-left: 20px; }
+  .key-list li { margin: 4px 0; }
+  .footnote { color: var(--muted); font-size: 12.5px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
+  .pending-pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; background: #f4eccc; color: #6a4d00; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Phase A judge calibration — three-way result</h1>
+<small class="meta">MAM-AI v0.2 · HealthBench rubric · 6,853 physician-labeled triples · 2026-06-08</small>
+
+<div class="tldr">
+<p><strong>Headline.</strong> Five judges tested across the open-source bake-off (Maverick, Nemotron, gpt-oss-120b) and the closed-source escalation (gpt-5-mini, gpt-5). <strong>No judge lands at the physician calibration baseline.</strong> They sit on a clean spectrum of net judge met-rate (the direct driver of the headline `weighted_met` score): the largest open-weight candidates over-rate above the physician 77% baseline, the smaller gpt-oss-120b sits just below it, and the closed-source candidates progressively under-rate further — gpt-5 by ~19 pp. Within each family, capability pushes the calibration <em>further</em> from physicians in that family's direction.</p>
+<p><strong>Decision.</strong> No clear winner emerges. All three active candidates (gpt-oss-120b, gpt-5-mini, gpt-5) produce conservative headlines; the choice is between mildest understatement (gpt-oss-120b at −3.8 pp, but weakest per-criterion accuracy on NOT-MET rows) and stricter alternatives. Pending: gpt-5.4-mini result (~99% complete) for completeness. <span class="pending-pill">gpt-5.4-mini pending</span></p>
+</div>
+
+<h2>Method</h2>
+<p>Each candidate judge runs the OpenAI HealthBench rubric grader over the same 6,853-row OBGYN-scoped meta-evaluation set (<code>mamabench@v0.2.1/calibration/obgyn_meta_eval.jsonl</code>), each row a physician-labeled <code>(prompt, completion, criterion)</code> triple. Closed-source judges use the OpenAI Responses API + Batch endpoint (<code>reasoning.effort=medium</code>, <code>reasoning.summary=auto</code>); open-source judge runs on a 1× H200 vLLM serve at the same effort level. We report the four standard meta-eval metrics plus the deployment-relevant judge met-rate calibration.</p>
+
+<h2>What the metrics measure</h2>
+<p>Each triple is a <em>(prompt, completion, criterion)</em>. Physicians labeled each as <strong>MET</strong> (the response satisfies the criterion) or <strong>NOT MET</strong>. The LLM judge produces the same binary label. The metrics below summarize, in different cuts, how often the judge's label matches the physicians'.</p>
+<p style="font-size:13px;color:var(--muted);margin-top:6px;"><em>About the labels:</em> 163 distinct physicians contributed across the dataset, but <strong>each row has only 2–4 labels</strong> (93.5% of rows have exactly 2; 6.3% have 3; 0.2% have 4). "Consensus" below means a clear majority — for the dominant 2-label rows, that requires both physicians to agree (5,241 of 6,853 rows = 76.5% reach consensus this way; the rest are 1–1 ties, excluded from consensus metrics).</p>
+<dl style="margin:8px 0 0 0;">
+  <dt style="margin-top:10px;font-weight:600;">LLM ↔ single human</dt>
+  <dd style="margin:2px 0 0 18px;color:var(--soft);">Across every physician-LLM <em>pairing</em> (each row may be labeled by multiple physicians, so this counts each pair separately), what fraction agree? The reference is the <strong>human ↔ human baseline (77.6%)</strong>: physicians don't even agree with each other 100% of the time, so 77.6% is the ceiling an "average physician" judge could hit.</dd>
+
+  <dt style="margin-top:10px;font-weight:600;">LLM ↔ physician consensus</dt>
+  <dd style="margin:2px 0 0 18px;color:var(--soft);">Restrict to the rows where physicians reached a clear consensus (majority vote on MET or NOT MET, ignoring ties). What fraction of those does the judge get right? This is the cleanest single number — it removes noise from individual-physician disagreement.</dd>
+
+  <dt style="margin-top:10px;font-weight:600;">Agreement on MET rows / NOT-MET rows</dt>
+  <dd style="margin:2px 0 0 18px;color:var(--soft);">The consensus rows broken out by label. <strong>MET agreement</strong> = "of the rows physicians agreed are MET, what fraction did the judge also call MET" (high = good recall on quality). <strong>NOT-MET agreement</strong> = the same on the other side (high = the judge isn't rubber-stamping; it correctly flags poor responses). This split is the rubber-stamp detector — lenient-biased judges typically score near-100% on MET while scoring much lower on NOT-MET.</dd>
+
+  <dt style="margin-top:10px;font-weight:600;">Judge met-rate (vs physician 77%)</dt>
+  <dd style="margin:2px 0 0 18px;color:var(--soft);">Across all rows, what fraction did the judge label MET? Physicians' rate is <strong>77.0%</strong> — distance from that is a direct measure of calibration bias. <em>Below</em> 77% = judge under-rates ("too strict"; false negatives); <em>above</em> 77% = judge over-rates ("rubber-stamping"; false positives). The deployment headline metric <code>weighted_met</code> inherits this bias directly.</dd>
+</dl>
+<p style="font-size:13px;color:var(--muted);margin-top:10px;"><em>Why two "agreement" metrics?</em> Overall agreement can be high even when the judge is badly biased — e.g., 77% of rows are MET, so a judge that always says MET scores 77%. Splitting by MET/NOT-MET reveals the bias the overall number hides.</p>
+
+<h2>Results</h2>
+
+<div style="overflow-x:auto;">
+<table>
+<thead>
+<tr>
+  <th>Metric</th>
+  <th class="baseline-header">ALWAYS-MET<br><small>trivial</small></th>
+  <th class="baseline-header">Maverick<br><small>open, 4×H200</small></th>
+  <th class="baseline-header">Nemotron<br><small>open, 4×H200</small></th>
+  <th>gpt-oss-120b<br><small>1×H200, pinned</small></th>
+  <th>gpt-5-mini<br><small>OpenAI, $4.84</small></th>
+  <th>gpt-5<br><small>OpenAI, $37.39</small></th>
+  <th class="baseline-header">ALWAYS-NOT-MET<br><small>trivial</small></th>
+  <th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="section-row"><td colspan="9">Overall agreement</td></tr>
+<tr>
+  <td>LLM ↔ single human</td>
+  <td class="cell-baseline">77.0%</td>
+  <td class="cell-baseline">79.8%</td>
+  <td class="cell-baseline">78.8%</td>
+  <td class="cell-good">74.3%</td>
+  <td class="cell-mid">72.5%</td>
+  <td class="cell-bad">66.7%</td>
+  <td class="cell-baseline">23.0%</td>
+  <td class="cell-ref">77.6% (human↔human)</td>
+</tr>
+<tr>
+  <td>LLM ↔ physician consensus</td>
+  <td class="cell-baseline">85.2%</td>
+  <td class="cell-baseline">88.7%</td>
+  <td class="cell-baseline">87.4%</td>
+  <td class="cell-good">81.6%</td>
+  <td class="cell-mid">79.1%</td>
+  <td class="cell-bad">71.8%</td>
+  <td class="cell-baseline">14.8%</td>
+  <td>—</td>
+</tr>
+
+<tr class="section-row"><td colspan="9">Per-class agreement (rubber-stamp detector)</td></tr>
+<tr>
+  <td>Agreement on MET rows</td>
+  <td class="cell-baseline">100%</td>
+  <td class="cell-baseline">96.3%</td>
+  <td class="cell-baseline">92.9%</td>
+  <td class="cell-good">84.0%</td>
+  <td class="cell-mid">80.7%</td>
+  <td class="cell-bad">70.1%</td>
+  <td class="cell-baseline">0%</td>
+  <td>—</td>
+</tr>
+<tr>
+  <td>Agreement on NOT-MET rows <small>(the bake-off gate)</small></td>
+  <td class="cell-baseline">0%</td>
+  <td class="cell-baseline">44.6%</td>
+  <td class="cell-baseline">55.3%</td>
+  <td class="cell-bad">67.9%</td>
+  <td class="cell-mid">69.5%</td>
+  <td class="cell-good">81.9%</td>
+  <td class="cell-baseline">100%</td>
+  <td>—</td>
+</tr>
+
+<tr class="section-row"><td colspan="9">Calibration (predicted "met" rate)</td></tr>
+<tr>
+  <td>Judge met-rate (all rows)</td>
+  <td class="cell-baseline">100%</td>
+  <td class="cell-baseline">88.8% <span class="badge over">+11.8 pp</span></td>
+  <td class="cell-baseline">83.3% <span class="badge over">+6.3 pp</span></td>
+  <td class="cell-good">73.2% <span class="badge under">−3.8 pp</span></td>
+  <td class="cell-mid">70.0% <span class="badge under">−7.0 pp</span></td>
+  <td class="cell-bad">58.3% <span class="badge heavy">−18.7 pp</span></td>
+  <td class="cell-baseline">0%</td>
+  <td class="cell-ref">77.0% (physician)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<p class="legend">
+  <span class="sw" style="background:var(--good-bg);border:1px solid var(--good)"></span>best of the three OpenAI candidates
+  <span class="sw" style="background:var(--mid-bg);border:1px solid var(--mid)"></span>middle
+  <span class="sw" style="background:var(--bad-bg);border:1px solid var(--bad)"></span>worst
+  <span class="sw" style="background:#f1f1f1;border:1px solid #aaa"></span>context — prior open-weight candidates and trivial constant baselines (not in the active decision space)
+  <span class="sw" style="background:var(--baseline-bg);border:1px solid var(--baseline)"></span>physician / human reference
+</p>
+
+<p style="font-size:13px;color:var(--muted);margin-top:-4px;"><em>Why the prior open-weight candidates and trivial baselines are in the table:</em> they sharpen two arguments. (1) <strong>Overall agreement is misleading.</strong> A judge that always says MET scores 85.2% on consensus agreement, beating every real judge — and Maverick scores 88.7%, beating it further. Optimizing for overall agreement alone would select the rubber stamps. (2) <strong>The per-class split (rows 3–4) is the rubber-stamp detector.</strong> Always-MET and Maverick both score near-perfectly on MET rows (100% / 96.3%) but catastrophically on NOT-MET rows (0% / 44.6%) — that's the signature pattern of lenient-biased judges. The bigger open models (Maverick 17B-MoE, Nemotron 253B) over-rate <em>more</em> than the smaller gpt-oss-120b, not less — scale doesn't fix calibration on this task.</p>
+
+<h2>The lenient ↔ strict spectrum</h2>
+
+<p>Plotted on the only axis that matters for the deployment headline (judge met-rate vs the 77% physician baseline). Each judge sits at a different distance, on opposite sides:</p>
+
+<svg width="820" height="180" viewBox="0 0 820 180" role="img" aria-label="Judge met-rate spectrum">
+  <!-- Scale: 50% -> x=40, 90% -> x=780. range=40 pp -> 740 px. 1 pp = 18.5 px. -->
+  <line x1="40" y1="110" x2="780" y2="110" stroke="#888" stroke-width="1"/>
+  <g font-family="-apple-system,sans-serif" class="axis-label" text-anchor="middle">
+    <text x="40"  y="130">50%</text><line x1="40"  y1="105" x2="40"  y2="115" stroke="#888"/>
+    <text x="225" y="130">60%</text><line x1="225" y1="105" x2="225" y2="115" stroke="#888"/>
+    <text x="410" y="130">70%</text><line x1="410" y1="105" x2="410" y2="115" stroke="#888"/>
+    <text x="595" y="130">80%</text><line x1="595" y1="105" x2="595" y2="115" stroke="#888"/>
+    <text x="780" y="130">90%</text><line x1="780" y1="105" x2="780" y2="115" stroke="#888"/>
+  </g>
+
+  <!-- physician baseline at 77% = 40 + 27*18.5 = 539.5 -->
+  <line x1="539.5" y1="40" x2="539.5" y2="145" stroke="#1a4e8a" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="539.5" y="32" class="axis-label" text-anchor="middle" fill="#1a4e8a" font-weight="600">physician 77.0%</text>
+  <text x="539.5" y="160" class="axis-label" text-anchor="middle" fill="#1a4e8a">target</text>
+
+  <!-- LEFT side (under-rates): OpenAI judges, colored. Labels alternate above/below to avoid overlap. -->
+  <!-- gpt-5 at 58.3% -> x=193.55 -->
+  <circle cx="193.55" cy="110" r="8" fill="#9c2727"/>
+  <text x="193.55" y="88" class="judge-label" text-anchor="middle" fill="#9c2727">gpt-5</text>
+  <text x="193.55" y="78" class="axis-label" text-anchor="middle" fill="#9c2727">58.3%</text>
+
+  <!-- gpt-5-mini at 70.0% -> x=410 -->
+  <circle cx="410" cy="110" r="8" fill="#9a5a00"/>
+  <text x="410" y="88" class="judge-label" text-anchor="middle" fill="#9a5a00">gpt-5-mini</text>
+  <text x="410" y="78" class="axis-label" text-anchor="middle" fill="#9a5a00">70.0%</text>
+
+  <!-- gpt-oss-120b at 73.2% -> x=469.2 -->
+  <circle cx="469.2" cy="110" r="8" fill="#117a3b"/>
+  <text x="469.2" y="170" class="judge-label" text-anchor="middle" fill="#117a3b">gpt-oss-120b</text>
+  <text x="469.2" y="62" class="axis-label" text-anchor="middle" fill="#117a3b">73.2%</text>
+
+  <!-- RIGHT side (over-rates): prior open-weight candidates, muted gray to mark them as context. -->
+  <!-- Nemotron at 83.3% -> x=40 + 33.3*18.5 = 656.05 -->
+  <circle cx="656.05" cy="110" r="7" fill="#9a9a9a"/>
+  <text x="656.05" y="88" class="judge-label" text-anchor="middle" fill="#666">Nemotron</text>
+  <text x="656.05" y="78" class="axis-label" text-anchor="middle" fill="#666">83.3%</text>
+
+  <!-- Maverick at 88.8% -> x=40 + 38.8*18.5 = 757.8 -->
+  <circle cx="757.8" cy="110" r="7" fill="#9a9a9a"/>
+  <text x="757.8" y="170" class="judge-label" text-anchor="middle" fill="#666">Maverick</text>
+  <text x="757.8" y="62" class="axis-label" text-anchor="middle" fill="#666">88.8%</text>
+
+  <!-- arrows -->
+  <text x="160" y="20" class="axis-label" text-anchor="middle">← under-rates "met"</text>
+  <text x="700" y="20" class="axis-label" text-anchor="middle">over-rates "met" →</text>
+</svg>
+<p style="font-size:12.5px;color:var(--muted);margin:-6px 0 0;text-align:center;"><em>Off-scale: ALWAYS-NOT-MET (0%, far left), ALWAYS-MET (100%, far right). Gray dots = prior open-weight candidates (shown for context); colored dots = the three OpenAI candidates whose calibration is the active decision space.</em></p>
+
+<p>Read the placement as a calibration spectrum. The physician line (77%) sits in the middle. <strong>OpenAI candidates (colored)</strong> all fall left of it — net under-rating "met" (their reported `weighted_met` would be <em>below</em> the true physician-equivalent quality). <strong>Prior open-weight candidates (gray)</strong> all fall right of it — net over-rating (their `weighted_met` would be <em>above</em> physician-equivalent quality). gpt-oss-120b is closest to physicians of all five judges (just 3.8 pp below); gpt-5 is the farthest (18.7 pp below). There is <em>no candidate sitting directly on the physician baseline</em> at any tier.</p>
+
+<h2>The capability-vs-bias tradeoff</h2>
+
+<p style="font-size:13px;color:var(--muted);margin:0 0 10px;"><em>Note on the two bias measures:</em> a judge's <strong>per-class error asymmetry</strong> (when it's wrong, which way does it err?) and its <strong>net effect on the headline metric</strong> (judge met-rate vs physician met-rate) can move in different directions. gpt-oss-120b illustrates this: it makes more false-positive errors than false-negative ones on individual ambiguous cases (per-class lenient pattern), but its overall met-rate (73.2%) still lands <em>below</em> physicians' (77.0%) because it also misses 16% of physician-met rows. The deployment-relevant question is the net shift of the headline (`weighted_met`), shown in each card below.</p>
+<div class="judge-card-grid">
+  <div class="judge-card">
+    <h4>gpt-oss-120b <span class="badge under">mixed: lenient on cases, conservative on net</span></h4>
+    <div class="bias">Errs toward MET on individual ambiguous criteria (NOT-MET agreement 67.9% &lt; MET agreement 84.0%), but the net met-rate 73.2% lands below physicians' 77.0% — the two effects partially cancel.</div>
+    <div class="stat-line"><span class="k">strength:</span> closest to physician calibration on net met-rate (−3.8 pp)</div>
+    <div class="stat-line"><span class="k">weakness:</span> weakest NOT-MET-row agreement of the three active candidates (67.9% vs gpt-5-mini's 69.5%, gpt-5's 81.9%)</div>
+    <div class="stat-line"><span class="k">in deployment:</span> headline `weighted_met` reads <strong>~4 pp below</strong> true physician-equivalent quality</div>
+  </div>
+  <div class="judge-card">
+    <h4>gpt-5-mini <span class="badge under">mildly strict</span></h4>
+    <div class="bias">Middling on both axes; closest to even-handed of the three OpenAI candidates.</div>
+    <div class="stat-line"><span class="k">strength:</span> moderate bias in both directions</div>
+    <div class="stat-line"><span class="k">weakness:</span> beats no other judge on any single axis</div>
+    <div class="stat-line"><span class="k">in deployment:</span> headline `weighted_met` reads <strong>~7 pp below</strong> true physician-equivalent quality</div>
+  </div>
+  <div class="judge-card">
+    <h4>gpt-5 <span class="badge heavy">heavily strict</span></h4>
+    <div class="bias">Excellent on NOT-MET, weak on MET. Discriminator, not calibrator.</div>
+    <div class="stat-line"><span class="k">strength:</span> NOT-MET agreement (81.9%, +14 pp over gpt-oss-120b)</div>
+    <div class="stat-line"><span class="k">weakness:</span> 18.7 pp below physician met-rate — largest net deflation</div>
+    <div class="stat-line"><span class="k">in deployment:</span> headline `weighted_met` reads <strong>~19 pp below</strong> true physician-equivalent quality</div>
+  </div>
+</div>
+<p style="font-size:13px;color:var(--muted);margin:10px 0 0;">For context, the open-weight bake-off candidates would shift the headline in the <em>opposite</em> direction: Maverick by <strong>+11.8 pp</strong> and Nemotron by <strong>+6.3 pp</strong> (judge met-rate above physician 77%). They are the only judges in this study whose headline would be inflated above true physician-equivalent quality. All three OpenAI candidates produce conservative (deflated) headlines.</p>
+
+<h2>Interpretation</h2>
+
+<p>Across <strong>five real judges</strong>, the calibration forms a coherent spectrum, not a noisy scatter. Reading from lenient to strict: <em>Llama-4-Maverick (88.8%) → Nemotron-Ultra-253B (83.3%) → gpt-oss-120b (73.2%) → gpt-5-mini (70.0%) → gpt-5 (58.3%)</em>. Two patterns stand out:</p>
+
+<p>(1) <strong>Among the open-weight candidates, bigger models over-rate <em>more</em>, not less.</strong> Maverick (17B active params, MoE) and Nemotron (253B) are both more lenient than the smaller gpt-oss-120b. Capability did not buy calibration on the open side; it pushed in the wrong direction.</p>
+
+<p>(2) <strong>Within the OpenAI lineup, the pattern inverts: bigger models under-rate <em>more</em>.</strong> gpt-5 is twice as strict as gpt-5-mini. The closed-source escalation argued in the budget doc — "open-weight over-rates, so we need closed-source to fix it" — turns out to be <strong>half true</strong>: closed-source does eliminate over-rating, but replaces it with progressively stronger under-rating.</p>
+
+<p>The "gate metric" we initially singled out — agreement on NOT-MET rows — does improve cleanly with capability (gpt-5 is +14 pp over gpt-oss-120b, +37 pp over Maverick). But this is a side effect: a judge that rejects more rows mechanically agrees more with rejections. The cost is paid on the MET side. <strong>No judge across the seven data points (5 real + 2 trivial) achieves both calibration and per-class accuracy.</strong> The right question is no longer "which judge wins" but "which bias direction is acceptable for the v0.2 deployment story."</p>
+
+<h2>Decision implications</h2>
+
+<ul class="key-list">
+  <li><strong>Single-metric escalation rule is invalidated.</strong> The budget doc's rule ("if not-met materially beats 67.9%, run Phase B at gpt-5-mini; else escalate") presupposed that improving NOT-MET-row agreement meant a better judge. It doesn't — it just means a stricter one, which moves the net headline further from physician calibration in the conservative direction.</li>
+  <li><strong>No tier-jump fixes the calibration.</strong> Moving from gpt-5-mini to gpt-5 burns ~$32 of additional Phase A spend to confirm the pattern, not to fix it. Going higher (gpt-5.4, gpt-5.5) will most likely push further in the strict direction.</li>
+  <li><strong>All three active candidates produce conservative headlines.</strong> No candidate in the active decision space would inflate `weighted_met` — every one of gpt-oss-120b, gpt-5-mini, and gpt-5 lands below the physician 77% met-rate. The choice is over <em>how</em> conservative:
+    <ul>
+      <li><strong>gpt-oss-120b (−3.8 pp):</strong> mildest understatement; closest to physician calibration of any judge tested. Free to run (cluster GPU). The trade-off is the rubber-stamp pattern on individual cases — its NOT-MET-row agreement (67.9%) is the weakest of the three, so a meaningful fraction of borderline failures get marked MET. The headline is the most accurate; the per-criterion accuracy is the weakest.</li>
+      <li><strong>gpt-5-mini (−7.0 pp):</strong> moderate understatement. Defensible "lower-bound" framing. ~$22 for Phase B.</li>
+      <li><strong>gpt-5 (−18.7 pp):</strong> heavy understatement. Best per-criterion accuracy on NOT-MET cases (81.9%), but the deployment headline reads ~19 pp below true physician-equivalent quality, which is a hard story to tell. ~$135 for Phase B.</li>
+      <li><strong>Bracket with two judges:</strong> use gpt-oss-120b (most-accurate headline) and gpt-5 (most-rigorous per-criterion verdict) as a pair, report <code>weighted_met</code> as an interval. The widest, most-honest range — though the lower bound (gpt-5's number) may be hard to defend as a useful figure. ~$135 incremental Phase B.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2>How to choose the final judge</h2>
+
+<p>The active decision space is three candidates: <strong>gpt-oss-120b</strong> (open, cluster), <strong>gpt-5-mini</strong> (OpenAI Batch), <strong>gpt-5</strong> (OpenAI Batch). Four factors carry weight, each capturing a different aspect of "is this judge fit to trust." None of the three wins on all four — picking a judge means choosing which axis matters most.</p>
+
+<h3>The four factors</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Factor</th>
+  <th>What it measures</th>
+  <th>gpt-oss-120b</th>
+  <th>gpt-5-mini</th>
+  <th>gpt-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>LLM ↔ consensus agreement</td>
+  <td>Per-row accuracy on rows where physicians agreed (cleanest "is the judge right" number).</td>
+  <td class="cell-good">81.6%</td>
+  <td>79.1%</td>
+  <td class="cell-bad">71.8%</td>
+</tr>
+<tr>
+  <td>MET-row agreement</td>
+  <td>Of physician-MET rows, what fraction did the judge also call MET. High = correctly recognizes quality.</td>
+  <td class="cell-good">84.0%</td>
+  <td>80.7%</td>
+  <td class="cell-bad">70.1%</td>
+</tr>
+<tr>
+  <td>NOT-MET-row agreement</td>
+  <td>Of physician-NOT-MET rows, what fraction did the judge also call NOT-MET. High = correctly flags failures (rubber-stamp detector).</td>
+  <td class="cell-bad">67.9%</td>
+  <td>69.5%</td>
+  <td class="cell-good">81.9%</td>
+</tr>
+<tr>
+  <td>Judge met-rate calibration <small>(distance from physician 77%)</small></td>
+  <td>How much the headline `weighted_met` is shifted vs the true physician-equivalent quality.</td>
+  <td class="cell-good">−3.8 pp</td>
+  <td>−7.0 pp</td>
+  <td class="cell-bad">−18.7 pp</td>
+</tr>
+<tr>
+  <td>(Operational) API cost for Phase B</td>
+  <td>Cost of running the full HealthBench rubric rescore (~38K judge calls, both ±RAG arms).</td>
+  <td class="cell-good">$0 (cluster)</td>
+  <td>~$22</td>
+  <td class="cell-bad">~$135</td>
+</tr>
+</tbody>
+</table>
+
+<p class="legend"><span class="sw" style="background:var(--good-bg);border:1px solid var(--good)"></span>best of three on that factor &nbsp; <span class="sw" style="background:var(--bad-bg);border:1px solid var(--bad)"></span>worst of three</p>
+
+<h3>Per-judge summary</h3>
+
+<div class="judge-card-grid">
+  <div class="judge-card">
+    <h4>gpt-oss-120b — wins 4 of 5 factors</h4>
+    <div class="bias">Best on overall agreement, MET-row accuracy, headline calibration, and cost. Weakest only on NOT-MET-row agreement (67.9%, below the human-human 77.6% ceiling) — the rubber-stamp pattern is the genuine weakness.</div>
+    <div class="stat-line"><span class="k">choose if:</span> the priority is general per-row accuracy with the headline closest to physician truth, and a moderate NOT-MET weakness is acceptable.</div>
+  </div>
+  <div class="judge-card">
+    <h4>gpt-5-mini — wins 0 of 5, loses 0 of 5</h4>
+    <div class="bias">Middling on every metric. Most balanced per-class gap (11.2 pp). Doesn't have a standout strength but has no standout weakness either.</div>
+    <div class="stat-line"><span class="k">choose if:</span> the priority is hedging — never the best, never the worst. A reasonable compromise pick.</div>
+  </div>
+  <div class="judge-card">
+    <h4>gpt-5 — wins 1 of 5 factors</h4>
+    <div class="bias">Best at the single most diagnostic metric: NOT-MET-row agreement at 81.9% is the only number in the table above the human-human ceiling. Worst on the other four factors — including ~$135 for Phase B and an 18.7 pp deflation of the deployment headline.</div>
+    <div class="stat-line"><span class="k">choose if:</span> catching genuine criterion failures is the highest priority (because over-rating in a clinical evaluation is the more dangerous error), and the heavy headline understatement + cost are acceptable.</div>
+  </div>
+</div>
+
+<h3>Three viable strategies</h3>
+
+<table>
+<thead>
+<tr>
+  <th>Strategy</th>
+  <th>Pick</th>
+  <th>Why</th>
+  <th>What you give up</th>
+  <th>Phase B cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>A. Most accurate single judge</strong></td>
+  <td>gpt-oss-120b</td>
+  <td>Wins the broadest set of metrics; cheapest; headline closest to physician calibration.</td>
+  <td>Weakest NOT-MET detection — borderline failures may go un-flagged in the rubric track.</td>
+  <td class="cell-good">$0</td>
+</tr>
+<tr>
+  <td><strong>B. Safest for clinical claims</strong></td>
+  <td>gpt-5</td>
+  <td>Only judge that catches NOT-MET cases at the human-human rate. Defensible "this judge errs on the side of finding failures."</td>
+  <td>Headline `weighted_met` reads ~19 pp below physician-equivalent quality — a hard story to tell stakeholders; 10 pp drop in general accuracy.</td>
+  <td>~$135</td>
+</tr>
+<tr>
+  <td><strong>C. Bracket with two judges</strong></td>
+  <td>gpt-oss-120b + gpt-5</td>
+  <td>Report `weighted_met` as a range. Lower bound (gpt-5) = "we ran a strict judge"; upper bound (gpt-oss-120b) = "we ran a calibration-closest judge."</td>
+  <td>The range is wide (~15 pp), and explaining the two-judge methodology adds report complexity.</td>
+  <td>~$135 (cluster + OpenAI)</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Recommendation</h3>
+
+<p>By the data, <strong>gpt-oss-120b is the empirical winner</strong> — it wins 4 of 5 factors including the headline-calibration metric and costs nothing in API spend. The original "open-weight rubber-stamps, must escalate" argument from the budget doc is partially walked back by our own data: gpt-oss-120b's net headline shift (−3.8 pp) is the smallest of any judge tested, and Maverick / Nemotron's rubber-stamping does <em>not</em> generalize to gpt-oss-120b.</p>
+
+<p>The one real concern is gpt-oss-120b's NOT-MET-row agreement (67.9%, below the human-human 77.6% baseline). For the v0.2 report, this is the disclosure to make explicit: <em>"the judge is well-calibrated on the headline and on physician-met cases, but agrees with physicians on borderline failure cases only ~68% of the time, vs ~78% for physician pairs." </em>If reviewers ask whether the judge under-detects failures, the answer is "yes, by about 10 pp below the human ceiling, and here is the per-category breakdown."</p>
+
+<p style="font-size:13px;color:var(--muted);background:var(--bg);border-left:3px solid var(--accent);padding:10px 14px;margin:10px 0;"><em>Footnote — reasoning-effort sensitivity test.</em> A natural follow-up question is whether the NOT-MET weakness can be closed by giving gpt-oss-120b more compute to think with. We tested this directly by re-running the calibration at <code>reasoning_effort=high</code>:</p>
+
+<table style="font-size:13px;width:auto;margin:-4px 0 8px;">
+<thead>
+<tr>
+  <th>Metric</th>
+  <th><code>medium</code> (pinned)</th>
+  <th><code>high</code></th>
+  <th>Δ</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>LLM ↔ consensus agreement</td><td>81.6%</td><td>77.5%</td><td style="color:var(--bad)">−4.1 pp</td></tr>
+<tr><td>MET-row agreement</td><td>84.0%</td><td>78.9%</td><td style="color:var(--bad)">−5.1 pp</td></tr>
+<tr><td>NOT-MET-row agreement</td><td>67.9%</td><td>69.6%</td><td style="color:var(--good)">+1.7 pp</td></tr>
+<tr><td>Met-rate (vs phys 77%)</td><td>−3.8 pp</td><td>−8.4 pp</td><td style="color:var(--bad)">−4.6 pp further</td></tr>
+</tbody>
+</table>
+
+<p style="font-size:13px;color:var(--muted);margin:0 0 16px;">High effort improves NOT-MET-row agreement by only <strong>+1.7 pp</strong> — well within bootstrap noise on a 774-row subset — while degrading every other metric by 4–5 pp. The NOT-MET weakness is <strong>not "reasoning-bound"</strong>: additional compute does not fix it. This is consistent with the broader spectrum finding that within any judge family, more capability / more reasoning moves the judge in the strict direction (better NOT-MET, worse everything else), never toward physician calibration. Medium remains the right pin.</p>
+
+<p>If failure-detection rigor is more important than the rest (a defensible position for clinical evaluation, but not the only one), <strong>Strategy C (bracket with two judges)</strong> is the methodologically strongest move — report the gpt-oss-120b number as the primary `weighted_met`, and the gpt-5 number as a conservative lower-bound disclosed alongside. The ~$135 incremental cost is well within the approved budget and the dual-judge methodology is the most-defensible-to-reviewers configuration on offer.</p>
+
+<p>Selecting <strong>gpt-5-mini alone</strong> is the weakest option: it wins nothing, costs more than gpt-oss-120b, and shifts the headline further from physician calibration. Pick it only if there's an external reason to commit to a closed-source-API judge that isn't gpt-5.</p>
+
+<h2>Cost & operational footnote</h2>
+
+<table>
+<thead>
+<tr><th>Run</th><th>Calls</th><th>Wall-clock</th><th>Cost</th><th>Errors</th><th>Reasoning summary coverage</th></tr>
+</thead>
+<tbody>
+<tr><td colspan="6" style="background:#fafafa;font-style:italic;color:var(--muted);padding:6px 10px;">Open-weight candidates (prior bake-off — included as context)</td></tr>
+<tr><td>Llama-4-Maverick FP8</td><td>6,853</td><td>cluster</td><td>$0 API (4× H200)</td><td>0</td><td>n/a</td></tr>
+<tr><td>Nemotron-Ultra-253B FP8</td><td>6,853</td><td>cluster</td><td>$0 API (4× H200)</td><td>0</td><td>n/a</td></tr>
+<tr><td>gpt-oss-120b (medium, pinned)</td><td>6,853</td><td>cluster</td><td>$0 API (1× H200)</td><td>0</td><td>n/a</td></tr>
+<tr><td colspan="6" style="background:#fafafa;font-style:italic;color:var(--muted);padding:6px 10px;">OpenAI candidates (Phase A — this round)</td></tr>
+<tr><td>gpt-5-mini</td><td>6,853</td><td>~35 min</td><td>$4.84</td><td>0</td><td>77.6%</td></tr>
+<tr><td>gpt-5</td><td>6,853</td><td>~30 min*</td><td>$37.39</td><td>0</td><td>88.8%</td></tr>
+<tr><td>gpt-5.4-mini <span class="pending-pill">pending</span></td><td>6,853</td><td>—</td><td>~$6 (projected)</td><td>0 so far (6,779/6,853 done)</td><td>—</td></tr>
+</tbody>
+</table>
+
+<p class="footnote">
+*gpt-5 actual cost ($37.39) exceeded the $30 smoke projection because the 20-row smoke under-sampled heavy-reasoning rows; full-set average was 892 reasoning tokens/call vs the smoke's 720. Still well under the $50 ask. Per-row averages used for the projections: gpt-5-mini 555 output tokens, gpt-5 940 output tokens (2.1× heavier reasoning at the same effort setting). All runs were OpenAI Batch endpoint (50% off standard), <code>reasoning.effort=medium</code>, <code>reasoning.summary=auto</code>, <code>text.format</code> strict JSON schema producing <code>{criteria_met: boolean}</code>; reasoning summary captured separately.
+</p>
+
+</body>
+</html>
