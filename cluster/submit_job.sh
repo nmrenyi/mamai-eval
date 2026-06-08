@@ -73,7 +73,11 @@ ANTHROPIC_KEY="${ANTHROPIC_API_KEY:-$(_read_key anthropic_key.txt)}"
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 HAS_REPO_REF=0
 EFFECTIVE_REPO_REF="$CURRENT_BRANCH"
-for ENV_PAIR in "${EXTRA_ENV[@]}"; do
+# bash 3.2 (macOS) + set -u errors on "${arr[@]}" when arr is empty; the
+# `${arr[@]+"${arr[@]}"}` form expands to nothing when unset/empty instead of
+# erroring. This block (and the matching one below) iterates extra env-pairs
+# passed as positional args; empty is a valid case (no extras supplied).
+for ENV_PAIR in ${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}; do
   if [[ "$ENV_PAIR" != *=* ]]; then
     echo "Error: extra arguments must be KEY=VALUE pairs, got: $ENV_PAIR"
     exit 1
@@ -127,7 +131,7 @@ if [ "$HAS_REPO_REF" -eq 0 ]; then
   RUNAI_ARGS+=(-e "REPO_REF=$CURRENT_BRANCH")
 fi
 
-for ENV_PAIR in "${EXTRA_ENV[@]}"; do
+for ENV_PAIR in ${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}; do
   RUNAI_ARGS+=(-e "$ENV_PAIR")
 done
 
