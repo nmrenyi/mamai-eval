@@ -1,0 +1,109 @@
+{
+  "judge_model": "gpt-5-mini",
+  "n_rows_total": 6853,
+  "n_rows_judged": 6853,
+  "n_concordant": 5241,
+  "n_discordant": 1612,
+  "human_human_baseline": {
+    "pairs": 7777,
+    "agreement": 0.7756,
+    "physician_met_rate": 0.7702,
+    "chance_agreement": 0.646,
+    "kappa": 0.3661
+  },
+  "llm_vs_single_human": {
+    "pairs": 14162,
+    "agreement": 0.7248
+  },
+  "llm_vs_consensus": {
+    "n": 5241,
+    "agreement": 0.7905,
+    "judge_met_rate": 0.7329,
+    "n_met_rows": 4467,
+    "n_not_met_rows": 774,
+    "agreement_on_met_rows": 0.807,
+    "agreement_on_not_met_rows": 0.6951
+  },
+  "prediction_distribution": {
+    "judge_met_rate": 0.7003,
+    "physician_met_rate": 0.7702,
+    "n_judge_verdicts": 6853,
+    "n_physician_labels": 14162
+  },
+  "per_category_consensus": {
+    "CHILD_HEALTH": {
+      "n": 2463,
+      "agreement": 0.782,
+      "judge_met_rate": 0.7337,
+      "n_met_rows": 2100,
+      "n_not_met_rows": 363,
+      "agreement_on_met_rows": 0.8024,
+      "agreement_on_not_met_rows": 0.6639
+    },
+    "SEXUAL_AND_REPRODUCTIVE_HEALTH": {
+      "n": 710,
+      "agreement": 0.7662,
+      "judge_met_rate": 0.7183,
+      "n_met_rows": 618,
+      "n_not_met_rows": 92,
+      "agreement_on_met_rows": 0.7783,
+      "agreement_on_not_met_rows": 0.6848
+    },
+    "NEONATAL": {
+      "n": 291,
+      "agreement": 0.8282,
+      "judge_met_rate": 0.7595,
+      "n_met_rows": 243,
+      "n_not_met_rows": 48,
+      "agreement_on_met_rows": 0.8519,
+      "agreement_on_not_met_rows": 0.7083
+    },
+    "MATERNAL": {
+      "n": 1777,
+      "agreement": 0.8059,
+      "judge_met_rate": 0.7333,
+      "n_met_rows": 1506,
+      "n_not_met_rows": 271,
+      "agreement_on_met_rows": 0.8181,
+      "agreement_on_not_met_rows": 0.738
+    }
+  },
+  "per_category_human_baseline": {
+    "CHILD_HEALTH": {
+      "pairs": 3647,
+      "agreement": 0.768,
+      "physician_met_rate": 0.7677,
+      "chance_agreement": 0.6434,
+      "kappa": 0.3496
+    },
+    "SEXUAL_AND_REPRODUCTIVE_HEALTH": {
+      "pairs": 1038,
+      "agreement": 0.763,
+      "physician_met_rate": 0.78,
+      "chance_agreement": 0.6568,
+      "kappa": 0.3094
+    },
+    "NEONATAL": {
+      "pairs": 460,
+      "agreement": 0.7761,
+      "physician_met_rate": 0.7599,
+      "chance_agreement": 0.635,
+      "kappa": 0.3865
+    },
+    "MATERNAL": {
+      "pairs": 2632,
+      "agreement": 0.791,
+      "physician_met_rate": 0.7715,
+      "chance_agreement": 0.6475,
+      "kappa": 0.4072
+    }
+  },
+  "ci_95_llm_vs_single_human": [
+    0.7159,
+    0.734
+  ],
+  "ci_95_llm_vs_consensus": [
+    0.779,
+    0.8002
+  ]
+}
