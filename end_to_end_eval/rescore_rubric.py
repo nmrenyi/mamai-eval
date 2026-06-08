@@ -402,8 +402,9 @@ def main():
                         help="Config version (sets MAMAI_EVAL_CONFIG)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Preview unscored-row counts without calling any API")
-    parser.add_argument("--temperature", type=float, default=0.0,
-                        help="Grader sampling temperature (default: 0.0)")
+    parser.add_argument("--temperature", type=float, default=None,
+                        help="Grader sampling temperature. Default: config-pinned value "
+                             "(params.json judge.temperature) if set, else 0.0.")
     parser.add_argument("--judge-override", default=None,
                         help='Inline JSON or file path overriding params.json judge.rubric. '
                              'Shape: {"provider": "openai", "model": "gpt-4o"}')
@@ -416,12 +417,16 @@ def main():
         print("ERROR: no rubric judge configured. Set params.json judge.rubric "
               "or pass --judge-override.")
         sys.exit(1)
-    # CLI --temperature wins if explicitly passed (default 0.0); otherwise use
-    # the config-pinned temperature; otherwise 0.0.
-    if "--temperature" in sys.argv:
+    # Resolution order: explicit CLI > config-pinned > 0.0. Using default=None
+    # as the sentinel lets argparse handle both `--temperature 0.2` and
+    # `--temperature=0.2` correctly (the prior sys.argv string-match only
+    # caught the space-separated form).
+    if args.temperature is not None:
         temperature = args.temperature
+    elif cfg_temperature is not None:
+        temperature = cfg_temperature
     else:
-        temperature = cfg_temperature if cfg_temperature is not None else args.temperature
+        temperature = 0.0
     extras_str = f" extra_body={extra_body}" if extra_body else ""
     print(f"Rubric judge: {provider}: {model} (temperature={temperature}){extras_str}")
 
