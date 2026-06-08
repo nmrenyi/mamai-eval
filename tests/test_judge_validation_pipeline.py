@@ -37,9 +37,12 @@ def _always_met_grader(prompt: str) -> str:
 
 
 def _flaky_grader(state: dict):
-    """Mock judge that fails once per row then succeeds — tests retry."""
+    """Mock judge that fails ONCE GLOBALLY across the whole test run, then
+    succeeds for every subsequent call (per-row or otherwise). Used to verify
+    the retry path catches a single transient error without retrying forever.
+    Not suitable for multi-row retry tests — the same `state` dict is shared,
+    so only the very first call sees the failure."""
     def grader(prompt: str) -> str:
-        # Fail once globally, then succeed.
         if not state.get("failed_once"):
             state["failed_once"] = True
             raise RuntimeError("simulated transient API error")

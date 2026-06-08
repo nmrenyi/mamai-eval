@@ -301,10 +301,18 @@ def parse_batch_output(jsonl_content: str, judge_model: str) -> list[dict]:
 
         try:
             parsed = extract_json(content)
+            met_val = parsed.get("criteria_met")
+            if not isinstance(met_val, bool):
+                # Strict: malformed grader output must surface as error, not
+                # get silently coerced to False via bool(...). With our
+                # json_schema constraint OpenAI rejects malformed shapes
+                # before we ever see them, but defending against future
+                # schema drift / non-OpenAI batch endpoints is cheap.
+                raise ValueError(f"criteria_met missing or not bool (got {met_val!r})")
             verdicts.append({
                 "row_index": row_index,
                 "judge_model": judge_model,
-                "criteria_met": bool(parsed.get("criteria_met")),
+                "criteria_met": met_val,
                 "reasoning_summary": reasoning_summary,
                 "error": None,
                 "status": status,
@@ -361,13 +369,32 @@ def run_judge_batch(
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Resumability: skip rows whose verdicts are already in `output_path`.
+    # Matches the sync judge.run_judge contract -- re-running the same command
+    # on the same output costs $0 and produces no duplicate row_index entries
+    # (which would otherwise corrupt downstream analysis: last-write-wins on
+    # JSONL loaders, or worse, double-counting on streaming aggregators).
+    # Note: row_index is the calibration set's `_orig_idx`, so this dedupes
+    # correctly across shard re-orderings.
+    from .judge import _load_existing_indices
+    done = _load_existing_indices(output_path)
+    todo_rows = [r for r in rows if r["_orig_idx"] not in done]
+    if done:
+        print(
+            f"Resumable: {len(done)} already in {output_path}, {len(todo_rows)} to submit",
+            file=sys.stderr,
+        )
+    if not todo_rows:
+        print("Nothing to do — all rows already have verdicts.", file=sys.stderr)
+        return 0
+
     jsonl = build_batch_jsonl(
-        rows, judge_model,
+        todo_rows, judge_model,
         reasoning_effort=reasoning_effort,
         reasoning_summary=reasoning_summary,
         extra_body=extra_body,
     )
-    print(f"Built batch input: {len(rows)} requests", file=sys.stderr)
+    print(f"Built batch input: {len(todo_rows)} requests", file=sys.stderr)
 
     batch = submit_batch(client, jsonl, completion_window=completion_window)
     batch = wait_batch(client, batch.id, poll_interval=poll_interval)

@@ -131,9 +131,17 @@ def grade_row(row: dict, grader, max_retries: int = 3) -> dict:
         try:
             raw = grader(prompt)
             obj = extract_json(raw)
+            met_val = obj.get("criteria_met")
+            if not isinstance(met_val, bool):
+                # Strict: malformed grader output (missing / null / non-bool)
+                # must surface as an error, not get silently coerced to False
+                # via bool(...). Otherwise downstream metrics see "judge
+                # decided NOT-MET" when the judge really produced nothing
+                # usable, biasing the report toward strictness.
+                raise ValueError(f"criteria_met missing or not bool (got {met_val!r})")
             return {
                 "row_index": row["_orig_idx"],
-                "criteria_met": bool(obj.get("criteria_met")),
+                "criteria_met": met_val,
                 "explanation": obj.get("explanation", ""),
                 "error": None,
             }
