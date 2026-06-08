@@ -25,9 +25,8 @@
     "model": "openai/gpt-oss-120b",
     "temperature": 0.0,
     "extra_body": {"reasoning_effort": "medium"},
+    "_ensemble_note": "The v0.2 plan retired the 3-judge ensemble in favor of one uniform single judge for both rubric and SAQ tracks (see docs/judge-validation-plan.md). The list below is a single-entry ensemble preserved only so legacy rescore_open_v2.py callers don't error on missing config; running it has no diversity benefit and adds zero compute over the single-judge path.",
     "ensemble": [
-      {"provider": "openai", "model": "openai/gpt-oss-120b"},
-      {"provider": "openai", "model": "openai/gpt-oss-120b"},
       {"provider": "openai", "model": "openai/gpt-oss-120b"}
     ],
     "rubric": {"provider": "openai", "model": "openai/gpt-oss-120b"}

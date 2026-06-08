@@ -92,30 +92,45 @@ in the response.
 
 # ── Provider dispatch ────────────────────────────────────────────────────────
 
-def _call_openai(model: str, prompt: str, temperature: float) -> str:
+def _call_openai(model: str, prompt: str, temperature: float,
+                 extra_body: dict | None = None) -> str:
     from openai import OpenAI
     client = OpenAI()
-    result = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=temperature,
-    )
+    kwargs: dict = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": temperature,
+    }
+    if extra_body:
+        # The OpenAI SDK forwards `extra_body` into the HTTP request body verbatim.
+        # This is how the pinned `reasoning_effort` (and any future judge tuning
+        # set in params.json) actually reaches the served model.
+        kwargs["extra_body"] = extra_body
+    result = client.chat.completions.create(**kwargs)
     return (result.choices[0].message.content or "").strip()
 
 
-def _call_anthropic(model: str, prompt: str, temperature: float) -> str:
+def _call_anthropic(model: str, prompt: str, temperature: float,
+                    extra_body: dict | None = None) -> str:
     import anthropic
     client = anthropic.Anthropic()
-    result = client.messages.create(
-        model=model,
-        max_tokens=1024,
-        temperature=temperature,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    kwargs: dict = {
+        "model": model,
+        "max_tokens": 1024,
+        "temperature": temperature,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    if extra_body:
+        kwargs["extra_body"] = extra_body
+    result = client.messages.create(**kwargs)
     return "\n".join(getattr(b, "text", "") for b in result.content).strip()
 
 
-def _call_google(model: str, prompt: str, temperature: float) -> str:
+def _call_google(model: str, prompt: str, temperature: float,
+                 extra_body: dict | None = None) -> str:
+    # google-genai does not have a generic extra_body equivalent; the caller
+    # would need to pre-map keys (e.g. reasoning) into `generation_config`. We
+    # accept the kwarg for signature parity but ignore it here.
     try:
         from google import genai
         client = genai.Client()
@@ -174,6 +189,7 @@ def _extract_json(text: str) -> dict:
 
 def _grade_criterion(provider: str, model: str, conversation: str,
                      criterion_text: str, temperature: float,
+                     extra_body: dict | None = None,
                      max_retries: int = 3) -> dict:
     dispatch = PROVIDER_DISPATCH.get(provider)
     if dispatch is None:
@@ -186,10 +202,17 @@ def _grade_criterion(provider: str, model: str, conversation: str,
     last_err = None
     for attempt in range(max_retries):
         try:
-            raw = dispatch(model, prompt, temperature)
+            raw = dispatch(model, prompt, temperature, extra_body)
             obj = _extract_json(raw)
+            met_val = obj.get("criteria_met")
+            if not isinstance(met_val, bool):
+                # Strict: missing / null / non-bool means the grader produced
+                # malformed output. Silently coercing to False would skew the
+                # downstream weighted_met toward NOT-MET without surfacing the
+                # data-quality issue.
+                raise ValueError(f"criteria_met missing or not bool (got {met_val!r})")
             return {
-                "met": bool(obj.get("criteria_met")),
+                "met": met_val,
                 "explanation": obj.get("explanation", ""),
                 "error": False,
             }
@@ -264,7 +287,15 @@ def is_rubric_result(data: dict) -> bool:
     )
 
 
-def _load_judge(judge_override: str | None) -> tuple[str, str]:
+def _load_judge(judge_override: str | None) -> tuple[str, str, float | None, dict | None]:
+    """Returns (provider, model, temperature, extra_body).
+
+    temperature / extra_body are None when not configured; callers can either
+    fall back to defaults or treat None as "don't set the kwarg." Reading these
+    fields from config is how the pinned reasoning_effort / temperature in
+    params.json actually reaches the production rescorer (they were dropped
+    before this change).
+    """
     if judge_override:
         path = Path(judge_override)
         cfg = json.loads(path.read_text()) if path.exists() else json.loads(judge_override)
@@ -272,12 +303,17 @@ def _load_judge(judge_override: str | None) -> tuple[str, str]:
         from shared.prompts import JUDGE_RUBRIC  # noqa: WPS433
         cfg = JUDGE_RUBRIC
     if not cfg or not cfg.get("model"):
-        return "", ""
-    return cfg.get("provider", "openai"), cfg["model"]
+        return "", "", None, None
+    return (
+        cfg.get("provider", "openai"),
+        cfg["model"],
+        cfg.get("temperature"),
+        cfg.get("extra_body"),
+    )
 
 
 def rescore_file(path: Path, provider: str, model: str, temperature: float,
-                 dry_run: bool) -> dict | None:
+                 dry_run: bool, extra_body: dict | None = None) -> dict | None:
     data = json.loads(path.read_text())
     if not is_rubric_result(data):
         return None
@@ -304,7 +340,7 @@ def rescore_file(path: Path, provider: str, model: str, temperature: float,
                 verdicts.append({**c, "met": None, "explanation": "empty criterion text",
                                  "error": True})
                 continue
-            v = _grade_criterion(provider, model, conversation, text, temperature)
+            v = _grade_criterion(provider, model, conversation, text, temperature, extra_body)
             verdicts.append({
                 "criterion_id": c.get("criterion_id"),
                 "points": c.get("points"),
@@ -375,12 +411,19 @@ def main():
     args = parser.parse_args()
 
     os.environ.setdefault("MAMAI_EVAL_CONFIG", args.config)
-    provider, model = _load_judge(args.judge_override)
+    provider, model, cfg_temperature, extra_body = _load_judge(args.judge_override)
     if not model:
         print("ERROR: no rubric judge configured. Set params.json judge.rubric "
               "or pass --judge-override.")
         sys.exit(1)
-    print(f"Rubric judge: {provider}: {model}")
+    # CLI --temperature wins if explicitly passed (default 0.0); otherwise use
+    # the config-pinned temperature; otherwise 0.0.
+    if "--temperature" in sys.argv:
+        temperature = args.temperature
+    else:
+        temperature = cfg_temperature if cfg_temperature is not None else args.temperature
+    extras_str = f" extra_body={extra_body}" if extra_body else ""
+    print(f"Rubric judge: {provider}: {model} (temperature={temperature}){extras_str}")
 
     default_root = Path(__file__).parent / "configs"
     roots = [Path(p) for p in args.paths] if args.paths else [default_root]
@@ -390,7 +433,8 @@ def main():
     updated = []
     for f in files:
         try:
-            summary = rescore_file(f, provider, model, args.temperature, dry_run=args.dry_run)
+            summary = rescore_file(f, provider, model, temperature,
+                                   dry_run=args.dry_run, extra_body=extra_body)
         except Exception as e:
             print(f"  ERROR {f}: {e}")
             continue
