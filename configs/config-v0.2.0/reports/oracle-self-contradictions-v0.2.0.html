@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oracle context self-contradictions — mamaretrieval v0.2.0</title>
+<style>
+  :root {
+    --fg: #1f2328;
+    --fg-soft: #57606a;
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --pass: #1a7f37;
+    --pass-soft: #dafbe1;
+    --fail: #cf222e;
+    --fail-soft: #ffebe9;
+    --warn: #9a6700;
+    --warn-soft: #fff8c5;
+    --neutral-soft: #eaeef2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  h2 { font-size: 19px; margin: 36px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  p { margin: 8px 0 12px; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em;
+         background: var(--bg-soft); padding: 1px 4px; border-radius: 3px; }
+  small { color: var(--fg-soft); font-size: 13px; }
+  ul, ol { padding-left: 22px; margin: 8px 0 12px; }
+  li { margin: 4px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; font-size: 14px; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  th { background: var(--bg-soft); font-weight: 600; font-size: 13px; text-transform: uppercase;
+       letter-spacing: 0.02em; color: var(--fg-soft); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .meta { color: var(--fg-soft); font-size: 13px; margin: 0 0 4px; }
+  .lede { color: var(--fg-soft); margin-top: 6px; font-size: 15px; }
+
+  /* Headline numbers — same restrained style as the main report */
+  .headline {
+    margin: 24px 0 8px;
+    padding: 18px 22px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--fg);
+    border-radius: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .headline .pre-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-soft);
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  .headline .value {
+    font-size: 38px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .headline .label { font-size: 14px; color: var(--fg-soft); }
+  .headline .secondary {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--fg-soft);
+    text-align: right;
+    border-left: 1px solid var(--border);
+    padding-left: 16px;
+    line-height: 1.6;
+  }
+  .headline .secondary strong { color: var(--fg); }
+
+  /* Case cards */
+  .case {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    background: var(--bg);
+  }
+  .case.significant { border-left: 4px solid var(--fail); }
+  .case h3 {
+    font-size: 16px;
+    margin: 0 0 6px;
+  }
+  .case .query {
+    color: var(--fg-soft);
+    font-size: 13px;
+    font-style: italic;
+    margin: 4px 0 10px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-weight: 500;
+    font-style: normal;
+  }
+  .badge.significant { background: var(--fail-soft); color: var(--fail); }
+  .badge.recur { background: var(--warn-soft); color: var(--warn); }
+  .passages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0;
+  }
+  @media (max-width: 640px) { .passages { grid-template-columns: 1fr; } }
+  .passage {
+    background: var(--bg-soft);
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 3px solid var(--accent);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .passage-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--fg-soft);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .case .conflict,
+  .case .answer {
+    font-size: 14px;
+    margin: 6px 0 0;
+  }
+  .case .answer { color: var(--fg-soft); }
+  .case .answer .match-A { color: var(--accent); font-weight: 600; }
+  .case .answer .match-B { color: var(--accent); font-weight: 600; }
+
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
+           font-size: 13px; color: var(--fg-soft); }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="meta">From Gemma 4 E4B faithfulness run <code>configs/config-v0.2.0/results/generator/gemma4-e4b/20260524T144321/</code> · filed 2026-06-09</p>
+  <h1>Oracle context self-contradictions — mamaretrieval v0.2.0</h1>
+  <p class="lede">A fraction of Lynx-flagged FAILs are not model hallucinations but artefacts of the retrieved oracle context disagreeing with itself: two of the merged mamaretrieval chunks state conflicting clinical facts about the same thing, the answer matches one, the judge faults it against the other. v0.2.0 uses a richer oracle (top-20 union, mean 7.45 chunks/query vs ~2.8 on v0.1.0) so both the count and the shape of these self-contradictions differ from v0.1.0.</p>
+</header>
+
+<div class="headline">
+  <div class="pre-label">Audit result</div>
+  <span class="value">16 / 43</span>
+  <div>
+    <div class="label">contradiction-bucket FAILs confirmed as corpus self-contradictions</div>
+    <small>≈ 37% of the v0.2.0 contradiction bucket, ≈ 9% of all 174 Lynx FAILs. v0.1.0 found 6 of 145.</small>
+  </div>
+  <div class="secondary">
+    <strong>Audit breakdown</strong><br>
+    <strong>16</strong> confirmed<br>
+    <strong>27</strong> excluded (with reasons)<br>
+    <strong>1</strong> recurs from v0.1.0; <strong>15</strong> new
+  </div>
+</div>
+
+<h2>How they were found</h2>
+<p>All 43 cases that gpt-5 placed in the <code>contradiction</code> bucket (of 174 v0.2.0 FAILs) were audited against their literal context. A case is confirmed only when two verbatim passages from the same context conflict on the same clinical fact. Every quote below was substring-verified against the raw <code>context</code> field.</p>
+<p>27 cases were excluded with documented reasons: 7 model hallucinations (claim not in context), 6 paraphrase / terminology / format issues, 5 Lynx misreads (no real conflict), 4 different sub-scenarios (drug-route or clinical-context variations), 3 model conflations of distinct concepts, 2 model failures-to-extract.</p>
+<p>The headline faithfulness count should treat the 16 confirmed cases as <strong>false FAILs</strong>. This is a data-quality finding about the guideline corpus / chunker, not about Gemma 4.</p>
+
+<h2>The 16 confirmed cases</h2>
+
+<article class="case">
+  <h3>1. <code>q_00459</code> — ECP vomit re-dose window</h3>
+  <p class="query">"How should high-dose emergency contraceptive pills be dosed and managed if vomiting occurs?"</p>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"If a woman vomits within <strong>3 hours</strong> of taking the pills, she should take the same dose again."</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"If the woman vomits within <strong>2 hours</strong> after taking progestin-only or combined ECPs, she should take another dose."</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> 3 h vs 2 h re-dose window for combined ECPs (the 50-mcg-EE high-dose pills in this context are combined ECPs).</p>
+  <p class="answer">Gemma answered <strong>2 hours</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case significant">
+  <h3>2. <code>q_00474</code> — adrenaline for allergic shock / anaphylaxis <span class="badge significant">clinically significant</span></h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A (allergic shock)</div>"inject 1:1000, <strong>0.5 ml</strong> adrenaline … under the skin, <strong>1 time only</strong> (subcutaneous injection)"</div>
+    <div class="passage"><div class="passage-label">Passage B (anaphylaxis)</div>"Administer adrenaline <strong>0.3–0.5 mg IM</strong> immediately, and repeat every <strong>10 to 15 minutes</strong>, as needed."</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> SC 0.5 ml once vs IM 0.3–0.5 mg with repeats — for the same clinical entity.</p>
+  <p class="answer">Gemma answered <strong>IM with repeats</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>3. <code>q_00560</code> — active-phase / partograph dilation threshold</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"The active phase of the first stage of labour starts when the cervix is <strong>4 cm</strong> dilated"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"active phase of the first stage of labour (<strong>5 cm or more</strong> cervical dilatation)"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> 4 cm vs 5 cm cut-off. Same pattern as v0.1.0 q_01302 (5 vs 6 cm).</p>
+  <p class="answer">Gemma answered <strong>5 cm</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>4. <code>q_00761</code> — retained-placenta time threshold</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"the placenta is retained if it has not been delivered within <strong>one hour</strong> of the delivery of the baby."</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Diagnose a prolonged third stage … within <strong>30 minutes</strong> of the birth with active management or within <strong>60 minutes</strong> … with physiological management."</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> 1-hour-flat vs management-dependent 30/60-min.</p>
+  <p class="answer">Gemma answered <strong>30/60-min</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>5. <code>q_00780</code> — total breech extraction for cephalic second twin</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"Total breech extraction should be used <strong>only for a non-cephalic</strong> second twin"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Delivery of a second twin in <strong>cephalic presentation</strong> or transverse lie: version … and allow a total breech extraction"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> cephalic excluded vs cephalic included (after version).</p>
+  <p class="answer">Gemma listed <strong>cephalic</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>6. <code>q_00846</code> — Bishop's score thresholds</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"An unfavourable cervix … <strong>4 or less</strong> … score of <strong>8 or more</strong> [favourable]"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"favourable to induction, if the score is <strong>6 or greater</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> ≤4 / ≥8 vs ≥6 cut-offs.</p>
+  <p class="answer">Gemma answered <strong>≥6</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case significant">
+  <h3>7. <code>q_00919</code> — antihypertensive threshold in essential hypertension <span class="badge significant">clinically significant</span></h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"Treatment is administered if systolic blood pressure is <strong>≥ 160 mmHg</strong> or if diastolic blood pressure is <strong>≥ 110 mmHg</strong>."</div>
+    <div class="passage"><div class="passage-label">Passage B (essential / chronic HTN section)</div>"Antihypertensive drugs may be prescribed if the <strong>diastolic blood pressure exceeds 100 mmHg</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> ≥160 / ≥110 vs DBP &gt; 100 — different drug-start triggers.</p>
+  <p class="answer">Gemma answered <strong>DBP &gt; 100</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>8. <code>q_01224</code> — GDM induction-of-labour gestation</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A (ACOG)</div>"can wait until <strong>40 weeks</strong>' gestation to consider induction of labor"</div>
+    <div class="passage"><div class="passage-label">Passage B (NICE-style)</div>"Advise women with gestational diabetes to give birth no later than <strong>40+6 weeks</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> 40 wk vs 40+6 wk.</p>
+  <p class="answer">Gemma answered <strong>40 weeks</strong> → matches <span class="match-A">A</span>.</p>
+</article>
+
+<article class="case">
+  <h3>9. <code>q_01447</code> — first-stage FHR recording interval</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"<strong>once every hour during the latent phase</strong>, <strong>once every 30 minutes during the active phase</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"every <strong>half hour in the first stage of labour</strong>" (i.e. throughout both latent and active)</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> phase-specific (1 h / 30 min) vs flat 30-min across the whole first stage.</p>
+  <p class="answer">Gemma answered <strong>every-half-hour-first-stage</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>10. <code>q_02218</code> — neonatal weight-loss threshold</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"Weight loss of <strong>&gt;7%</strong> in the first week of life is an indication of possible insufficient milk intake … <strong>&gt;10%</strong> should be a cause for concern."</div>
+    <div class="passage"><div class="passage-label">Passage B (NICE 1.4.1)</div>"If a baby loses <strong>more than 10%</strong> of their birth weight … measure their weight again at appropriate intervals"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> &gt;7% vs &gt;10% as the action-trigger threshold.</p>
+  <p class="answer">Gemma answered <strong>&gt;7%</strong> → matches <span class="match-A">A</span>.</p>
+</article>
+
+<article class="case">
+  <h3>11. <code>q_02878</code> — non-absorbable suture removal <span class="badge recur">recurs from v0.1.0</span></h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"For non-absorbable sutures: remove the stitches <strong>between the 5 and 8 day</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Remove skin sutures (if not absorbable) <strong>on D7</strong>."</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> D5–8 range vs D7-flat. Same conflict as v0.1.0 case 6.</p>
+  <p class="answer">Gemma answered <strong>D5–D8</strong> → matches <span class="match-A">A</span>.</p>
+</article>
+
+<article class="case">
+  <h3>12. <code>q_02932</code> — direction of finger insertion during VE</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A (Table 2.2)</div>"gently introduce lubricated fingers in <strong>downward and backward</strong> direction"</div>
+    <div class="passage"><div class="passage-label">Passage B (Skill section)</div>"insert them very gently into the vagina, following the direction of the vagina, <strong>upwards and backwards</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> literally opposite vertical directions for the same step.</p>
+  <p class="answer">Gemma answered <strong>upwards and backwards</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case">
+  <h3>13. <code>q_03002</code> — aspirin secondary prophylaxis duration</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"acetylsalicylic acid PO: 75 to 150 mg once daily starting at 12 weeks LMP and continuing <strong>until 36 weeks LMP</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Give 75 mg to every pregnant woman at risk of developing pre-eclampsia from 12 weeks <strong>until delivery</strong>."</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> stop at 36 wk vs continue until delivery.</p>
+  <p class="answer">Gemma answered <strong>until the baby is born</strong> → matches <span class="match-B">B</span>.</p>
+</article>
+
+<article class="case significant">
+  <h3>14. <code>q_03024</code> — neonatal head position for resuscitation <span class="badge significant">clinically significant</span></h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A</div>"The baby is placed on its back, on the resuscitaire, with its <strong>head facing downwards</strong>."</div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Lay the neonate on the back with the head in a <strong>neutral position</strong> … avoid flexion or hyperextension"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> "head facing downwards" vs "neutral position". Passage A also contradicts itself in the following sentences.</p>
+  <p class="answer">Gemma answered <strong>head facing downwards</strong> → matches <span class="match-A">A</span>.</p>
+</article>
+
+<article class="case">
+  <h3>15. <code>q_03090</code> — IV ergometrine dose for PPH</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A (table)</div>"IM / IV: <strong>0.2 mg</strong>" (rendered as <code>I M / I V: 0. 2 m g</code>)</div>
+    <div class="passage"><div class="passage-label">Passage B (prose)</div>"Intravenous ergometrine <strong>0.25–0.5 mg</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> 0.2 mg vs 0.25–0.5 mg for IV ergometrine in PPH. Classic prose-vs-table mismatch.</p>
+  <p class="answer">Gemma answered IV <strong>0.2 mg</strong> → matches <span class="match-A">A</span>.</p>
+</article>
+
+<article class="case">
+  <h3>16. <code>q_03144</code> — maternal heart-rate alert threshold</h3>
+  <div class="passages">
+    <div class="passage"><div class="passage-label">Passage A (causes table)</div>"Heart rate | <strong>&gt;130 /minute</strong>" (high risk)</div>
+    <div class="passage"><div class="passage-label">Passage B (LCG pulse table)</div>"Alert: &lt;60, <strong>≥120</strong>"</div>
+  </div>
+  <p class="conflict"><strong>Conflict:</strong> &gt;130 vs ≥120 bpm for the alerting threshold.</p>
+  <p class="answer">Gemma answered <strong>≥120</strong> as high-risk alert → matches <span class="match-B">B</span>.</p>
+</article>
+
+<h2>Root-cause patterns</h2>
+<table>
+  <thead>
+    <tr><th>Pattern</th><th>Cases</th><th class="num">n</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cross-guideline disagreement</strong> — two different source guidelines (ACOG vs NICE, RCOG vs WHO, two book editions) each retrieved as its own chunk, each stating a different number. <em>This is the dominant v0.2.0 pattern and is a direct consequence of the larger chunk pool.</em></td>
+      <td>1, 4, 6, 7, 8, 10, 13, 16</td>
+      <td class="num">8</td>
+    </tr>
+    <tr>
+      <td><strong>Prose-vs-table conflict in one source</strong> — identical pattern to v0.1.0 cases 4–6.</td>
+      <td>11, 15, partly 6</td>
+      <td class="num">2</td>
+    </tr>
+    <tr>
+      <td><strong>Within-passage contradiction</strong> — one chunk says "head facing downwards" <em>and</em> "neutral position".</td>
+      <td>14</td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td><strong>Opposite-direction conflict</strong> — opposite directions for the same examination step.</td>
+      <td>12</td>
+      <td class="num">1</td>
+    </tr>
+  </tbody>
+</table>
+<p>In <strong>14 of 16</strong> cases Gemma's wording matches a verbatim passage the judge ignored.</p>
+
+<h2>Cross-reference with v0.1.0</h2>
+<table>
+  <thead>
+    <tr><th>v0.1.0 case</th><th>v0.2.0 status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>q_00410</code> (pre-eclampsia monitoring)</td><td>Dropped from contradiction bucket.</td></tr>
+    <tr><td><code>q_01073</code> (neonate HSV)</td><td>Dropped.</td></tr>
+    <tr><td><code>q_01302</code> (active-stage dilation: &gt;5 vs &gt;6 cm)</td><td>Dropped, but the same dilation-threshold conflict reappears as v0.2.0 <code>q_00560</code> (4 vs 5 cm) — corpus issue still present.</td></tr>
+    <tr><td><code>q_01618</code> (misoprostol 13–22 wk)</td><td>Dropped.</td></tr>
+    <tr><td><code>q_02317</code> (misoprostol 13–22 wk)</td><td>Dropped.</td></tr>
+    <tr><td><code>q_02878</code> (suture D5–8 vs D7)</td><td><strong>Recurs verbatim</strong> as v0.2.0 case 11.</td></tr>
+  </tbody>
+</table>
+<p>Net: <strong>1 recurs</strong>, <strong>5 drop</strong>, <strong>15 are new</strong>. The richer chunk pool retires some old conflicts (likely reclassified or now offset by a third concordant chunk) and exposes many more by mixing more independent sources.</p>
+
+<h2>Impact</h2>
+<ul>
+  <li><strong>16 of 174 v0.2.0 FAILs (≈9%)</strong> and <strong>≈37% of the contradiction bucket</strong> are false FAILs.</li>
+  <li>3 conflicts are clinically meaningful (cases 2 anaphylaxis adrenaline route, 7 antihypertensive threshold, 14 neonatal head position) and warrant a guideline owner's attention regardless of the eval.</li>
+  <li>The gpt-oss-120b judge-validation failure should be re-read with this 9% false-FAIL floor in mind.</li>
+</ul>
+
+<h2>Recommendation</h2>
+<ol>
+  <li>Report the 16 query IDs and their passages upstream to the <code>mamaretrieval</code> / <code>mamai-medical-guidelines</code> owners.</li>
+  <li>The prose-vs-table conflicts (cases 11, 15) and the within-passage contradiction (case 14) need a guideline owner to decide which value is authoritative.</li>
+  <li>The cross-guideline conflicts (cases 1, 4, 6, 7, 8, 10, 13, 16) are not chunker bugs — they reflect different source guidelines disagreeing. Faithfulness scoring should distinguish "answer disagrees with context" from "context disagrees with itself".</li>
+  <li>Pattern (1) implies the contradiction count will scale with chunk-pool size; re-audit on v0.3.0.</li>
+</ol>
+
+<footer>
+  <p>Main report: <a href="oracle-v0.2.0-faithfulness.html">oracle-v0.2.0-faithfulness.html</a></p>
+  <p>Structured data: <code>configs/config-v0.2.0/results/generator/gemma4-e4b/20260524T144321/oracle_contradictions.json</code> &mdash; <code>{confirmed: 16, excluded: 27}</code>, schema matches v0.1.0.</p>
+</footer>
+
+</body>
+</html>

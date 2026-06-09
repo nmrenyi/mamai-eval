@@ -6,7 +6,7 @@ Forward-looking TODO + cold-start handoff. v0.2.0 results report:
 [`configs/config-v0.2.0/reports/oracle-v0.2.0-faithfulness.html`](../configs/config-v0.2.0/reports/oracle-v0.2.0-faithfulness.html).
 Earlier methodology + v0.1.0 results: [`faithfulness-eval-v0.2.0.md`](faithfulness-eval-v0.2.0.md).
 Oracle data-quality findings: [`oracle-self-contradictions-v0.1.0.md`](oracle-self-contradictions-v0.1.0.md),
-[`oracle-self-contradictions-v0.2.0.md`](oracle-self-contradictions-v0.2.0.md).
+[`oracle-self-contradictions-v0.2.0.html`](../configs/config-v0.2.0/reports/oracle-self-contradictions-v0.2.0.html).
 
 ---
 
@@ -127,7 +127,7 @@ PR #2; can run in parallel.
 The audit surfaced 16 confirmed corpus-quality issues, several of them
 clinically significant (anaphylaxis adrenaline route, antihypertensive
 threshold, aspirin prophylaxis duration, neonatal head position, IV
-ergometrine dose — see `oracle-self-contradictions-v0.2.0.md`).
+ergometrine dose — see `configs/config-v0.2.0/reports/oracle-self-contradictions-v0.2.0.html`).
 Recommendation: file against `mamai-medical-guidelines` and/or
 `mamaretrieval` for guideline-owner review.
 
