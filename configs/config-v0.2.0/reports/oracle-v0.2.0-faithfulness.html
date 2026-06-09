@@ -306,7 +306,14 @@
 </div>
 <p><small>Lynx's FAIL bucket is ~74% noise (false alarms); but it also passes ~8% of cases that <em>are</em> unfaithful — both directions matter for the population estimate.</small></p>
 
-<h3>4.3 Per-category confirmation (within Lynx-FAIL stratum)</h3>
+<h3>4.3 Rubric-adherence check (per Lynx-FAIL category)</h3>
+<p>The same 12 confirmed FAILs from §4.1, broken down by Lynx category. The point of this section is <strong>not</strong> precise per-category precision (n=10 per bucket is too small for that) — it's an audit of whether gpt-5 actually applies the strict §3.1 rubric correctly, especially on the rules that broke gpt-oss-120b.</p>
+<p>What we want to see:</p>
+<ul>
+  <li><strong>Real-hallucination buckets</strong> (contradiction, unsupported_addition): gpt-5 confirms most cases as FAIL.</li>
+  <li><strong>Not-hallucination buckets</strong> (omission, refusal, unclear): gpt-5 confirms <em>almost none</em> — the rubric explicitly says these are PASS.</li>
+</ul>
+
 <div>
   <div class="bar-row">
     <div class="label">contradiction</div>
@@ -334,7 +341,9 @@
     <div class="count">0 / 6</div>
   </div>
 </div>
-<p><small>gpt-5 cleanly follows the rubric on the "not hallucination" buckets: omission 0/10, refusal 1/10, unclear 0/6. The earlier gpt-oss-120b attempt drifted heavily on exactly these cases — gpt-5 does not.</small></p>
+
+<p>The bottom three rows are the load-bearing evidence: <strong>omission 0/10, refusal 1/10, unclear 0/6</strong> — gpt-5 followed the rubric 25 of 26 times where the rubric explicitly prescribes PASS. The earlier gpt-oss-120b attempt drifted heavily on exactly these cases (called FAIL on refusals, omissions, etc.) — gpt-5 does not. This is the direct evidence that the v0.2.0 calibrated rate isn't contaminated by the same judge-side rubric drift that disqualified gpt-oss.</p>
+<p><small>Sample sizes (10 per bucket, 6 for unclear) are too small for precise per-category precision estimates but large enough to detect systematic rubric drift — which is what this audit is testing.</small></p>
 
 <h3>4.4 Population estimate</h3>
 <div class="stat" style="max-width: 540px;">
