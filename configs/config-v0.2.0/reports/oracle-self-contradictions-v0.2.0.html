@@ -154,6 +154,15 @@
 
   footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
            font-size: 13px; color: var(--fg-soft); }
+  .passage-source {
+    font-size: 11px;
+    color: var(--fg-soft);
+    margin-top: 6px;
+    padding-top: 5px;
+    border-top: 1px dashed var(--border);
+    line-height: 1.4;
+  }
+  .passage-source code { background: transparent; padding: 0; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -190,8 +199,8 @@
   <h3>1. <code>q_00459</code> — ECP vomit re-dose window</h3>
   <p class="query">"How should high-dose emergency contraceptive pills be dosed and managed if vomiting occurs?"</p>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"If a woman vomits within <strong>3 hours</strong> of taking the pills, she should take the same dose again."</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"If the woman vomits within <strong>2 hours</strong> after taking progestin-only or combined ECPs, she should take another dose."</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"If a woman vomits within <strong>3 hours</strong> of taking the pills, she should take the same dose again."<div class="passage-source">chunk <code>34796ca696c421d8</code> · score 6 · "Using high-dose pills *(with 50 mcg ethinyl estradiol)"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"If the woman vomits within <strong>2 hours</strong> after taking progestin-only or combined ECPs, she should take another dose."<div class="passage-source">chunk <code>3e9d9d8c36ff8d92</code> · score 6 · "3. Explain what to do about side effects"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> 3 h vs 2 h re-dose window for combined ECPs (the 50-mcg-EE high-dose pills in this context are combined ECPs).</p>
   <p class="answer">Gemma answered <strong>2 hours</strong> → matches <span class="match-B">B</span>.</p>
@@ -200,8 +209,8 @@
 <article class="case significant">
   <h3>2. <code>q_00474</code> — adrenaline for allergic shock / anaphylaxis <span class="badge significant">clinically significant</span></h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A (allergic shock)</div>"inject 1:1000, <strong>0.5 ml</strong> adrenaline … under the skin, <strong>1 time only</strong> (subcutaneous injection)"</div>
-    <div class="passage"><div class="passage-label">Passage B (anaphylaxis)</div>"Administer adrenaline <strong>0.3–0.5 mg IM</strong> immediately, and repeat every <strong>10 to 15 minutes</strong>, as needed."</div>
+    <div class="passage"><div class="passage-label">Passage A (allergic shock)</div>"inject 1:1000, <strong>0.5 ml</strong> adrenaline … under the skin, <strong>1 time only</strong> (subcutaneous injection)"<div class="passage-source">chunk <code>e86daa9ff416149c</code> · score 6 · "For allergic shock"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (anaphylaxis)</div>"Administer adrenaline <strong>0.3–0.5 mg IM</strong> immediately, and repeat every <strong>10 to 15 minutes</strong>, as needed."<div class="passage-source">chunk <code>126a94ce844ee0bc</code> · score 5 · "ANAPHYLAXIS"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> SC 0.5 ml once vs IM 0.3–0.5 mg with repeats — for the same clinical entity.</p>
   <p class="answer">Gemma answered <strong>IM with repeats</strong> → matches <span class="match-B">B</span>.</p>
@@ -210,8 +219,8 @@
 <article class="case">
   <h3>3. <code>q_00560</code> — active-phase / partograph dilation threshold</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"The active phase of the first stage of labour starts when the cervix is <strong>4 cm</strong> dilated"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"active phase of the first stage of labour (<strong>5 cm or more</strong> cervical dilatation)"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"The active phase of the first stage of labour starts when the cervix is <strong>4 cm</strong> dilated"<div class="passage-source">chunk <code>1e6dfb46f856691c</code> · score 6 · "Progress of labour"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"active phase of the first stage of labour (<strong>5 cm or more</strong> cervical dilatation)"<div class="passage-source">chunk <code>b26c8277a8919e2f</code> · score 6 · "When should the LCG be initiated?"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> 4 cm vs 5 cm cut-off. Same pattern as v0.1.0 q_01302 (5 vs 6 cm).</p>
   <p class="answer">Gemma answered <strong>5 cm</strong> → matches <span class="match-B">B</span>.</p>
@@ -220,8 +229,8 @@
 <article class="case">
   <h3>4. <code>q_00761</code> — retained-placenta time threshold</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"the placenta is retained if it has not been delivered within <strong>one hour</strong> of the delivery of the baby."</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"Diagnose a prolonged third stage … within <strong>30 minutes</strong> of the birth with active management or within <strong>60 minutes</strong> … with physiological management."</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"the placenta is retained if it has not been delivered within <strong>one hour</strong> of the delivery of the baby."<div class="passage-source">chunk <code>5e1443e4adb11f99</code> · score 6 · "haemorrhage** *bleeding."</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Diagnose a prolonged third stage … within <strong>30 minutes</strong> of the birth with active management or within <strong>60 minutes</strong> … with physiological management."<div class="passage-source">chunk <code>64c1133050c4cc1e</code> · score 6 · "Prolonged third stage"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> 1-hour-flat vs management-dependent 30/60-min.</p>
   <p class="answer">Gemma answered <strong>30/60-min</strong> → matches <span class="match-B">B</span>.</p>
@@ -230,8 +239,8 @@
 <article class="case">
   <h3>5. <code>q_00780</code> — total breech extraction for cephalic second twin</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"Total breech extraction should be used <strong>only for a non-cephalic</strong> second twin"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"Delivery of a second twin in <strong>cephalic presentation</strong> or transverse lie: version … and allow a total breech extraction"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"Total breech extraction should be used <strong>only for a non-cephalic</strong> second twin"<div class="passage-source">chunk <code>0e789241b96bedb3</code> · score 6 · "Total breech extraction"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Delivery of a second twin in <strong>cephalic presentation</strong> or transverse lie: version … and allow a total breech extraction"<div class="passage-source">chunk <code>6c57f77a1b7d3021</code> · score 6 · "7.8.1 Indications and conditions"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> cephalic excluded vs cephalic included (after version).</p>
   <p class="answer">Gemma listed <strong>cephalic</strong> → matches <span class="match-B">B</span>.</p>
@@ -240,8 +249,8 @@
 <article class="case">
   <h3>6. <code>q_00846</code> — Bishop's score thresholds</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"An unfavourable cervix … <strong>4 or less</strong> … score of <strong>8 or more</strong> [favourable]"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"favourable to induction, if the score is <strong>6 or greater</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"An unfavourable cervix … <strong>4 or less</strong> … score of <strong>8 or more</strong> [favourable]"<div class="passage-source">chunk <code>4db986ae73d512b7</code> · score 6 · "Cervical priming"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"favourable to induction, if the score is <strong>6 or greater</strong>"<div class="passage-source">chunk <code>76cf6acd2ef0ee9a</code> · score 6 · "7.3.3 Conditions"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> ≤4 / ≥8 vs ≥6 cut-offs.</p>
   <p class="answer">Gemma answered <strong>≥6</strong> → matches <span class="match-B">B</span>.</p>
@@ -250,8 +259,8 @@
 <article class="case significant">
   <h3>7. <code>q_00919</code> — antihypertensive threshold in essential hypertension <span class="badge significant">clinically significant</span></h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"Treatment is administered if systolic blood pressure is <strong>≥ 160 mmHg</strong> or if diastolic blood pressure is <strong>≥ 110 mmHg</strong>."</div>
-    <div class="passage"><div class="passage-label">Passage B (essential / chronic HTN section)</div>"Antihypertensive drugs may be prescribed if the <strong>diastolic blood pressure exceeds 100 mmHg</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"Treatment is administered if systolic blood pressure is <strong>≥ 160 mmHg</strong> or if diastolic blood pressure is <strong>≥ 110 mmHg</strong>."<div class="passage-source">chunk <code>0d732cc3bd41af75</code> · score 5 · "4.5 Hypertensive disorders in pregnancy"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (essential / chronic HTN section)</div>"Antihypertensive drugs may be prescribed if the <strong>diastolic blood pressure exceeds 100 mmHg</strong>"<div class="passage-source">chunk <code>2da57235872e15fc</code> · score 5 · "Management"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> ≥160 / ≥110 vs DBP &gt; 100 — different drug-start triggers.</p>
   <p class="answer">Gemma answered <strong>DBP &gt; 100</strong> → matches <span class="match-B">B</span>.</p>
@@ -260,8 +269,8 @@
 <article class="case">
   <h3>8. <code>q_01224</code> — GDM induction-of-labour gestation</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A (ACOG)</div>"can wait until <strong>40 weeks</strong>' gestation to consider induction of labor"</div>
-    <div class="passage"><div class="passage-label">Passage B (NICE-style)</div>"Advise women with gestational diabetes to give birth no later than <strong>40+6 weeks</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A (ACOG)</div>"can wait until <strong>40 weeks</strong>' gestation to consider induction of labor"<div class="passage-source">chunk <code>945ded51df906069</code> · score 6 · "Follow-up Care: Follow-up Measures to Consider"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (NICE-style)</div>"Advise women with gestational diabetes to give birth no later than <strong>40+6 weeks</strong>"<div class="passage-source">chunk <code>2e7db9d49d2f7766</code> · score 5 · "General principles of care for women with diabetes in pregnancy"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> 40 wk vs 40+6 wk.</p>
   <p class="answer">Gemma answered <strong>40 weeks</strong> → matches <span class="match-A">A</span>.</p>
@@ -270,8 +279,8 @@
 <article class="case">
   <h3>9. <code>q_01447</code> — first-stage FHR recording interval</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"<strong>once every hour during the latent phase</strong>, <strong>once every 30 minutes during the active phase</strong>"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"every <strong>half hour in the first stage of labour</strong>" (i.e. throughout both latent and active)</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"<strong>once every hour during the latent phase</strong>, <strong>once every 30 minutes during the active phase</strong>"<div class="passage-source">chunk <code>3c5ad35652256722</code> · score 6 · "ASSESSMENT OF FETAL CONDITION"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"every <strong>half hour in the first stage of labour</strong>" (i.e. throughout both latent and active)<div class="passage-source">chunk <code>54e07ed497389e60</code> · score 6 · "Points to remember:"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> phase-specific (1 h / 30 min) vs flat 30-min across the whole first stage.</p>
   <p class="answer">Gemma answered <strong>every-half-hour-first-stage</strong> → matches <span class="match-B">B</span>.</p>
@@ -280,8 +289,8 @@
 <article class="case">
   <h3>10. <code>q_02218</code> — neonatal weight-loss threshold</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"Weight loss of <strong>&gt;7%</strong> in the first week of life is an indication of possible insufficient milk intake … <strong>&gt;10%</strong> should be a cause for concern."</div>
-    <div class="passage"><div class="passage-label">Passage B (NICE 1.4.1)</div>"If a baby loses <strong>more than 10%</strong> of their birth weight … measure their weight again at appropriate intervals"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"Weight loss of <strong>&gt;7%</strong> in the first week of life is an indication of possible insufficient milk intake … <strong>&gt;10%</strong> should be a cause for concern."<div class="passage-source">chunk <code>717df6e990d2b03d</code> · score 6 · "Breastfeeding patterns of growth"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (NICE 1.4.1)</div>"If a baby loses <strong>more than 10%</strong> of their birth weight … measure their weight again at appropriate intervals"<div class="passage-source">chunk <code>413f49d4e36f04e5</code> · score 6 · "1.4 Weighing babies and young children"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> &gt;7% vs &gt;10% as the action-trigger threshold.</p>
   <p class="answer">Gemma answered <strong>&gt;7%</strong> → matches <span class="match-A">A</span>.</p>
@@ -290,8 +299,8 @@
 <article class="case">
   <h3>11. <code>q_02878</code> — non-absorbable suture removal <span class="badge recur">recurs from v0.1.0</span></h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"For non-absorbable sutures: remove the stitches <strong>between the 5 and 8 day</strong>"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"Remove skin sutures (if not absorbable) <strong>on D7</strong>."</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"For non-absorbable sutures: remove the stitches <strong>between the 5 and 8 day</strong>"<div class="passage-source">chunk <code>1ba0f5da7125bb69</code> · score 5 · "5.9.3 Post-operative care"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Remove skin sutures (if not absorbable) <strong>on D7</strong>."<div class="passage-source">chunk <code>05eedf50f2d9782f</code> · score 6 · "Dressing and suture removal:"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> D5–8 range vs D7-flat. Same conflict as v0.1.0 case 6.</p>
   <p class="answer">Gemma answered <strong>D5–D8</strong> → matches <span class="match-A">A</span>.</p>
@@ -300,8 +309,8 @@
 <article class="case">
   <h3>12. <code>q_02932</code> — direction of finger insertion during VE</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A (Table 2.2)</div>"gently introduce lubricated fingers in <strong>downward and backward</strong> direction"</div>
-    <div class="passage"><div class="passage-label">Passage B (Skill section)</div>"insert them very gently into the vagina, following the direction of the vagina, <strong>upwards and backwards</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A (Table 2.2)</div>"gently introduce lubricated fingers in <strong>downward and backward</strong> direction"<div class="passage-source">chunk <code>76d6a41e2a75b729</code> · score 6 · "Table 2.2: Procedure for vaginal examination"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (Skill section)</div>"insert them very gently into the vagina, following the direction of the vagina, <strong>upwards and backwards</strong>"<div class="passage-source">chunk <code>f359741751e8cd2f</code> · score 6 · "SKILL: ASSESSING PELVIC OUTLET"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> literally opposite vertical directions for the same step.</p>
   <p class="answer">Gemma answered <strong>upwards and backwards</strong> → matches <span class="match-B">B</span>.</p>
@@ -310,8 +319,8 @@
 <article class="case">
   <h3>13. <code>q_03002</code> — aspirin secondary prophylaxis duration</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"acetylsalicylic acid PO: 75 to 150 mg once daily starting at 12 weeks LMP and continuing <strong>until 36 weeks LMP</strong>"</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"Give 75 mg to every pregnant woman at risk of developing pre-eclampsia from 12 weeks <strong>until delivery</strong>."</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"acetylsalicylic acid PO: 75 to 150 mg once daily starting at 12 weeks LMP and continuing <strong>until 36 weeks LMP</strong>"<div class="passage-source">chunk <code>1e2a476b3ec51218</code> · score 6 · "4.5.5 Secondary prophylaxis for severe pre-eclampsia"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Give 75 mg to every pregnant woman at risk of developing pre-eclampsia from 12 weeks <strong>until delivery</strong>."<div class="passage-source">chunk <code>e02fd41189c5d2fe</code> · score 6 · "Aspirin"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> stop at 36 wk vs continue until delivery.</p>
   <p class="answer">Gemma answered <strong>until the baby is born</strong> → matches <span class="match-B">B</span>.</p>
@@ -320,8 +329,8 @@
 <article class="case significant">
   <h3>14. <code>q_03024</code> — neonatal head position for resuscitation <span class="badge significant">clinically significant</span></h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A</div>"The baby is placed on its back, on the resuscitaire, with its <strong>head facing downwards</strong>."</div>
-    <div class="passage"><div class="passage-label">Passage B</div>"Lay the neonate on the back with the head in a <strong>neutral position</strong> … avoid flexion or hyperextension"</div>
+    <div class="passage"><div class="passage-label">Passage A</div>"The baby is placed on its back, on the resuscitaire, with its <strong>head facing downwards</strong>."<div class="passage-source">chunk <code>472cf302efba83e7</code> · score 6 · "Position of the neonate"</div></div>
+    <div class="passage"><div class="passage-label">Passage B</div>"Lay the neonate on the back with the head in a <strong>neutral position</strong> … avoid flexion or hyperextension"<div class="passage-source">chunk <code>60447137d98c2e88</code> · score 6 · "2 - Clear the airway"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> "head facing downwards" vs "neutral position". Passage A also contradicts itself in the following sentences.</p>
   <p class="answer">Gemma answered <strong>head facing downwards</strong> → matches <span class="match-A">A</span>.</p>
@@ -330,8 +339,8 @@
 <article class="case">
   <h3>15. <code>q_03090</code> — IV ergometrine dose for PPH</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A (table)</div>"IM / IV: <strong>0.2 mg</strong>" (rendered as <code>I M / I V: 0. 2 m g</code>)</div>
-    <div class="passage"><div class="passage-label">Passage B (prose)</div>"Intravenous ergometrine <strong>0.25–0.5 mg</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A (table)</div>"IM / IV: <strong>0.2 mg</strong>" (rendered as <code>I M / I V: 0. 2 m g</code>)<div class="passage-source">chunk <code>0783e9afca037afe</code> · score 6 · "Give ergometrine"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (prose)</div>"Intravenous ergometrine <strong>0.25–0.5 mg</strong>"<div class="passage-source">chunk <code>3c2e92b6bdfdaacc</code> · score 6 · "Intravenous ergometrine 0.25–0.5 mg"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> 0.2 mg vs 0.25–0.5 mg for IV ergometrine in PPH. Classic prose-vs-table mismatch.</p>
   <p class="answer">Gemma answered IV <strong>0.2 mg</strong> → matches <span class="match-A">A</span>.</p>
@@ -340,8 +349,8 @@
 <article class="case">
   <h3>16. <code>q_03144</code> — maternal heart-rate alert threshold</h3>
   <div class="passages">
-    <div class="passage"><div class="passage-label">Passage A (causes table)</div>"Heart rate | <strong>&gt;130 /minute</strong>" (high risk)</div>
-    <div class="passage"><div class="passage-label">Passage B (LCG pulse table)</div>"Alert: &lt;60, <strong>≥120</strong>"</div>
+    <div class="passage"><div class="passage-label">Passage A (causes table)</div>"Heart rate | <strong>&gt;130 /minute</strong>" (high risk)<div class="passage-source">chunk <code>869d7912a193e236</code> · score 6 · "Causes"</div></div>
+    <div class="passage"><div class="passage-label">Passage B (LCG pulse table)</div>"Alert: &lt;60, <strong>≥120</strong>"<div class="passage-source">chunk <code>9f0fea49f6cd7cc9</code> · score 6 · "Table 5. Guidance for completing Section 4 of the LCG"</div></div>
   </div>
   <p class="conflict"><strong>Conflict:</strong> &gt;130 vs ≥120 bpm for the alerting threshold.</p>
   <p class="answer">Gemma answered <strong>≥120</strong> as high-risk alert → matches <span class="match-B">B</span>.</p>
