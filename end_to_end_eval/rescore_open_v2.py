@@ -183,6 +183,9 @@ def _extract_reasoning_content(msg) -> str | None:
     return None
 
 
+_DEBUG_DUMPED = False  # gate for one-shot debug message dump
+
+
 def _call_openai(model: str, prompt: str, temperature: float,
                  extra_body: dict | None = None) -> dict:
     from openai import OpenAI
@@ -198,6 +201,29 @@ def _call_openai(model: str, prompt: str, temperature: float,
         kwargs["extra_body"] = extra_body
     result = client.chat.completions.create(**kwargs)
     msg = result.choices[0].message
+
+    # Diagnostic: when RESCORE_DEBUG_MSG=1 in env, dump the FIRST message
+    # structure (full dict) to stderr so we can see what fields vLLM is
+    # actually emitting (vs what our reasoning_content extractor expects).
+    global _DEBUG_DUMPED
+    if (not _DEBUG_DUMPED) and os.environ.get("RESCORE_DEBUG_MSG") == "1":
+        try:
+            d = msg.model_dump() if hasattr(msg, "model_dump") else None
+            extra = getattr(msg, "model_extra", None)
+            attrs = sorted([a for a in dir(msg) if not a.startswith("_")])
+            print("==DEBUG msg.model_dump()==",
+                  json.dumps(d, indent=2, default=str)[:4000],
+                  "==DEBUG msg.model_extra==",
+                  json.dumps(extra, indent=2, default=str) if extra else "(none)",
+                  "==DEBUG msg attrs==",
+                  attrs,
+                  "==DEBUG raw response choices[0]==",
+                  json.dumps(result.choices[0].model_dump(), indent=2, default=str)[:4000],
+                  sep="\n", flush=True)
+        except Exception as e:
+            print(f"==DEBUG dump failed: {type(e).__name__}: {e}", flush=True)
+        _DEBUG_DUMPED = True
+
     return {
         "content": (msg.content or "").strip(),
         "reasoning_content": _extract_reasoning_content(msg),
