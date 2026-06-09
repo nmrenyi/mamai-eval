@@ -1,0 +1,4 @@
+# Cached HF download of obgyn_meta_eval.jsonl — fetchable on demand, not committed.
+data/
+# verdicts/ and reports/ ARE committed — they're the bake-off record.
+# Raw verdict JSONLs let us recompute metrics offline without re-running judges.

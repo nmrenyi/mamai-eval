@@ -67,9 +67,9 @@ python -m retrieval_eval.precompute_retrieval --config config-v0.2.0 \
     --datasets afrimedqa,medqa_usmle,medmcqa
 
 # Post-hoc rescoring on saved result JSONs:
-python -m end_to_end_eval.rescore_mcq      configs/config-v0.2.0/results/generation/<model>/<ts>/
-python -m end_to_end_eval.rescore_open_v2  configs/config-v0.2.0/results/generation/<model>/<ts>/
-python -m end_to_end_eval.rescore_rubric   configs/config-v0.2.0/results/generation/<model>/<ts>/
+python -m end_to_end_eval.rescore_mcq      configs/config-v0.2.0/results/end_to_end_eval/<model>/<ts>/
+python -m end_to_end_eval.rescore_open_v2  configs/config-v0.2.0/results/end_to_end_eval/<model>/<ts>/
+python -m end_to_end_eval.rescore_rubric   configs/config-v0.2.0/results/end_to_end_eval/<model>/<ts>/
 ```
 
-Results land under `configs/<config>/results/generation/<model>/<ts>/`.
+Results land under `configs/<config>/results/end_to_end_eval/<model>/<ts>/`.

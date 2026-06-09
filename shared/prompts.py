@@ -73,7 +73,18 @@ JUDGE_TEMPERATURE: float = _params["judge"]["temperature"]
 # v0.2: 3-judge ensemble for open_ended scoring and a separate single judge for
 # open_ended_rubric scoring. Both are optional so v0.1 configs still load.
 JUDGE_ENSEMBLE: list[dict] = _params["judge"].get("ensemble", [])
-JUDGE_RUBRIC: dict = _params["judge"].get("rubric", {})
+# JUDGE_RUBRIC = the rubric subsection, but inheriting temperature / extra_body
+# from the top-level `judge` block when the subsection doesn't override them.
+# This is how the pinned reasoning_effort / temperature from the judge config
+# actually reach the production rescorer (previously dropped on the floor).
+_judge_top: dict = _params.get("judge", {})
+_rubric_sub: dict = _judge_top.get("rubric", {})
+JUDGE_RUBRIC: dict = {
+    "provider": _rubric_sub.get("provider", "openai"),
+    "model": _rubric_sub.get("model") or _judge_top.get("model"),
+    "temperature": _rubric_sub.get("temperature", _judge_top.get("temperature", 0.0)),
+    "extra_body": _rubric_sub.get("extra_body", _judge_top.get("extra_body")),
+} if (_rubric_sub.get("model") or _judge_top.get("model")) else {}
 
 # --- Dataset source (v0.2: HF dataset; v0.1: local TSV) ---
 _dataset_cfg = _params.get("dataset", {})

@@ -223,3 +223,7 @@ __marimo__/
 configs/**/results/generator/**/lynx_fail_cases.json
 configs/**/results/generator/**/lynx_categorize_rubric.txt
 configs/**/results/generator/**/calibration_rubric.txt
+
+# macOS Finder metadata
+.DS_Store
+*/.DS_Store
