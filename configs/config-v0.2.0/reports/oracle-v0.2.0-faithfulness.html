@@ -206,26 +206,61 @@
 <p><small>Lynx is a holistic PASS/FAIL judge — it can't tell you <em>why</em> something failed. Categorization (§3) and calibration (§4) unpack that.</small></p>
 
 <h2>3. FAIL categorization (n = 174, gpt-5 medium reasoning)</h2>
-<p>Lynx's FAIL bucket conflates real hallucinations with cases the §3.1 rubric explicitly treats as faithful (incompleteness, refusal). Splitting the 174 FAILs:</p>
+<p>Lynx's FAIL bucket conflates several distinct things. The §3.1 spec defines a faithfulness failure (a "real hallucination") narrowly — only <em>contradiction</em> or <em>unsupported addition</em>. Cases Lynx flags for other reasons (the answer was incomplete, declined, or unclear) are not faithfulness failures under the spec, even though Lynx marks them FAIL.</p>
+
+<table>
+  <thead>
+    <tr><th>Category</th><th>What it means</th><th>Real hallucination?</th></tr>
+  </thead>
+  <tbody>
+    <tr class="true-h">
+      <td><strong>contradiction</strong></td>
+      <td>Answer asserts something that conflicts with the context — wrong dose, wrong threshold, states X where the context says Y.</td>
+      <td><span class="tag h">yes</span></td>
+    </tr>
+    <tr class="true-h">
+      <td><strong>unsupported_addition</strong></td>
+      <td>Answer makes a clinical claim that isn't supported by the context — information introduced beyond the document.</td>
+      <td><span class="tag h">yes</span></td>
+    </tr>
+    <tr class="not-h">
+      <td><strong>omission</strong></td>
+      <td>Answer is correct as far as it goes but leaves out content the context contains. Lynx penalises incompleteness; §3.1 does not.</td>
+      <td><span class="tag">no</span></td>
+    </tr>
+    <tr class="not-h">
+      <td><strong>refusal</strong></td>
+      <td>Answer declines to engage ("consult a doctor", "out of scope") even when the context could substantively answer.</td>
+      <td><span class="tag">no</span></td>
+    </tr>
+    <tr>
+      <td><strong>unclear</strong></td>
+      <td>Lynx's reasoning doesn't let you identify the failure mode confidently.</td>
+      <td><span class="tag">—</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Splitting the 174 Lynx-FAILs across these buckets (red bars = real hallucination, green bars = not):</p>
 
 <div>
   <div class="bar-row">
-    <div class="label">contradiction <span class="tag h">true H</span></div>
+    <div class="label">contradiction</div>
     <div><div class="bar h" style="width: 65%"></div></div>
     <div class="count">43</div>
   </div>
   <div class="bar-row">
-    <div class="label">unsupported_addition <span class="tag h">true H</span></div>
+    <div class="label">unsupported_addition</div>
     <div><div class="bar h" style="width: 48%"></div></div>
     <div class="count">32</div>
   </div>
   <div class="bar-row">
-    <div class="label">omission <span class="tag">not H</span></div>
+    <div class="label">omission</div>
     <div><div class="bar notH" style="width: 100%"></div></div>
     <div class="count">66</div>
   </div>
   <div class="bar-row">
-    <div class="label">refusal <span class="tag">not H</span></div>
+    <div class="label">refusal</div>
     <div><div class="bar notH" style="width: 41%"></div></div>
     <div class="count">27</div>
   </div>
@@ -236,7 +271,7 @@
   </div>
 </div>
 
-<p>True-hallucination candidates (contradiction + unsupported_addition): <strong>75 / 174</strong> Lynx-FAILs, or <strong>2.51%</strong> of all 2,989 responses — Lynx's raw rate overstates by ~2.3× even before calibration.</p>
+<p>Real-hallucination candidates (contradiction + unsupported_addition): <strong>75 / 174</strong> Lynx-FAILs, or <strong>2.51%</strong> of all 2,989 responses. The other 99 FAILs are not §3.1 violations — Lynx's raw 5.82% rate overstates by ~2.3× even before any calibration.</p>
 
 <h2>4. Lynx calibration (n = 96, gpt-5 high reasoning)</h2>
 <p>An independent gpt-5 pass on a stratified blind sample (50 Lynx-PASS + 46 stratified Lynx-FAIL: 10 contradiction + 10 unsupported_addition + 10 omission + 10 refusal + 6 unclear). Judges from first principles against the strict §3.1 rubric.</p>
