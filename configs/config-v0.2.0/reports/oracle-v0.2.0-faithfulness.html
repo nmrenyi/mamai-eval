@@ -183,9 +183,10 @@
     <small>≈ 271 of 2,989 responses estimated unfaithful under the strict §3.1 definition (contradiction or unsupported addition only).</small>
   </div>
   <div class="secondary">
-    Lynx raw FAIL: 5.82%<br>
-    Categorized true-H: 2.51%<br>
-    <strong>Calibrated: 9.05%</strong>
+    <strong>Three rates in this report</strong><br>
+    <strong>5.82%</strong> raw Lynx FAIL <small>(174/2,989, uncorrected)</small><br>
+    <strong>2.51%</strong> categorized <small>(75/2,989, FAIL bucket → real-H cats only)</small><br>
+    <strong>9.05%</strong> calibrated <small>(271/2,989, full pop incl. Lynx misses)</small>
   </div>
 </div>
 
@@ -363,10 +364,36 @@
 <p><small><strong>Caveat — gpt-5 examining gpt-5.</strong> The 12 Lynx-FAIL bucket labels in the chart are from gpt-5's own categorize step on v0.2.0. The 4 Lynx-PASS rubric categories in the mini-table were assigned manually by a Claude reader of gpt-5's verdict reasoning. So this whole section is closer to a <em>self-consistency check</em> on gpt-5 than an independent audit — a clinician or different-family LLM would be required for that. The signal is illustrative (gpt-5's verdicts are internally consistent with the rubric it was given), not load-bearing on the headline rate.</small></p>
 
 <h3>4.4 Population estimate</h3>
+<p>Extrapolate from the calibration sample to all 2,989 responses by treating each Lynx stratum's confirmed-FAIL fraction as an estimator for that stratum's whole population:</p>
+<table style="max-width: 720px;">
+  <thead>
+    <tr><th>Stratum</th><th class="num">population n</th><th class="num">× rate</th><th class="num">= est. real FAILs</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lynx-FAIL</td>
+      <td class="num">174</td>
+      <td class="num">26.1% (precision, §4.2)</td>
+      <td class="num">≈ 45</td>
+    </tr>
+    <tr>
+      <td>Lynx-PASS</td>
+      <td class="num">2,815</td>
+      <td class="num">8.0% (miss rate, §4.2)</td>
+      <td class="num">≈ 225</td>
+    </tr>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td class="num"><strong>2,989</strong></td>
+      <td></td>
+      <td class="num"><strong>≈ 271</strong></td>
+    </tr>
+  </tbody>
+</table>
 <div class="stat" style="max-width: 540px;">
-  <div class="k">Calibrated true-hallucination count</div>
-  <div class="v">≈ 271 / 2,989 <small>= <strong>9.05%</strong></small></div>
-  <div class="ci">= n<sub>Lynx-FAIL</sub> × precision + n<sub>Lynx-PASS</sub> × miss-rate<br>= 174 × 0.261 + 2,815 × 0.080</div>
+  <div class="k">Calibrated true-hallucination rate</div>
+  <div class="v">271 / 2,989 <small>= <strong>9.05%</strong></small></div>
+  <div class="ci">Note the missed-FAIL term (225) dominates the FAIL-stratum term (45). Lynx misses real hallucinations 4× more often than it correctly flags them — a small per-row miss rate becomes a big number when applied to 2,815 rows.</div>
 </div>
 
 <h2>5. Methodology choices</h2>
