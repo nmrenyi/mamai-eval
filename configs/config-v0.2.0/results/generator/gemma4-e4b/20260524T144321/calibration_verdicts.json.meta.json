@@ -1,0 +1,1163 @@
+{
+  "metadata": {
+    "batch_id": "batch_6a27c68426dc8190b6f0a950d3d24e77",
+    "mode": "calibrate",
+    "method": "openai_batch_calibration",
+    "judge_model": "gpt-5",
+    "judge_family": "openai (gpt-5)",
+    "judge_endpoint": "Batch API",
+    "n_cases": 96,
+    "n_ok": 96,
+    "n_bad": 0,
+    "finalized_at_utc": "2026-06-09T08:02:48.969052+00:00",
+    "usage_totals": {
+      "prompt_tokens": 95123,
+      "completion_tokens": 135682,
+      "reasoning_tokens": 127360
+    },
+    "verdict_distribution": {
+      "PASS": 78,
+      "FAIL": 15
+    },
+    "retry_note": "3 cases re-run sync with max_completion_tokens=16384 after batch returned finish_reason=length"
+  },
+  "results": [
+    {
+      "query_id": "q_00124",
+      "verdict": "PASS",
+      "reasoning": "The answer does not introduce unsupported clinical claims and correctly cites the pregnancy recommendation for topical imidazoles and 7-day course efficacy. It omits the fluconazole (Diflucan) dose present in the context but omission is not unfaithfulness per the rubric.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 973,
+        "completion_tokens": 665,
+        "reasoning_tokens": 576
+      }
+    },
+    {
+      "query_id": "q_01776",
+      "verdict": "FAIL",
+      "reasoning": "Includes unsupported additions: advising fetal cardiac screening at 36 weeks if previously missed (context specifies offering this at 18–20 weeks) and adding assessment for heavy bleeding/severe pain, which is not in the document. Other elements (SFH, presentation, CO testing) are supported.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 965,
+        "completion_tokens": 3228,
+        "reasoning_tokens": 3136
+      }
+    },
+    {
+      "query_id": "q_00517",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: assisting by managing the sterile field and opening syringe/needle/suture, and monitoring comfort by observing the woman, asking how she feels, and reporting concerns. It also aligns with maintaining a supportive atmosphere. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1162,
+        "completion_tokens": 662,
+        "reasoning_tokens": 576
+      }
+    },
+    {
+      "query_id": "q_01353",
+      "verdict": "FAIL",
+      "reasoning": "The context only describes rooting and sucking reflexes; it does not identify a swallowing reflex. Adding “swallowing reflex” is an unsupported addition beyond the provided context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 662,
+        "completion_tokens": 516,
+        "reasoning_tokens": 448
+      }
+    },
+    {
+      "query_id": "q_00977",
+      "verdict": "PASS",
+      "reasoning": "Lists the six vertex positions (DOA, DOP, LOA, ROA, LOP, ROP) which are supported by the context; the landmark descriptions for DOA/DOP/LOP/ROP match the text and no conflicting or unsupported claims are made.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1088,
+        "completion_tokens": 1690,
+        "reasoning_tokens": 1600
+      }
+    },
+    {
+      "query_id": "q_02083",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context’s augmentation steps (rule out CPD/presentation issues, rupture membranes, start IV Syntocinon, monitor mother/fetus, provide analgesia and support, record on partogram, escalate if no progress despite oxytocin) and introduces no contradictory thresholds or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1164,
+        "completion_tokens": 2911,
+        "reasoning_tokens": 2816
+      }
+    },
+    {
+      "query_id": "q_01078",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately restates the MUAC-based supplementation thresholds and quantities (Plumpy’nut/BP100) and notes admission to a therapeutic feeding program and food supplementation in food insecurity, all of which are supported by the context. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1033,
+        "completion_tokens": 534,
+        "reasoning_tokens": 448
+      }
+    },
+    {
+      "query_id": "q_00558",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately reflects the context: hypertension after 20 weeks with or without proteinuria plus one or more listed end-organ signs, and the alternative pathway of severe hypertension with proteinuria. It introduces no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1049,
+        "completion_tokens": 2255,
+        "reasoning_tokens": 2176
+      }
+    },
+    {
+      "query_id": "q_01121",
+      "verdict": "PASS",
+      "reasoning": "The answer largely declines but the included steps (checking MVA instruments, confirming push-valve closure with feel/sound, and preventing cannula advancement when attaching the syringe) are directly supported by the context. No contradictions or unsupported clinical claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 998,
+        "completion_tokens": 1234,
+        "reasoning_tokens": 1152
+      }
+    },
+    {
+      "query_id": "q_00581",
+      "verdict": "PASS",
+      "reasoning": "The answer follows the context’s procedure: consent, empty bladder, position and privacy, expose abdomen, use outer hand to find fundus, then palmar sides of both hands to palpate. It introduces no contradictory or unsupported clinical claims; omissions are acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1204,
+        "completion_tokens": 726,
+        "reasoning_tokens": 640
+      }
+    },
+    {
+      "query_id": "q_00118",
+      "verdict": "PASS",
+      "reasoning": "The answer correctly reflects the context’s doxycycline regimens (100 mg BID for 7 days; 21 days if rectal LGV suspected/confirmed with caveat about dual therapy) and does not contradict it. Omission of the erythromycin alternative is acceptable incompleteness, not unfaithfulness.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 856,
+        "completion_tokens": 1376,
+        "reasoning_tokens": 1280
+      }
+    },
+    {
+      "query_id": "q_00721",
+      "verdict": "PASS",
+      "reasoning": "Accurately paraphrases the context: using both hands, fingers at the jaw angle, keeping head/neck still, pushing jaw forwards/upwards (and outwards in a floppy baby), and avoiding soft tissue pressure. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1001,
+        "completion_tokens": 1236,
+        "reasoning_tokens": 1152
+      }
+    },
+    {
+      "query_id": "q_02485",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: monitoring baby’s condition, encouraging a physiological third stage, cutting/clamping the cord before the mother leaves the pool to reduce polycythaemia risk, keeping mother and baby warm, and bringing the baby gently to the surface with minimal cord traction. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1171,
+        "completion_tokens": 1504,
+        "reasoning_tokens": 1408
+      }
+    },
+    {
+      "query_id": "q_00911",
+      "verdict": "PASS",
+      "reasoning": "All stated items are supported by the context (iron/folate doses, proteinuria testing with preeclampsia signs, weight monitoring, and 32-week repeat scan for low-lying placenta). It omits some details (e.g., anti-D at 34 weeks in Australia), but there are no contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1051,
+        "completion_tokens": 1702,
+        "reasoning_tokens": 1600
+      }
+    },
+    {
+      "query_id": "q_01272",
+      "verdict": "PASS",
+      "reasoning": "The answer lists the exact immediate assessment checks from the context (term status, clear amniotic fluid, breathing/crying, muscle tone) and includes ensuring good lighting and subsequent steps (warmth, clear airway if needed, dry, skin-to-skin), all supported by the provided guideline.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 898,
+        "completion_tokens": 350,
+        "reasoning_tokens": 256
+      }
+    },
+    {
+      "query_id": "q_02736",
+      "verdict": "FAIL",
+      "reasoning": "The answer introduces unsupported transfer criteria (abdominal distension and coma); in the provided context these are feeding contraindications with IV fluids, not stated transfer triggers. Other monitoring points align with the text, and transfer after 20 minutes of ineffective ventilation is correctly cited.",
+      "verdict_source": "sync_retry_max16k",
+      "_ok": true
+    },
+    {
+      "query_id": "q_01138",
+      "verdict": "PASS",
+      "reasoning": "The answer paraphrases the context’s instructions on examining products of conception (immediate inspection, use of strainer, water/saline, weak acetic acid, infection prevention, possible complete abortion if none seen) and includes the uterine massage and ergometrine dosing with contraindications from the bleeding section. It omits some details (e.g., oxytocin infusion, antibiotics if placenta incomplete) but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1268,
+        "completion_tokens": 1978,
+        "reasoning_tokens": 1856
+      }
+    },
+    {
+      "query_id": "q_02604",
+      "verdict": "PASS",
+      "reasoning": "It correctly states that planned caesarean should be after 39 weeks to reduce neonatal respiratory morbidity, which is explicitly supported by the context. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 924,
+        "completion_tokens": 581,
+        "reasoning_tokens": 512
+      }
+    },
+    {
+      "query_id": "q_00208",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: continuous EFM is not recommended for low‑risk women, may not improve outcomes and can restrict mobility, and women should be involved in decisions. Mention of focusing on IA aligns with the document’s emphasis on IA, even though the context specifically highlights improving IA in high‑mortality settings; this is not a contradiction.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1144,
+        "completion_tokens": 1512,
+        "reasoning_tokens": 1408
+      }
+    },
+    {
+      "query_id": "q_02071",
+      "verdict": "PASS",
+      "reasoning": "All listed indications (abnormal uterine bleeding, postmenopausal bleeding, endometrial stripe >5 mm, infertility workup) are explicitly supported by the context. It omits some items (e.g., ruling out endometrial cancer), but incompleteness is acceptable and there are no contradictions or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 641,
+        "completion_tokens": 420,
+        "reasoning_tokens": 320
+      }
+    },
+    {
+      "query_id": "q_01894",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately restates the context: immediate alcohol fixation (or hairspray if no alcohol), allow to sit then air-dry, and transport to a lab capable of Pap tests within one week, plus the note about minor bleeding. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 809,
+        "completion_tokens": 407,
+        "reasoning_tokens": 320
+      }
+    },
+    {
+      "query_id": "q_02052",
+      "verdict": "PASS",
+      "reasoning": "The items listed (pool, water supply, sieve, light, mirror, protective clothing, support pillow, Doppler and Pinard, fan, bed/mattress, delivery pack, oxygen, suction, oxytocics, and means to call for help) are all supported by the context with no contradictions. Some items from the context are omitted, but incompleteness is acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1189,
+        "completion_tokens": 1776,
+        "reasoning_tokens": 1664
+      }
+    },
+    {
+      "query_id": "q_01995",
+      "verdict": "FAIL",
+      "reasoning": "It misstates the five moments by including “after performing a clean/aseptic procedure,” which contradicts the context that specifies hand hygiene before aseptic procedures, and it omits the moments “after touching the patient” and “after touching the patient’s environment,” instead duplicating body-fluid exposure.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1053,
+        "completion_tokens": 2206,
+        "reasoning_tokens": 2112
+      }
+    },
+    {
+      "query_id": "q_01595",
+      "verdict": "PASS",
+      "reasoning": "States expressing every 2–3 hours and correct container preparation (washed, boiled, rinsed with boiled water, air-dried). The note about continuing until milk flow slows is supported by the context. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 969,
+        "completion_tokens": 529,
+        "reasoning_tokens": 448
+      }
+    },
+    {
+      "query_id": "q_01286",
+      "verdict": "PASS",
+      "reasoning": "The answer summarizes the inspection steps and initial bleeding control consistent with the context and does not contradict any details. It omits some management specifics (e.g., IV fluids, suturing details), but incompleteness is allowed and no unsupported claims are added.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1491,
+        "completion_tokens": 2069,
+        "reasoning_tokens": 1984
+      }
+    },
+    {
+      "query_id": "q_00445",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: reviews GBS status and culture timing (35–37 weeks), prenatal and labor course, maternal/fetal vitals, and time from ROM to birth, and notes consideration of neonatal sepsis risk factors. It adds no contradictory or unsupported clinical claims; omissions (e.g., odor/color, antibiotic discussions) do not constitute unfaithfulness.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 861,
+        "completion_tokens": 1836,
+        "reasoning_tokens": 1728
+      }
+    },
+    {
+      "query_id": "q_01023",
+      "verdict": "PASS",
+      "reasoning": "The answer lists signs that are supported by the context (visible/concealed bleeding, boggy uterus, tachycardia, falling BP with <90 mmHg concern, pallor/cold/clammy skin, oliguria/anuria, dizziness/restlessness/altered consciousness). It does not contradict the context; the escalation advice is not a contradictory or unsupported clinical claim.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1129,
+        "completion_tokens": 1454,
+        "reasoning_tokens": 1344
+      }
+    },
+    {
+      "query_id": "q_02131",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it names core concerning signs (difficulty breathing, lethargy, poor/no feeding) and advises immediate treatment/transfer for suspected severe illness, observation after PROM, and possible 48-hour antibiotics for asymptomatic at-risk neonates. It introduces no contradictory doses or unsupported clinical claims, though it is less specific than the guideline.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1547,
+        "completion_tokens": 2282,
+        "reasoning_tokens": 2176
+      }
+    },
+    {
+      "query_id": "q_00142",
+      "verdict": "PASS",
+      "reasoning": "The answer cites facilitated self-help, SSRIs/SNRIs/TCAs (including for history of severe depression), antipsychotics for mania/psychosis, CBT/family interventions, interpersonal psychotherapy, and estrogen therapy—all supported by the context. It does not contradict the context or add unsupported clinical claims; any omissions are acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1392,
+        "completion_tokens": 3173,
+        "reasoning_tokens": 3072
+      }
+    },
+    {
+      "query_id": "q_03133",
+      "verdict": "PASS",
+      "reasoning": "The schedule and protection percentages/durations given match the WHO table in the context with no contradictions or unsupported claims. It omits the duration for TT-2 and TT-3, but incompleteness is allowed.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1135,
+        "completion_tokens": 525,
+        "reasoning_tokens": 448
+      }
+    },
+    {
+      "query_id": "q_02580",
+      "verdict": "PASS",
+      "reasoning": "The answer requests clarification and makes no clinical claims; it neither contradicts nor adds unsupported information beyond the context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 814,
+        "completion_tokens": 376,
+        "reasoning_tokens": 320
+      }
+    },
+    {
+      "query_id": "q_01955",
+      "verdict": "FAIL",
+      "reasoning": "The context only supports Group A Streptococcus as the cause; the answer adds that several other bacteria can cause puerperal sepsis, which is not supported by the provided text, and introduces extra signs (e.g., fever, severe pain) not specified in the context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 698,
+        "completion_tokens": 1434,
+        "reasoning_tokens": 1344
+      }
+    },
+    {
+      "query_id": "q_01768",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context by stating that total bilirubin >17 µmol/L may be abnormal and does not contradict any figures. Other statements are generic advice/referral to guidelines and do not introduce unsupported clinical claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 745,
+        "completion_tokens": 1614,
+        "reasoning_tokens": 1536
+      }
+    },
+    {
+      "query_id": "q_00615",
+      "verdict": "FAIL",
+      "reasoning": "The statements about placenta praevia (painless, bright red bleeding) and abruption (painful, darker blood) are supported by the context, but the answer adds uterine rupture features (severe pain, rapid blood loss, medical emergency) that are not provided in the context, making it an unsupported addition.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1112,
+        "completion_tokens": 1123,
+        "reasoning_tokens": 1024
+      }
+    },
+    {
+      "query_id": "q_03014",
+      "verdict": "PASS",
+      "reasoning": "The answer restates the context’s steps for female urethral catheterization (preparation, cleaning, sterile technique, insertion, advance 5 cm after urine, inflate balloon, stop if resistance) without contradicting or adding unsupported details. It omits some fine points but remains faithful.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1344,
+        "completion_tokens": 1436,
+        "reasoning_tokens": 1344
+      }
+    },
+    {
+      "query_id": "q_00474",
+      "verdict": "PASS",
+      "reasoning": "The answer gives 0.3–0.5 mg IM with repeats every 10–15 minutes, which matches the anaphylaxis guidance in the context. Although another section advises 0.5 ml 1:1000 subcutaneously for allergic shock, the context contains conflicting recommendations, and the answer selects one supported by the document.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1004,
+        "completion_tokens": 1320,
+        "reasoning_tokens": 1216
+      }
+    },
+    {
+      "query_id": "q_00926",
+      "verdict": "FAIL",
+      "reasoning": "The context only discusses bleeding as a dangerous problem after miscarriage/abortion; it does not mention infection. The answer adds infection as one of the two most dangerous problems, which is not supported by the provided context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 671,
+        "completion_tokens": 781,
+        "reasoning_tokens": 704
+      }
+    },
+    {
+      "query_id": "q_00206",
+      "verdict": "PASS",
+      "reasoning": "The assistant declines to answer and makes no clinical claims, so there is no contradiction or unsupported addition relative to the context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 670,
+        "completion_tokens": 250,
+        "reasoning_tokens": 192
+      }
+    },
+    {
+      "query_id": "q_00101",
+      "verdict": "PASS",
+      "reasoning": "The response defers and provides no clinical claims; it neither contradicts the context nor adds unsupported details.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 770,
+        "completion_tokens": 887,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_02787",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: first sample ASAP after treatment, second within 1–2 hours (no later than 4 hours) from onset, and a third at 24 hours. The added note on observation aligns with the context’s emphasis on prolonged monitoring and does not contradict it.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 827,
+        "completion_tokens": 3996,
+        "reasoning_tokens": 3904
+      }
+    },
+    {
+      "query_id": "q_01035",
+      "verdict": "PASS",
+      "reasoning": "The answer closely reflects the context’s telephone communication guidance (asking about wellbeing, wishes/concerns, fetal movements; providing information on latent labour and pain; agreeing a plan) and notes documenting advice, which the context supports. It omits some items (e.g., birth companion support), but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 954,
+        "completion_tokens": 1060,
+        "reasoning_tokens": 960
+      }
+    },
+    {
+      "query_id": "q_02533",
+      "verdict": "FAIL",
+      "reasoning": "It incorrectly instructs to observe the infant for postpartum hemorrhage; the context’s postpartum hemorrhage observation pertains to the mother. This is a contradictory/unsupported clinical claim, though other elements align with the context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1136,
+        "completion_tokens": 1548,
+        "reasoning_tokens": 1472
+      }
+    },
+    {
+      "query_id": "q_02524",
+      "verdict": "FAIL",
+      "reasoning": "The context supports fetal macrosomia (>4000 g) as a risk factor and the need to communicate suspicion of a large baby, but it does not mention maternal diabetes. Stating maternal diabetes as a risk factor is an unsupported addition.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 670,
+        "completion_tokens": 593,
+        "reasoning_tokens": 512
+      }
+    },
+    {
+      "query_id": "q_01608",
+      "verdict": "PASS",
+      "reasoning": "The answer restates the context’s criteria (fever thresholds, HR >100, RR >20, abnormal WCC, altered mental state, glucose ≥7.7), the instruction to start the Sepsis Six package, urgent referral, and use of a MEOWS chart. It omits low temperature (≤36°C) but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1079,
+        "completion_tokens": 3373,
+        "reasoning_tokens": 3264
+      }
+    },
+    {
+      "query_id": "q_02963",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: it lists increased maternal risks (thromboembolism, infection, haemorrhage), future pregnancy risks (uterine rupture, placenta previa), and neonatal risks (lacerations, poor respiratory response), and notes consultant-led decision-making. No contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 754,
+        "completion_tokens": 350,
+        "reasoning_tokens": 256
+      }
+    },
+    {
+      "query_id": "q_00428",
+      "verdict": "PASS",
+      "reasoning": "The answer closely follows the context’s steps for bimanual uterine compression, including hand positioning, continuation until bleeding stops, and escalation to aortic compression and transport. No contradictory or unsupported claims are introduced.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1182,
+        "completion_tokens": 908,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_02069",
+      "verdict": "PASS",
+      "reasoning": "The answer correctly reflects the context on sampling (use of reagent strips per local policy and venous sampling if clinically symptomatic) and timing for at‑risk neonates. It omits the specific diagnostic thresholds, but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1035,
+        "completion_tokens": 915,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_02878",
+      "verdict": "PASS",
+      "reasoning": "The answer mirrors the context: dressings off D1 if hygiene is good or D5 otherwise, and non-absorbable sutures removed between days 5–8. It also notes removal depends on wound healing and mentions cleansing with soap and water, both supported by the context.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 955,
+        "completion_tokens": 924,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_00033",
+      "verdict": "PASS",
+      "reasoning": "The answer lists signs and symptoms (sudden behavioral change, anxiety, dyspnoea/tachypnoea, hypotension, convulsions, bleeding/shock) and the timing (during labor or within 30 minutes postpartum) that are all supported by the context. No contradictory or unsupported claims, though it is not exhaustive.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1148,
+        "completion_tokens": 615,
+        "reasoning_tokens": 512
+      }
+    },
+    {
+      "query_id": "q_01964",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: CS if the first twin is transverse; for a transverse second twin, deliver the first, reassess, allow time, and consider ECV/IPV in a CEmONC facility with senior involvement. While it first says ECV is not allowed, it subsequently allows ECV for the second twin—both positions are present in the (internally inconsistent) context.",
+      "verdict_source": "sync_retry_max16k",
+      "_ok": true
+    },
+    {
+      "query_id": "q_00739",
+      "verdict": "PASS",
+      "reasoning": "The causes listed (mastitis, UTI, pneumonia, maternal sepsis; dehydration, tissue trauma, breast engorgement) are supported by the context, and the 38°C within 24 hours alert is consistent. It omits some causes (e.g., thromboembolic disorders, endometritis) but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1250,
+        "completion_tokens": 1322,
+        "reasoning_tokens": 1216
+      }
+    },
+    {
+      "query_id": "q_02023",
+      "verdict": "PASS",
+      "reasoning": "The answer closely reflects the context’s described steps for assisted/spontaneous breech birth and the listed precautions (no traction on legs, wait until scapula, complete within 3 minutes after umbilicus, avoid stimulating respiration, monitor back position). It introduces no contradictory or unsupported clinical claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1235,
+        "completion_tokens": 1693,
+        "reasoning_tokens": 1600
+      }
+    },
+    {
+      "query_id": "q_02587",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: expedite birth if severe pre-eclampsia/eclampsia persists, deliver within 12 hours after an eclamptic convulsion, and individualize timing based on maternal/fetal status. It omits the 24-hour delivery statement but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 837,
+        "completion_tokens": 1120,
+        "reasoning_tokens": 1024
+      }
+    },
+    {
+      "query_id": "q_02021",
+      "verdict": "FAIL",
+      "reasoning": "The answer instructs to wet the hands and wrists with a paper towel, which contradicts the context that specifies rinsing/wetting with water and using paper towels only for drying and turning off taps.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1089,
+        "completion_tokens": 906,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_01491",
+      "verdict": "FAIL",
+      "reasoning": "The answer introduces prior uterine incision as a risk factor for uterine rupture, which is not stated in the context. The document links prior cesarean/uterine surgery to postpartum hemorrhage risk but not to uterine rupture.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1085,
+        "completion_tokens": 2961,
+        "reasoning_tokens": 2880
+      }
+    },
+    {
+      "query_id": "q_01225",
+      "verdict": "PASS",
+      "reasoning": "Accurately summarizes the context: equipment and gases at 37 weeks, resuscitation kit, midwife attendance and second midwife, ongoing assessments and mobility/comfort measures, adherence to NMC/NICE, transfer planning with ambulance for emergencies and midwife accompanying. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1435,
+        "completion_tokens": 1950,
+        "reasoning_tokens": 1856
+      }
+    },
+    {
+      "query_id": "q_02387",
+      "verdict": "PASS",
+      "reasoning": "The answer lists materials and stepwise repair that match the provided guidance (lidocaine infiltration, needle holder with 21G curved needle, absorbable polyglycol sutures, starting 1 cm above apex, sequence of closure, and referral for sphincter involvement). Although the context also mentions a continuous technique, using interrupted sutures is explicitly supported in the context, so there is no contradiction.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1335,
+        "completion_tokens": 2355,
+        "reasoning_tokens": 2240
+      }
+    },
+    {
+      "query_id": "q_02344",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it advises detailed history, mood monitoring with recommended questions, communication, documentation, and referral to psychiatry for women with prior serious mental illness. It introduces no contradictory or unsupported clinical claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1089,
+        "completion_tokens": 1486,
+        "reasoning_tokens": 1408
+      }
+    },
+    {
+      "query_id": "q_02315",
+      "verdict": "FAIL",
+      "reasoning": "The answer introduces general benefits (natural nutrition, maternal health) not supported by the provided context and incorrectly claims the context does not address pros/cons, despite the context noting direct breastfeeding maintains supply/preserves relationship and feasibility/logistical issues.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 722,
+        "completion_tokens": 1106,
+        "reasoning_tokens": 1024
+      }
+    },
+    {
+      "query_id": "q_02731",
+      "verdict": "PASS",
+      "reasoning": "All points match the context: seek medical help if HR >180 bpm and if tachycardia persists 20 minutes; recheck if >160 and assess maternal infection signs; keep records. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1063,
+        "completion_tokens": 591,
+        "reasoning_tokens": 512
+      }
+    },
+    {
+      "query_id": "q_01752",
+      "verdict": "PASS",
+      "reasoning": "The answer declines to provide details and does not make any clinical claims; while it overlooks the context (paracervical block), it introduces no contradictions or unsupported additions, so per rubric it passes.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 986,
+        "completion_tokens": 586,
+        "reasoning_tokens": 512
+      }
+    },
+    {
+      "query_id": "q_00471",
+      "verdict": "FAIL",
+      "reasoning": "The answer advises reattempting breaths immediately if there is no chest rise, whereas the context specifies reattempting the two breaths after the next set of compressions. It also labels mouth-to-mouth as “bagging,” which the context treats separately from bag–valve–mask ventilation.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1213,
+        "completion_tokens": 3164,
+        "reasoning_tokens": 3072
+      }
+    },
+    {
+      "query_id": "q_02451",
+      "verdict": "PASS",
+      "reasoning": "The response is a refusal/deflection and makes no clinical claims. It does not contradict the context or introduce unsupported information.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 614,
+        "completion_tokens": 251,
+        "reasoning_tokens": 192
+      }
+    },
+    {
+      "query_id": "q_01015",
+      "verdict": "PASS",
+      "reasoning": "The steps mirror the provided guidance: apex stitch, inside-out closure of vaginal mucosa (continuous or interrupted/figure-of-eight), muscle layer suturing, and optional skin closure followed by hemostasis check. Any potential discrepancies (e.g., subcutaneous vs subcuticular skin closure, first stitch at vs above apex) are each supported by parts of the context, so there is no contradiction or unsupported addition.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1200,
+        "completion_tokens": 2741,
+        "reasoning_tokens": 2624
+      }
+    },
+    {
+      "query_id": "q_00649",
+      "verdict": "FAIL",
+      "reasoning": "The answer instructs to put a hat on the mother’s head, which is not supported by the context (the hat is for the baby’s head). Most other points align, but this is an unsupported addition.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1268,
+        "completion_tokens": 2637,
+        "reasoning_tokens": 2560
+      }
+    },
+    {
+      "query_id": "q_00404",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately reflects the context’s management steps for AFE (CPR indications, left uterine displacement, perimortem cesarean within 5 minutes, massive transfusion with cryoprecipitate, and not withholding life-saving interventions) and the need for multidisciplinary involvement. It introduces no unsupported claims, though it omits reporting protocol details.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1182,
+        "completion_tokens": 1258,
+        "reasoning_tokens": 1152
+      }
+    },
+    {
+      "query_id": "q_00472",
+      "verdict": "PASS",
+      "reasoning": "The steps given match the context (positioning, sterile prep with povidone-iodine, guided amnihook use, slow drainage, FHR checks, noting fluid color, and checking for cord prolapse). The answer mentions both rupturing during a contraction and between contractions, which are both stated in the context; there are no unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1471,
+        "completion_tokens": 2473,
+        "reasoning_tokens": 2368
+      }
+    },
+    {
+      "query_id": "q_01610",
+      "verdict": "PASS",
+      "reasoning": "The assistant declined to answer, making no clinical claims and not contradicting the provided context. A refusal is considered faithful under the rubric.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 748,
+        "completion_tokens": 253,
+        "reasoning_tokens": 192
+      }
+    },
+    {
+      "query_id": "q_01872",
+      "verdict": "PASS",
+      "reasoning": "The answer reflects the context: prioritize maternal stabilization, confirm fetal death and the obstacle to vaginal delivery, attempt embryotomy only if the fetus is small/easily accessible, and otherwise do caesarean section. It does not contradict the guidance and stays within the provided details.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 955,
+        "completion_tokens": 2265,
+        "reasoning_tokens": 2176
+      }
+    },
+    {
+      "query_id": "q_02257",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it notes that FHR may slow during contractions, gives the normal range (110–160 bpm), and cites the post-contraction abnormal thresholds (<100 or >180) and need for further monitoring. It introduces no contradictions or unsupported clinical claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1246,
+        "completion_tokens": 3418,
+        "reasoning_tokens": 3328
+      }
+    },
+    {
+      "query_id": "q_01559",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately lists the fetal risks and provides prevention strategies that align with the context; it does not introduce unsupported claims or contradict the provided guidance.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1257,
+        "completion_tokens": 831,
+        "reasoning_tokens": 768
+      }
+    },
+    {
+      "query_id": "q_02794",
+      "verdict": "PASS",
+      "reasoning": "All statements match the context: record frequency/length/strength every 30 minutes; uterus should relax between contractions; hypertonicity >2 minutes; count contractions per 10 minutes with ≥5 indicating tachysystole/hyperstimulation. It omits shading/duration coding details, but incompleteness is acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1135,
+        "completion_tokens": 931,
+        "reasoning_tokens": 832
+      }
+    },
+    {
+      "query_id": "q_01853",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately paraphrases the context’s steps for freeing extended legs and the extended legs technique, and correctly summarizes the McRoberts manoeuvre. It introduces no contradictions; the brief caution about maternal distress is a general note and not a conflicting or unsupported clinical claim.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1045,
+        "completion_tokens": 1815,
+        "reasoning_tokens": 1728
+      }
+    },
+    {
+      "query_id": "q_00985",
+      "verdict": "FAIL",
+      "reasoning": "The context specifies that at crowning the woman should gently blow or ‘sigh’ out each breath to minimize pushing; the answer adds ‘blow hard and fast’ as an option at this stage, which conflicts with the context’s instruction.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1024,
+        "completion_tokens": 1299,
+        "reasoning_tokens": 1216
+      }
+    },
+    {
+      "query_id": "q_02291",
+      "verdict": "PASS",
+      "reasoning": "The answer mirrors the context’s guidance: call an experienced midwife and obstetric team, alert haematology and blood bank, involve porters, nominate a scribe, and communicate/support the woman. It introduces no contradictory or unsupported claims, though it omits location-specific steps (e.g., 999/emergency buzzer), which is acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 993,
+        "completion_tokens": 873,
+        "reasoning_tokens": 768
+      }
+    },
+    {
+      "query_id": "q_02502",
+      "verdict": "PASS",
+      "reasoning": "Correctly identifies buccal and sublingual as routes that bypass the GI tract and enter circulation directly, with rapid response and a 5-minute note consistent with the context. No contradictions or unsupported specific claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 664,
+        "completion_tokens": 1165,
+        "reasoning_tokens": 1088
+      }
+    },
+    {
+      "query_id": "q_00897",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context by stating cannula size is based on gestational age and giving the 5‑mm for 5 weeks example; it also mentions informed consent and emergency equipment, both supported by the context. Although it omits the factor of achievable cervical dilation, this is an omission (incompleteness), not a contradiction or unsupported addition.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 807,
+        "completion_tokens": 747,
+        "reasoning_tokens": 640
+      }
+    },
+    {
+      "query_id": "q_01669",
+      "verdict": "PASS",
+      "reasoning": "The answer restates cord care steps and infection signs (redness, pus, blood), handwashing, folding the diaper below the stump, and not bandaging or applying substances—all supported by the context. It omits the chlorhexidine exception for home births but does not contradict the context or add unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1180,
+        "completion_tokens": 1121,
+        "reasoning_tokens": 1024
+      }
+    },
+    {
+      "query_id": "q_00917",
+      "verdict": "PASS",
+      "reasoning": "States first-visit blood grouping/antibody screen and Rh incompatibility relevance, and notes ensuring blood availability in bleeding emergencies, all supported by the context. It omits placenta praevia crossmatch details but makes no contradictory or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1012,
+        "completion_tokens": 3539,
+        "reasoning_tokens": 3456
+      }
+    },
+    {
+      "query_id": "q_01947",
+      "verdict": "PASS",
+      "reasoning": "The steps listed (handwashing, clean surface, hot soapy water with bottle brush, cold water rinse, careful handling after sterilization, and not disturbing the chemical sterilizer) are all supported by the provided context. There are no contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1142,
+        "completion_tokens": 1430,
+        "reasoning_tokens": 1344
+      }
+    },
+    {
+      "query_id": "q_00999",
+      "verdict": "PASS",
+      "reasoning": "All elements cited (prior history, onset/duration/severity, bleeding/pain/itching, self-help measures, toileting/straining, low fiber/inadequate fluids, iron/narcotics, bowel habit details, abdominal cramping/backache, past surgeries) are supported by the context. No contradictory or unsupported claims are introduced; some context items are omitted, which is acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1030,
+        "completion_tokens": 1073,
+        "reasoning_tokens": 960
+      }
+    },
+    {
+      "query_id": "q_02862",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it correctly notes ≤3 at 1 minute indicates severe asphyxia needing urgent resuscitation, and that <5 (i.e., ≤4) at 5 minutes warrants doctor review; mentioning potential transfer for ≤4 at 5 minutes does not contradict the guideline (transfer is indicated at ≤6).",
+      "verdict_source": "sync_retry_max16k",
+      "_ok": true
+    },
+    {
+      "query_id": "q_01192",
+      "verdict": "PASS",
+      "reasoning": "The answer accurately reflects the context’s recommendation to consider antibiotics in preterm labour with prelabour ROM of any duration and with intrapartum ROM >18 hours, and does not contradict guidance about term PROM. It is incomplete (omits pyrexia and ≥24h at term), but incompleteness is allowed and there are no unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 847,
+        "completion_tokens": 1513,
+        "reasoning_tokens": 1408
+      }
+    },
+    {
+      "query_id": "q_00262",
+      "verdict": "FAIL",
+      "reasoning": "While the procedural steps align with the context, the statement that decapitation is indicated when an immediate caesarean section cannot be performed is not supported by the provided text, which specifies immediate caesarean section as management.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1086,
+        "completion_tokens": 2193,
+        "reasoning_tokens": 2112
+      }
+    },
+    {
+      "query_id": "q_01512",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context stating that concerns must be made known first to the specialist named nurse and the named midwife (safeguarding) and that they must be involved at all stages. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 866,
+        "completion_tokens": 1104,
+        "reasoning_tokens": 1024
+      }
+    },
+    {
+      "query_id": "q_01397",
+      "verdict": "PASS",
+      "reasoning": "The listed postpartum differentials match those in the context, and the refusal to provide dosages does not introduce contradictions or unsupported claims.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1116,
+        "completion_tokens": 1468,
+        "reasoning_tokens": 1408
+      }
+    },
+    {
+      "query_id": "q_03006",
+      "verdict": "PASS",
+      "reasoning": "The assistant refuses to provide details and makes no clinical claims. There is no contradiction with the context and no unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 717,
+        "completion_tokens": 314,
+        "reasoning_tokens": 256
+      }
+    },
+    {
+      "query_id": "q_01867",
+      "verdict": "PASS",
+      "reasoning": "Accurately restates the context: check secretions every afternoon/evening via fingers/underwear/tissue/sensation, and consider fertile that day and the next upon any secretion. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 617,
+        "completion_tokens": 334,
+        "reasoning_tokens": 256
+      }
+    },
+    {
+      "query_id": "q_01059",
+      "verdict": "PASS",
+      "reasoning": "The answer stays generic about diet and accurately reflects the context’s points that low‑dose iron may be prescribed at ferritin 100 g/L and that oral iron is used for iron deficiency anemia. It introduces no contradictory doses or thresholds and makes no specific unsupported claims about foods; omissions are acceptable.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 807,
+        "completion_tokens": 3549,
+        "reasoning_tokens": 3456
+      }
+    },
+    {
+      "query_id": "q_01287",
+      "verdict": "PASS",
+      "reasoning": "The answer restates the context’s recommendations: disinfect and smoke/sun-dry banana leaves, and boil then dry cloth rags or sacks. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 842,
+        "completion_tokens": 325,
+        "reasoning_tokens": 256
+      }
+    },
+    {
+      "query_id": "q_00432",
+      "verdict": "PASS",
+      "reasoning": "All listed steps (vital signs, bleeding/hematoma monitoring, fluids/blood, single-dose ampicillin 500 mg plus metronidazole 400 mg, hygiene, infection signs, no enemas/rectal exams, stool softener, documentation) are supported by the context and do not contradict it. Omitted items are acceptable under the rubric.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1223,
+        "completion_tokens": 1900,
+        "reasoning_tokens": 1792
+      }
+    },
+    {
+      "query_id": "q_01960",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it includes reassessment, updating the care plan (maternal/fetal response, interval change, clinical impression, planned actions), referrals to OB/GYN and pediatric services, referrals outside scope, client communication, and emergency planning. It introduces no contradictory or unsupported clinical claims; omissions (e.g., specific timing, transport) do not affect faithfulness.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1045,
+        "completion_tokens": 1455,
+        "reasoning_tokens": 1344
+      }
+    },
+    {
+      "query_id": "q_00459",
+      "verdict": "PASS",
+      "reasoning": "The answer correctly states the dosing for 50 mcg ethinyl estradiol pills (2 pills, then 2 more 12 hours later) and advises redosing if vomiting occurs within 2 hours, which is supported by the context for combined/progestin-only ECPs. Although the context also contains a 3-hour statement elsewhere, selecting the 2-hour guidance is still supported by the provided text.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1002,
+        "completion_tokens": 2615,
+        "reasoning_tokens": 2496
+      }
+    },
+    {
+      "query_id": "q_02532",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: it emphasizes privacy, nonjudgmental approach, getting permission, confidentiality with the emergency exception, clear/simple language, active listening, and encouraging questions. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1174,
+        "completion_tokens": 973,
+        "reasoning_tokens": 896
+      }
+    },
+    {
+      "query_id": "q_00154",
+      "verdict": "PASS",
+      "reasoning": "The answer’s IV fluid advice (sodium-containing crystalloid, 500 mL bolus <15 min, monitor I/O) and the transfusion threshold (Hb ≤5 g/100 ml or Hct ≤15%) are both supported by the context. Although it omits other details (e.g., alternative 1 L bolus, volume limits, O-negative use), there is no contradiction or unsupported clinical claim relevant to the asked protocol and threshold.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 986,
+        "completion_tokens": 2687,
+        "reasoning_tokens": 2560
+      }
+    },
+    {
+      "query_id": "q_01578",
+      "verdict": "PASS",
+      "reasoning": "The answer aligns with the context: locate muscle ends (including rectal exam for retracted sphincter ends), use interrupted stitches with 2–3 sutures, tie 4-layer knots, clip ends, and ensure muscle stitches are covered by skin. No contradictions or unsupported additions.",
+      "_ok": true,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 1088,
+        "completion_tokens": 1052,
+        "reasoning_tokens": 960
+      }
+    }
+  ]
+}

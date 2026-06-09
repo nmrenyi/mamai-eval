@@ -1,0 +1,11 @@
+{
+  "batch_id": "batch_6a27c4ee2a908190a88d3bf8c1be6871",
+  "mode": "categorize",
+  "model": "gpt-5",
+  "reasoning_effort": "medium",
+  "max_completion_tokens": 4096,
+  "input_file": "lynx_fail_cases.json",
+  "input_file_sha256": "a40370c088554beb6ca9b2d3c198e7e3f619a9848fac15f30c1e4abcac0039de",
+  "n_cases": 174,
+  "submitted_at_utc": "2026-06-09T07:46:54.980964+00:00"
+}

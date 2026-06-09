@@ -1,0 +1,1192 @@
+[
+  {
+    "query_id": "q_00009",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines to give the treatment though context provides a specific TCA/BCA regimen.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00019",
+    "category": "unsupported_addition",
+    "secondary": [
+      "contradiction"
+    ],
+    "justification": "Answer lists suprapubic pressure as an initial step, which Lynx says context places after McRoberts.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Suprapubic pressure is a standard early external maneuver and the context does list it as a management step; Lynx is over-strict."
+  },
+  {
+    "query_id": "q_00023",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer states CCT occurs 'after the placenta is delivered', contradicting context where CCT delivers the placenta.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00066",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults a paraphrase of '>=50%' as '50% or more', which is actually equivalent; no real failure identifiable.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "'>=50 per cent' and '50 per cent or more' are synonymous; Lynx's distinction is incorrect."
+  },
+  {
+    "query_id": "q_00084",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits prescriber address/telephone and other required identifiers present in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00112",
+    "category": "unclear",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Lynx faults relevance to the 4-6 week timeframe, not a hallucination; answer content is supported by context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful to context; Lynx's complaint is about question-relevance, not faithfulness."
+  },
+  {
+    "query_id": "q_00122",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer gives general shock signs but omits the condition-specific abruptio differentiation in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content is supported by context; Lynx faults incompleteness, not hallucination."
+  },
+  {
+    "query_id": "q_00132",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the final valve-release verification step described in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00139",
+    "category": "contradiction",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer says 'conduction gel' where context's first box specifies aqueous jelly.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context elsewhere does say 'conductive gel'; the discrepancy is trivial wording."
+  },
+  {
+    "query_id": "q_00154",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults relevance to 'post-abortion' specificity; the extracted clinical content is faithful.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer accurately reflects context; Lynx's complaint is about question scope, not faithfulness."
+  },
+  {
+    "query_id": "q_00181",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits later procedural steps (positioning, draping, antiseptic) present in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is accurate as far as it goes; faulted only for incompleteness."
+  },
+  {
+    "query_id": "q_00244",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits 'sickle trait' as an indication listed in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00293",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds maternal sepsis as a screening condition not present in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00315",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says rinse in hot water without the 'unless contraindicated' caveat and against the warm-water emphasis.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's manual-cleaning step does say rinse in hot water; the contradiction is mild."
+  },
+  {
+    "query_id": "q_00318",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the speculum/sponge-forceps cervical inspection technique in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00328",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says 'higher level facility' where context specifies CEmONC facility for the alert line.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "'Higher level facility' is a reasonable generalization of CEmONC; Lynx is over-strict."
+  },
+  {
+    "query_id": "q_00338",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer lists twin pregnancy with infection signs as major risk factor; context says 'twin WITH clinical signs of infection' which it actually does list.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context table does list 'Twin with clinical signs of infection' as a major risk factor; the answer is actually correct and Lynx is wrong."
+  },
+  {
+    "query_id": "q_00343",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer attributes primary-level activities to the community level, contradicting context's level assignment.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's table column is labeled 'Primary'; the community/primary mapping is ambiguous."
+  },
+  {
+    "query_id": "q_00397",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says NRT 'can be an option' in pregnancy; context classifies it Category D / not recommended.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00410",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says weekly follow-up for <37 weeks; context specifies twice-weekly monitoring.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context has conflicting passages (weekly outpatient and twice-weekly); the answer reflects one of them."
+  },
+  {
+    "query_id": "q_00453",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer covers most factors but omits some general-examination and obstructed-labour specifics.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is broadly faithful; faulted only for incompleteness."
+  },
+  {
+    "query_id": "q_00459",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "For high-dose pills context says repeat dose if vomiting within 3 hours; answer states a 2-hour window.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00506",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer states baseline variability range '5 to 15 bpm' not supported by the context's variability categories.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The '5-15 bpm' figure does appear in a context passage on healthy patterns; Lynx overlooked it."
+  },
+  {
+    "query_id": "q_00507",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer states obstructed labour causes coagulopathy, a link not present in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The question itself framed obstructed labour with fetal death; minor extension, arguably over-strict."
+  },
+  {
+    "query_id": "q_00538",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines to advise on FGC complications though context provides relevant management.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00544",
+    "category": "contradiction",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer invents Hb criteria for '36 weeks or more' not in context and omits the 5-6 g/dl sub-criterion.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00576",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer refuses the topic as out-of-scope though context directly answers it.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00603",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer invents an 'M-E-O-W-S' acronym with weight etc. not in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00606",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer lists visual estimation as a method to improve accuracy; context emphasizes its inaccuracy.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00643",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer says it is unsure and defers, though context gives MVA/D&C management.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00673",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds mother-to-child transmission as a route not listed in the provided context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context says 'four main sources' but only details some; MTCT plausibly among them, mild over-strictness."
+  },
+  {
+    "query_id": "q_00679",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer applies request-form labeling details to the specimen label, contradicting context's separation.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's first passage does list name/number/ward as tube labels; answer is largely supported."
+  },
+  {
+    "query_id": "q_00703",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says cuff '2-3 cm above the elbow'; context says above the brachial pulsation in antecubital fossa.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context itself states '2-3cm above the elbow'; the two descriptions are near-equivalent."
+  },
+  {
+    "query_id": "q_00707",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer asserts 100-120 bpm is 'not in immediate danger', a reassurance not in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00715",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx claims answer adds an 8-hour second dose, but the answer contains no such statement.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Lynx hallucinated a claim; the answer is actually faithful to context."
+  },
+  {
+    "query_id": "q_00725",
+    "category": "contradiction",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer changes oxytocin '60 drops/min' to 'infuse quickly' and omits ergometrine for continued bleeding.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's last passage does say 'infuse quickly'; discrepancy is minor."
+  },
+  {
+    "query_id": "q_00745",
+    "category": "contradiction",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer says preterm 'after 35 weeks' (context: less than 35) and post-term '42 weeks' (context: more than 42).",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00748",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says diaphragm 'protects 83%' when correct-use figure (16/100) implies 84%.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The 83% figure does appear in context for typical use; answer mixed the two figures, minor."
+  },
+  {
+    "query_id": "q_00756",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says Hb testing is in the third stage of labour; context places it in the postnatal period.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00761",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says retained placenta at 30 min for active management; one context passage says retained = 1 hour regardless.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Two context passages explicitly define retained placenta at 30 min active management; the answer is actually correct."
+  },
+  {
+    "query_id": "q_00780",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer indicates total breech extraction for a cephalic second twin; context says non-cephalic.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's section 7.8.1 does mention version of a cephalic second twin then extraction; answer partly supported."
+  },
+  {
+    "query_id": "q_00814",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer labels a full bladder blocking placenta as an 'obstetrical emergency', a claim not in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The emergency framing is minor editorializing; core catheterization advice is faithful."
+  },
+  {
+    "query_id": "q_00821",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says the womb has prolapsed where context describes a prolapsed cervix.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context itself says 'the womb has prolapsed into the vagina'; the answer mirrors context wording."
+  },
+  {
+    "query_id": "q_00846",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says unfavourable cervix is score 6 or less as primary; context's cited passage says 4 or less.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context has both <=4 and <=6 thresholds; answer explicitly notes both, so it is faithful."
+  },
+  {
+    "query_id": "q_00864",
+    "category": "refusal",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer says it lacks guidance for lymphangitis and gives only generic mastitis advice though context covers it.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00868",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer states two-or-more prior caesareans is a risk factor; context only notes professional contention.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context discusses VBAC after two caesareans with rupture rate 1.36%; the inference is reasonable."
+  },
+  {
+    "query_id": "q_00883",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the bidet method described in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Bidet omission is trivial; answer otherwise faithful."
+  },
+  {
+    "query_id": "q_00886",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines to give vacuum-extraction complications though context provides them.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00897",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer says it lacks guidance and defers though context gives clear cannula-sizing rules.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00899",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer gives 10 cm as the recommended distance; context's 10 cm is irradiance, distance is min 40 cm.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_00909",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer generalizes to 'safety' instead of the specific rationales; faulted for not reflecting specifics.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer actually states the two specific rationales; Lynx's complaint is weak."
+  },
+  {
+    "query_id": "q_00913",
+    "category": "omission",
+    "secondary": [
+      "contradiction"
+    ],
+    "justification": "Answer omits Chagas disease; Lynx also faults the malaria characterization.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Malaria is listed in context as a where-possible screen; the answer's malaria mention is fine."
+  },
+  {
+    "query_id": "q_00957",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says pH below 6.9 as the morbidity threshold; the cited criterion is pH less than 7.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context explicitly says pH 'particularly below 6.9' has highest risk; the answer is actually supported."
+  },
+  {
+    "query_id": "q_01039",
+    "category": "unsupported_addition",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer lists the Wood screw maneuver as a last-resort maneuver; context lists it separately as HELPERR.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01073",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults blending two divergent context protocols; the answer follows the more complete one faithfully.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer faithfully follows context passage 1; the context itself is internally inconsistent."
+  },
+  {
+    "query_id": "q_01108",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds 'severe changes in thinking or behavior' not present in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01121",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits preoperative medication and oxytocin/ergometrine preparatory steps in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01157",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits many listed indications for continuous EFM present in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content is faithful; faulted for incompleteness only."
+  },
+  {
+    "query_id": "q_01194",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits that a single 140/90 in stage 2 may indicate pre-eclampsia per the stage-2 passage.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The stage-2 context passage states 140/90 'or higher' indicates pre-eclampsia without the two-reading rule; the answer adding it is not a hallucination."
+  },
+  {
+    "query_id": "q_01226",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults that the answer addresses breech not mal-presentation; context only covers breech.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Breech is a mal-presentation; answer is faithful to the only relevant context provided."
+  },
+  {
+    "query_id": "q_01227",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says uterus 'corresponds to dates'; context's table says uterine size less than or equal to dates for inevitable abortion.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's first WHO table does say 'Uterus corresponds to dates' for inevitable abortion; tables conflict."
+  },
+  {
+    "query_id": "q_01302",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer uses >5 cm dilation; one context passage uses >6 cm for prolonged active first stage.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context has both >5cm and >6cm passages; the answer picks one valid value."
+  },
+  {
+    "query_id": "q_01325",
+    "category": "unclear",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Lynx faults not stating episiotomy timing during vacuum extraction specifically; answer gives general indications faithfully.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content is supported by context; complaint is about question specificity."
+  },
+  {
+    "query_id": "q_01340",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer lists brachial artery as a pulse site; context assigns brachial to BP measurement.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's pulse passage does mention forearm/throat sites; brachial mention is a minor error."
+  },
+  {
+    "query_id": "q_01341",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says 'continue misoprostol as needed'; context's analgesic regimen is ibuprofen, not misoprostol.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01348",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer refuses the topic as out-of-scope though context directly answers it.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01432",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Lynx faults the phrase 'suspect shoulder or neck delivery is delayed'; minor framing addition.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer's timeframes and steps are fully faithful; the faulted phrase is benign paraphrase."
+  },
+  {
+    "query_id": "q_01434",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer condenses symptoms and omits the three-category framing; faulted as incomplete.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful; combining insomnia/appetite/concentration is not a real error."
+  },
+  {
+    "query_id": "q_01446",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults not isolating the 'Delay of fetal head' technique though it pivots under symphysis; answer cites MSV which pivots upwards around it.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The MSV maneuver context says pivot 'around the symphysis pubis'; the distinction Lynx draws is hairsplitting."
+  },
+  {
+    "query_id": "q_01454",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds eating/drinking as a psychosocial principle; context frames it as physical comfort.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context does mention eating/drinking under anxiety strategies; the addition is mildly supported."
+  },
+  {
+    "query_id": "q_01515",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits typical/atypical deceleration classifications listed in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is otherwise faithful; faulted mainly for incomplete classification list."
+  },
+  {
+    "query_id": "q_01584",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says confirm 'no second twin' by palpation; context says give oxytocin after the second baby confirming no third.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's recommendations do say 'no second twin' by abdominal palpation; the answer matches that passage."
+  },
+  {
+    "query_id": "q_01610",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer refuses the topic as out-of-scope though context directly answers it.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01618",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says misoprostol every 3 hours for 13-22 weeks; main text says every 4 to 6 hours.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's protocol table 12.2.2 says 'every 3 hours'; context conflicts internally."
+  },
+  {
+    "query_id": "q_01660",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds infection check and reproductive-health assessment as exam reasons not in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01702",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits contraction-intensity (mmHg) detail; faulted for incompleteness.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The 3-4 per 10 min figure is directly from context; Lynx's contradiction claim is unfounded."
+  },
+  {
+    "query_id": "q_01708",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says infection risk after 6 hours; one context passage says get help if labour not started in 8-12 hours.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's last passage explicitly says risk of infection if labour not started within 6 hours; answer is supported."
+  },
+  {
+    "query_id": "q_01736",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Answer faithfully lists all context items; Lynx faults only the clarifying question and categorization.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content is fully faithful to context; the verdict is over-strict."
+  },
+  {
+    "query_id": "q_01739",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says backup needed after cycle day 1; context says day-1 insertion needs none and day-2+ needs 7 days.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "For insertion after day 1 (i.e., day 2+) backup IS recommended; the answer is essentially correct."
+  },
+  {
+    "query_id": "q_01752",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines to give the technique though context describes the paracervical block in detail.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01767",
+    "category": "contradiction",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer expands AFE as 'Antepartum Haemorrhage'; context means Amniotic Fluid Embolism.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01777",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Lynx faults 'strong' vs 'good' uterine contractions, a trivial synonym substitution.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "'Strong' and 'good' contractions are effectively synonymous; Lynx is over-strict."
+  },
+  {
+    "query_id": "q_01780",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Answer faithfully reflects context; Lynx faults only minor framing and an omitted no-sorting line.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is substantively faithful; verdict is over-strict."
+  },
+  {
+    "query_id": "q_01805",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer recommends polyglycolic/2-0 catgut; one context passage specifies polyglactin 910 (Vicryl rapide).",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's episiotomy-specific passages explicitly say polyglycolic or 2/0 catgut; the answer matches them."
+  },
+  {
+    "query_id": "q_01825",
+    "category": "unclear",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer omits the specific forceps repositioning sequence; Lynx faults the clarifying question and missing detail.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01845",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits fundal height monitoring listed in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer faithfully follows the 11.2.1 context list; fundal height appears only in a different passage."
+  },
+  {
+    "query_id": "q_01847",
+    "category": "unclear",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer is faithful to context; Lynx faults only not giving specific debriefing how-to which context lacks.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer aligns with context; verdict is over-strict given context offers no debriefing procedure."
+  },
+  {
+    "query_id": "q_01857",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits many psychiatric symptoms listed in context; faulted as incomplete.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful; faulted mainly for incompleteness."
+  },
+  {
+    "query_id": "q_01867",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Answer faithfully describes the TwoDay Method; Lynx faults the question/context term mismatch only.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful to the only method in context; the mismatch is with the question, not the context."
+  },
+  {
+    "query_id": "q_01876",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds a third-trimester sign ('uterus continues to grow') not in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01877",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines, saying it lacks guidance; context describes perforation signs (rapid pulse, falling BP, pain).",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context is about IUD-insertion perforation, not instrumental termination; the refusal is partly defensible."
+  },
+  {
+    "query_id": "q_01894",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults 'within one week of' vs 'within a week after', a meaningless distinction.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The two phrasings are equivalent; the answer is faithful."
+  },
+  {
+    "query_id": "q_01907",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the specific IM maintenance dose (10 g then 5 g every 4 h) given in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_01910",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Answer faithfully reports context signs; Lynx faults only that 'contraction' wasn't explicitly tied.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful; the verdict is over-strict semantic nitpicking."
+  },
+  {
+    "query_id": "q_01920",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds 'Movement' as a factor not present in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context mentions elbow position affecting lifting; 'movement' is a mild extrapolation."
+  },
+  {
+    "query_id": "q_01930",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer presents BP check and hemoglobin/STI tests as recommended; context says these are not essential.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer explicitly says 'some checks are not required'; the distinction is partly preserved."
+  },
+  {
+    "query_id": "q_01949",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the oral antibiotic options and ampicillin/shock dosing detail in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content given is faithful; faulted mainly for incompleteness."
+  },
+  {
+    "query_id": "q_01990",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults 'until respirations improve' vs 'until satisfactory', a trivial paraphrase.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The paraphrase preserves meaning; the answer is faithful."
+  },
+  {
+    "query_id": "q_01995",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer gives only 3 of the 5 hand-hygiene moments; context implies 5.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02015",
+    "category": "unclear",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer is faithful to context; Lynx faults not giving FH measurement specific to >34 weeks, which context partly covers via xiphisternum.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer reflects context including the xiphisternum landmark; the verdict is over-strict."
+  },
+  {
+    "query_id": "q_02044",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer declines to give labetalol/methyldopa dosing though context provides exact doses.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02071",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits DUB as an indication (though it lists the synonymous abnormal uterine bleeding).",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "DUB and abnormal uterine bleeding overlap heavily; the omission is minor."
+  },
+  {
+    "query_id": "q_02152",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer asks for clarification instead of giving the station-based delivery guidance in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02162",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds pain/tenderness differentiation for abruptio not present in the provided context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context is sparse; the addition is clinically standard, mild over-strictness."
+  },
+  {
+    "query_id": "q_02271",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits 'delay in referral' risk factor listed in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02289",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says tubercular meningitis occurs in epidemics; context attributes epidemics to meningococcal.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02311",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults blending sounding and biopsy steps, but context's first list itself blends them.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The answer follows context's combined ordering closely; verdict is over-strict."
+  },
+  {
+    "query_id": "q_02317",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says 800 mcg before 13 weeks without the 600 mcg sublingual alternative and uses every-3-hour dosing.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "800 mcg and every-3-hours both appear in the context protocol table; context is internally inconsistent."
+  },
+  {
+    "query_id": "q_02365",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says cord length ~50 cm; one context passage says approximately 56 cm.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context has both 50 cm and 56 cm; the answer picks one valid figure."
+  },
+  {
+    "query_id": "q_02385",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds OB/GYN referral indications; context only covers pediatric/neonatology and social services.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The question explicitly asked about OB/GYN; the answer's attribution is loose but question-driven."
+  },
+  {
+    "query_id": "q_02420",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the bleach-sterilization step for plastic gloves before disposal.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02440",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer gives 20 minutes as maximum suction duration; context's ideal max is <=15 minutes.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's technique passage explicitly says 'do not apply suction for more than 20 minutes'; the answer is supported."
+  },
+  {
+    "query_id": "q_02445",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer says Apgar is recorded at 10 minutes; the cited context passage says 1 and 5 minutes only.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Another context passage explicitly says Apgar is assessed at 1, 5, and 10 minutes; answer is actually supported."
+  },
+  {
+    "query_id": "q_02469",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits insecure-resistant behaviour on caregiver return; but context itself truncates that detail.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context is itself cut off for insecure-resistant; the omission is not the answer's fault."
+  },
+  {
+    "query_id": "q_02484",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults 'benzathine penicillin G' vs 'benzathine benzylpenicillin', which are the same drug.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Benzathine penicillin G and benzathine benzylpenicillin are the same drug; verdict is wrong."
+  },
+  {
+    "query_id": "q_02487",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults that RCOG isn't addressed; answer correctly notes context cites NICE and reports that scheme.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful to context and transparently flags the RCOG/NICE mismatch; verdict over-strict."
+  },
+  {
+    "query_id": "q_02488",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds heavy bleeding/distress under shock signs not present in the FGC context's shock entry.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context says shock signs are 'see the list above'; the additions are plausibly from that list."
+  },
+  {
+    "query_id": "q_02506",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer equates 'functional bleeding' with DUB, a synonymy not stated in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Functional and dysfunctional uterine bleeding are widely used as synonyms; mild over-strictness."
+  },
+  {
+    "query_id": "q_02518",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the time qualifier (pre-pregnancy or booking <12 weeks) for the BMI<=35 criterion.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Omitting the BMI timing qualifier is a minor incompleteness, not a hallucination."
+  },
+  {
+    "query_id": "q_02542",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer gives only preparatory steps and omits the suturing technique for cervical tear repair.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02598",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits sublingual/vaginal/buccal misoprostol routes listed in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer does mention some routes/doses; faulted mainly for incomplete route list."
+  },
+  {
+    "query_id": "q_02619",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer opens with 'I am not sure' and largely defers though context lists the relevant blood tests.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02633",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer asks clarifying questions instead of giving the contraception start/backup guidance in context.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02721",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says 'all staff' must be trained; context requires only at least one trained person per birth.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context does say all relevant professionals attend annual training; the answer's 'all staff' is close."
+  },
+  {
+    "query_id": "q_02723",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer addresses hyperstimulation faithfully but omits hypotonic contractions; context lacks that part.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context provides nothing on hypotonic contractions; omission is unavoidable, not a hallucination."
+  },
+  {
+    "query_id": "q_02728",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits initial patient-preparation steps (positioning, swabbing, bladder emptying) in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer follows the 'Preparation for vacuum' context list; the omitted steps are in a different passage."
+  },
+  {
+    "query_id": "q_02733",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says start fertility awareness at 2-4 weeks; context says wait for three normal periods.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02768",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits the core-peripheral temperature gap and predisposing factors for hyperthermia.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer content is faithful; faulted mainly for incompleteness."
+  },
+  {
+    "query_id": "q_02776",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer lists abnormal Pap smear as an endometrial biopsy indication; context does not include it.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02783",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults 'must take a test if she misses her period' vs the 7-days-late wording, a trivial paraphrase.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The answer also states the >7-days rule; the distinction is hairsplitting."
+  },
+  {
+    "query_id": "q_02865",
+    "category": "refusal",
+    "secondary": [
+      "omission"
+    ],
+    "justification": "Answer says it lacks MVA-specific guidance though context's MVA table gives ketamine 10-25 mg IV.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_02878",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says remove sutures Day 5-8; one context passage specifies Day 7.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's 5.9.3 passage explicitly says remove non-absorbable sutures between day 5 and 8; answer is supported."
+  },
+  {
+    "query_id": "q_02898",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Answer faithfully presents both early ectopic and rupture signs; Lynx faults only the blending of the two.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer separates early symptoms and rupture signs; both are in context, verdict over-strict."
+  },
+  {
+    "query_id": "q_02908",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer covers uterine size but omits uterine position, which context does not actually address.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context provides nothing on uterine position; the omission is unavoidable."
+  },
+  {
+    "query_id": "q_02918",
+    "category": "unclear",
+    "secondary": [],
+    "justification": "Lynx faults not addressing the '<5 years' time frame, but context only addresses unsafe/unhygienic abortion.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Answer is faithful to context, which gives a booster for any unsafe abortion regardless of timing."
+  },
+  {
+    "query_id": "q_02932",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says insert fingers 'downwards and backwards'; context's exam passage says upwards and backwards.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context's third passage explicitly says 'downwards and backwards direction'; context conflicts internally."
+  },
+  {
+    "query_id": "q_02990",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says normal FHR 110-160 bpm; this context passage states reassuring range 110-150 bpm.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Another context passage explicitly states FHR rate 110-160bpm; the answer is supported by it."
+  },
+  {
+    "query_id": "q_03002",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer gives 75 mg only and omits the 75-150 mg range and continuation-to-36-weeks detail.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "75 mg and the before-20-weeks timing are directly supported; faulted mainly for incompleteness."
+  },
+  {
+    "query_id": "q_03022",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Lynx claims the right-side wedge is wrong, but context explicitly recommends a wedge under the right side if supine.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Context explicitly says place a wedge under her right side if she lies supine; the answer is correct and Lynx is wrong."
+  },
+  {
+    "query_id": "q_03029",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer writes the IV rate formula with the time term multiplied rather than dividing, inverting the formula.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_03066",
+    "category": "unsupported_addition",
+    "secondary": [],
+    "justification": "Answer adds 'treated with kindness' as a charter right not present in the context's list.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The added kindness line is in a closing reminder, not presented as a numbered right; mild over-strictness."
+  },
+  {
+    "query_id": "q_03144",
+    "category": "contradiction",
+    "secondary": [],
+    "justification": "Answer says >=120 bpm is the high-risk threshold; context's high-risk threshold is >130/minute.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "The >=120 figure comes from the LCG pulse-alert table in context; the answer conflates two valid context thresholds."
+  },
+  {
+    "query_id": "q_03160",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer omits that diuretics are contraindicated, which context lists.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_03167",
+    "category": "refusal",
+    "secondary": [],
+    "justification": "Answer refuses the topic as out-of-scope though context directly answers the Mental Health Act criteria.",
+    "lynx_verdict": "sound",
+    "lynx_verdict_note": ""
+  },
+  {
+    "query_id": "q_03184",
+    "category": "omission",
+    "secondary": [],
+    "justification": "Answer covers only the hands-and-knees maneuver and omits the internal-rotation method in context.",
+    "lynx_verdict": "questionable",
+    "lynx_verdict_note": "Question asked specifically about the hands-and-knees maneuver; the answer is faithful to that part."
+  }
+]

@@ -72,5 +72,4 @@ python -m end_to_end_eval.rescore_open_v2  configs/config-v0.2.0/results/end_to_
 python -m end_to_end_eval.rescore_rubric   configs/config-v0.2.0/results/end_to_end_eval/<model>/<ts>/
 ```
 
-Results land under `configs/<config>/results/end_to_end_eval/<model>/<ts>/`. For the full
-file-layout rationale see [`docs/refactor-plan-tracks.md`](docs/refactor-plan-tracks.md).
+Results land under `configs/<config>/results/end_to_end_eval/<model>/<ts>/`.

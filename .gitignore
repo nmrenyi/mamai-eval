@@ -214,6 +214,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Claude Code local runtime state
+.claude/
+
+# Regenerable artifacts from analyze_lynx_fails extract + calibrate sample
+# — deterministic side-effects, pure dumps of code constants. Same precedent
+# as commit bbd5f2c (lynx_fails_for_review.json drop).
+configs/**/results/generator/**/lynx_fail_cases.json
+configs/**/results/generator/**/lynx_categorize_rubric.txt
+configs/**/results/generator/**/calibration_rubric.txt
+
 # macOS Finder metadata
 .DS_Store
 */.DS_Store

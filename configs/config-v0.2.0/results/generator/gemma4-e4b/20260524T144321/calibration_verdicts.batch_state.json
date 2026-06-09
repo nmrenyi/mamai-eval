@@ -1,0 +1,11 @@
+{
+  "batch_id": "batch_6a27c68426dc8190b6f0a950d3d24e77",
+  "mode": "calibrate",
+  "model": "gpt-5",
+  "reasoning_effort": "high",
+  "max_completion_tokens": 4096,
+  "input_file": "calibration_blind.json",
+  "input_file_sha256": "4115801dbccff8e06364067d4c120fa7772f7384e8c35d09f3a4a861c443c42b",
+  "n_cases": 96,
+  "submitted_at_utc": "2026-06-09T07:53:40.809354+00:00"
+}

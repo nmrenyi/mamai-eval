@@ -1,0 +1,653 @@
+[
+  {
+    "query_id": "q_02393",
+    "verdict": "PASS",
+    "reasoning": "The answer does not contradict the context and only provides information present in the context; it refuses to give a definitive recommendation, which is allowed and does not assert any false claim.",
+    "_ok": true,
+    "n_input_tokens": 879
+  },
+  {
+    "query_id": "q_01762",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 802
+  },
+  {
+    "query_id": "q_00603",
+    "verdict": "FAIL",
+    "reasoning": "The answer lists specific MEOWS components (mental state, blood pressure, output, weight, severe pain) that are not mentioned in the provided context, introducing unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 936
+  },
+  {
+    "query_id": "q_00725",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1281
+  },
+  {
+    "query_id": "q_01165",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1061
+  },
+  {
+    "query_id": "q_02783",
+    "verdict": "PASS",
+    "reasoning": "The answer restates follow-up recommendations that are present in the context (pregnancy test if period >7 days late, continue contraception, investigate abdominal pain) and does not add any unsupported claims or contradict the context; omissions are not failures.",
+    "_ok": true,
+    "n_input_tokens": 800
+  },
+  {
+    "query_id": "q_02912",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly reports the 0.5% chlorine solution and associated steps as described in the context, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1042
+  },
+  {
+    "query_id": "q_03067",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 725
+  },
+  {
+    "query_id": "q_02828",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the steps described in the context without contradicting or adding unsupported information; omissions are allowed.",
+    "_ok": true,
+    "n_input_tokens": 1204
+  },
+  {
+    "query_id": "q_01348",
+    "verdict": "PASS",
+    "reasoning": "The answer declines to answer and does not make any false or unsupported statements about the context; refusals are considered faithful.",
+    "_ok": true,
+    "n_input_tokens": 848
+  },
+  {
+    "query_id": "q_02152",
+    "verdict": "PASS",
+    "reasoning": "The response does not contradict any information in the context nor introduce unsupported claims; it merely requests clarification, which is an incomplete answer but not a faithfulness failure.",
+    "_ok": true,
+    "n_input_tokens": 1317
+  },
+  {
+    "query_id": "q_00579",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 819
+  },
+  {
+    "query_id": "q_01449",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the IV fluid regimen and catheter removal timing and conditions as given in the context, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 901
+  },
+  {
+    "query_id": "q_01434",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the symptoms and management described in the context without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 931
+  },
+  {
+    "query_id": "q_00236",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1193
+  },
+  {
+    "query_id": "q_01150",
+    "verdict": "PASS",
+    "reasoning": "The answer lists the maternal and infant signs exactly as presented in the context table and matches the guidance about observing the baby; no contradictions or unsupported claims are made.",
+    "_ok": true,
+    "n_input_tokens": 912
+  },
+  {
+    "query_id": "q_01276",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1163
+  },
+  {
+    "query_id": "q_01039",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1091
+  },
+  {
+    "query_id": "q_00180",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1356
+  },
+  {
+    "query_id": "q_01610",
+    "verdict": "PASS",
+    "reasoning": "The response declines to answer and does not contradict or add unsupported claims; refusals are considered faithful per rubric.",
+    "_ok": true,
+    "n_input_tokens": 667
+  },
+  {
+    "query_id": "q_01379",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the timing of Apgar score repeats (1, 5, and 10 minutes) and the condition that the score should increase if ≤8, and correctly notes that breastfeeding should be initiated when the mother and newborn are well/alert within the first hour, matching the provided context without adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1038
+  },
+  {
+    "query_id": "q_02201",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly states the two benefits (prevent hypothermia, promote breastfeeding) from the context and adds a general statement about importance that is consistent with the recommendation, without contradicting or introducing unsupported claims.",
+    "_ok": true,
+    "n_input_tokens": 596
+  },
+  {
+    "query_id": "q_01857",
+    "verdict": "PASS",
+    "reasoning": "All listed psychiatric symptoms appear in the provided context; the answer does not contradict or add unsupported information, merely omits some items, which is allowed.",
+    "_ok": true,
+    "n_input_tokens": 986
+  },
+  {
+    "query_id": "q_01433",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly restates the escalation criteria and management steps from the context without adding contradictory or unsupported information; omissions are allowed, so it is faithful.",
+    "_ok": true,
+    "n_input_tokens": 822
+  },
+  {
+    "query_id": "q_00147",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the predisposing factors listed in the context without adding contradictory or unsupported information; omissions are allowed.",
+    "_ok": true,
+    "n_input_tokens": 932
+  },
+  {
+    "query_id": "q_02487",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the context, noting that the classification scheme is from NICE and that RCOG is not mentioned, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 954
+  },
+  {
+    "query_id": "q_01877",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1052
+  },
+  {
+    "query_id": "q_02784",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 890
+  },
+  {
+    "query_id": "q_02186",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the management steps described in the context, without contradicting or adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1131
+  },
+  {
+    "query_id": "q_00734",
+    "verdict": "PASS",
+    "reasoning": "The answer restates the checklist items from the context without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1028
+  },
+  {
+    "query_id": "q_01660",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 745
+  },
+  {
+    "query_id": "q_00456",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the protocol details given in the context (20 IU in 1 L over 2 h, 5–10 IU bolus up to 60 IU total, and monitoring), without adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1093
+  },
+  {
+    "query_id": "q_03066",
+    "verdict": "PASS",
+    "reasoning": "The answer paraphrases the seven rights from the context without adding or contradicting any information; incompleteness is not a faithfulness failure.",
+    "_ok": true,
+    "n_input_tokens": 756
+  },
+  {
+    "query_id": "q_01910",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 839
+  },
+  {
+    "query_id": "q_02420",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 928
+  },
+  {
+    "query_id": "q_02440",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly states the maximum suction duration (≤20 minutes) and that the vacuum should be released as soon as the fetal head is delivered, both of which are directly supported by the context; no contradictions or unsupported claims are present.",
+    "_ok": true,
+    "n_input_tokens": 990
+  },
+  {
+    "query_id": "q_00507",
+    "verdict": "FAIL",
+    "reasoning": "The answer claims that obstructed labour causes coagulopathy, which is not mentioned in the provided context, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 1041
+  },
+  {
+    "query_id": "q_01736",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 823
+  },
+  {
+    "query_id": "q_01867",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately paraphrases the context, includes all key steps, and does not contradict or add unsupported information; omission of consistency is an incompleteness, not a faithfulness error.",
+    "_ok": true,
+    "n_input_tokens": 664
+  },
+  {
+    "query_id": "q_00707",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 987
+  },
+  {
+    "query_id": "q_01212",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly restates the time thresholds for arrest of cervical dilation (4 hours in active phase) and protracted fetal descent (≥2 hours in multipara, ≥3 hours in primipara) as given in the context, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 746
+  },
+  {
+    "query_id": "q_00487",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the description of asymmetrical tonic neck position from the context without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 884
+  },
+  {
+    "query_id": "q_00536",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds a recommendation to treat heavy bleeding as an emergency and to immediately escalate to a doctor, which is not mentioned in the provided context, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 1000
+  },
+  {
+    "query_id": "q_02340",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the preparation steps from the context without contradicting or adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 808
+  },
+  {
+    "query_id": "q_00679",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the equipment and labeling details described in the context without adding unsupported information or contradictions.",
+    "_ok": true,
+    "n_input_tokens": 947
+  },
+  {
+    "query_id": "q_00315",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1070
+  },
+  {
+    "query_id": "q_02626",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1098
+  },
+  {
+    "query_id": "q_00643",
+    "verdict": "PASS",
+    "reasoning": "The answer does not contradict any information in the context nor add unsupported claims; it is simply incomplete and expresses uncertainty, which is allowed under the faithfulness criteria.",
+    "_ok": true,
+    "n_input_tokens": 796
+  },
+  {
+    "query_id": "q_00897",
+    "verdict": "FAIL",
+    "reasoning": "The answer incorrectly states that the context lacks specific guidance on cannula sizing, contradicting the provided context which explicitly details size selection based on gestational age and cervical dilation.",
+    "_ok": true,
+    "n_input_tokens": 840
+  },
+  {
+    "query_id": "q_00886",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds a claim about third-stage management ('the general goal is to manage the delivery of the placenta') that is not present in the provided context, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 805
+  },
+  {
+    "query_id": "q_01121",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1020
+  },
+  {
+    "query_id": "q_00244",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 999
+  },
+  {
+    "query_id": "q_00812",
+    "verdict": "PASS",
+    "reasoning": "The answer lists exactly the contraindications for amniotomy as given in the context, with no contradictions or unsupported additions.",
+    "_ok": true,
+    "n_input_tokens": 767
+  },
+  {
+    "query_id": "q_00883",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 780
+  },
+  {
+    "query_id": "q_02289",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds an unsupported claim that tubercular meningitis can be seen in epidemics, which is not mentioned in the provided context and thus contradicts the faithfulness requirement.",
+    "_ok": true,
+    "n_input_tokens": 806
+  },
+  {
+    "query_id": "q_02044",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1015
+  },
+  {
+    "query_id": "q_00037",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds the claim that gloves should always be used when handling linen, which is not explicitly stated in the context (gloves are only mentioned for the specific case when leak‑proof bags are unavailable). This unsupported addition makes the response unfaithful to the provided document.",
+    "_ok": true,
+    "n_input_tokens": 982
+  },
+  {
+    "query_id": "q_01738",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the context, stating the same principles and intervention criteria without contradicting or adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1167
+  },
+  {
+    "query_id": "q_00508",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the context, summarizing the midwife's tasks of talking to supporters, exploring their childbirth experiences, discussing role expectations, assessing ability, and addressing negative experiences, without adding or contradicting any information.",
+    "_ok": true,
+    "n_input_tokens": 691
+  },
+  {
+    "query_id": "q_02204",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1294
+  },
+  {
+    "query_id": "q_01825",
+    "verdict": "PASS",
+    "reasoning": "The answer does not contradict any detail in the context nor introduce unsupported claims; it simply omits the specific repositioning steps, which is an incompleteness rather than a faithfulness error.",
+    "_ok": true,
+    "n_input_tokens": 1044
+  },
+  {
+    "query_id": "q_02829",
+    "verdict": "PASS",
+    "reasoning": "The answer restates the context's recommendations about a multi‑professional team, inclusion of an experienced obstetric anaesthetist, a bespoke care plan and joint training, without adding unsupported claims; omissions are allowed.",
+    "_ok": true,
+    "n_input_tokens": 658
+  },
+  {
+    "query_id": "q_01991",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1030
+  },
+  {
+    "query_id": "q_00009",
+    "verdict": "PASS",
+    "reasoning": "The answer declines to provide a treatment recommendation, which does not contradict or add unsupported information; refusals are considered faithful per the rubric.",
+    "_ok": true,
+    "n_input_tokens": 801
+  },
+  {
+    "query_id": "q_00138",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 971
+  },
+  {
+    "query_id": "q_01864",
+    "verdict": "PASS",
+    "reasoning": "The answer repeats the oral aciclovir regimen (800 mg PO five times daily for 7 days) and timing (within 24 h) and IV use for severe disease as stated in the context, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 766
+  },
+  {
+    "query_id": "q_01876",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds a third‑trimester sign ('the uterus continues to grow') that is not mentioned in the provided context, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 772
+  },
+  {
+    "query_id": "q_03144",
+    "verdict": "FAIL",
+    "reasoning": "The answer claims high‑risk heart rate is ≥120 bpm, but the context’s risk table defines high risk as >130 bpm (moderate risk 91–130 bpm). This conflicts with the provided risk thresholds, constituting a contradiction.",
+    "_ok": true,
+    "n_input_tokens": 1023
+  },
+  {
+    "query_id": "q_03121",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the prescribing and documentation requirements described in the context and does not contradict any statements; omissions are allowed and the added suggestion to consult a doctor is consistent with the context’s emphasis on seeking supervision.",
+    "_ok": true,
+    "n_input_tokens": 1110
+  },
+  {
+    "query_id": "q_03129",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly states that polyglycolic sutures are preferred, matching the context and not adding unsupported claims.",
+    "_ok": true,
+    "n_input_tokens": 829
+  },
+  {
+    "query_id": "q_00482",
+    "verdict": "PASS",
+    "reasoning": "The answer paraphrases the context accurately, includes no contradictory statements or unsupported additions, and omits only non-essential details, which is allowed.",
+    "_ok": true,
+    "n_input_tokens": 677
+  },
+  {
+    "query_id": "q_01515",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the context's definitions and interpretation of early decelerations; it omits some classification categories but omission is not a faithfulness failure.",
+    "_ok": true,
+    "n_input_tokens": 953
+  },
+  {
+    "query_id": "q_00154",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds a claim that heavy bleeding is an emergency and advises escalation to a doctor, which is not mentioned in the provided guideline, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 921
+  },
+  {
+    "query_id": "q_01140",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 830
+  },
+  {
+    "query_id": "q_01124",
+    "verdict": "PASS",
+    "reasoning": "The answer does not contradict the provided guidelines nor introduce unsupported claims; it simply requests missing clinical details, which is an incomplete but faithful response.",
+    "_ok": true,
+    "n_input_tokens": 1324
+  },
+  {
+    "query_id": "q_00647",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately restates the baseline rate (110‑160 bpm), baseline variability ranges, and acceleration criteria (≥15 bpm for ≥15 seconds) as given in the context, without adding contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1352
+  },
+  {
+    "query_id": "q_00416",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 743
+  },
+  {
+    "query_id": "q_00535",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately summarizes the cleaning and sterilization instructions from the context without contradicting any details or adding unsupported claims.",
+    "_ok": true,
+    "n_input_tokens": 1052
+  },
+  {
+    "query_id": "q_00868",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds that having two or more previous caesarean sections is a risk factor, which is not stated in the provided context; this is an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 866
+  },
+  {
+    "query_id": "q_01454",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately summarizes the principles described in the context—supportive companionship, communication, anxiety‑relief techniques, and basic care—without contradicting or adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1048
+  },
+  {
+    "query_id": "q_01450",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately lists the warning signs (baby sideways, unusual bleeding, fetal heart rate <100) that the context says require medical help, without contradicting or adding unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 889
+  },
+  {
+    "query_id": "q_03061",
+    "verdict": "PASS",
+    "reasoning": "The answer accurately reflects the steps described in the context without adding unsupported information or contradicting any details.",
+    "_ok": true,
+    "n_input_tokens": 941
+  },
+  {
+    "query_id": "q_00338",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1451
+  },
+  {
+    "query_id": "q_01325",
+    "verdict": "PASS",
+    "reasoning": "The answer lists the indications for episiotomy that are present in the context and does not contradict any statements; it simply omits timing details, which is an incompleteness, not a faithfulness error.",
+    "_ok": true,
+    "n_input_tokens": 1048
+  },
+  {
+    "query_id": "q_00761",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 857
+  },
+  {
+    "query_id": "q_01194",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds that pre‑eclampsia requires two consecutive elevated blood pressure readings 15–30 minutes apart, a condition only mentioned for first‑stage labour and not present in the stage‑2 context, making it an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 881
+  },
+  {
+    "query_id": "q_02484",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1055
+  },
+  {
+    "query_id": "q_01920",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 720
+  },
+  {
+    "query_id": "q_00318",
+    "verdict": "PASS",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1129
+  },
+  {
+    "query_id": "q_01782",
+    "verdict": "FAIL",
+    "reasoning": "...",
+    "_ok": true,
+    "n_input_tokens": 1050
+  },
+  {
+    "query_id": "q_00833",
+    "verdict": "FAIL",
+    "reasoning": "The answer adds a recommendation to manage under doctor guidance, which is not present in the context, constituting an unsupported addition.",
+    "_ok": true,
+    "n_input_tokens": 1093
+  },
+  {
+    "query_id": "q_01036",
+    "verdict": "PASS",
+    "reasoning": "The answer correctly restates the context's details on incision start, angle, technique, and analgesia without contradicting or adding unsupported information; omissions of side direction are not contradictions.",
+    "_ok": true,
+    "n_input_tokens": 1109
+  },
+  {
+    "query_id": "q_02721",
+    "verdict": "PASS",
+    "reasoning": "The answer restates preparation steps that are present in the context (training, equipment check, assistance plan, minimizing mother‑baby separation) and does not introduce any contradictory or unsupported information.",
+    "_ok": true,
+    "n_input_tokens": 1147
+  }
+]

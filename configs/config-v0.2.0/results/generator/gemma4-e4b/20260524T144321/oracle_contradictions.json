@@ -1,0 +1,258 @@
+{
+  "confirmed": [
+    {
+      "query_id": "q_00459",
+      "query_text": "How should high-dose emergency contraceptive pills be dosed and managed if vomiting occurs?",
+      "topic": "time window for re-dosing emergency contraceptive pills after vomiting",
+      "passage_A": "If a woman vomits within 3 hours of taking the pills, she should take the same dose again.",
+      "passage_B": "If the woman vomits within 2 hours after taking progestin-only or combined ECPs, she should take another dose.",
+      "conflict": "A says re-dose if vomiting occurs within 3 hours of ECPs; B says re-dose if vomiting occurs within 2 hours of progestin-only or combined ECPs (which include the high-dose 50-mcg pills described in the same context).",
+      "answer_excerpt": "If the woman vomits within **2 hours** after taking the pills, she should take the same dose again."
+    },
+    {
+      "query_id": "q_00474",
+      "query_text": "What is the adrenaline dosage and route for allergic shock?",
+      "topic": "adrenaline dose and route for allergic shock / anaphylaxis",
+      "passage_A": "inject 1:1000, 0.5 ml adrenaline ......................................under the skin, 1 time only (subcutaneous injection)",
+      "passage_B": "Administer adrenaline 0.3–0.5 mg IM immediately, and repeat every 10 to 15 minutes, as needed.",
+      "conflict": "A says allergic shock takes 0.5 ml of 1:1000 adrenaline subcutaneously, one time only; B says anaphylaxis takes 0.3–0.5 mg IM with repeats every 10–15 min. Allergic shock and anaphylaxis are the same clinical entity.",
+      "answer_excerpt": "inject **adrenaline** 0.3–0.5 mg **IM** (intramuscularly).\n*   You can repeat this every 10 to 15 minutes, as needed."
+    },
+    {
+      "query_id": "q_00560",
+      "query_text": "At what cervical dilation should partograph plotting commence?",
+      "topic": "cervical dilation defining onset of active phase / start of partograph plotting",
+      "passage_A": "The active phase of the first stage of labour starts when the cervix is 4 cm dilated",
+      "passage_B": "Documentation on the LCG of the well-being of the woman and her baby as well as progression of labour should be initiated when the woman enters active phase of the first stage of labour (5 cm or more cervical dilatation)",
+      "conflict": "A defines active phase (and partograph plotting trigger) as 4 cm dilatation; B defines it as 5 cm or more.",
+      "answer_excerpt": "This is when cervical dilatation reaches **5 cm** or more."
+    },
+    {
+      "query_id": "q_00761",
+      "query_text": "How long after birth is a placenta considered retained?",
+      "topic": "time threshold for diagnosing retained placenta / prolonged third stage",
+      "passage_A": "The students should remember that the placenta is retained if it has not been delivered within one hour of the delivery of the baby.",
+      "passage_B": "Diagnose a prolonged third stage of labour if it is not completed within 30 minutes of the birth with active management or within 60 minutes of the birth with physiological management.",
+      "conflict": "A says the placenta is retained after one hour regardless of management; B says the cut-off is 30 minutes with active management and 60 minutes with physiological management.",
+      "answer_excerpt": "*   **30 minutes** with **active management**.\n*   **60 minutes** with **physiological management**."
+    },
+    {
+      "query_id": "q_00780",
+      "query_text": "What are the indications and precautions for total breech extraction of the second twin?",
+      "topic": "indication of total breech extraction for a cephalic second twin",
+      "passage_A": "Total breech extraction should be used only for a non-cephalic second twin",
+      "passage_B": "Delivery of a second twin in cephalic presentation or transverse lie: version to bring the foetus into the breech position and allow a total breech extraction",
+      "conflict": "A says total breech extraction is for non-cephalic second twins only; B says cephalic-presentation second twin is an indication (after internal version to breech).",
+      "answer_excerpt": "The second twin is in a **cephalic presentation**."
+    },
+    {
+      "query_id": "q_00846",
+      "query_text": "What Bishop's score thresholds define favorable and unfavorable cervix for induction?",
+      "topic": "Bishop's score cut-off defining an unfavourable / favourable cervix",
+      "passage_A": "An unfavourable cervix (for induction of labour) has a Bishop's score of 4 or less, whereas women whose cervices have a score of 8 or more have the same chance of vaginal delivery as someone who went into spontaneous labour",
+      "passage_B": "The cervix is considered ripe, that is, favourable to induction, if the score is 6 or greater.",
+      "conflict": "A defines unfavourable as ≤4 and favourable as ≥8; B defines favourable as ≥6 (with unfavourable <6 per the surrounding text).",
+      "answer_excerpt": "A score of **6 or greater** is considered **favorable** for induction."
+    },
+    {
+      "query_id": "q_00919",
+      "query_text": "When should antihypertensive medication be started for essential hypertension in pregnancy?",
+      "topic": "blood-pressure threshold for starting antihypertensive treatment in pregnancy",
+      "passage_A": "Treatment is administered if systolic blood pressure is ≥ 160 mmHg or if diastolic blood pressure is ≥ 110 mmHg.",
+      "passage_B": "Antihypertensive drugs may be prescribed if the diastolic blood pressure exceeds 100 mmHg (RCOG 2006, Sibai 1991).",
+      "conflict": "A gives the BP threshold for starting antihypertensives as ≥160 systolic or ≥110 diastolic; B (specifically discussing essential / chronic hypertension management) gives the threshold as diastolic >100 mmHg.",
+      "answer_excerpt": "antihypertensive medications if the diastolic blood pressure exceeds **100 mmHg**"
+    },
+    {
+      "query_id": "q_01224",
+      "query_text": "When should induction of labor be considered for clients with gestational diabetes?",
+      "topic": "gestational age at which to consider induction of labour in GDM",
+      "passage_A": "If well-controlled blood sugars and no other problems, can wait until 40 weeks' gestation to consider induction of labor (ACOG, 2001b)",
+      "passage_B": "Advise women with gestational diabetes to give birth no later than 40+6 weeks, and offer elective birth (by induction of labour, or by Caesarean section if indicated) to women who have not given birth by this time.",
+      "conflict": "A says consider induction by 40 weeks for well-controlled GDM (ACOG); B says no later than 40+6 weeks (NICE-style guidance) — different gestational cut-offs for the same scenario.",
+      "answer_excerpt": "you may wait until **40 weeks** gestation to consider induction of labor."
+    },
+    {
+      "query_id": "q_01447",
+      "query_text": "What are the partograph recording intervals and fetal heart rate distress thresholds?",
+      "topic": "fetal heart-rate recording interval during the first stage of labour",
+      "passage_A": "Count the fetal heart rate for a full minute at least once every hour during the latent phase, once every 30 minutes during the active phase and every five minutes during the second stage.",
+      "passage_B": "The fetal heart rate is recorded at the top of the partograph. It is recorded every half hour in the first stage of labour, but more frequently at the end of the first stage and in the second stage.",
+      "conflict": "A gives phase-specific FHR intervals (hourly latent, 30 min active, 5 min second stage); B says every half hour throughout the first stage — different intervals for the same phase (latent specifically).",
+      "answer_excerpt": "During the **first stage** of labour: Record the FHR every **half hour**."
+    },
+    {
+      "query_id": "q_02218",
+      "query_text": "What neonatal weight loss percentage requires feeding investigation and maternal support?",
+      "topic": "neonatal weight-loss percentage that should trigger feeding investigation",
+      "passage_A": "Weight loss of >7% in the first week of life is an indication of possible insufficient milk intake32 and weight loss of >10% should be a cause for concern.",
+      "passage_B": "If a baby loses more than 10% of their birth weight in the early days of life, measure their weight again at appropriate intervals depending on the level of concern",
+      "conflict": "A treats >7% as the trigger for concern about insufficient milk intake; B (NICE) treats >10% as the threshold for re-measurement and intervention.",
+      "answer_excerpt": "A weight loss of **more than 7%** in the first week of life is a sign that milk intake might be low. This needs feeding investigation."
+    },
+    {
+      "query_id": "q_02878",
+      "query_text": "When should post-operative dressings and non-absorbable skin sutures be removed?",
+      "topic": "timing for removal of non-absorbable skin sutures after surgery",
+      "passage_A": "For non-absorbable sutures: remove the stitches between the 5 and 8 day",
+      "passage_B": "Remove skin sutures (if not absorbable) on D7.",
+      "conflict": "A says remove non-absorbable sutures between day 5 and day 8; B says remove them on day 7. Recurs verbatim from v0.1.0 q_02878.",
+      "answer_excerpt": "Remove the sutures between **Day 5 and Day 8**."
+    },
+    {
+      "query_id": "q_02932",
+      "query_text": "What is the correct procedure for inserting fingers during a vaginal examination?",
+      "topic": "direction of finger insertion during vaginal examination",
+      "passage_A": "gently introduce lubricated fingers in downward and backward direction",
+      "passage_B": "insert them very gently into the vagina, following the direction of the vagina, upwards and backwards",
+      "conflict": "A says insert the examining fingers downward and backward; B says insert them upwards and backwards — directly opposite vertical directions for the same step.",
+      "answer_excerpt": "Gently insert the fingers into the vagina. They should move **upwards and backwards**, following the direction of the vagina."
+    },
+    {
+      "query_id": "q_03002",
+      "query_text": "What is the recommended aspirin dosage and timing for secondary prophylaxis of severe pre-eclampsia?",
+      "topic": "duration of aspirin secondary prophylaxis for pre-eclampsia",
+      "passage_A": "acetylsalicylic acid** PO: 75 to 150 mg once daily starting at 12 weeks LMP and continuing until 36 weeks LMP reduces the risk of recurrence during the next pregnancy",
+      "passage_B": "Give 75 mg to every pregnant woman at risk of developing pre-eclampsia from 12 weeks until delivery.",
+      "conflict": "A says continue aspirin from 12 weeks until 36 weeks LMP; B says from 12 weeks until delivery — different stop-points for the same prophylactic regimen.",
+      "answer_excerpt": "**Continuation:** It continues until the baby is born."
+    },
+    {
+      "query_id": "q_03024",
+      "query_text": "How should an infant be positioned and suctioned during initial neonatal resuscitation?",
+      "topic": "head position of the neonate during initial resuscitation",
+      "passage_A": "The baby is placed on its back, on the resuscitaire, with its head facing downwards.",
+      "passage_B": "Lay the neonate on the back with the head in a neutral position (Figure 10.1); avoid flexion or hyperextension of the neck, as this can obstruct the airway.",
+      "conflict": "A says the head should face downwards; B says the head should be in a neutral position, avoiding flexion or hyperextension. The 'downwards' wording in A contradicts both B and A's own later sentence about the neutral position.",
+      "answer_excerpt": "The head should face **downwards**."
+    },
+    {
+      "query_id": "q_03090",
+      "query_text": "What is the recommended dosage and route for ergometrine in postpartum hemorrhage?",
+      "topic": "intravenous ergometrine dose for postpartum haemorrhage",
+      "passage_A": "I M / I V: 0. 2 m g",
+      "passage_B": "Intravenous ergometrine 0.25–0.5 mg",
+      "conflict": "A (the dosing table) gives ergometrine IM/IV as 0.2 mg; B (the prose IV section) gives the IV dose as 0.25–0.5 mg — different IV doses for the same drug and indication.",
+      "answer_excerpt": "**Intravenous (I V):** **0.2 mg** initially"
+    },
+    {
+      "query_id": "q_03144",
+      "query_text": "What heart rate values indicate high versus moderate risk in pregnant patients?",
+      "topic": "maternal heart-rate threshold for high-risk / alert",
+      "passage_A": "Heart rate | >130 /minute",
+      "passage_B": "Alert: <60, ≥120",
+      "conflict": "A places the high-risk maternal heart-rate threshold at >130 /min; B (the LCG pulse table) places the alert threshold at ≥120 bpm — different cut-offs for the same alert.",
+      "answer_excerpt": "**High Risk (Alert):** If the pulse is **$\\ge 120$ beats/minute**."
+    }
+  ],
+  "excluded": [
+    {
+      "query_id": "q_00075",
+      "reason": "Lynx misread context: context explicitly lists antepartum haemorrhage and massive PPH among triggers of coagulopathy; no contradiction."
+    },
+    {
+      "query_id": "q_00137",
+      "reason": "Model hallucination of absence: answer claims no protocol listed when context has a detailed rapid HIV testing algorithm."
+    },
+    {
+      "query_id": "q_00262",
+      "reason": "Model invented indication: Gemma's 'when CS cannot be performed' phrasing is not substring-verifiable in context."
+    },
+    {
+      "query_id": "q_00397",
+      "reason": "Same passage gives nuanced 'Pregnancy Category D not recommended' alongside dosing-if-used; one passage with a caveat, not two conflicting passages."
+    },
+    {
+      "query_id": "q_00576",
+      "reason": "Paraphrase, not clinically distinct: 'anyone who is sick' vs context's 'anyone with a health problem' is a single source phrase paraphrased by Gemma."
+    },
+    {
+      "query_id": "q_00748",
+      "reason": "Two figures describe different things (17/100 common use vs 16/100 correct use); the 83% Gemma cited is from common-use data misapplied to correct-use, not a self-contradicting fact."
+    },
+    {
+      "query_id": "q_00911",
+      "reason": "Lynx misread answer: Gemma's answer actually states 32 weeks for the placenta scan, matching the context. No contradiction."
+    },
+    {
+      "query_id": "q_00985",
+      "reason": "Different clinical moments: 'blow hard and fast' is for stopping pushing before crowning; 'blow gently / sigh' is at crowning. Context is consistent."
+    },
+    {
+      "query_id": "q_01446",
+      "reason": "Context consistently says MSV pivots upwards; Gemma misattributed mechanism to the wrong manoeuvre. No context conflict."
+    },
+    {
+      "query_id": "q_01491",
+      "reason": "Gemma misattributed '>4 births' (a hemorrhage risk factor in context) to uterine rupture; the rupture attribution is not substring-verifiable in context."
+    },
+    {
+      "query_id": "q_01529",
+      "reason": "Different scenarios: 'turn on back, displace uterus' is generic unresponsive/CPR airway; 'left lateral' is eclampsia-fit specific. Not the same clinical situation."
+    },
+    {
+      "query_id": "q_01576",
+      "reason": "Lynx misread: context's 'posterior fontanelle—that is, anteriorly for occiput anterior presentations' is consistent with Gemma's answer; no conflict."
+    },
+    {
+      "query_id": "q_01628",
+      "reason": "Model fabricated alternate method: context only describes urinating directly on the strip; 'collect and dip' is not in context."
+    },
+    {
+      "query_id": "q_01641",
+      "reason": "Model hallucination: answer says dexamethasone IV; context consistently states IM (two passages, both IM). Not a context self-contradiction."
+    },
+    {
+      "query_id": "q_01894",
+      "reason": "Paraphrase ('within one week of' vs 'within a week after') with the same clinical meaning; Lynx flagged a non-conflict."
+    },
+    {
+      "query_id": "q_02021",
+      "reason": "Model confused wet/dry: context says wet with water, dry with paper towel; Gemma wrote wet with paper towel. Not a context conflict."
+    },
+    {
+      "query_id": "q_02074",
+      "reason": "Different sub-scenarios: 'upright between breasts' is for VLBW/preterm transfer; 'prone on abdomen' is the biological-nurturing breastfeeding position. Not the same clinical fact."
+    },
+    {
+      "query_id": "q_02221",
+      "reason": "Model mangled the formula (multiplication vs division of time); context has a single consistent formula. No self-contradiction."
+    },
+    {
+      "query_id": "q_02322",
+      "reason": "Model failure to extract: context recommends acupuncture for early nausea but Gemma claims no info. Single source, no conflict."
+    },
+    {
+      "query_id": "q_02323",
+      "reason": "Model conflated two distinct techniques (internal shoulder push vs Gaskin roll). Context separates them; no self-contradiction."
+    },
+    {
+      "query_id": "q_02394",
+      "reason": "Context is consistent: 'private transport' (with another driver) and 'should not drive herself' are compatible. Gemma omitted the 'not drive herself' detail; not a conflict."
+    },
+    {
+      "query_id": "q_02427",
+      "reason": "Lynx misread: Gemma's 'below -20°C' matches context's 'stored below -20°C' verbatim. No conflict."
+    },
+    {
+      "query_id": "q_02612",
+      "reason": "Different scenarios: general allergic shock (50 mg IM) vs anaphylactic shock from mismatched blood transfusion (10 mg IV). Sub-scenario, not contradictory facts about one fact."
+    },
+    {
+      "query_id": "q_02811",
+      "reason": "Paraphrase ('two times' vs 'two servings'); Lynx admits the issue is restating, not contradiction."
+    },
+    {
+      "query_id": "q_02856",
+      "reason": "Terminology variation ('name bands' vs 'identification labels') for the same item with the same daily-check procedure. Not a clinical conflict."
+    },
+    {
+      "query_id": "q_02862",
+      "reason": "Model hallucinated threshold: Gemma's '≤4 at 5 minutes' is not substring-verifiable; context has '<5 at 5 minutes' and '≤6 at 5 minutes' but not Gemma's value."
+    },
+    {
+      "query_id": "q_02899",
+      "reason": "Model misstated indication: Gemma's 'babies who are not breathing' is not in context; context consistently says 'do not require positive-pressure ventilation'."
+    }
+  ]
+}
