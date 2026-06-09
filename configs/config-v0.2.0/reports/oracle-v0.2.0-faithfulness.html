@@ -44,32 +44,45 @@
   .meta { color: var(--fg-soft); font-size: 13px; margin: 0 0 4px; }
   .lede { color: var(--fg-soft); margin-top: 6px; font-size: 15px; }
 
-  /* Headline number */
+  /* Headline number — plain but emphasized via thick top rule + tabular alignment */
   .headline {
     margin: 24px 0 8px;
-    padding: 22px 28px;
-    background: linear-gradient(90deg, var(--warn-soft), #fff);
+    padding: 18px 22px 16px;
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--warn);
-    border-radius: 6px;
+    border-top: 3px solid var(--fg);
+    border-radius: 4px;
     display: flex;
     align-items: baseline;
-    gap: 16px;
+    gap: 20px;
     flex-wrap: wrap;
   }
-  .headline .value {
-    font-size: 44px;
-    font-weight: 600;
-    color: var(--warn);
-    line-height: 1;
+  .headline .pre-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-soft);
+    width: 100%;
+    margin-bottom: 4px;
   }
-  .headline .label { font-size: 15px; }
+  .headline .value {
+    font-size: 38px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .headline .label { font-size: 14px; color: var(--fg-soft); }
   .headline .secondary {
     margin-left: auto;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--fg-soft);
     text-align: right;
+    border-left: 1px solid var(--border);
+    padding-left: 16px;
+    line-height: 1.6;
   }
+  .headline .secondary strong { color: var(--fg); }
 
   /* Tables */
   table { border-collapse: collapse; width: 100%; margin: 8px 0 16px; font-size: 14px; }
@@ -177,16 +190,17 @@
 </header>
 
 <div class="headline">
+  <div class="pre-label">Headline result</div>
   <span class="value">9.05%</span>
   <div>
     <div class="label">calibrated true-hallucination rate</div>
-    <small>≈ 271 of 2,989 responses estimated unfaithful under the strict §3.1 definition (contradiction or unsupported addition only).</small>
+    <small>≈ 271 of 2,989 responses estimated unfaithful under the strict §3.1 definition (contradiction or unsupported addition only). 95% CI on the underlying Lynx miss rate is wide (§4.4); the band on this point estimate is roughly 3–17%.</small>
   </div>
   <div class="secondary">
     <strong>Three rates in this report</strong><br>
-    <strong>5.82%</strong> raw Lynx FAIL <small>(174/2,989, uncorrected)</small><br>
-    <strong>2.51%</strong> categorized <small>(75/2,989, FAILs that are real hallucinations: contradiction + unsupported addition)</small><br>
-    <strong>9.05%</strong> calibrated <small>(271/2,989, full pop incl. Lynx misses)</small>
+    <strong>5.82%</strong> raw Lynx FAIL <small>(174 / 2,989, uncorrected)</small><br>
+    <strong>2.51%</strong> categorized <small>(75 / 2,989, FAILs that are real hallucinations: contradiction + unsupported addition)</small><br>
+    <strong>9.05%</strong> calibrated <small>(271 / 2,989, full population incl. Lynx misses)</small>
   </div>
 </div>
 
