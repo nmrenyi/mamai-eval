@@ -360,6 +360,7 @@
 
 <p><strong>Net adherence across all 16 gpt-5-FAIL verdicts in the calibration sample: 16/16 are rubric-defensible.</strong> The earlier gpt-oss-120b attempt drifted heavily on exactly the cases the rubric prescribes PASS (called FAIL on refusals, omissions, clarification questions) — gpt-5 does not. This is the direct evidence that the v0.2.0 calibrated rate isn't contaminated by the same judge-side rubric drift that disqualified gpt-oss.</p>
 <p><small>Sample sizes (10 per FAIL-bucket, 6 for unclear, 50 for the PASS stratum) are too small for precise per-category precision estimates but large enough to detect systematic rubric drift — which is what this audit is testing.</small></p>
+<p><small><strong>Caveat — gpt-5 examining gpt-5.</strong> The 12 Lynx-FAIL bucket labels in the chart are from gpt-5's own categorize step on v0.2.0. The 4 Lynx-PASS rubric categories in the mini-table were assigned manually by a Claude reader of gpt-5's verdict reasoning. So this whole section is closer to a <em>self-consistency check</em> on gpt-5 than an independent audit — a clinician or different-family LLM would be required for that. The signal is illustrative (gpt-5's verdicts are internally consistent with the rubric it was given), not load-bearing on the headline rate.</small></p>
 
 <h3>4.4 Population estimate</h3>
 <div class="stat" style="max-width: 540px;">
