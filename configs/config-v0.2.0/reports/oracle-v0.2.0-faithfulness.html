@@ -342,8 +342,24 @@
   </div>
 </div>
 
-<p>The bottom three rows are the load-bearing evidence: <strong>omission 0/10, refusal 1/10, unclear 0/6</strong> — gpt-5 followed the rubric 25 of 26 times where the rubric explicitly prescribes PASS. The earlier gpt-oss-120b attempt drifted heavily on exactly these cases (called FAIL on refusals, omissions, etc.) — gpt-5 does not. This is the direct evidence that the v0.2.0 calibrated rate isn't contaminated by the same judge-side rubric drift that disqualified gpt-oss.</p>
-<p><small>Sample sizes (10 per bucket, 6 for unclear) are too small for precise per-category precision estimates but large enough to detect systematic rubric drift — which is what this audit is testing.</small></p>
+<p>The bottom three rows above are the load-bearing evidence: <strong>omission 0/10, refusal 1/10, unclear 0/6</strong> — gpt-5 followed the rubric 25 of 26 times where the rubric explicitly prescribes PASS. The one refusal-bucket case it confirmed as FAIL (q_02315) is a hybrid: the answer begins with a refusal but then introduces general benefits not in the context — gpt-5's stated reasoning correctly cites the unsupported addition, making the FAIL verdict rubric-defensible.</p>
+
+<p>For completeness, the 4 cases gpt-5 FAILed but Lynx PASSed (Lynx-PASS stratum, no Lynx-category to bucket against):</p>
+<table>
+  <thead>
+    <tr><th>query_id</th><th>gpt-5 reasoning (excerpt)</th><th>Rubric category</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>q_02736</code></td><td>"introduces unsupported transfer criteria (abdominal distension, coma)"</td><td>unsupported_addition</td></tr>
+    <tr><td><code>q_02533</code></td><td>"instructs to observe the infant for postpartum hemorrhage; context says mother"</td><td>contradiction</td></tr>
+    <tr><td><code>q_00471</code></td><td>"advises reattempting breaths immediately; context says after next compressions"</td><td>contradiction</td></tr>
+    <tr><td><code>q_00649</code></td><td>"hat on the mother's head; context: hat is for baby"</td><td>unsupported_addition</td></tr>
+  </tbody>
+</table>
+<p>All 4 cite contradiction or unsupported_addition — none cite incompleteness or refusal. Rubric-following on every one.</p>
+
+<p><strong>Net adherence across all 16 gpt-5-FAIL verdicts in the calibration sample: 16/16 are rubric-defensible.</strong> The earlier gpt-oss-120b attempt drifted heavily on exactly the cases the rubric prescribes PASS (called FAIL on refusals, omissions, clarification questions) — gpt-5 does not. This is the direct evidence that the v0.2.0 calibrated rate isn't contaminated by the same judge-side rubric drift that disqualified gpt-oss.</p>
+<p><small>Sample sizes (10 per FAIL-bucket, 6 for unclear, 50 for the PASS stratum) are too small for precise per-category precision estimates but large enough to detect systematic rubric drift — which is what this audit is testing.</small></p>
 
 <h3>4.4 Population estimate</h3>
 <div class="stat" style="max-width: 540px;">
