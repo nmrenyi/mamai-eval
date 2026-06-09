@@ -113,6 +113,12 @@ Wrap the JSON in a ```json ... ``` fence.
 class JudgeSpec:
     provider: str
     model: str
+    # Per-judge config: temperature and extra_body inherit from top-level
+    # judge config in params.json (see shared/prompts.JUDGE_ENSEMBLE), so the
+    # pinned reasoning_effort actually reaches the served model — previously
+    # extra_body was dropped at the dispatch boundary.
+    temperature: float = 0.0
+    extra_body: dict | None = None
 
 
 def _api_key(env_var: str, key_file_env: str | None = None) -> str | None:
@@ -126,26 +132,36 @@ def _api_key(env_var: str, key_file_env: str | None = None) -> str | None:
     return None
 
 
-def _call_openai(model: str, prompt: str, temperature: float) -> str:
+def _call_openai(model: str, prompt: str, temperature: float,
+                 extra_body: dict | None = None) -> str:
     from openai import OpenAI
     client = OpenAI()
-    result = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=temperature,
-    )
+    kwargs: dict = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": temperature,
+    }
+    if extra_body:
+        # OpenAI SDK forwards extra_body into the HTTP request body verbatim —
+        # how reasoning_effort etc. reaches the served model.
+        kwargs["extra_body"] = extra_body
+    result = client.chat.completions.create(**kwargs)
     return (result.choices[0].message.content or "").strip()
 
 
-def _call_anthropic(model: str, prompt: str, temperature: float) -> str:
+def _call_anthropic(model: str, prompt: str, temperature: float,
+                    extra_body: dict | None = None) -> str:
     import anthropic
     client = anthropic.Anthropic()
-    result = client.messages.create(
-        model=model,
-        max_tokens=4096,
-        temperature=temperature,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    kwargs: dict = {
+        "model": model,
+        "max_tokens": 4096,
+        "temperature": temperature,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    if extra_body:
+        kwargs["extra_body"] = extra_body
+    result = client.messages.create(**kwargs)
     parts = []
     for block in result.content:
         text = getattr(block, "text", None)
@@ -154,7 +170,12 @@ def _call_anthropic(model: str, prompt: str, temperature: float) -> str:
     return "\n".join(parts).strip()
 
 
-def _call_google(model: str, prompt: str, temperature: float) -> str:
+def _call_google(model: str, prompt: str, temperature: float,
+                 extra_body: dict | None = None) -> str:
+    # google-genai has no generic extra_body equivalent; accept the kwarg for
+    # signature parity with the dispatch table but ignore it here. Callers
+    # using Gemini judges need to push reasoning kwargs into generation_config
+    # via a future override path.
     try:
         from google import genai
         client = genai.Client()
@@ -273,8 +294,13 @@ def _question_text(q) -> str:
 
 
 def _judge_row(spec: JudgeSpec, question, reference: str, key_facts: list[str],
-               response: str, temperature: float, max_retries: int = 3) -> dict:
-    """Run a single judge on a single row, with exponential-backoff retry."""
+               response: str, max_retries: int = 3) -> dict:
+    """Run a single judge on a single row, with exponential-backoff retry.
+
+    temperature + extra_body come from the spec (which inherits its defaults
+    from the top-level judge config in params.json — see
+    shared/prompts.JUDGE_ENSEMBLE).
+    """
     prompt = JUDGE_PROMPT.format(
         question=_question_text(question),
         reference=reference,
@@ -289,7 +315,7 @@ def _judge_row(spec: JudgeSpec, question, reference: str, key_facts: list[str],
     last_err = None
     for attempt in range(max_retries):
         try:
-            raw = dispatch(spec.model, prompt, temperature)
+            raw = dispatch(spec.model, prompt, spec.temperature, spec.extra_body)
             parsed = _parse_judge_output(raw, key_facts)
             return {"provider": spec.provider, "model": spec.model,
                     "error": None, "output": parsed}
@@ -439,11 +465,16 @@ def _load_judge_specs(judges_override: str | None) -> list[JudgeSpec]:
         cfg = JUDGE_ENSEMBLE
     specs = []
     for entry in cfg or []:
-        specs.append(JudgeSpec(provider=entry["provider"], model=entry["model"]))
+        specs.append(JudgeSpec(
+            provider=entry.get("provider", "openai"),
+            model=entry["model"],
+            temperature=entry.get("temperature", 0.0),
+            extra_body=entry.get("extra_body"),
+        ))
     return specs
 
 
-def rescore_file(path: Path, specs: list[JudgeSpec], temperature: float,
+def rescore_file(path: Path, specs: list[JudgeSpec],
                  dry_run: bool) -> dict | None:
     data = json.loads(path.read_text())
     if not is_open_result(data):
@@ -467,7 +498,7 @@ def rescore_file(path: Path, specs: list[JudgeSpec], temperature: float,
         reference = r.get("reference", "")
         key_facts = r.get("key_facts", []) or []
         response = r.get("model_response", "")
-        outputs = [_judge_row(s, question, reference, key_facts, response, temperature)
+        outputs = [_judge_row(s, question, reference, key_facts, response)
                    for s in specs]
         aggregate = _aggregate(outputs, key_facts)
         return idx, {"judges": outputs, "aggregate": aggregate}
@@ -524,8 +555,9 @@ def main():
                              "ensemble is read from configs/<config>/params.json)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Preview unjudged-row counts without calling any API")
-    parser.add_argument("--temperature", type=float, default=0.0,
-                        help="Judge sampling temperature (default: 0.0)")
+    parser.add_argument("--temperature", type=float, default=None,
+                        help="Judge sampling temperature. Default: config-pinned "
+                             "value (params.json judge.temperature) if set, else 0.0.")
     parser.add_argument("--judges-override", default=None,
                         help="JSON file or inline JSON overriding params.json judge ensemble")
     parser.add_argument("paths", nargs="*", help="Files or directories to score")
@@ -536,9 +568,17 @@ def main():
     if not specs:
         print("ERROR: no judges configured. Set params.json judge.ensemble or pass --judges-override.")
         sys.exit(1)
+    # Apply CLI --temperature override on top of config-pinned per-spec values.
+    # Same default=None sentinel trick as rescore_rubric.py so the equals-form
+    # (`--temperature=0.2`) detects correctly.
+    if args.temperature is not None:
+        specs = [JudgeSpec(provider=s.provider, model=s.model,
+                            temperature=args.temperature, extra_body=s.extra_body)
+                 for s in specs]
     print(f"Judge ensemble ({len(specs)}):")
     for s in specs:
-        print(f"  - {s.provider}: {s.model}")
+        extras = f" extra_body={s.extra_body}" if s.extra_body else ""
+        print(f"  - {s.provider}: {s.model} (temperature={s.temperature}){extras}")
 
     default_root = Path(__file__).parent / "configs"
     roots = [Path(p) for p in args.paths] if args.paths else [default_root]
@@ -548,7 +588,7 @@ def main():
     updated = []
     for f in files:
         try:
-            summary = rescore_file(f, specs, args.temperature, dry_run=args.dry_run)
+            summary = rescore_file(f, specs, dry_run=args.dry_run)
         except Exception as e:
             print(f"  ERROR {f}: {e}")
             continue
