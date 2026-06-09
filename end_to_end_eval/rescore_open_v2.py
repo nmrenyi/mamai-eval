@@ -153,6 +153,36 @@ def _api_key(env_var: str, key_file_env: str | None = None) -> str | None:
 # downstream verdict file has a full audit trail of the judge's actual
 # reasoning, not just the visible JSON output. For providers that don't expose
 # internal reasoning (cloud OpenAI, Gemini), reasoning_content is None.
+def _extract_reasoning_content(msg) -> str | None:
+    """Pull reasoning_content from a chat message, trying multiple SDK paths.
+
+    vLLM (with reasoning_parser='openai_gptoss') emits `reasoning_content` as
+    a non-standard field on the message. Different openai-python versions
+    surface non-standard fields differently:
+      - direct attribute (older SDKs / models that bake it in)
+      - Pydantic v2 `model_extra` dict (what current openai-python uses for
+        unknown fields it doesn't have a schema for — this is the path that
+        was returning None silently in our first SAQ smoke)
+      - model_dump() including all fields (last-resort fallback)
+    """
+    val = getattr(msg, "reasoning_content", None)
+    if val:
+        return val
+    extra = getattr(msg, "model_extra", None)
+    if isinstance(extra, dict):
+        val = extra.get("reasoning_content")
+        if val:
+            return val
+    try:
+        if hasattr(msg, "model_dump"):
+            val = msg.model_dump().get("reasoning_content")
+            if val:
+                return val
+    except Exception:
+        pass
+    return None
+
+
 def _call_openai(model: str, prompt: str, temperature: float,
                  extra_body: dict | None = None) -> dict:
     from openai import OpenAI
@@ -170,7 +200,7 @@ def _call_openai(model: str, prompt: str, temperature: float,
     msg = result.choices[0].message
     return {
         "content": (msg.content or "").strip(),
-        "reasoning_content": getattr(msg, "reasoning_content", None),
+        "reasoning_content": _extract_reasoning_content(msg),
     }
 
 
