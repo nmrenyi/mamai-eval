@@ -217,8 +217,9 @@ __marimo__/
 # Claude Code local runtime state
 .claude/
 
-# Regenerable artifacts from analyze_lynx_fails extract — deterministic
-# from lynx_scores.json + oracle_responses.json, so we don't version them.
-# Same precedent as commit bbd5f2c (lynx_fails_for_review.json drop).
+# Regenerable artifacts from analyze_lynx_fails extract + calibrate sample
+# — deterministic side-effects, pure dumps of code constants. Same precedent
+# as commit bbd5f2c (lynx_fails_for_review.json drop).
 configs/**/results/generator/**/lynx_fail_cases.json
 configs/**/results/generator/**/lynx_categorize_rubric.txt
+configs/**/results/generator/**/calibration_rubric.txt
