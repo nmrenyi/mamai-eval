@@ -110,7 +110,7 @@ KEY FACTS (extracted from the reference; score each):
 CANDIDATE RESPONSE:
 {response}
 
-Output one JSON object matching this schema, wrapped in a ```json ... ``` fence. Do not include any prose outside the JSON fence — your internal reasoning is captured separately by the runtime. Provide exactly one verdict entry for each numbered key fact above, using its 1-based `idx`.
+Output one JSON object matching this schema, wrapped in a ```json ... ``` fence. Do not include any prose outside the JSON fence — your internal reasoning is captured separately by the runtime. Provide exactly one verdict entry for each KEY FACT above, using its `idx` label verbatim.
 
 {{
   "key_fact_verdicts": [
@@ -352,7 +352,9 @@ def _format_key_facts(key_facts: list[str]) -> str:
         # fallback. The judge is told to assess against the reference text
         # directly when no facts are provided.
         return "(none — assess against the reference text directly)"
-    return "\n".join(f"  {i + 1}. {kf}" for i, kf in enumerate(key_facts))
+    # `[idx N]` notation matches the JSON output schema's `idx` field, so the
+    # model sees the same label in input and produces it back in output.
+    return "\n".join(f"  [idx {i + 1}] {kf}" for i, kf in enumerate(key_facts))
 
 
 def _question_text(q) -> str:
