@@ -540,7 +540,9 @@ def _load_judge_specs(judges_override: str | None) -> list[JudgeSpec]:
 
 
 def rescore_file(path: Path, specs: list[JudgeSpec],
-                 dry_run: bool) -> dict | None:
+                 dry_run: bool,
+                 sample_per_file: int | None = None,
+                 sample_seed: int = 42) -> dict | None:
     data = json.loads(path.read_text())
     if not is_open_result(data):
         return None
@@ -553,6 +555,17 @@ def rescore_file(path: Path, specs: list[JudgeSpec],
     ]
     if not todo:
         return None
+
+    # Stratified-sampling support: if --sample-per-file N is given, pseudo-
+    # randomly take N rows from each file's unjudged set. Reproducible via
+    # the seed (default 42). Smoke runs use this to cover all (dataset × arm)
+    # combinations cheaply.
+    if sample_per_file is not None and sample_per_file < len(todo):
+        import random
+        rng = random.Random(sample_seed)
+        sampled = rng.sample(todo, sample_per_file)
+        # Preserve original row order so the verdict file stays human-readable.
+        todo = sorted(sampled, key=lambda ir: ir[0])
 
     if dry_run:
         return {"path": str(path), "unjudged": len(todo), "total": len(results)}
@@ -625,6 +638,12 @@ def main():
                              "value (params.json judge.temperature) if set, else 0.0.")
     parser.add_argument("--judges-override", default=None,
                         help="JSON file or inline JSON overriding params.json judge ensemble")
+    parser.add_argument("--sample-per-file", type=int, default=None,
+                        help="If set, take a random sample of N unjudged rows per "
+                             "file (instead of all). Use for stratified smoke runs "
+                             "across multiple datasets / arms.")
+    parser.add_argument("--sample-seed", type=int, default=42,
+                        help="Seed for --sample-per-file (default 42; deterministic).")
     parser.add_argument("paths", nargs="*", help="Files or directories to score")
     args = parser.parse_args()
 
@@ -653,7 +672,9 @@ def main():
     updated = []
     for f in files:
         try:
-            summary = rescore_file(f, specs, dry_run=args.dry_run)
+            summary = rescore_file(f, specs, dry_run=args.dry_run,
+                                   sample_per_file=args.sample_per_file,
+                                   sample_seed=args.sample_seed)
         except Exception as e:
             print(f"  ERROR {f}: {e}")
             continue
