@@ -90,22 +90,28 @@ def _save(output_path: Path, metadata: dict, results: list[dict]) -> None:
 def run(model, oracle_rows: list[dict], top_k: int, max_tokens: int,
         output_path: Path, metadata: dict,
         resume_results: list[dict] | None) -> list[dict]:
-    """Generate one response per oracle query and write a single JSON file."""
-    n_skip = len(resume_results) if resume_results else 0
+    """Generate one response per oracle query and write a single JSON file.
+
+    Resume semantics: identified by query_id, not row index. A generation
+    error on row N leaves no placeholder; on restart that query is retried.
+    Resuming by `len(resume_results)` would silently skip an error'd query
+    AND double-process a later row — fixed per the score_lynx pattern.
+    """
+    done_ids = {r["query_id"] for r in resume_results} if resume_results else set()
     results = list(resume_results) if resume_results else []
-    if n_skip:
-        print(f"  Resuming from checkpoint: skipping {n_skip} already-completed rows")
+    if done_ids:
+        print(f"  Resuming from checkpoint: {len(done_ids)} already-completed query_ids; "
+              f"unfinished/errored queries will be retried")
 
     uses_messages = (
         (hasattr(model, "is_api") and model.is_api)
         or (hasattr(model, "supports_chat") and model.supports_chat)
     )
 
-    for i, row in enumerate(tqdm(oracle_rows, desc="Faithfulness gen",
-                                 initial=n_skip), 1):
-        if i <= n_skip:
-            continue
-
+    pending = [r for r in oracle_rows if r["query_id"] not in done_ids]
+    for i, row in enumerate(tqdm(pending, desc="Faithfulness gen",
+                                 initial=len(done_ids),
+                                 total=len(oracle_rows)), 1):
         all_chunks = row["chunks"]
         used_chunks = all_chunks[:top_k]
         context = "\n\n".join(c["text"] for c in used_chunks)
@@ -138,7 +144,7 @@ def run(model, oracle_rows: list[dict], top_k: int, max_tokens: int,
 
         if i % CHECKPOINT_INTERVAL == 0:
             _save(output_path, metadata, results)
-            print(f"  Checkpoint saved at {i}/{len(oracle_rows)}")
+            print(f"  Checkpoint saved at {len(done_ids) + i}/{len(oracle_rows)}")
 
     return results
 
