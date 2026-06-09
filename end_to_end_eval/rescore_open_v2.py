@@ -154,32 +154,43 @@ def _api_key(env_var: str, key_file_env: str | None = None) -> str | None:
 # reasoning, not just the visible JSON output. For providers that don't expose
 # internal reasoning (cloud OpenAI, Gemini), reasoning_content is None.
 def _extract_reasoning_content(msg) -> str | None:
-    """Pull reasoning_content from a chat message, trying multiple SDK paths.
+    """Pull the model's internal-CoT reasoning from a chat message.
 
-    vLLM (with reasoning_parser='openai_gptoss') emits `reasoning_content` as
-    a non-standard field on the message. Different openai-python versions
-    surface non-standard fields differently:
-      - direct attribute (older SDKs / models that bake it in)
-      - Pydantic v2 `model_extra` dict (what current openai-python uses for
-        unknown fields it doesn't have a schema for — this is the path that
-        was returning None silently in our first SAQ smoke)
-      - model_dump() including all fields (last-resort fallback)
+    Field name has shifted across vLLM versions:
+      - Current vLLM (≥v0.10ish): `reasoning` (per https://docs.vllm.ai/en/latest/features/reasoning_outputs/)
+      - Older vLLM + openai/codex tooling: `reasoning_content` (legacy)
+    We try both, in both Pydantic-v2 access patterns (direct attribute,
+    model_extra dict, full model_dump). First-non-None wins.
+
+    Notes:
+      - vLLM serves reasoning via the Chat Completions endpoint when
+        `--reasoning-parser openai_gptoss` is set (no separate
+        `--enable-reasoning` flag is required in current vLLM).
+      - For Anthropic, the caller passes `reasoning` already extracted
+        from `thinking` blocks — this helper is only used on OpenAI-shaped
+        message objects.
     """
-    val = getattr(msg, "reasoning_content", None)
-    if val:
-        return val
-    extra = getattr(msg, "model_extra", None)
-    if isinstance(extra, dict):
-        val = extra.get("reasoning_content")
+    for field_name in ("reasoning", "reasoning_content"):
+        # 1. Direct attribute (some SDK versions / baked-in support).
+        val = getattr(msg, field_name, None)
         if val:
             return val
-    try:
-        if hasattr(msg, "model_dump"):
-            val = msg.model_dump().get("reasoning_content")
+        # 2. Pydantic v2 `model_extra` (current openai-python's bucket for
+        #    fields the schema doesn't know about — the field LIVES here
+        #    for vLLM-served reasoning models).
+        extra = getattr(msg, "model_extra", None)
+        if isinstance(extra, dict):
+            val = extra.get(field_name)
             if val:
                 return val
-    except Exception:
-        pass
+        # 3. Last-resort full model_dump (catches anything model_extra didn't).
+        try:
+            if hasattr(msg, "model_dump"):
+                val = msg.model_dump().get(field_name)
+                if val:
+                    return val
+        except Exception:
+            pass
     return None
 
 

@@ -104,23 +104,31 @@ in the response.
 # explanation. Existing Phase B verdict files are unaffected — they were
 # produced before this change and don't need re-running.
 def _extract_reasoning_content(msg) -> str | None:
-    """Pull `reasoning_content` from a chat message, trying multiple SDK paths
-    (direct attribute, Pydantic v2 model_extra, then full model_dump)."""
-    val = getattr(msg, "reasoning_content", None)
-    if val:
-        return val
-    extra = getattr(msg, "model_extra", None)
-    if isinstance(extra, dict):
-        val = extra.get("reasoning_content")
+    """Pull the model's internal-CoT reasoning from a chat message.
+
+    Field name has shifted across vLLM versions:
+      - Current vLLM: `reasoning` (per official docs)
+      - Older vLLM: `reasoning_content` (legacy)
+    Try both, via direct attribute / Pydantic v2 model_extra / model_dump.
+    First-non-None wins. See rescore_open_v2._extract_reasoning_content for
+    the rationale on each path.
+    """
+    for field_name in ("reasoning", "reasoning_content"):
+        val = getattr(msg, field_name, None)
         if val:
             return val
-    try:
-        if hasattr(msg, "model_dump"):
-            val = msg.model_dump().get("reasoning_content")
+        extra = getattr(msg, "model_extra", None)
+        if isinstance(extra, dict):
+            val = extra.get(field_name)
             if val:
                 return val
-    except Exception:
-        pass
+        try:
+            if hasattr(msg, "model_dump"):
+                val = msg.model_dump().get(field_name)
+                if val:
+                    return val
+        except Exception:
+            pass
     return None
 
 
