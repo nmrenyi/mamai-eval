@@ -103,7 +103,7 @@
 </table>
 <p class="legend"><strong>positive credit</strong> = Σ positive points met / Σ positive points (↑ better); <strong>penalty incurred</strong> = Σ |negative points| met / Σ |negative points| (↓ better). Both shown no-RAG — RAG barely moves either (≤~1 pp; see <em>The RAG effect</em>). Δ on weighted_met: oss −0.5, consensus −2.0, hard −0.3 pp.</p>
 
-<p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view: two separable problems (under-coverage and "should-not" violations) that the blended ~0.00 masks. The penalty-incurred rate is the safety-relevant signal.</p>
+<p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view: two separable problems the blended ~0.00 masks. But neither is mostly <em>active harm</em> — the failure-mode analysis below shows both channels are dominated by the model <strong>not providing content</strong> (deflection / omission), with active commission rare (~2%).</p>
 
 <h2>Where the lost points go</h2>
 
@@ -176,7 +176,37 @@
   <li><strong>consensus is uniformly high across every axis</strong> (0.42–0.70) — but that is the forgiving positive-only lens (the same conversations as <code>oss_eval</code>, consensus criteria only), not the model being genuinely stronger on those axes.</li>
 </ul>
 
-<p class="callout"><em>Penalty violations.</em> Beyond the means, the model <strong>met 1,634 penalty ("should-not") criteria on <code>oss_eval</code> and 499 on <code>hard</code></strong> (no-RAG). These violations are what pull the scores negative and are the rubric-track counterpart to the SAQ <code>potentially_harmful</code> rate — the failure mode is doing the discouraged thing, not just omitting the encouraged thing.</p>
+<p class="callout"><em>Penalty violations.</em> The model <strong>met 1,634 penalty ("should-not") criteria on <code>oss_eval</code> and 499 on <code>hard</code></strong> (no-RAG) — these pull the scores negative. But they are overwhelmingly omission-phrased ("fails to mention X"), and the failure-mode analysis below shows they are mostly <strong>deflection / omission, not active harm</strong> (commission ~2%).</p>
+
+<h2>Why the model fails — failure modes</h2>
+
+<p>The metrics say <em>where</em> the model loses points; this says <em>why</em>. We sampled 240 failing criteria from <code>oss_eval</code> no-RAG (120 triggered penalties + 120 missed positives) and categorized each by the model's actual behavior — reading the criterion, the judge's explanation, and the model's response — into five bins.</p>
+
+<table>
+<thead>
+<tr><th>failure mode</th><th>penalty</th><th>positive</th><th>what the model did</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Deflection</strong> (refuse / defer)</td><td class="cell-bad">53%</td><td class="cell-bad">61%</td><td>refused as "out of scope" or punted to "see a doctor" with no real content</td></tr>
+<tr><td>Under-coverage</td><td class="cell-mid">22%</td><td class="cell-mid">12%</td><td>engaged and answered, but omitted the required content</td></tr>
+<tr><td>Measurement-strictness <small>(not a real failure)</small></td><td>16%</td><td>25%</td><td>adequate answer missed a sub-item, pedantic criterion, or grading artifact</td></tr>
+<tr><td>Commission</td><td class="cell-mid">2%</td><td class="cell-mid">2%</td><td>actively wrong / harmful / fabricated</td></tr>
+<tr><td>Other</td><td>7%</td><td>1%</td><td>generation/format failures, etc.</td></tr>
+</tbody>
+</table>
+
+<p>Three robust reads (the sampling/single-rater caveats below don't change them):</p>
+<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><strong>"Safe but deflecting."</strong> Deflection is the #1 failure on both channels (and mostly outright <em>refusal</em>); Deflection + Under-coverage ≈ 75%. The model's problem is overwhelmingly <strong>not providing content</strong>, not providing wrong content.</li>
+  <li><strong>Active harm is rare (~2%).</strong> Confirms the safety floor from the harm side.</li>
+  <li><strong>~16–25% of "failures" aren't real</strong> (strictness + grading artifacts), so the raw miss/penalty rates overstate true capability gaps by roughly a fifth.</li>
+</ul>
+
+<p class="callout"><em>Emergency mis-refusal — the most deployment-critical finding.</em> The scope-refusal reflex mis-fires on emergencies. The model refused a <strong>choking 2-year-old</strong>, <strong>peanut anaphylaxis</strong>, and a <strong>scalded toddler</strong> as <em>"not a healthcare question"</em> / "not maternal-neonatal care" — rather than, at minimum, advising to call emergency services. Refusing emergencies is worse than unhelpful; tightening the scope prompt to always give a minimal safety response is a priority fix.</p>
+
+<p><strong>Two more specifics.</strong> (1) <strong>Leaked chain-of-thought:</strong> a handful of responses emitted raw reasoning (<code>&lt;|channel&gt;thought…</code>), truncated, with <em>no final answer delivered</em> — a generation/serving bug, not a content choice. (2) <strong>Grading artifacts:</strong> a few triggered penalties are not model failures at all — e.g. a positively-phrased criterion carrying negative points (the model penalized for correctly recommending urgent care), and a verdict that fires despite the judge's own explanation saying the criterion was satisfied. These inflate the negative scores and are relevant to the <a href="judge-validation-phase-a-result-20260608.html">judge-validation</a> work.</p>
+
+<p>This corroborates the SAQ track from the other direction: both independently find a <strong>safe-but-deflecting</strong> model whose dominant failure is declining or punting rather than answering. <em>Caveats:</em> one 240-item sample on <code>oss_eval</code> no-RAG; a single Fable&nbsp;5 categorizer (the consequential refuse/defer reclassifications were verified by hand against the responses); the Under-coverage↔strictness boundary is the softest split.</p>
 
 <h2>The RAG effect (small, mostly noise)</h2>
 
