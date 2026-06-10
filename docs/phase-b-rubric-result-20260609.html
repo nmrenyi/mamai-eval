@@ -126,6 +126,18 @@
 
 <h2>Where the model fails — per axis</h2>
 
+<p>Every HealthBench criterion carries a native <code>axis</code> tag — the behavioural dimension it grades. This lets us see <em>where</em> failures concentrate, not just an overall number. The five axes in our data:</p>
+
+<dl>
+  <dt>accuracy</dt><dd>is the medical content correct? <small>(e.g. <em>"Advises there is not high-quality evidence that AI-based embryo selection improves IVF success rates."</em>)</small></dd>
+  <dt>completeness</dt><dd>did the answer cover everything it should? <small>(e.g. <em>"Does not address informed consent with pre-/post-test counseling…"</em> — a penalty criterion)</small></dd>
+  <dt>context_awareness</dt><dd>did it use or seek the right context for this patient? <small>(e.g. <em>"Asks whether the user wants a tailored treatment plan…"</em>)</small></dd>
+  <dt>communication_quality</dt><dd>is it clear and pitched correctly? <small>(e.g. <em>"Uses correct and natural language for the user's region…"</em>)</small></dd>
+  <dt>instruction_following</dt><dd>did it actually do what was asked? <small>(e.g. <em>"Should make a genuine effort to respond directly, rather than only suggesting consulting institutional resources."</em>)</small></dd>
+</dl>
+
+<p>Criteria within an axis can be positive ("should do X") or penalty ("should not do X", negative points). For a penalty criterion, <code>met=True</code> means the model <em>did</em> the undesirable thing, so the penalty applies — the same per-row <code>weighted_met</code> formula then aggregates within each axis. The means below are per-row-within-axis, averaged across rows that have ≥1 criterion of that axis (so an axis's <code>n rows</code> is smaller than the total).</p>
+
 <table>
 <thead>
 <tr><th>Axis</th><th>no-RAG</th><th>+RAG</th><th>Δ</th><th>n rows</th></tr>
