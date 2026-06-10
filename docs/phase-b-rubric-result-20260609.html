@@ -101,28 +101,9 @@
 <tr><td>hard <small>(adversarial)</small></td><td class="cell-bad">−0.178</td><td class="cell-bad">−0.181</td><td class="cell-bad">0.11</td><td class="cell-bad">0.46</td></tr>
 </tbody>
 </table>
-<p class="legend"><strong>positive credit</strong> = Σ positive points met / Σ positive points (↑ better); <strong>penalty incurred</strong> = Σ |negative points| met / Σ |negative points| (↓ better). Both shown no-RAG — RAG barely moves either (≤~1 pp; see <em>Decomposing the score</em>). Δ on weighted_met: oss −0.5, consensus −2.0, hard −0.3 pp.</p>
+<p class="legend"><strong>positive credit</strong> = Σ positive points met / Σ positive points (↑ better); <strong>penalty incurred</strong> = Σ |negative points| met / Σ |negative points| (↓ better). Both shown no-RAG — RAG barely moves either (≤~1 pp; see <em>The RAG effect</em>). Δ on weighted_met: oss −0.5, consensus −2.0, hard −0.3 pp.</p>
 
-<p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view and are detailed in the next section.</p>
-
-<h2>Decomposing the score: credit earned vs penalty incurred</h2>
-
-<p><code>weighted_met</code> blends positive credit and penalties into one number, so cancellation hides what is actually happening. Splitting the two — <strong>positive credit earned</strong> (Σ positive points met / Σ positive points; higher is better) and <strong>penalty incurred</strong> (Σ |negative points| met / Σ |negative points|; <em>higher is worse</em>), both in [0,1] — gives a clearer view:</p>
-
-<table>
-<thead>
-<tr><th>subset (no-RAG)</th><th>weighted_met</th><th>positive credit earned</th><th>penalty incurred</th></tr>
-</thead>
-<tbody>
-<tr><td>oss_eval</td><td class="cell-mid">~0.00</td><td class="cell-bad">0.18</td><td class="cell-bad">0.38</td></tr>
-<tr><td>consensus <small>(no penalties)</small></td><td class="cell-good">0.51</td><td class="cell-good">0.51</td><td>—</td></tr>
-<tr><td>hard</td><td class="cell-bad">−0.18</td><td class="cell-bad">0.11</td><td class="cell-bad">0.46</td></tr>
-</tbody>
-</table>
-
-<p>The blended near-zero/negative scores resolve into <strong>two separable problems</strong>: (1) <strong>low positive coverage</strong> — the model earns only 11–18% of achievable positive credit on the penalty-bearing subsets (the completeness/under-coverage story, same as the SAQ track); and (2) <strong>a high penalty-incurred rate</strong> — it trips ~38% (oss_eval) to ~46% (hard) of the available "should-not" penalty weight. The penalty rate is the safety-relevant signal that the ~0.00 blended score completely masked.</p>
-
-<p>RAG stays ≈neutral even decomposed: on oss_eval positive credit 0.184 → 0.174 and penalty 0.378 → 0.366 (very slightly less complete, very slightly safer); on hard both are essentially flat. All decomposed deltas are ≤~1 pp.</p>
+<p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view: two separable problems (under-coverage and "should-not" violations) that the blended ~0.00 masks. The penalty-incurred rate is the safety-relevant signal.</p>
 
 <h2>Where the model fails — per axis</h2>
 
@@ -169,6 +150,8 @@
 <h2>The RAG effect (small, mostly noise)</h2>
 
 <p>All three RAG deltas are negative, which is suggestive, but the evidence is weak: no bootstrap CIs were computed, and the per-row metric is high-variance (−2.2 to 1.0). The −0.5 pp (oss) and −0.3 pp (hard) deltas are within plausible noise; three-of-three negative is also weak on its own (a coin-flip would give all-negative ~1/8 of the time). Only the <strong>consensus −2.0 pp</strong> is large enough to plausibly be real — and even that sits on the penalty-free, 2-criteria-per-row subset with the coarsest per-row resolution.</p>
+
+<p>The decomposition stays flat too: on <code>oss_eval</code> positive credit moves 0.184 → 0.174 and penalty incurred 0.378 → 0.366 (marginally less complete, marginally safer); on <code>hard</code> both are essentially unchanged. All decomposed deltas are ≤~1 pp.</p>
 
 <p>The per-axis deltas hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp, n=396) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
 
