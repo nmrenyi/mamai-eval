@@ -65,6 +65,18 @@
 </table>
 <p class="legend">The "penalty criteria" share matters: <code>consensus</code> has <em>none</em> (so it can never score negative), while <code>oss_eval</code>/<code>hard</code> are ~⅓ penalties. The three subsets are therefore <strong>not on a common scale</strong> — consensus's higher score is partly a metric-construction effect, not purely lower difficulty.</p>
 
+<h3>How the three subsets relate</h3>
+
+<p><strong>These are not three independent datasets.</strong> Verified by example-ID and question-text overlap in our own data, the relationship is nested:</p>
+
+<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><code>oss_eval</code> is the <strong>superset</strong> (1,209 examples), scored with the full physician rubric (~11.7 criteria/row, including penalties). This is the analog of the paper's main "overall HealthBench" set.</li>
+  <li><code>consensus</code> is the <strong>same conversations re-scored on a different (forgiving) lens</strong>: all 872 consensus examples are a subset of <code>oss_eval</code>, but graded using <em>only</em> the physician-consensus criteria (2.2/row, all positive). The model is not answering easier questions — the <em>same</em> answers are judged against a positive-only, physician-agreed subset of criteria.</li>
+  <li><code>hard</code> is the <strong>hardest examples</strong> (258; 254 of them also in <code>oss_eval</code>), scored with full rubrics. 150 examples appear in all three files.</li>
+</ul>
+
+<p>Two consequences: (1) the subsets must <strong>not be pooled</strong> into one score — the same conversation appears up to three times. (2) The <code>consensus</code> (0.51) vs <code>oss_eval</code> (~0.00) gap is largely the <em>same conversations under a more forgiving grading lens</em>, not a difference in question difficulty — which is why we read them separately, never as one scale.</p>
+
 <h2>What <code>weighted_met</code> measures</h2>
 
 <p style="font-family: ui-monospace, monospace; font-size: 13.5px; padding: 8px 14px; background: var(--bg);">weighted_met = (Σ <code>points</code> where met) / (Σ <strong>max(points, 0)</strong>)</p>
@@ -142,7 +154,7 @@
 </tbody>
 </table>
 
-<p>The paper's headline "overall HealthBench" score is computed on the main eval set, which is the same rubric construction as our <code>oss_eval</code> — so <strong><code>oss_eval</code> ~0.00 is our directly-comparable overall number</strong>, below even the weakest model in the paper (GPT-3.5 Turbo, 0.16). We do <em>not</em> pool the three subsets into one score (that would average in the penalty-free consensus scale and double-count the hard examples, which are a subset of the main set — the paper reports them separately too).</p>
+<p>The paper's headline "overall HealthBench" score is computed on the main eval set, which is the same rubric construction as our <code>oss_eval</code> — so <strong><code>oss_eval</code> ~0.00 is our directly-comparable overall number</strong>, below even the weakest model in the paper (GPT-3.5 Turbo, 0.16). We do <em>not</em> pool the three subsets into one score — as the construction note above shows, they are nested (consensus and most of hard are subsets of <code>oss_eval</code>), so pooling would double-count and mix scales; the paper reports them separately too.</p>
 
 <p>Two further reads: on <strong>hard</strong>, near-zero is <em>not</em> unusual — even the best model in the paper (o3) tops out at 0.32 and many score near zero, so our floored result is roughly where weak-to-mid models land. On <strong>consensus</strong> (the cleaner positive-only scale) our 0.51 is genuinely below the frontier cloud models.</p>
 
