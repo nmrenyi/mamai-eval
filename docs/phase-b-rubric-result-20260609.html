@@ -5,293 +5,137 @@
 <title>Phase B HealthBench rubric — Gemma 4 E4B ±RAG result</title>
 <style>
   :root {
-    --ink: #1a1a1a;
-    --muted: #555;
-    --soft: #666;
-    --rule: #d9d9d9;
-    --bg: #fafafa;
-    --good: #117a3b;
-    --good-bg: #e6f4ec;
-    --mid: #9a5a00;
-    --mid-bg: #fcf3e1;
-    --bad: #9c2727;
-    --bad-bg: #fbe7e7;
-    --baseline: #1a4e8a;
-    --baseline-bg: #e8f0fa;
-    --accent: #444;
+    --ink: #1a1a1a; --muted: #555; --soft: #666; --rule: #d9d9d9; --bg: #fafafa;
+    --good: #117a3b; --good-bg: #e6f4ec; --mid: #9a5a00; --mid-bg: #fcf3e1;
+    --bad: #9c2727; --bad-bg: #fbe7e7; --baseline: #1a4e8a; --baseline-bg: #e8f0fa; --accent: #444;
   }
-  body {
-    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    color: var(--ink);
-    max-width: 920px;
-    margin: 32px auto;
-    padding: 0 24px;
-    background: #fff;
-  }
+  body { font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: var(--ink); max-width: 920px; margin: 32px auto; padding: 0 24px; background: #fff; }
   h1 { font-size: 22px; margin: 0 0 4px; }
   h2 { font-size: 17px; margin: 28px 0 10px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
   h3 { font-size: 14.5px; margin: 18px 0 6px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
   p { margin: 8px 0; }
   small.meta { color: var(--muted); }
-  .tldr {
-    background: var(--bg);
-    border-left: 3px solid var(--accent);
-    padding: 12px 16px;
-    margin: 16px 0;
-  }
+  .tldr { background: var(--bg); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 16px 0; }
   .tldr p { margin: 6px 0; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0 16px;
-    font-size: 14px;
-  }
-  th, td {
-    padding: 8px 10px;
-    text-align: right;
-    border-bottom: 1px solid var(--rule);
-  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 14px; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--rule); }
   th:first-child, td:first-child { text-align: left; }
   thead th { background: #f4f4f4; font-weight: 600; border-bottom: 2px solid #bbb; }
-  tbody tr.section-row td { background: #fafafa; font-weight: 600; font-style: italic; color: var(--muted); }
   .cell-good { background: var(--good-bg); color: var(--good); font-weight: 600; }
   .cell-mid  { background: var(--mid-bg);  color: var(--mid);  font-weight: 600; }
   .cell-bad  { background: var(--bad-bg);  color: var(--bad);  font-weight: 600; }
-  .cell-ref  { background: var(--baseline-bg); color: var(--baseline); font-weight: 600; }
   .legend { font-size: 12.5px; color: var(--muted); margin: -8px 0 16px; }
-  .legend .sw { display: inline-block; width: 10px; height: 10px; vertical-align: middle; margin: 0 4px 2px 12px; border-radius: 2px; }
   dl { margin: 8px 0; }
   dt { margin-top: 10px; font-weight: 600; }
   dd { margin: 2px 0 0 18px; color: var(--soft); }
+  .callout { background: var(--bg); border-left: 3px solid var(--accent); padding: 10px 14px; font-size: 13px; color: var(--muted); margin: 10px 0; }
   .footnote { color: var(--muted); font-size: 12.5px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
-  .callout {
-    background: var(--bg);
-    border-left: 3px solid var(--accent);
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--muted);
-    margin: 10px 0;
-  }
+  code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
 </style>
 </head>
 <body>
 
 <h1>Phase B HealthBench rubric — Gemma 4 E4B ±RAG result</h1>
-<small class="meta">MAM-AI v0.2 · open-ended rubric track · gpt-oss-120b @ reasoning_effort=medium judge · 38,308 criterion calls · 2026-06-09</small>
+<small class="meta">MAM-AI v0.2 · open-ended rubric track · gpt-oss-120b @ reasoning_effort=medium judge · 4,678 rows · 38,308 criterion calls · 2026-06-09</small>
 
 <div class="tldr">
-<p><strong>Headline.</strong> Across all three HealthBench subsets, retrieval-augmented generation (+RAG) produces a slightly <em>worse</em> `weighted_met` score than the no-RAG baseline. Direction is consistent across all subsets; magnitudes range from −0.3 pp (hard) to −2.0 pp (consensus) of the maximum possible score. <strong>RAG does not improve the rubric-track headline; the small effect goes against the v0.2 deployment hypothesis.</strong></p>
-<p><strong>Caveat.</strong> The pinned judge (gpt-oss-120b @ medium) has a documented per-criterion bias profile — see <a href="judge-validation-phase-a-result-20260608.html">Phase A judge calibration</a>. Direction of the RAG effect is robust to that bias; magnitude is approximately the right size relative to it. No bootstrap CIs computed here yet — the 2 pp consensus delta is the largest single-arm signal and likely above noise, but smaller deltas may not be.</p>
+<p><strong>Gemma 4 E4B earns essentially no net rubric credit on HealthBench</strong>, and RAG does not change that:</p>
+<ul style="margin: 6px 0 4px 18px;">
+  <li><strong>Absolute scores are near-zero / negative.</strong> On <code>oss_eval</code> (the largest, most representative subset) mean <code>weighted_met</code> is ~0.00 — and that mean hides a wide split: <strong>43% of responses score net-negative</strong> (trigger more penalty than credit). On <code>hard</code> it is −0.18 (68% net-negative). <code>consensus</code> looks better (+0.51) but is penalty-free and not on the same scale.</li>
+  <li><strong>RAG is effectively neutral.</strong> All three deltas are slightly negative (−0.5 / −2.0 / −0.3 pp), but with no confidence intervals and a per-row metric spanning −2.2 to +1.0, only the consensus −2 pp is plausibly above noise — and it sits on the lowest-resolution subset. RAG should be reported as ≈neutral, not as a regression.</li>
+  <li><strong>The weak axis is completeness</strong> (on <code>oss_eval</code>/<code>hard</code>), corroborating the SAQ track's low-recall finding from the other direction.</li>
+</ul>
+<p>The headline is the absolute level, not the RAG delta: the model fails most rubric criteria and trips many "should-not" penalties. Improving coverage — not retrieval — is the lever.</p>
 </div>
 
 <h2>Method</h2>
 
-<p>Phase B scored Gemma 4 E4B's existing HealthBench-track responses (both ±RAG arms, generated on the cluster in May) with the pinned judge identified by Phase A. Six result JSONs were rescored in-place via <code>end_to_end_eval/rescore_rubric.py</code> on the EPFL RunAI cluster (<code>cluster/rescore_rubric.sh</code> on a single H200): vLLM serves <code>openai/gpt-oss-120b</code> at <code>reasoning_effort=medium</code>, the production scorer calls it via the OpenAI client at the local vLLM endpoint, and each (response, criterion) pair gets a binary <code>met</code> verdict written back into the result JSON.</p>
+<p>Scored Gemma 4 E4B's existing HealthBench responses (both ±RAG arms, generated on the cluster in May) with the pinned judge from Phase A. Six result JSONs rescored in-place via <code>end_to_end_eval/rescore_rubric.py</code> on EPFL RunAI (<code>cluster/rescore_rubric.sh</code>, single H200): vLLM serves <code>openai/gpt-oss-120b</code> at <code>reasoning_effort=medium</code>; each (response, criterion) pair gets a binary <code>met</code> verdict. All 38,308 calls completed, 0 errors, no <code>met=None</code>. Wall-clock ~2 h, $0 API.</p>
 
 <table>
 <thead>
-<tr><th>HealthBench subset</th><th>Rows / arm</th><th>Criteria / arm</th><th>Avg crit/row</th></tr>
+<tr><th>HealthBench subset</th><th>Rows / arm</th><th>Crit / row</th><th>Penalty criteria</th></tr>
 </thead>
 <tbody>
-<tr><td>healthbench_oss_eval</td><td>1,209</td><td>14,195</td><td>11.7</td></tr>
-<tr><td>healthbench_consensus</td><td>872</td><td>1,909</td><td>2.2</td></tr>
-<tr><td>healthbench_hard</td><td>258</td><td>3,050</td><td>11.8</td></tr>
-<tr><th>Total × 2 arms</th><th>4,678</th><th>38,308</th><th>—</th></tr>
+<tr><td>healthbench_oss_eval <small>(general OBGYN open-ended)</small></td><td>1,209</td><td>11.7</td><td>31%</td></tr>
+<tr><td>healthbench_consensus <small>(consensus-grade items)</small></td><td>872</td><td>2.2</td><td>0%</td></tr>
+<tr><td>healthbench_hard <small>(adversarial / edge cases)</small></td><td>258</td><td>11.8</td><td>36%</td></tr>
+<tr><th>Total × 2 arms</th><th>4,678</th><th>—</th><th>38,308 calls</th></tr>
 </tbody>
 </table>
-
-<p>All 38,308 criterion calls completed with no errors and no <code>met=None</code> values (the strict-bool validation from PR #3's Copilot follow-up held — no silent NOT-MET coercions). Total cluster wall-clock: <strong>2 hours</strong>; API spend: <strong>$0</strong>.</p>
+<p class="legend">The "penalty criteria" share matters: <code>consensus</code> has <em>none</em> (so it can never score negative), while <code>oss_eval</code>/<code>hard</code> are ~⅓ penalties. The three subsets are therefore <strong>not on a common scale</strong> — consensus's higher score is partly a metric-construction effect, not purely lower difficulty.</p>
 
 <h2>What <code>weighted_met</code> measures</h2>
 
-<p>Each HealthBench rubric criterion carries an integer <code>points</code> value — positive for <em>"the response should…"</em> criteria, negative for <em>"the response should not…"</em> penalties. The judge labels each criterion <code>met=True/False</code>. For each row:</p>
-
-<p style="font-family: ui-monospace, monospace; font-size: 13.5px; padding: 8px 14px; background: var(--bg);">
-weighted_met = (sum of <code>points</code> where <code>met=True</code>) / (sum of <strong>max(points, 0)</strong>)
-</p>
+<p style="font-family: ui-monospace, monospace; font-size: 13.5px; padding: 8px 14px; background: var(--bg);">weighted_met = (Σ <code>points</code> where met) / (Σ <strong>max(points, 0)</strong>)</p>
 
 <dl>
-  <dt>+1.0</dt>
-  <dd>The response met every positive criterion and triggered no penalty criterion — the ceiling.</dd>
-  <dt>+0.5</dt>
-  <dd>About half the positive points captured, no penalties triggered (or equivalently: most positives plus a few penalties).</dd>
-  <dt>0.0</dt>
-  <dd>Either: nothing matched, or — more commonly in this dataset — what the model got right is offset by penalty criteria it also triggered.</dd>
-  <dt>Negative</dt>
-  <dd>The model triggered more penalty value than the positive value it earned. Common when penalty criteria are heavy ("should not recommend X dangerous thing") and the model violates them.</dd>
+  <dt>+1.0 — every positive criterion met, no penalty triggered (ceiling).</dt>
+  <dt>0.0 — achievements and penalties cancel (<em>not</em> "produced nothing").</dt>
+  <dt>Negative — triggered more penalty value than positive credit earned.</dt>
 </dl>
+<p class="legend">Only positive criteria count toward the denominator, so the scale is "fraction of <em>achievable</em> positive credit, net of penalties." Negative scores are possible only where penalty criteria exist (oss_eval/hard).</p>
 
-<p style="font-size: 13px; color: var(--muted); margin-top: 4px;"><em>Note on denominator.</em> Only positive criteria count toward the denominator, so the scale is "fraction of <em>achievable</em> positive credit, net of penalties." A score near zero means achievements and penalties roughly cancel — not that the model produced nothing.</p>
-
-<h2>Headline result — mean <code>weighted_met</code> per (arm × dataset)</h2>
-
-<table>
-<thead>
-<tr>
-  <th>HealthBench subset</th>
-  <th>no-RAG</th>
-  <th>+RAG</th>
-  <th>Δ (RAG impact)</th>
-  <th>n rows / arm</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>healthbench_oss_eval <small>(general OBGYN open-ended)</small></td>
-  <td class="cell-mid">+0.0033</td>
-  <td class="cell-bad">−0.0017</td>
-  <td class="cell-bad">−0.0051</td>
-  <td>1,209</td>
-</tr>
-<tr>
-  <td>healthbench_consensus <small>(consensus-grade items)</small></td>
-  <td class="cell-good">+0.5119</td>
-  <td class="cell-mid">+0.4918</td>
-  <td class="cell-bad">−0.0201</td>
-  <td>872</td>
-</tr>
-<tr>
-  <td>healthbench_hard <small>(adversarial/edge cases)</small></td>
-  <td class="cell-bad">−0.1784</td>
-  <td class="cell-bad">−0.1810</td>
-  <td class="cell-bad">−0.0026</td>
-  <td>258</td>
-</tr>
-</tbody>
-</table>
-
-<p class="legend">
-  <span class="sw" style="background:var(--good-bg);border:1px solid var(--good)"></span>net positive (≥+0.05)
-  <span class="sw" style="background:var(--mid-bg);border:1px solid var(--mid)"></span>near zero
-  <span class="sw" style="background:var(--bad-bg);border:1px solid var(--bad)"></span>net negative or negative delta
-</p>
-
-<p>The pattern is unambiguous in <em>direction</em> — all three deltas are negative, meaning RAG-on lowers `weighted_met` on every subset — but the <em>magnitudes</em> are small in absolute terms:</p>
-
-<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
-  <li><strong>consensus (−2.0 pp)</strong> is the largest delta and the one above plausible noise. RAG materially trades off some performance on these clearer rubric items.</li>
-  <li><strong>oss_eval (−0.5 pp)</strong> is a small but consistent shift. Both arms are essentially "break-even" on this subset (positives nearly cancel penalties), and RAG pushes that balance slightly toward net-negative.</li>
-  <li><strong>hard (−0.3 pp)</strong> is within noise range; gpt-oss-120b's known per-criterion under-rating on borderline NOT-MET rows makes us treat very small magnitudes here with caution.</li>
-</ul>
-
-<h2>Per-axis breakdown</h2>
-
-<p>HealthBench criteria carry an <code>axis</code> tag. The per-axis mean across both arms tells us <em>where</em> Gemma 4 E4B's failures concentrate, and which axes RAG impacts most.</p>
+<h2>Headline: mean <code>weighted_met</code></h2>
 
 <table>
 <thead>
-<tr>
-  <th>Axis</th>
-  <th>no-RAG mean</th>
-  <th>+RAG mean</th>
-  <th>Δ</th>
-  <th>n rows scored</th>
-</tr>
+<tr><th>HealthBench subset</th><th>no-RAG</th><th>+RAG</th><th>Δ (RAG)</th><th>% rows net-negative</th></tr>
 </thead>
 <tbody>
-<tr>
-  <td>communication_quality</td>
-  <td class="cell-good">+0.3716</td>
-  <td class="cell-mid">+0.3372</td>
-  <td class="cell-bad">−0.0344</td>
-  <td>1,095</td>
-</tr>
-<tr>
-  <td>instruction_following</td>
-  <td class="cell-good">+0.2741</td>
-  <td class="cell-mid">+0.2421</td>
-  <td class="cell-bad">−0.0320</td>
-  <td>396</td>
-</tr>
-<tr>
-  <td>accuracy</td>
-  <td class="cell-mid">+0.2647</td>
-  <td class="cell-mid">+0.2605</td>
-  <td>−0.0041</td>
-  <td>1,867</td>
-</tr>
-<tr>
-  <td>context_awareness</td>
-  <td class="cell-mid">+0.2155</td>
-  <td class="cell-mid">+0.2033</td>
-  <td>−0.0121</td>
-  <td>1,464</td>
-</tr>
-<tr>
-  <td>completeness <small>(weakest axis)</small></td>
-  <td class="cell-bad">−0.1997</td>
-  <td class="cell-bad">−0.2019</td>
-  <td>−0.0022</td>
-  <td>1,313</td>
-</tr>
+<tr><td>oss_eval <small>(largest; representative)</small></td><td class="cell-mid">+0.003</td><td class="cell-mid">−0.002</td><td>−0.5 pp</td><td class="cell-bad">43% / 42%</td></tr>
+<tr><td>consensus <small>(penalty-free; low-res)</small></td><td class="cell-good">+0.512</td><td class="cell-good">+0.492</td><td>−2.0 pp</td><td>0% / 0%</td></tr>
+<tr><td>hard <small>(adversarial)</small></td><td class="cell-bad">−0.178</td><td class="cell-bad">−0.181</td><td>−0.3 pp</td><td class="cell-bad">68% / 69%</td></tr>
 </tbody>
 </table>
 
-<p>Two notable patterns:</p>
+<p><strong>The absolute level is the story.</strong> On <code>oss_eval</code> the ~0.00 mean is not "uniformly break-even" — the per-row scores span −2.24 to +1.0, with 43% net-negative, ~15% exactly zero, 43% positive. The mean is near zero by cancellation <em>across</em> rows. On <code>hard</code>, more than two-thirds of responses are net-negative. The model is failing the rubric outright on the penalty-bearing subsets, before RAG is even considered.</p>
 
-<ol style="margin: 6px 0 12px 0; padding-left: 22px;">
-  <li><strong>Completeness is the only axis with a <em>negative</em> mean</strong> in both arms (~−0.20). Gemma 4 E4B systematically under-covers what HealthBench rubrics expect a complete answer to include — this is the axis to target for deployment improvements (more thorough generations, longer outputs, or better prompting).</li>
-  <li><strong>RAG's biggest negative impacts hit <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp)</strong>, not the axes one would <em>expect</em> retrieval to affect (accuracy / context_awareness). This is consistent with retrieval contexts injecting extra material that gets in the way of clean answers and dilutes the model's adherence to the asked-for form.</li>
-</ol>
+<h2>Where the model fails — per axis</h2>
 
-<h2>How to read these numbers, concretely</h2>
-
-<div class="callout">
-The <code>weighted_met</code> scale feels small when reading the consensus row's 0.512 vs 0.492. A useful translation: that 2.0 pp delta means RAG-on on average loses Gemma <strong>2% of the maximum possible positive credit per response</strong>, sustained over 872 prompts. For a deployment that ships ~hundreds of conversations per day, that's a steady downward pressure on the headline rubric metric — small per-row but cumulatively visible.
-</div>
-
-<h2>Caveats — judge calibration</h2>
-
-<p>The pinned judge has documented bias relative to physician ground truth (see <a href="judge-validation-phase-a-result-20260608.html">Phase A calibration report</a>). The key facts for interpreting Phase B results:</p>
-
-<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
-  <li>gpt-oss-120b's overall judge met-rate is <strong>73.2%</strong>, just <strong>−3.8 pp</strong> below the physician baseline of 77% (the closest calibration of any judge tested across 5 candidates + 2 trivial baselines).</li>
-  <li>On the <strong>NOT-MET-row</strong> subset (concordant cases where physicians agreed a criterion was NOT met), the judge agrees only 67.9% of the time vs the 77.6% human-human ceiling — a real ~10 pp under-detection of failures. This is the disclosure to surface in the v0.2 methods section.</li>
-  <li><strong>Effect on Phase B numbers:</strong> the absolute <code>weighted_met</code> values shown here are likely slightly understated vs what physicians would produce (since the judge under-detects some failures the model genuinely satisfied). But the <strong>±RAG comparison is robust</strong> — both arms are judged by the same judge with the same bias, so the Δ values cancel that bias out and reflect a real difference in Gemma's outputs.</li>
-</ul>
-
-<p>So: if a reviewer pushes back on absolute scores, the answer is "see Phase A — judge under-rates met by ~3.8 pp on average, so absolute scores are lower bounds." If a reviewer pushes back on the ±RAG comparison, the answer is "judge bias cancels in the Δ; the direction is robust."</p>
-
-<h2>What this changes for v0.2</h2>
-
-<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
-  <li>The <strong>RAG arm should not be presented as a quality improvement</strong> on the rubric track. The honest framing is: "retrieval brings in additional context but does not improve and slightly hurts HealthBench-rubric headline performance on the OBGYN scope tested."</li>
-  <li><strong>Completeness</strong> emerges as the priority axis for future model/prompt iteration — it's where the model is genuinely failing, RAG-neutral.</li>
-  <li><strong>Per-iteration budget impact</strong> (from <a href="budget-justification-mamai.md">the budget doc</a>): future RAG-arm-only rescore iterations cost ~$0 (cluster), so the cost story for retrying retrieval improvements is unchanged. But each iteration now starts from a baseline where RAG slightly hurts; improvements will need to make up that gap before they're a net win.</li>
-</ul>
-
-<h2 class="footnote">Cost &amp; operational footnote</h2>
-
-<table style="font-size: 13px; margin-top: 8px;">
+<table>
 <thead>
-<tr><th>Stage</th><th>Wall-clock</th><th>GPU</th><th>API cost</th><th>Outcome</th></tr>
+<tr><th>Axis</th><th>no-RAG</th><th>+RAG</th><th>Δ</th><th>n rows</th></tr>
 </thead>
 <tbody>
-<tr>
-  <td>Probe (single file, healthbench_hard no-RAG)</td>
-  <td>24 min</td>
-  <td>1× H200</td>
-  <td>$0</td>
-  <td>258/258 scored, pipeline verified</td>
-</tr>
-<tr>
-  <td>Full sweep (6 files, 38,308 criterion calls)</td>
-  <td>2 h</td>
-  <td>1× H200</td>
-  <td>$0</td>
-  <td>4,678/4,678 scored, 0 errors</td>
-</tr>
-<tr>
-  <td><strong>Phase B total</strong></td>
-  <td><strong>~2.5 h</strong></td>
-  <td>1× H200 (≈$0)</td>
-  <td><strong>$0</strong></td>
-  <td>—</td>
-</tr>
+<tr><td>communication_quality</td><td class="cell-good">+0.372</td><td class="cell-mid">+0.337</td><td class="cell-bad">−3.4 pp</td><td>1,095</td></tr>
+<tr><td>instruction_following</td><td class="cell-good">+0.274</td><td class="cell-mid">+0.242</td><td class="cell-bad">−3.2 pp</td><td>396</td></tr>
+<tr><td>accuracy</td><td class="cell-mid">+0.265</td><td class="cell-mid">+0.261</td><td>−0.4 pp</td><td>1,867</td></tr>
+<tr><td>context_awareness</td><td class="cell-mid">+0.216</td><td class="cell-mid">+0.203</td><td>−1.2 pp</td><td>1,464</td></tr>
+<tr><td>completeness <small>(pooled — but see below)</small></td><td class="cell-bad">−0.200</td><td class="cell-bad">−0.202</td><td>−0.2 pp</td><td>1,313</td></tr>
 </tbody>
 </table>
 
-<p class="footnote" style="margin-top: 0; padding-top: 4px; border-top: none;">vLLM throughput on H200 at <code>reasoning_effort=medium</code> with prefix caching: ~3,500 combined tokens/sec at 20 concurrent in-flight requests, 32% prefix cache hit rate (rubric criteria from the same row share the grader prompt + conversation prefix). KV cache utilization peaked at ~1.4% of the H200's ~78 GB free-after-weights budget — the client (<code>ThreadPoolExecutor</code> in <code>rescore_rubric.py</code>) capped concurrency well below the GPU's ceiling. Future runs could compress wall-clock by 2-3× by raising <code>MAX_WORKERS</code> if needed.</p>
+<p><strong>Completeness is the worst axis</strong> — but the pooled −0.20 is misleading. Per subset it is +0.70 on consensus and deeply negative on the others:</p>
+
+<table>
+<thead><tr><th>completeness by subset</th><th>no-RAG</th><th>+RAG</th></tr></thead>
+<tbody>
+<tr><td>oss_eval</td><td class="cell-bad">−0.19</td><td class="cell-bad">−0.19</td></tr>
+<tr><td>consensus</td><td class="cell-good">+0.70</td><td class="cell-good">+0.79</td></tr>
+<tr><td>hard</td><td class="cell-bad">−0.48</td><td class="cell-bad">−0.49</td></tr>
+</tbody>
+</table>
+
+<p>Two reads: (1) the model is reasonably complete on simple consensus items but badly incomplete on the open-ended (<code>oss_eval</code>) and adversarial (<code>hard</code>) subsets, where a negative axis mean means it is actively <em>triggering</em> completeness penalties, not merely under-covering; (2) this matches the SAQ track, where the same model conveys only ~17–21% of expected key facts. Both tracks point at coverage as the core weakness.</p>
+
+<p class="callout"><em>Penalty violations.</em> Beyond the means, the model <strong>met 1,634 penalty ("should-not") criteria on <code>oss_eval</code> and 499 on <code>hard</code></strong> (no-RAG). These violations are what pull the scores negative and are the rubric-track counterpart to the SAQ <code>potentially_harmful</code> rate — the failure mode is doing the discouraged thing, not just omitting the encouraged thing.</p>
+
+<h2>The RAG effect (small, mostly noise)</h2>
+
+<p>All three RAG deltas are negative, which is suggestive, but the evidence is weak: no bootstrap CIs were computed, and the per-row metric is high-variance (−2.2 to +1.0). The −0.5 pp (oss) and −0.3 pp (hard) deltas are within plausible noise; three-of-three negative is also weak on its own (a coin-flip would give all-negative ~1/8 of the time). Only the <strong>consensus −2.0 pp</strong> is large enough to plausibly be real — and even that sits on the penalty-free, 2-criteria-per-row subset with the coarsest per-row resolution.</p>
+
+<p>The per-axis deltas hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp, n=396) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
+
+<h2>Caveats &amp; methodology</h2>
+
+<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><strong>No confidence intervals.</strong> All deltas here are point estimates. Treat oss/hard deltas as noise until CIs are computed; the absolute scores and the completeness/penalty findings are robust (large n, direct counts).</li>
+  <li><strong>Judge calibration.</strong> Per the <a href="judge-validation-phase-a-result-20260608.html">Phase A report</a>, gpt-oss-120b's overall met-rate is 73.2% vs a 77% physician baseline (−3.8 pp; closest of all candidates tested), but it under-detects failures on NOT-MET rows (67.9% vs 77.6% human ceiling, ~10 pp). So absolute <code>weighted_met</code> here is a mild <em>lower bound</em>; the ±RAG Δ cancels the bias (same judge, both arms).</li>
+  <li><strong>Track asymmetry.</strong> Rubric uses OpenAI's HealthBench grader prompt verbatim (inline per-criterion <code>explanation</code>); SAQ uses a custom verdict-only prompt with captured CoT. Same judge, same ±RAG robustness; only audit surface differs.</li>
+</ul>
+
+<p class="footnote">Operational: full sweep 4,678 rows / 38,308 criterion calls in ~2 h on a single H200, $0 API. Client concurrency (<code>ThreadPoolExecutor</code> in <code>rescore_rubric.py</code>) capped well below the GPU ceiling — KV-cache utilization peaked at ~1.4% — so raising <code>MAX_WORKERS</code> could cut wall-clock 2–3× if needed.</p>
 
 </body>
 </html>
