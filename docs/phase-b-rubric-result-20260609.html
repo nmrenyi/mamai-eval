@@ -39,13 +39,14 @@
 <small class="meta">MAM-AI v0.2 · open-ended rubric track · gpt-oss-120b @ reasoning_effort=medium judge · 4,678 rows · 38,308 criterion calls · 2026-06-09</small>
 
 <div class="tldr">
-<p><strong>Gemma 4 E4B earns essentially no net rubric credit on HealthBench</strong>, and RAG does not change that:</p>
+<p><strong>Gemma 4 E4B earns essentially no net rubric credit on HealthBench — and the failure is mostly the model declining to engage, not getting things wrong.</strong></p>
 <ul style="margin: 6px 0 4px 18px;">
-  <li><strong>Absolute scores are near-zero / negative — but that blended number is a cancellation.</strong> Decomposed, on the penalty-bearing subsets the model earns only <strong>11–18% of achievable positive credit</strong> while <strong>incurring 38–46% of the available "should-not" penalty weight</strong>; blended, these offset to ~0.00 (<code>oss_eval</code>) and −0.18 (<code>hard</code>, 68% of responses net-negative). <code>consensus</code> looks better (0.51) but is penalty-free and not on the same scale.</li>
-  <li><strong>RAG is effectively neutral.</strong> All three deltas are slightly negative (−0.5 / −2.0 / −0.3 pp), but with no confidence intervals and a per-row metric spanning −2.2 to 1.0, only the consensus −2 pp is plausibly above noise — and it sits on the lowest-resolution subset. RAG should be reported as ≈neutral, not as a regression.</li>
-  <li><strong>The weak axis is completeness</strong> (on <code>oss_eval</code>/<code>hard</code>), corroborating the SAQ track's low-recall finding from the other direction.</li>
+  <li><strong>Safe but deflecting.</strong> The dominant failure (53–61% of sampled failures) is the model <strong>refusing as "out of scope" or punting to "see a doctor"</strong> instead of answering; deflection + omission ≈ 75%, while active harm is rare (~2%).</li>
+  <li><strong>Absolute scores are near-zero / negative</strong> — a cancellation: on the penalty-bearing subsets the model earns only 11–18% of achievable positive credit while incurring 38–46% of the "should-not" penalty weight; blended, these offset to ~0.00 (<code>oss_eval</code>) and −0.18 (<code>hard</code>). <code>consensus</code> looks better (0.51) but is penalty-free and not on the same scale.</li>
+  <li><strong>Safety-critical bug:</strong> the scope reflex mis-fires on emergencies — the model refused a choking child, peanut anaphylaxis, and a scald as <em>"not a healthcare question."</em> A must-fix before deployment.</li>
+  <li><strong>RAG is effectively neutral</strong> (deltas −0.5 / −2.0 / −0.3 pp, no CIs, mostly within noise) — not the lever.</li>
 </ul>
-<p>The headline is the absolute level, not the RAG delta: the model fails most rubric criteria and trips many "should-not" penalties. Improving coverage — not retrieval — is the lever.</p>
+<p>The lever is <strong>fixing the scope/deflection reflex</strong> first, then coverage — not retrieval. See <em>Recommended fixes</em>.</p>
 </div>
 
 <h2>Method</h2>
@@ -243,6 +244,26 @@
   <li><strong>Clipping.</strong> The paper clips the mean to [0,1]; we keep it unclipped, so our negative <code>hard</code> would read as 0.00 under the paper's convention.</li>
 </ul>
 <p>So: low, and below published models on the comparable consensus scale — consistent with a small on-device model on a hard benchmark under a stricter judge — but <strong>indicative only, not a leaderboard-comparable result</strong>. The within-study ±RAG comparison remains the clean signal.</p>
+
+<h2>Recommended fixes — where to work</h2>
+
+<p>These are <strong>advice</strong> grounded in the failure-mode analysis (and the SAQ track); the prompt changes themselves are out of scope for this report and will be implemented separately. Ordered by impact × effort.</p>
+
+<p><strong>Tier 1 — prompt-only, $0 per cluster re-run, targets the dominant failure (deflection):</strong></p>
+<ol style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><strong>Emergency override (safety-critical — do first).</strong> For any red-flag / emergency presentation, always give minimal safety guidance (call emergency services + immediate steps) regardless of scope, instead of refusing as "not a healthcare question."</li>
+  <li><strong>Reframe scope from "refuse" to "engage in-scope, safe-pointer out-of-scope."</strong> The case's geographic origin is irrelevant; widen the scope explicitly to women's reproductive / sexual / neonatal health; and when genuinely out of scope, give a brief safe pointer, not a flat refusal.</li>
+  <li><strong>"Both/and," not "defer."</strong> In scope, give concrete first-line management steps <em>and</em> advise escalation — not "see a doctor" instead of content.</li>
+  <li><strong>Authorize naming first-line drugs / doses</strong> (with a "confirm against local protocol" caveat).</li>
+</ol>
+
+<p><strong>Tier 2 — serving / code bug (independent of model quality):</strong> fix the leaked chain-of-thought cases (raw <code>&lt;|channel&gt;thought…</code>, truncated, no final answer) — likely the gpt-oss reasoning format leaking through or a max-tokens truncation; check the generation config and response parsing.</p>
+
+<p><strong>Tier 3 — eval integrity (so progress is measurable):</strong> before pinning judge IDs (per the <a href="judge-validation-phase-a-result-20260608.html">judge-validation</a> plan), clean the grading artifacts (mis-keyed rubric polarity; judge verdicts that contradict their own explanations) and account for the ~16–25% strictness inflation, and compute the bootstrap CIs this report currently lacks.</p>
+
+<p><strong>Tier 4 — capability (hardest, ongoing):</strong> after deflection is fixed, the residual gap is genuine under-coverage (the model still misses ~82% of accuracy positives even when it engages). Levers: thoroughness / structured-management prompting, retrieval-corpus tuning, or a stronger base model — but <em>not</em> RAG as currently configured (≈neutral here).</p>
+
+<p><strong>Highest-leverage:</strong> Tier 1 — prompt-only, hits the majority failure mode, and item 1 closes a safety gap that should block deployment.</p>
 
 <h2>Caveats &amp; methodology</h2>
 
