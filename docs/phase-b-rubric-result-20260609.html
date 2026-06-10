@@ -117,33 +117,27 @@
   <dt>instruction_following</dt><dd>did it actually do what was asked? <small>(e.g. <em>"Should make a genuine effort to respond directly, rather than only suggesting consulting institutional resources."</em>)</small></dd>
 </dl>
 
-<p>Criteria within an axis can be positive ("should do X") or penalty ("should not do X", negative points). For a penalty criterion, <code>met=True</code> means the model <em>did</em> the undesirable thing, so the penalty applies — the same per-row <code>weighted_met</code> formula then aggregates within each axis. The means below are per-row-within-axis, averaged across rows that have ≥1 criterion of that axis (so an axis's <code>n rows</code> is smaller than the total).</p>
+<p>Criteria within an axis can be positive ("should do X") or penalty ("should not do X", negative points). For a penalty criterion, <code>met=True</code> means the model <em>did</em> the undesirable thing, so the penalty applies — the same per-row <code>weighted_met</code> formula then aggregates within each axis. We report each axis <strong>per subset</strong> (no-RAG), <em>not</em> pooled: pooling would average in the penalty-free consensus lens (inflating every axis) and double-count conversations — the same reasons the headline is not pooled.</p>
 
 <table>
 <thead>
-<tr><th>Axis</th><th>no-RAG</th><th>+RAG</th><th>Δ</th><th>n rows</th></tr>
+<tr><th>Axis (no-RAG)</th><th>oss_eval</th><th>consensus</th><th>hard</th></tr>
 </thead>
 <tbody>
-<tr><td>communication_quality</td><td class="cell-good">0.372</td><td class="cell-mid">0.337</td><td class="cell-bad">−3.4 pp</td><td>1,095</td></tr>
-<tr><td>instruction_following</td><td class="cell-good">0.274</td><td class="cell-mid">0.242</td><td class="cell-bad">−3.2 pp</td><td>396</td></tr>
-<tr><td>accuracy</td><td class="cell-mid">0.265</td><td class="cell-mid">0.261</td><td>−0.4 pp</td><td>1,867</td></tr>
-<tr><td>context_awareness</td><td class="cell-mid">0.216</td><td class="cell-mid">0.203</td><td>−1.2 pp</td><td>1,464</td></tr>
-<tr><td>completeness <small>(pooled — but see below)</small></td><td class="cell-bad">−0.200</td><td class="cell-bad">−0.202</td><td>−0.2 pp</td><td>1,313</td></tr>
+<tr><td>communication_quality</td><td class="cell-mid">0.337</td><td class="cell-good">0.419</td><td class="cell-mid">0.367</td></tr>
+<tr><td>instruction_following</td><td class="cell-mid">0.194</td><td class="cell-good">0.495</td><td class="cell-mid">0.215</td></tr>
+<tr><td>accuracy</td><td class="cell-mid">0.149</td><td class="cell-good">0.534</td><td class="cell-bad">0.020</td></tr>
+<tr><td>context_awareness</td><td class="cell-mid">0.119</td><td class="cell-good">0.523</td><td class="cell-bad">−0.188</td></tr>
+<tr><td>completeness</td><td class="cell-bad">−0.188</td><td class="cell-good">0.696</td><td class="cell-bad">−0.479</td></tr>
 </tbody>
 </table>
+<p class="legend">Per-row-within-axis weighted_met, averaged over rows that contain that axis. Read down a column for where the model fails on that subset; read across a row for how an axis behaves as the grading lens / difficulty changes.</p>
 
-<p><strong>Completeness is the worst axis</strong> — but the pooled −0.20 is misleading. Per subset it is 0.70 on consensus and deeply negative on the others:</p>
-
-<table>
-<thead><tr><th>completeness by subset</th><th>no-RAG</th><th>+RAG</th></tr></thead>
-<tbody>
-<tr><td>oss_eval</td><td class="cell-bad">−0.19</td><td class="cell-bad">−0.19</td></tr>
-<tr><td>consensus</td><td class="cell-good">0.70</td><td class="cell-good">0.79</td></tr>
-<tr><td>hard</td><td class="cell-bad">−0.48</td><td class="cell-bad">−0.49</td></tr>
-</tbody>
-</table>
-
-<p>Two reads: (1) the model is reasonably complete on simple consensus items but badly incomplete on the open-ended (<code>oss_eval</code>) and adversarial (<code>hard</code>) subsets, where a negative axis mean means it is actively <em>triggering</em> completeness penalties, not merely under-covering; (2) this matches the SAQ track, where the same model conveys only ~17–21% of expected key facts. Both tracks point at coverage as the core weakness.</p>
+<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><strong>Completeness is the weakest axis</strong> on the penalty-bearing subsets (−0.19 oss_eval, −0.48 hard). A negative mean means the model is actively <em>triggering</em> completeness penalties — omitting expected content — not merely under-covering. This matches the SAQ track, where the same model conveys only ~17–21% of expected key facts; both tracks point at coverage as the core weakness.</li>
+  <li><strong>context_awareness collapses on <code>hard</code></strong> (0.12 → −0.19): the model handles context adequately on general items but mishandles it on adversarial / edge cases.</li>
+  <li><strong>consensus is uniformly high across every axis</strong> (0.42–0.70) — but that is the forgiving positive-only lens (the same conversations as <code>oss_eval</code>, consensus criteria only), not the model being genuinely stronger on those axes.</li>
+</ul>
 
 <p class="callout"><em>Penalty violations.</em> Beyond the means, the model <strong>met 1,634 penalty ("should-not") criteria on <code>oss_eval</code> and 499 on <code>hard</code></strong> (no-RAG). These violations are what pull the scores negative and are the rubric-track counterpart to the SAQ <code>potentially_harmful</code> rate — the failure mode is doing the discouraged thing, not just omitting the encouraged thing.</p>
 
@@ -153,7 +147,7 @@
 
 <p>The decomposition stays flat too: on <code>oss_eval</code> positive credit moves 0.184 → 0.174 and penalty incurred 0.378 → 0.366 (marginally less complete, marginally safer); on <code>hard</code> both are essentially unchanged. All decomposed deltas are ≤~1 pp.</p>
 
-<p>The per-axis deltas hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp, n=396) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
+<p>The per-axis ±RAG deltas (pooled across subsets — fine to pool here because the consensus inflation hits both arms equally and cancels in the delta) hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
 
 <h2>How this compares to published HealthBench scores</h2>
 
