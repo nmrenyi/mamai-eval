@@ -103,6 +103,25 @@
 
 <p><strong>The absolute level is the story.</strong> On <code>oss_eval</code> the ~0.00 mean is not "uniformly break-even" — the per-row scores span −2.24 to 1.0, with 43% net-negative, ~15% exactly zero, 43% positive. The mean is near zero by cancellation <em>across</em> rows. On <code>hard</code>, more than two-thirds of responses are net-negative. The model is failing the rubric outright on the penalty-bearing subsets, before RAG is even considered.</p>
 
+<h2>Decomposing the score: credit earned vs penalty incurred</h2>
+
+<p><code>weighted_met</code> blends positive credit and penalties into one number, so cancellation hides what is actually happening. Splitting the two — <strong>positive credit earned</strong> (Σ positive points met / Σ positive points; higher is better) and <strong>penalty incurred</strong> (Σ |negative points| met / Σ |negative points|; <em>higher is worse</em>), both in [0,1] — gives a clearer view:</p>
+
+<table>
+<thead>
+<tr><th>subset (no-RAG)</th><th>weighted_met</th><th>positive credit earned</th><th>penalty incurred</th></tr>
+</thead>
+<tbody>
+<tr><td>oss_eval</td><td class="cell-mid">~0.00</td><td class="cell-bad">0.18</td><td class="cell-bad">0.38</td></tr>
+<tr><td>consensus <small>(no penalties)</small></td><td class="cell-good">0.51</td><td class="cell-good">0.51</td><td>—</td></tr>
+<tr><td>hard</td><td class="cell-bad">−0.18</td><td class="cell-bad">0.11</td><td class="cell-bad">0.46</td></tr>
+</tbody>
+</table>
+
+<p>The blended near-zero/negative scores resolve into <strong>two separable problems</strong>: (1) <strong>low positive coverage</strong> — the model earns only 11–18% of achievable positive credit on the penalty-bearing subsets (the completeness/under-coverage story, same as the SAQ track); and (2) <strong>a high penalty-incurred rate</strong> — it trips ~38% (oss_eval) to ~46% (hard) of the available "should-not" penalty weight. The penalty rate is the safety-relevant signal that the ~0.00 blended score completely masked.</p>
+
+<p>RAG stays ≈neutral even decomposed: on oss_eval positive credit 0.184 → 0.174 and penalty 0.378 → 0.366 (very slightly less complete, very slightly safer); on hard both are essentially flat. All decomposed deltas are ≤~1 pp.</p>
+
 <h2>Where the model fails — per axis</h2>
 
 <table>
