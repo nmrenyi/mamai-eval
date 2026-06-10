@@ -127,6 +127,34 @@
 
 <p>The per-axis deltas hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp, n=396) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
 
+<h2>How this compares to published HealthBench scores</h2>
+
+<p>For context only — <strong>this is not a ranking</strong> (see caveats below). Published scores from the <a href="https://arxiv.org/abs/2505.08775">HealthBench paper</a> (clipped to [0,1], full benchmark, GPT-4.1 grader):</p>
+
+<table>
+<thead>
+<tr><th>Subset</th><th>Published frontier models</th><th>Gemma 4 E4B (ours, no-RAG)</th></tr>
+</thead>
+<tbody>
+<tr><td>overall <small>(= main eval; our <code>oss_eval</code>)</small></td><td>GPT-3.5 0.16 · GPT-4o 0.32 · o3 0.60</td><td class="cell-bad">~0.00 <small>(0.003 no-RAG)</small></td></tr>
+<tr><td>hard</td><td>o3 0.32 <small>(top score)</small>, GPT-4.1 ~0.24, many near 0</td><td class="cell-bad">−0.18 <small>(0.00 clipped)</small></td></tr>
+<tr><td>consensus</td><td>GPT-4o ~0.75 · GPT-4.1 ~0.85 · o3 ~0.90</td><td class="cell-mid">0.51</td></tr>
+</tbody>
+</table>
+
+<p>The paper's headline "overall HealthBench" score is computed on the main eval set, which is the same rubric construction as our <code>oss_eval</code> — so <strong><code>oss_eval</code> ~0.00 is our directly-comparable overall number</strong>, below even the weakest model in the paper (GPT-3.5 Turbo, 0.16). We do <em>not</em> pool the three subsets into one score (that would average in the penalty-free consensus scale and double-count the hard examples, which are a subset of the main set — the paper reports them separately too).</p>
+
+<p>Two further reads: on <strong>hard</strong>, near-zero is <em>not</em> unusual — even the best model in the paper (o3) tops out at 0.32 and many score near zero, so our floored result is roughly where weak-to-mid models land. On <strong>consensus</strong> (the cleaner positive-only scale) our 0.51 is genuinely below the frontier cloud models.</p>
+
+<p>But the gap is <strong>not cleanly attributable to model quality</strong>, because four things differ from the paper's setup:</p>
+<ul style="margin: 6px 0 12px 0; padding-left: 22px;">
+  <li><strong>Model class.</strong> Gemma 4 E4B is a ~4B-parameter <em>on-device</em> model; the smallest model the paper tests (GPT-4.1 nano) is a far larger, stronger cloud model. Nothing in Gemma's weight class is benchmarked there.</li>
+  <li><strong>Different data.</strong> We score an OBGYN-filtered mamabench subset, not the full HealthBench — different question mix.</li>
+  <li><strong>Different, stricter grader.</strong> We use gpt-oss-120b; the paper uses GPT-4.1. Per Phase A, our judge under-detects met criteria by ~4–10 pp, biasing our absolute scores <em>downward</em>.</li>
+  <li><strong>Clipping.</strong> The paper clips the mean to [0,1]; we keep it unclipped, so our negative <code>hard</code> would read as 0.00 under the paper's convention.</li>
+</ul>
+<p>So: low, and below published models on the comparable consensus scale — consistent with a small on-device model on a hard benchmark under a stricter judge — but <strong>indicative only, not a leaderboard-comparable result</strong>. The within-study ±RAG comparison remains the clean signal.</p>
+
 <h2>Caveats &amp; methodology</h2>
 
 <ul style="margin: 6px 0 12px 0; padding-left: 22px;">
