@@ -83,12 +83,12 @@ _judge_top: dict = _params.get("judge", {})
 JUDGE_ENSEMBLE: list[dict] = [
     {
         "provider": e.get("provider", _judge_top.get("provider", "openai")),
-        "model": e.get("model"),
+        "model": e.get("model") or _judge_top.get("model"),
         "temperature": e.get("temperature", _judge_top.get("temperature", 0.0)),
         "extra_body": e.get("extra_body", _judge_top.get("extra_body")),
     }
     for e in (_judge_top.get("ensemble") or [])
-    if e.get("model")
+    if (e.get("model") or _judge_top.get("model"))
 ]
 
 # JUDGE_RUBRIC = the rubric subsection, but inheriting temperature / extra_body
