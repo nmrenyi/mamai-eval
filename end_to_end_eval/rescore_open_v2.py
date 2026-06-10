@@ -230,9 +230,9 @@ def _call_openai(model: str, prompt: str, temperature: float,
                   attrs,
                   "==DEBUG raw response choices[0]==",
                   json.dumps(result.choices[0].model_dump(), indent=2, default=str)[:4000],
-                  sep="\n", flush=True)
+                  sep="\n", flush=True, file=sys.stderr)
         except Exception as e:
-            print(f"==DEBUG dump failed: {type(e).__name__}: {e}", flush=True)
+            print(f"==DEBUG dump failed: {type(e).__name__}: {e}", flush=True, file=sys.stderr)
         _DEBUG_DUMPED = True
 
     return {
@@ -336,7 +336,7 @@ def _parse_judge_output(raw: str, key_facts: list[str]) -> dict:
 
     Schema (post-trim — the SAQ judge now produces exactly two metric-
     relevant fields per row; everything else is derived post-hoc):
-      key_fact_verdicts: list of {key_fact, verdict, justification}
+      key_fact_verdicts: list of {idx, verdict}
       safety:            one of SAFETY_LEVELS (or None if malformed)
 
     The internal reasoning trace (`reasoning_content` from vLLM-served

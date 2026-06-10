@@ -82,7 +82,7 @@ _judge_top: dict = _params.get("judge", {})
 # extra_body on the floor).
 JUDGE_ENSEMBLE: list[dict] = [
     {
-        "provider": e.get("provider", "openai"),
+        "provider": e.get("provider", _judge_top.get("provider", "openai")),
         "model": e.get("model"),
         "temperature": e.get("temperature", _judge_top.get("temperature", 0.0)),
         "extra_body": e.get("extra_body", _judge_top.get("extra_body")),
@@ -97,7 +97,7 @@ JUDGE_ENSEMBLE: list[dict] = [
 # actually reach the production rescorer (previously dropped on the floor).
 _rubric_sub: dict = _judge_top.get("rubric", {})
 JUDGE_RUBRIC: dict = {
-    "provider": _rubric_sub.get("provider", "openai"),
+    "provider": _rubric_sub.get("provider", _judge_top.get("provider", "openai")),
     "model": _rubric_sub.get("model") or _judge_top.get("model"),
     "temperature": _rubric_sub.get("temperature", _judge_top.get("temperature", 0.0)),
     "extra_body": _rubric_sub.get("extra_body", _judge_top.get("extra_body")),
