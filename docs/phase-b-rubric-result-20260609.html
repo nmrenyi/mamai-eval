@@ -247,23 +247,25 @@
 
 <h2>Recommended fixes — where to work</h2>
 
-<p>These are <strong>advice</strong> grounded in the failure-mode analysis (and the SAQ track); the prompt changes themselves are out of scope for this report and will be implemented separately. Ordered by impact × effort.</p>
+<p>These are <strong>advice</strong> grounded in the failure-mode analysis (and the SAQ track); the prompt changes themselves are out of scope for this report and will be implemented separately. Two kinds of work — improving the <em>model</em>, and improving the <em>eval</em> that measures it.</p>
 
-<p><strong>Tier 1 — prompt-only, $0 per cluster re-run, targets the dominant failure (deflection):</strong></p>
+<h3>Model improvements</h3>
+
+<p><strong>1. Fix the scope / deflection reflex — prompt-only, $0 per cluster re-run, do first.</strong> Targets the dominant failure (deflection 53–61%), and item (a) closes a safety gap that should block deployment:</p>
 <ol style="margin: 6px 0 12px 0; padding-left: 22px;">
-  <li><strong>Emergency override (safety-critical — do first).</strong> For any red-flag / emergency presentation, always give minimal safety guidance (call emergency services + immediate steps) regardless of scope, instead of refusing as "not a healthcare question."</li>
+  <li><strong>Emergency override (safety-critical).</strong> For any red-flag / emergency presentation, always give minimal safety guidance (call emergency services + immediate steps) regardless of scope, instead of refusing as "not a healthcare question."</li>
   <li><strong>Reframe scope from "refuse" to "engage in-scope, safe-pointer out-of-scope."</strong> The case's geographic origin is irrelevant; widen the scope explicitly to women's reproductive / sexual / neonatal health; and when genuinely out of scope, give a brief safe pointer, not a flat refusal.</li>
   <li><strong>"Both/and," not "defer."</strong> In scope, give concrete first-line management steps <em>and</em> advise escalation — not "see a doctor" instead of content.</li>
   <li><strong>Authorize naming first-line drugs / doses</strong> (with a "confirm against local protocol" caveat).</li>
 </ol>
 
-<p><strong>Tier 2 — eval/device alignment (likely not a real device bug):</strong> the leaked chain-of-thought cases (raw <code>&lt;|channel&gt;thought…</code>, no final answer) are most likely an artifact of the <em>host</em> eval path — llama.cpp + Q4_0 GGUF + manual <code>&lt;start_of_turn&gt;</code> template + raw-text capture. The deployed app uses LiteRT-LM's conversation API, which applies the chat template and parses output, so it should not surface raw thought. Align the eval serving to the device — or run the device-faithful path (<code>run_eval_device.py</code> / the app's benchmark service) — and re-check before treating it as a defect.</p>
+<p><strong>2. Improve coverage / completeness — important; the harder, later work.</strong> Even once deflection is fixed, the model misses ~82% of accuracy positives <em>when it does engage</em> — this is the genuine capability ceiling and where the real quality gains are. Levers: thoroughness / structured-management prompting, retrieval-corpus tuning, or a stronger base model — but <em>not</em> RAG as currently configured (≈neutral here). Slower to move than the prompt fixes, so schedule it as a dedicated follow-up rather than a quick pass.</p>
 
-<p><strong>Tier 3 — eval integrity (so progress is measurable):</strong> before pinning judge IDs (per the <a href="judge-validation-phase-a-result-20260608.html">judge-validation</a> plan): (a) account for the ~16–25% measurement-strictness inflation so raw failure rates aren't read as pure capability gaps; (b) compute the bootstrap CIs this report currently lacks; and (c) note that genuine grading artifacts (mis-keyed polarity; judge verdicts contradicting their explanations) are <em>rare</em> (&lt;1% of triggered penalties, negligible score impact) — don't run a broad cleanup, but do make the one targeted benchmark-logic fix (conditional emergency/self-harm criteria firing when the condition is absent) and track the rest via judge validation.</p>
+<h3>Eval-side work <small>(not model fixes — needed to measure progress honestly)</small></h3>
 
-<p><strong>Tier 4 — capability (hardest, ongoing):</strong> after deflection is fixed, the residual gap is genuine under-coverage (the model still misses ~82% of accuracy positives even when it engages). Levers: thoroughness / structured-management prompting, retrieval-corpus tuning, or a stronger base model — but <em>not</em> RAG as currently configured (≈neutral here).</p>
+<p><strong>3. Eval integrity</strong> (before pinning judge IDs, per the <a href="judge-validation-phase-a-result-20260608.html">judge-validation</a> plan): (a) account for the ~16–25% measurement-strictness inflation so raw failure rates aren't read as pure capability gaps; (b) compute the bootstrap CIs this report currently lacks; (c) genuine grading artifacts are <em>rare</em> (&lt;1% of triggered penalties, negligible score impact) — don't run a broad cleanup, but do make the one targeted benchmark-logic fix (conditional emergency/self-harm criteria firing when the condition is absent) and track the rest via judge validation.</p>
 
-<p><strong>Highest-leverage:</strong> Tier 1 — prompt-only, hits the majority failure mode, and item 1 closes a safety gap that should block deployment.</p>
+<p><strong>4. Eval/device alignment (minor).</strong> The leaked chain-of-thought (~1.8%, rubric-only) is most likely a <em>host</em>-eval artifact (llama.cpp + Q4_0 GGUF + manual <code>&lt;start_of_turn&gt;</code> template + raw-text capture), not a device behavior — the deployed app's LiteRT-LM conversation API applies the template and parses output. Verify on the device-faithful path (<code>run_eval_device.py</code> / the app's benchmark service) rather than treating it as a defect.</p>
 
 <h2>Caveats &amp; methodology</h2>
 
