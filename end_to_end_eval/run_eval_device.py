@@ -168,42 +168,59 @@ def _device_apk_info(serial: str | None) -> dict:
 
 # ── Eval input + output handling ──────────────────────────────────────────────
 
-def _build_eval_input(rows: list[dict], set_type: str) -> dict:
+def _build_eval_input(rows: list[dict], set_type: str, use_retrieval: bool = False) -> dict:
     """Build the eval_input.json the on-device service consumes.
 
-    The on-device eval branch sends each `user_message` to the model verbatim
-    (bypassPromptFormatting=true) under `system_prompt`, so we build the exact
-    user message the host used for the matching track:
+    Schema: {system_prompt, use_retrieval, rows: [{id, user_message, history?}]}.
+    Per track:
 
-      mcq         -> MCQ adapter prompt + "Question: …\\nOptions:\\n…"
-                     (build_mcq_messages wire format)
-      open_ended  -> app system prompt + the bare question
-                     (build_open_messages, no-RAG arm)
+      mcq                -> MCQ adapter prompt + "Question: …\\nOptions:\\n…"
+      open_ended (SAQ)   -> app prompt + the bare question
+      open_ended_rubric  -> app prompt; the conversation's final user turn is
+                            `user_message`, earlier turns become `history`.
 
-    Identical input on both stacks isolates the LiteRT-vs-GGUF generation gap.
-    open_ended_rubric (healthbench) is multi-turn and not yet supported here.
+    When ``use_retrieval`` is False the device sends `user_message` verbatim
+    (no-RAG arm; identical input to the host no-RAG arm, isolating the
+    LiteRT-vs-GGUF generation gap). When True the device runs on-device
+    retrieval + the deployed context-injection (the +RAG arm, which also
+    exercises the device retrieval stack).
     """
     payload_rows = []
     for r in rows:
+        history: list[dict] = []
         if set_type == "mcq":
             user_message = f"Question: {r['question']}\nOptions:\n{r['choices_formatted']}"
-        else:  # open_ended (SAQ), no-RAG
+        elif set_type == "open_ended":
             user_message = str(r["question"])
-        payload_rows.append({"id": r["id"], "user_message": user_message})
+        else:  # open_ended_rubric — question is a list of {role, content} turns
+            turns = r["question"] if isinstance(r["question"], list) else \
+                [{"role": "user", "content": str(r["question"])}]
+            user_message = str(turns[-1].get("content", "")) if turns else ""
+            for t in turns[:-1]:
+                role = "model" if t.get("role") in ("assistant", "model") else "user"
+                history.append({"role": role, "text": str(t.get("content", ""))})
+        payload = {"id": r["id"], "user_message": user_message}
+        if history:
+            payload["history"] = history
+        payload_rows.append(payload)
     return {
         "system_prompt": MCQ_SYSTEM_PROMPT if set_type == "mcq" else OPEN_SYSTEM_PROMPT,
+        "use_retrieval": use_retrieval,
         "rows": payload_rows,
     }
 
 
-def _open_ended_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict], dict]:
-    """Shape device SAQ responses into the host open_ended result format.
+def _open_ended_results(rows: list[dict], device_rows: list[dict],
+                        set_type: str) -> tuple[list[dict], dict]:
+    """Shape device open-ended responses into the host result format.
 
-    Produces rows matching run_eval.py's open_ended output
-    ({id, question, reference, key_facts, model_response, inference_time_s}) so
-    the file can be scored later by rescore_open_v2 with the pinned judge — the
-    judge is NOT run here (it needs the cluster vLLM endpoint). Aggregate scores
-    are left for the rescore step; we only record coverage here.
+    open_ended       -> {id, question, reference, key_facts, model_response, …}
+                        (scored later by rescore_open_v2)
+    open_ended_rubric -> {id, question, rubrics, model_response, …}
+                        (scored later by rescore_rubric)
+
+    The judge is NOT run here (it needs the cluster vLLM endpoint); we only
+    record response coverage. Aggregate scores come from the rescore step.
     """
     by_id = {r["id"]: r for r in device_rows}
     results = []
@@ -217,20 +234,25 @@ def _open_ended_results(rows: list[dict], device_rows: list[dict]) -> tuple[list
             print(f"  WARNING: row {row['id']} returned error: {error}")
         if not response.strip():
             n_empty += 1
-        results.append({
+        out_row = {
             "id": row["id"],
             "question": row["question"],
-            "reference": row.get("reference", ""),
-            "key_facts": list(row.get("key_facts", [])),
             "model_response": response,
             "inference_time_s": round((inference_ms or 0) / 1000.0, 2),
             "device_error": error if (error and not isinstance(error, type(None))) else None,
-        })
+        }
+        if set_type == "open_ended_rubric":
+            out_row["rubrics"] = row.get("rubrics", [])
+        else:
+            out_row["reference"] = row.get("reference", "")
+            out_row["key_facts"] = list(row.get("key_facts", []))
+        results.append(out_row)
+    scorer = "rescore_rubric" if set_type == "open_ended_rubric" else "rescore_open_v2"
     scores = {
         "n_responses": len(results),
         "n_empty_responses": n_empty,
         "scored": False,
-        "note": "judge scoring deferred to rescore_open_v2 (needs cluster vLLM judge)",
+        "note": f"judge scoring deferred to {scorer} (needs cluster vLLM judge)",
     }
     return results, scores
 
@@ -290,6 +312,10 @@ def main():
                              f"{','.join(n for n, (_, t) in HF_CONFIGS.items() if t == 'mcq')}")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit questions per dataset")
+    parser.add_argument("--rag", action="store_true",
+                        help="+RAG arm: instruct the device to run on-device retrieval "
+                             "and the deployed context-injection (vs no-RAG verbatim). "
+                             "Requires the eval-branch APK build with use_retrieval support.")
     parser.add_argument("--row-ids", default=None,
                         help="Path to a calibration manifest JSON. When set, only rows whose "
                              "`id` appears in manifest['ids'] are evaluated. Pair with the "
@@ -322,10 +348,8 @@ def main():
         if name not in HF_CONFIGS:
             parser.error(f"Unknown dataset: {name}. Available: {list(HF_CONFIGS.keys())}")
         set_type = HF_CONFIGS[name][1]
-        if set_type not in ("mcq", "open_ended"):
-            parser.error(f"{name} is set_type={set_type}; run_eval_device.py currently "
-                         f"supports mcq and open_ended (SAQ). open_ended_rubric "
-                         f"(healthbench) is multi-turn and needs the multi-turn device branch.")
+        if set_type not in ("mcq", "open_ended", "open_ended_rubric"):
+            parser.error(f"{name} is set_type={set_type}; unsupported.")
 
     row_ids_filter: set[str] | None = None
     if args.row_ids:
@@ -355,7 +379,7 @@ def main():
 
         # Stage input
         local_input = os.path.join(run_dir, f"{ds_name}.eval_input.json")
-        Path(local_input).write_text(json.dumps(_build_eval_input(rows, set_type), ensure_ascii=False, indent=2))
+        Path(local_input).write_text(json.dumps(_build_eval_input(rows, set_type, use_retrieval=args.rag), ensure_ascii=False, indent=2))
         _push(args.device_serial, local_input, INPUT_PATH_ON_DEVICE)
 
         # Clear stale logcat, kick off eval, watch for completion
@@ -382,7 +406,7 @@ def main():
         if set_type == "mcq":
             results, scores = _score_results(rows, device_rows)
         else:
-            results, scores = _open_ended_results(rows, device_rows)
+            results, scores = _open_ended_results(rows, device_rows, set_type)
 
         metadata = {
             "model": args.device_model_tag,
@@ -405,7 +429,7 @@ def main():
             "protocol_version": PROTOCOL_VERSION,
             "prompt_version": PROMPT_VERSION,
             "spec_sha256": SPEC_SHA256,
-            "rag": False,
+            "rag": bool(args.rag),
             "generation_params": {
                 "temperature": TEMPERATURE,
                 "top_p": TOP_P,
