@@ -41,7 +41,7 @@
 <div class="tldr">
 <p><strong>Gemma 4 E4B earns essentially no net rubric credit on HealthBench</strong>, and RAG does not change that:</p>
 <ul style="margin: 6px 0 4px 18px;">
-  <li><strong>Absolute scores are near-zero / negative.</strong> On <code>oss_eval</code> (the largest, most representative subset) mean <code>weighted_met</code> is ~0.00 — and that mean hides a wide split: <strong>43% of responses score net-negative</strong> (trigger more penalty than credit). On <code>hard</code> it is −0.18 (68% net-negative). <code>consensus</code> looks better (0.51) but is penalty-free and not on the same scale.</li>
+  <li><strong>Absolute scores are near-zero / negative — but that blended number is a cancellation.</strong> Decomposed, on the penalty-bearing subsets the model earns only <strong>11–18% of achievable positive credit</strong> while <strong>incurring 38–46% of the available "should-not" penalty weight</strong>; blended, these offset to ~0.00 (<code>oss_eval</code>) and −0.18 (<code>hard</code>, 68% of responses net-negative). <code>consensus</code> looks better (0.51) but is penalty-free and not on the same scale.</li>
   <li><strong>RAG is effectively neutral.</strong> All three deltas are slightly negative (−0.5 / −2.0 / −0.3 pp), but with no confidence intervals and a per-row metric spanning −2.2 to 1.0, only the consensus −2 pp is plausibly above noise — and it sits on the lowest-resolution subset. RAG should be reported as ≈neutral, not as a regression.</li>
   <li><strong>The weak axis is completeness</strong> (on <code>oss_eval</code>/<code>hard</code>), corroborating the SAQ track's low-recall finding from the other direction.</li>
 </ul>
@@ -88,20 +88,22 @@
 </dl>
 <p class="legend">Only positive criteria count toward the denominator, so the scale is "fraction of <em>achievable</em> positive credit, net of penalties." Negative scores are possible only where penalty criteria exist (oss_eval/hard).</p>
 
-<h2>Headline: mean <code>weighted_met</code></h2>
+<h2>Headline result</h2>
 
 <table>
 <thead>
-<tr><th>HealthBench subset</th><th>no-RAG</th><th>+RAG</th><th>Δ (RAG)</th><th>% rows net-negative</th></tr>
+<tr><th rowspan="2">HealthBench subset</th><th colspan="2">weighted_met (blended)</th><th colspan="2">decomposed (no-RAG)</th></tr>
+<tr><th>no-RAG</th><th>+RAG</th><th>positive credit ↑</th><th>penalty incurred ↓</th></tr>
 </thead>
 <tbody>
-<tr><td>oss_eval <small>(largest; representative)</small></td><td class="cell-mid">0.003</td><td class="cell-mid">−0.002</td><td>−0.5 pp</td><td class="cell-bad">43% / 42%</td></tr>
-<tr><td>consensus <small>(penalty-free; low-res)</small></td><td class="cell-good">0.512</td><td class="cell-good">0.492</td><td>−2.0 pp</td><td>0% / 0%</td></tr>
-<tr><td>hard <small>(adversarial)</small></td><td class="cell-bad">−0.178</td><td class="cell-bad">−0.181</td><td>−0.3 pp</td><td class="cell-bad">68% / 69%</td></tr>
+<tr><td>oss_eval <small>(largest; representative)</small></td><td class="cell-mid">0.003</td><td class="cell-mid">−0.002</td><td class="cell-bad">0.18</td><td class="cell-bad">0.38</td></tr>
+<tr><td>consensus <small>(penalty-free; low-res)</small></td><td class="cell-good">0.512</td><td class="cell-good">0.492</td><td class="cell-good">0.51</td><td>—</td></tr>
+<tr><td>hard <small>(adversarial)</small></td><td class="cell-bad">−0.178</td><td class="cell-bad">−0.181</td><td class="cell-bad">0.11</td><td class="cell-bad">0.46</td></tr>
 </tbody>
 </table>
+<p class="legend"><strong>positive credit</strong> = Σ positive points met / Σ positive points (↑ better); <strong>penalty incurred</strong> = Σ |negative points| met / Σ |negative points| (↓ better). Both shown no-RAG — RAG barely moves either (≤~1 pp; see <em>Decomposing the score</em>). Δ on weighted_met: oss −0.5, consensus −2.0, hard −0.3 pp.</p>
 
-<p><strong>The absolute level is the story.</strong> On <code>oss_eval</code> the ~0.00 mean is not "uniformly break-even" — the per-row scores span −2.24 to 1.0, with 43% net-negative, ~15% exactly zero, 43% positive. The mean is near zero by cancellation <em>across</em> rows. On <code>hard</code>, more than two-thirds of responses are net-negative. The model is failing the rubric outright on the penalty-bearing subsets, before RAG is even considered.</p>
+<p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view and are detailed in the next section.</p>
 
 <h2>Decomposing the score: credit earned vs penalty incurred</h2>
 
