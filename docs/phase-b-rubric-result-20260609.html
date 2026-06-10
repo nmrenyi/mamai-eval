@@ -121,6 +121,27 @@
 
 <p><strong>Read both, but don't cross-compare.</strong> In <em>absolute</em> terms most lost points are on the positive side (52,786 ≫ 11,145) — but largely because the positive pool is ~2× the penalty pool (64,661 vs 30,620 points), not because the model does proportionally better there. In <em>rate</em> terms it satisfies only 20% of should-dos and triggers 37% of should-nots; those two rates measure opposite behaviours (doing the encouraged thing vs avoiding the discouraged thing), so they are not apples-to-apples and we don't rank one against the other. The takeaway is just that <strong>both channels leak</strong>: pervasive under-coverage on the positive side, plus a non-trivial penalty-trigger rate.</p>
 
+<h3>By axis — two complementary views</h3>
+
+<p>Breaking both channels down by axis needs two views that answer different questions (and are easy to confuse):</p>
+
+<table>
+<thead>
+<tr><th rowspan="2">axis (oss_eval, no-RAG)</th><th colspan="2">failure rate <small>(within axis)</small></th><th colspan="2">share of lost points <small>(across axes)</small></th></tr>
+<tr><th>positive not-met</th><th>penalty triggered</th><th>of missed positive</th><th>of penalty</th></tr>
+</thead>
+<tbody>
+<tr><td>completeness</td><td class="cell-bad">84%</td><td class="cell-bad">64%</td><td>44%</td><td>71%</td></tr>
+<tr><td>accuracy</td><td class="cell-bad">82%</td><td class="cell-mid">10%</td><td>34%</td><td>10%</td></tr>
+<tr><td>context_awareness</td><td class="cell-bad">77%</td><td class="cell-mid">46%</td><td>15%</td><td>15%</td></tr>
+<tr><td>communication_quality</td><td class="cell-mid">62%</td><td class="cell-mid">12%</td><td>4%</td><td>2%</td></tr>
+<tr><td>instruction_following</td><td class="cell-mid">65%</td><td class="cell-mid">30%</td><td>3%</td><td>3%</td></tr>
+</tbody>
+</table>
+<p class="legend"><strong>Failure rate</strong> = fraction of that axis's criteria the model gets wrong (positives not met; penalties triggered), each over its own denominator — so the two rates do <em>not</em> sum to 100%. Answers "<em>how leaky is each axis?</em>" <strong>Share of lost points</strong> = how the total missed-positive / penalty points distribute across axes (each column sums to 100%). Answers "<em>where do the points go?</em>"</p>
+
+<p>Two reads: (1) <strong>completeness + accuracy hold 78% of the missed positive points</strong>, and completeness alone is 71% of penalty points — coverage on those two axes is where the score is won or lost. (2) <strong>accuracy misses 82% of its positives but triggers only 10% of its penalties</strong> — the model omits correct information far more than it asserts wrong information, the clearest per-axis signature of "safe but unhelpful."</p>
+
 <h2>Where the model fails — per axis</h2>
 
 <p>Every HealthBench criterion carries a native <code>axis</code> tag — the behavioural dimension it grades. This lets us see <em>where</em> failures concentrate, not just an overall number. The five axes in our data:</p>
