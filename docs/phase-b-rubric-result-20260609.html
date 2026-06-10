@@ -41,8 +41,8 @@
 <div class="tldr">
 <p><strong>Gemma 4 E4B earns essentially no net rubric credit on HealthBench</strong>, and RAG does not change that:</p>
 <ul style="margin: 6px 0 4px 18px;">
-  <li><strong>Absolute scores are near-zero / negative.</strong> On <code>oss_eval</code> (the largest, most representative subset) mean <code>weighted_met</code> is ~0.00 — and that mean hides a wide split: <strong>43% of responses score net-negative</strong> (trigger more penalty than credit). On <code>hard</code> it is −0.18 (68% net-negative). <code>consensus</code> looks better (+0.51) but is penalty-free and not on the same scale.</li>
-  <li><strong>RAG is effectively neutral.</strong> All three deltas are slightly negative (−0.5 / −2.0 / −0.3 pp), but with no confidence intervals and a per-row metric spanning −2.2 to +1.0, only the consensus −2 pp is plausibly above noise — and it sits on the lowest-resolution subset. RAG should be reported as ≈neutral, not as a regression.</li>
+  <li><strong>Absolute scores are near-zero / negative.</strong> On <code>oss_eval</code> (the largest, most representative subset) mean <code>weighted_met</code> is ~0.00 — and that mean hides a wide split: <strong>43% of responses score net-negative</strong> (trigger more penalty than credit). On <code>hard</code> it is −0.18 (68% net-negative). <code>consensus</code> looks better (0.51) but is penalty-free and not on the same scale.</li>
+  <li><strong>RAG is effectively neutral.</strong> All three deltas are slightly negative (−0.5 / −2.0 / −0.3 pp), but with no confidence intervals and a per-row metric spanning −2.2 to 1.0, only the consensus −2 pp is plausibly above noise — and it sits on the lowest-resolution subset. RAG should be reported as ≈neutral, not as a regression.</li>
   <li><strong>The weak axis is completeness</strong> (on <code>oss_eval</code>/<code>hard</code>), corroborating the SAQ track's low-recall finding from the other direction.</li>
 </ul>
 <p>The headline is the absolute level, not the RAG delta: the model fails most rubric criteria and trips many "should-not" penalties. Improving coverage — not retrieval — is the lever.</p>
@@ -70,7 +70,7 @@
 <p style="font-family: ui-monospace, monospace; font-size: 13.5px; padding: 8px 14px; background: var(--bg);">weighted_met = (Σ <code>points</code> where met) / (Σ <strong>max(points, 0)</strong>)</p>
 
 <dl>
-  <dt>+1.0 — every positive criterion met, no penalty triggered (ceiling).</dt>
+  <dt>1.0 — every positive criterion met, no penalty triggered (ceiling).</dt>
   <dt>0.0 — achievements and penalties cancel (<em>not</em> "produced nothing").</dt>
   <dt>Negative — triggered more penalty value than positive credit earned.</dt>
 </dl>
@@ -83,13 +83,13 @@
 <tr><th>HealthBench subset</th><th>no-RAG</th><th>+RAG</th><th>Δ (RAG)</th><th>% rows net-negative</th></tr>
 </thead>
 <tbody>
-<tr><td>oss_eval <small>(largest; representative)</small></td><td class="cell-mid">+0.003</td><td class="cell-mid">−0.002</td><td>−0.5 pp</td><td class="cell-bad">43% / 42%</td></tr>
-<tr><td>consensus <small>(penalty-free; low-res)</small></td><td class="cell-good">+0.512</td><td class="cell-good">+0.492</td><td>−2.0 pp</td><td>0% / 0%</td></tr>
+<tr><td>oss_eval <small>(largest; representative)</small></td><td class="cell-mid">0.003</td><td class="cell-mid">−0.002</td><td>−0.5 pp</td><td class="cell-bad">43% / 42%</td></tr>
+<tr><td>consensus <small>(penalty-free; low-res)</small></td><td class="cell-good">0.512</td><td class="cell-good">0.492</td><td>−2.0 pp</td><td>0% / 0%</td></tr>
 <tr><td>hard <small>(adversarial)</small></td><td class="cell-bad">−0.178</td><td class="cell-bad">−0.181</td><td>−0.3 pp</td><td class="cell-bad">68% / 69%</td></tr>
 </tbody>
 </table>
 
-<p><strong>The absolute level is the story.</strong> On <code>oss_eval</code> the ~0.00 mean is not "uniformly break-even" — the per-row scores span −2.24 to +1.0, with 43% net-negative, ~15% exactly zero, 43% positive. The mean is near zero by cancellation <em>across</em> rows. On <code>hard</code>, more than two-thirds of responses are net-negative. The model is failing the rubric outright on the penalty-bearing subsets, before RAG is even considered.</p>
+<p><strong>The absolute level is the story.</strong> On <code>oss_eval</code> the ~0.00 mean is not "uniformly break-even" — the per-row scores span −2.24 to 1.0, with 43% net-negative, ~15% exactly zero, 43% positive. The mean is near zero by cancellation <em>across</em> rows. On <code>hard</code>, more than two-thirds of responses are net-negative. The model is failing the rubric outright on the penalty-bearing subsets, before RAG is even considered.</p>
 
 <h2>Where the model fails — per axis</h2>
 
@@ -98,21 +98,21 @@
 <tr><th>Axis</th><th>no-RAG</th><th>+RAG</th><th>Δ</th><th>n rows</th></tr>
 </thead>
 <tbody>
-<tr><td>communication_quality</td><td class="cell-good">+0.372</td><td class="cell-mid">+0.337</td><td class="cell-bad">−3.4 pp</td><td>1,095</td></tr>
-<tr><td>instruction_following</td><td class="cell-good">+0.274</td><td class="cell-mid">+0.242</td><td class="cell-bad">−3.2 pp</td><td>396</td></tr>
-<tr><td>accuracy</td><td class="cell-mid">+0.265</td><td class="cell-mid">+0.261</td><td>−0.4 pp</td><td>1,867</td></tr>
-<tr><td>context_awareness</td><td class="cell-mid">+0.216</td><td class="cell-mid">+0.203</td><td>−1.2 pp</td><td>1,464</td></tr>
+<tr><td>communication_quality</td><td class="cell-good">0.372</td><td class="cell-mid">0.337</td><td class="cell-bad">−3.4 pp</td><td>1,095</td></tr>
+<tr><td>instruction_following</td><td class="cell-good">0.274</td><td class="cell-mid">0.242</td><td class="cell-bad">−3.2 pp</td><td>396</td></tr>
+<tr><td>accuracy</td><td class="cell-mid">0.265</td><td class="cell-mid">0.261</td><td>−0.4 pp</td><td>1,867</td></tr>
+<tr><td>context_awareness</td><td class="cell-mid">0.216</td><td class="cell-mid">0.203</td><td>−1.2 pp</td><td>1,464</td></tr>
 <tr><td>completeness <small>(pooled — but see below)</small></td><td class="cell-bad">−0.200</td><td class="cell-bad">−0.202</td><td>−0.2 pp</td><td>1,313</td></tr>
 </tbody>
 </table>
 
-<p><strong>Completeness is the worst axis</strong> — but the pooled −0.20 is misleading. Per subset it is +0.70 on consensus and deeply negative on the others:</p>
+<p><strong>Completeness is the worst axis</strong> — but the pooled −0.20 is misleading. Per subset it is 0.70 on consensus and deeply negative on the others:</p>
 
 <table>
 <thead><tr><th>completeness by subset</th><th>no-RAG</th><th>+RAG</th></tr></thead>
 <tbody>
 <tr><td>oss_eval</td><td class="cell-bad">−0.19</td><td class="cell-bad">−0.19</td></tr>
-<tr><td>consensus</td><td class="cell-good">+0.70</td><td class="cell-good">+0.79</td></tr>
+<tr><td>consensus</td><td class="cell-good">0.70</td><td class="cell-good">0.79</td></tr>
 <tr><td>hard</td><td class="cell-bad">−0.48</td><td class="cell-bad">−0.49</td></tr>
 </tbody>
 </table>
@@ -123,7 +123,7 @@
 
 <h2>The RAG effect (small, mostly noise)</h2>
 
-<p>All three RAG deltas are negative, which is suggestive, but the evidence is weak: no bootstrap CIs were computed, and the per-row metric is high-variance (−2.2 to +1.0). The −0.5 pp (oss) and −0.3 pp (hard) deltas are within plausible noise; three-of-three negative is also weak on its own (a coin-flip would give all-negative ~1/8 of the time). Only the <strong>consensus −2.0 pp</strong> is large enough to plausibly be real — and even that sits on the penalty-free, 2-criteria-per-row subset with the coarsest per-row resolution.</p>
+<p>All three RAG deltas are negative, which is suggestive, but the evidence is weak: no bootstrap CIs were computed, and the per-row metric is high-variance (−2.2 to 1.0). The −0.5 pp (oss) and −0.3 pp (hard) deltas are within plausible noise; three-of-three negative is also weak on its own (a coin-flip would give all-negative ~1/8 of the time). Only the <strong>consensus −2.0 pp</strong> is large enough to plausibly be real — and even that sits on the penalty-free, 2-criteria-per-row subset with the coarsest per-row resolution.</p>
 
 <p>The per-axis deltas hint that RAG's drag, where present, falls on <code>communication_quality</code> (−3.4 pp) and <code>instruction_following</code> (−3.2 pp, n=396) rather than accuracy — <em>plausibly</em> because injected context crowds the answer and dilutes adherence to the asked-for form. This is an unverified hypothesis (we did not read transcripts to confirm it). Bottom line: <strong>report RAG as ≈neutral on the rubric track</strong>; do not present it as either an improvement or a clear regression.</p>
 
