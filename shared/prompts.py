@@ -70,17 +70,34 @@ QUESTION_LABEL: str = _params["context_injection"]["question_label_en"]
 JUDGE_MODEL: str = _params["judge"]["model"]
 JUDGE_TEMPERATURE: float = _params["judge"]["temperature"]
 
-# v0.2: 3-judge ensemble for open_ended scoring and a separate single judge for
-# open_ended_rubric scoring. Both are optional so v0.1 configs still load.
-JUDGE_ENSEMBLE: list[dict] = _params["judge"].get("ensemble", [])
+# v0.2: ensemble (now retired to a single-entry list) for open_ended scoring
+# and a separate single judge for open_ended_rubric scoring. Both are optional
+# so v0.1 configs still load.
+_judge_top: dict = _params.get("judge", {})
+
+# JUDGE_ENSEMBLE = each entry's provider/model/temperature/extra_body, inheriting
+# the top-level defaults when the entry doesn't override them. This is how the
+# pinned reasoning_effort actually reaches the open-ended SAQ rescorer (the same
+# fix pattern as JUDGE_RUBRIC below — previously the ensemble entries lost
+# extra_body on the floor).
+JUDGE_ENSEMBLE: list[dict] = [
+    {
+        "provider": e.get("provider", _judge_top.get("provider", "openai")),
+        "model": e.get("model") or _judge_top.get("model"),
+        "temperature": e.get("temperature", _judge_top.get("temperature", 0.0)),
+        "extra_body": e.get("extra_body", _judge_top.get("extra_body")),
+    }
+    for e in (_judge_top.get("ensemble") or [])
+    if (e.get("model") or _judge_top.get("model"))
+]
+
 # JUDGE_RUBRIC = the rubric subsection, but inheriting temperature / extra_body
 # from the top-level `judge` block when the subsection doesn't override them.
 # This is how the pinned reasoning_effort / temperature from the judge config
 # actually reach the production rescorer (previously dropped on the floor).
-_judge_top: dict = _params.get("judge", {})
 _rubric_sub: dict = _judge_top.get("rubric", {})
 JUDGE_RUBRIC: dict = {
-    "provider": _rubric_sub.get("provider", "openai"),
+    "provider": _rubric_sub.get("provider", _judge_top.get("provider", "openai")),
     "model": _rubric_sub.get("model") or _judge_top.get("model"),
     "temperature": _rubric_sub.get("temperature", _judge_top.get("temperature", 0.0)),
     "extra_body": _rubric_sub.get("extra_body", _judge_top.get("extra_body")),

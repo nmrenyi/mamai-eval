@@ -48,24 +48,36 @@ _read_key() {
   ssh light "cat /mnt/light/scratch/users/yiren/keys/$1 2>/dev/null" 2>/dev/null || true
 }
 
-OPENAI_KEY="$(_read_key openai_key.txt)"
+# Each key may come from (in order of preference):
+#   (a) a matching env var already set in the local shell (lets you submit
+#       without SSH-to-cluster — useful when off the EPFL network or for
+#       vLLM-only jobs that don't actually need real provider keys; pass
+#       OPENAI_API_KEY=EMPTY explicitly)
+#   (b) the file under /mnt/light/scratch/users/yiren/keys/ on haas001
+#       (the canonical source for cluster runs that talk to real providers)
+OPENAI_KEY="${OPENAI_API_KEY:-$(_read_key openai_key.txt)}"
 if [ -z "$OPENAI_KEY" ]; then
-  echo "Error: Could not read OpenAI API key from cluster"
+  echo "Error: Could not read OpenAI API key (set OPENAI_API_KEY locally, or"
+  echo "       ensure ssh light can reach /mnt/light/scratch/users/yiren/keys/openai_key.txt)"
   exit 1
 fi
 
-HF_TOKEN="$(_read_key hf_key.txt)"
+HF_TOKEN="${HF_TOKEN:-$(_read_key hf_key.txt)}"
 if [ -z "$HF_TOKEN" ]; then
-  echo "Warning: hf_key.txt not found on cluster — gated HF datasets will fail to load"
+  echo "Warning: HF_TOKEN not set and hf_key.txt not on cluster — gated HF datasets / model downloads will fail"
 fi
 
-GEMINI_KEY="$(_read_key gemini_key.txt)"
-ANTHROPIC_KEY="$(_read_key anthropic_key.txt)"
+GEMINI_KEY="${GOOGLE_API_KEY:-$(_read_key gemini_key.txt)}"
+ANTHROPIC_KEY="${ANTHROPIC_API_KEY:-$(_read_key anthropic_key.txt)}"
 
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 HAS_REPO_REF=0
 EFFECTIVE_REPO_REF="$CURRENT_BRANCH"
-for ENV_PAIR in "${EXTRA_ENV[@]}"; do
+# bash 3.2 (macOS) + set -u errors on "${arr[@]}" when arr is empty; the
+# `${arr[@]+"${arr[@]}"}` form expands to nothing when unset/empty instead of
+# erroring. This block (and the matching one below) iterates extra env-pairs
+# passed as positional args; empty is a valid case (no extras supplied).
+for ENV_PAIR in ${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}; do
   if [[ "$ENV_PAIR" != *=* ]]; then
     echo "Error: extra arguments must be KEY=VALUE pairs, got: $ENV_PAIR"
     exit 1
@@ -119,7 +131,7 @@ if [ "$HAS_REPO_REF" -eq 0 ]; then
   RUNAI_ARGS+=(-e "REPO_REF=$CURRENT_BRANCH")
 fi
 
-for ENV_PAIR in "${EXTRA_ENV[@]}"; do
+for ENV_PAIR in ${EXTRA_ENV[@]+"${EXTRA_ENV[@]}"}; do
   RUNAI_ARGS+=(-e "$ENV_PAIR")
 done
 

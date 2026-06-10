@@ -1,0 +1,51 @@
+{
+  "schema_version": 2,
+  "context_version": "rubric-v0.2.0-bundle-v0.2.0-cpu32",
+  "config_version": "config-v0.2.0",
+  "created_at_utc": "2026-05-21T12:07:29Z",
+  "repo_ref": "feat/open-ended-gemma4-eval-20260520",
+  "repo_commit": "0f00c5538cc77e15d76dc3c84dcc9e686bb0036b",
+  "source_lock": {
+    "bundle_version": null,
+    "manifest_sha256": null,
+    "producer_repo": null,
+    "producer_commit": null,
+    "chunk_count": null,
+    "source_count": null
+  },
+  "dataset_source": {
+    "hf_repo": "nmrenyi/mamabench",
+    "hf_revision": "v0.2"
+  },
+  "retrieval_config": {
+    "top_k": 3,
+    "datasets": [
+      "healthbench_consensus",
+      "healthbench_hard",
+      "healthbench_oss_eval"
+    ],
+    "max_questions": null
+  },
+  "artifacts": {
+    "db_path": "/lightscratch/users/yiren/rag_assets/embeddings.sqlite",
+    "db_sha256": "c7f7d3d4c0be77055bcee16467734699952db3c7ceeb9aabf293b624623bb6cd",
+    "gecko_model_path": "/lightscratch/users/yiren/rag_assets/Gecko_1024_quant.tflite",
+    "gecko_model_sha256": "2334395c8192ea6466093dc39177c524535ba8318c876232096d023518d323e6",
+    "tokenizer_path": "/lightscratch/users/yiren/rag_assets/sentencepiece.model",
+    "tokenizer_sha256": "839ffa4b9afae8d77834a88b87781849aa021975d6063dec6085633fcaf7171c"
+  },
+  "datasets": {
+    "healthbench_oss_eval": {
+      "n_questions": 1209,
+      "output_file": "healthbench_oss_eval.json"
+    },
+    "healthbench_consensus": {
+      "n_questions": 872,
+      "output_file": "healthbench_consensus.json"
+    },
+    "healthbench_hard": {
+      "n_questions": 258,
+      "output_file": "healthbench_hard.json"
+    }
+  }
+}

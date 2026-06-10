@@ -92,8 +92,48 @@ in the response.
 
 # ── Provider dispatch ────────────────────────────────────────────────────────
 
+# Dispatch returns dict {content, reasoning_content} so we can capture the
+# model's INTERNAL chain-of-thought alongside the visible JSON output.
+# Rationale: the rubric track's prompt (ported from openai/simple-evals
+# healthbench_eval.py) asks the model to emit a visible `explanation` field
+# in the JSON — that's the methodology preserved in our Phase B verdict
+# files. But since we serve via vLLM (with reasoning_parser='openai_gptoss'
+# for gpt-oss models), the model ALSO produces an internal reasoning trace
+# that the upstream cloud-API design couldn't access. Capturing it gives
+# future rubric runs a second, richer audit surface alongside the inline
+# explanation. Existing Phase B verdict files are unaffected — they were
+# produced before this change and don't need re-running.
+def _extract_reasoning_content(msg) -> str | None:
+    """Pull the model's internal-CoT reasoning from a chat message.
+
+    Field name has shifted across vLLM versions:
+      - Current vLLM: `reasoning` (per official docs)
+      - Older vLLM: `reasoning_content` (legacy)
+    Try both, via direct attribute / Pydantic v2 model_extra / model_dump.
+    First-non-None wins. See rescore_open_v2._extract_reasoning_content for
+    the rationale on each path.
+    """
+    for field_name in ("reasoning", "reasoning_content"):
+        val = getattr(msg, field_name, None)
+        if val:
+            return val
+        extra = getattr(msg, "model_extra", None)
+        if isinstance(extra, dict):
+            val = extra.get(field_name)
+            if val:
+                return val
+        try:
+            if hasattr(msg, "model_dump"):
+                val = msg.model_dump().get(field_name)
+                if val:
+                    return val
+        except Exception:
+            pass
+    return None
+
+
 def _call_openai(model: str, prompt: str, temperature: float,
-                 extra_body: dict | None = None) -> str:
+                 extra_body: dict | None = None) -> dict:
     from openai import OpenAI
     client = OpenAI()
     kwargs: dict = {
@@ -107,11 +147,15 @@ def _call_openai(model: str, prompt: str, temperature: float,
         # set in params.json) actually reaches the served model.
         kwargs["extra_body"] = extra_body
     result = client.chat.completions.create(**kwargs)
-    return (result.choices[0].message.content or "").strip()
+    msg = result.choices[0].message
+    return {
+        "content": (msg.content or "").strip(),
+        "reasoning_content": _extract_reasoning_content(msg),
+    }
 
 
 def _call_anthropic(model: str, prompt: str, temperature: float,
-                    extra_body: dict | None = None) -> str:
+                    extra_body: dict | None = None) -> dict:
     import anthropic
     client = anthropic.Anthropic()
     kwargs: dict = {
@@ -123,28 +167,46 @@ def _call_anthropic(model: str, prompt: str, temperature: float,
     if extra_body:
         kwargs["extra_body"] = extra_body
     result = client.messages.create(**kwargs)
-    return "\n".join(getattr(b, "text", "") for b in result.content).strip()
+    parts = []
+    thinking_parts = []
+    for block in result.content:
+        text = getattr(block, "text", None)
+        if text:
+            parts.append(text)
+        # Claude with extended thinking emits `thinking` blocks — surface as
+        # reasoning_content for parity with vLLM's gpt-oss reasoning_content.
+        thinking = getattr(block, "thinking", None)
+        if thinking:
+            thinking_parts.append(thinking)
+    return {
+        "content": "\n".join(parts).strip(),
+        "reasoning_content": "\n".join(thinking_parts).strip() or None,
+    }
 
 
 def _call_google(model: str, prompt: str, temperature: float,
-                 extra_body: dict | None = None) -> str:
+                 extra_body: dict | None = None) -> dict:
     # google-genai does not have a generic extra_body equivalent; the caller
-    # would need to pre-map keys (e.g. reasoning) into `generation_config`. We
-    # accept the kwarg for signature parity but ignore it here.
+    # would need to pre-map keys (e.g. reasoning) into `generation_config`.
+    # Gemini also doesn't expose internal CoT through the public API, so
+    # reasoning_content is None for Gemini judges.
     try:
         from google import genai
         client = genai.Client()
         result = client.models.generate_content(
             model=model, contents=prompt, config={"temperature": temperature},
         )
-        return (result.text or "").strip()
+        return {"content": (result.text or "").strip(), "reasoning_content": None}
     except ImportError:
         import google.generativeai as genai
         gmodel = genai.GenerativeModel(model)
         result = gmodel.generate_content(
             prompt, generation_config={"temperature": temperature},
         )
-        return (getattr(result, "text", "") or "").strip()
+        return {
+            "content": (getattr(result, "text", "") or "").strip(),
+            "reasoning_content": None,
+        }
 
 
 PROVIDER_DISPATCH = {
@@ -193,7 +255,8 @@ def _grade_criterion(provider: str, model: str, conversation: str,
                      max_retries: int = 3) -> dict:
     dispatch = PROVIDER_DISPATCH.get(provider)
     if dispatch is None:
-        return {"met": None, "explanation": f"unknown provider: {provider}", "error": True}
+        return {"met": None, "explanation": f"unknown provider: {provider}",
+                "reasoning_content": None, "error": True}
 
     prompt = (GRADER_PROMPT
               .replace("<<conversation>>", conversation)
@@ -202,8 +265,9 @@ def _grade_criterion(provider: str, model: str, conversation: str,
     last_err = None
     for attempt in range(max_retries):
         try:
-            raw = dispatch(model, prompt, temperature, extra_body)
-            obj = _extract_json(raw)
+            res = dispatch(model, prompt, temperature, extra_body)
+            content = res["content"]
+            obj = _extract_json(content)
             met_val = obj.get("criteria_met")
             if not isinstance(met_val, bool):
                 # Strict: missing / null / non-bool means the grader produced
@@ -214,6 +278,11 @@ def _grade_criterion(provider: str, model: str, conversation: str,
             return {
                 "met": met_val,
                 "explanation": obj.get("explanation", ""),
+                # Internal CoT from vLLM (None for cloud OpenAI / Gemini). The
+                # inline `explanation` is the upstream simple-evals audit
+                # surface; reasoning_content is a second, richer surface
+                # available on self-hosted reasoning models. Both are kept.
+                "reasoning_content": res.get("reasoning_content"),
                 "error": False,
             }
         except Exception as e:
@@ -221,7 +290,7 @@ def _grade_criterion(provider: str, model: str, conversation: str,
             if attempt < max_retries - 1:
                 time.sleep(2 ** attempt)
     return {"met": None, "explanation": f"{type(last_err).__name__}: {last_err}",
-            "error": True}
+            "reasoning_content": None, "error": True}
 
 
 # ── Row scoring ──────────────────────────────────────────────────────────────
