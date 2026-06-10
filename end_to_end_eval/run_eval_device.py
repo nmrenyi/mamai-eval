@@ -45,7 +45,8 @@ os.environ["MAMAI_EVAL_CONFIG"] = _pre_args.config
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from shared.prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, PROMPT_VERSION,
+from shared.prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, OPEN_SYSTEM_PROMPT,
+                            PROMPT_VERSION,
                             PROTOCOL_VERSION, SPEC_SHA256, DATASET_HF_REPO,
                             DATASET_REVISION, TEMPERATURE, TOP_P, TOP_K, N_CTX,
                             _params as _active_params)
@@ -167,20 +168,71 @@ def _device_apk_info(serial: str | None) -> dict:
 
 # ── Eval input + output handling ──────────────────────────────────────────────
 
-def _build_eval_input(rows: list[dict]) -> dict:
+def _build_eval_input(rows: list[dict], set_type: str) -> dict:
     """Build the eval_input.json the on-device service consumes.
 
-    Each user_message matches build_mcq_messages(question, choices_formatted)
-    in prompts.py — same wire format as Mac/cluster runs.
+    The on-device eval branch sends each `user_message` to the model verbatim
+    (bypassPromptFormatting=true) under `system_prompt`, so we build the exact
+    user message the host used for the matching track:
+
+      mcq         -> MCQ adapter prompt + "Question: …\\nOptions:\\n…"
+                     (build_mcq_messages wire format)
+      open_ended  -> app system prompt + the bare question
+                     (build_open_messages, no-RAG arm)
+
+    Identical input on both stacks isolates the LiteRT-vs-GGUF generation gap.
+    open_ended_rubric (healthbench) is multi-turn and not yet supported here.
     """
     payload_rows = []
     for r in rows:
-        user_message = f"Question: {r['question']}\nOptions:\n{r['choices_formatted']}"
+        if set_type == "mcq":
+            user_message = f"Question: {r['question']}\nOptions:\n{r['choices_formatted']}"
+        else:  # open_ended (SAQ), no-RAG
+            user_message = str(r["question"])
         payload_rows.append({"id": r["id"], "user_message": user_message})
     return {
-        "system_prompt": MCQ_SYSTEM_PROMPT,
+        "system_prompt": MCQ_SYSTEM_PROMPT if set_type == "mcq" else OPEN_SYSTEM_PROMPT,
         "rows": payload_rows,
     }
+
+
+def _open_ended_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict], dict]:
+    """Shape device SAQ responses into the host open_ended result format.
+
+    Produces rows matching run_eval.py's open_ended output
+    ({id, question, reference, key_facts, model_response, inference_time_s}) so
+    the file can be scored later by rescore_open_v2 with the pinned judge — the
+    judge is NOT run here (it needs the cluster vLLM endpoint). Aggregate scores
+    are left for the rescore step; we only record coverage here.
+    """
+    by_id = {r["id"]: r for r in device_rows}
+    results = []
+    n_empty = 0
+    for row in rows:
+        dr = by_id.get(row["id"])
+        response = (dr or {}).get("response_text", "") or ""
+        inference_ms = (dr or {}).get("inference_time_ms", 0)
+        error = (dr or {}).get("error")
+        if error and not isinstance(error, type(None)) and error != "null":
+            print(f"  WARNING: row {row['id']} returned error: {error}")
+        if not response.strip():
+            n_empty += 1
+        results.append({
+            "id": row["id"],
+            "question": row["question"],
+            "reference": row.get("reference", ""),
+            "key_facts": list(row.get("key_facts", [])),
+            "model_response": response,
+            "inference_time_s": round((inference_ms or 0) / 1000.0, 2),
+            "device_error": error if (error and not isinstance(error, type(None))) else None,
+        })
+    scores = {
+        "n_responses": len(results),
+        "n_empty_responses": n_empty,
+        "scored": False,
+        "note": "judge scoring deferred to rescore_open_v2 (needs cluster vLLM judge)",
+    }
+    return results, scores
 
 
 def _score_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict], dict]:
@@ -270,9 +322,10 @@ def main():
         if name not in HF_CONFIGS:
             parser.error(f"Unknown dataset: {name}. Available: {list(HF_CONFIGS.keys())}")
         set_type = HF_CONFIGS[name][1]
-        if set_type != "mcq":
+        if set_type not in ("mcq", "open_ended"):
             parser.error(f"{name} is set_type={set_type}; run_eval_device.py currently "
-                         f"supports MCQ only.")
+                         f"supports mcq and open_ended (SAQ). open_ended_rubric "
+                         f"(healthbench) is multi-turn and needs the multi-turn device branch.")
 
     row_ids_filter: set[str] | None = None
     if args.row_ids:
@@ -294,15 +347,15 @@ def main():
         print(f"Dataset: {ds_name}  |  Config: {CONFIG_VERSION}  |  Device: {args.device_serial or 'default'}")
         print(f"{'='*60}")
 
-        rows, _ = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
-                                row_ids=row_ids_filter)
+        rows, set_type = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
+                                       row_ids=row_ids_filter)
         if not rows:
             print(f"SKIP: {ds_name} produced 0 normalized rows")
             continue
 
         # Stage input
         local_input = os.path.join(run_dir, f"{ds_name}.eval_input.json")
-        Path(local_input).write_text(json.dumps(_build_eval_input(rows), ensure_ascii=False, indent=2))
+        Path(local_input).write_text(json.dumps(_build_eval_input(rows, set_type), ensure_ascii=False, indent=2))
         _push(args.device_serial, local_input, INPUT_PATH_ON_DEVICE)
 
         # Clear stale logcat, kick off eval, watch for completion
@@ -325,8 +378,11 @@ def main():
         if len(device_rows) != len(rows):
             print(f"  WARNING: device returned {len(device_rows)} rows, expected {len(rows)}")
 
-        # Score
-        results, scores = _score_results(rows, device_rows)
+        # Score (MCQ scored here; open_ended responses shaped for later judge rescore)
+        if set_type == "mcq":
+            results, scores = _score_results(rows, device_rows)
+        else:
+            results, scores = _open_ended_results(rows, device_rows)
 
         metadata = {
             "model": args.device_model_tag,
@@ -340,7 +396,7 @@ def main():
             },
             "apk_info": apk_info,
             "dataset": ds_name,
-            "dataset_type": "mcq",
+            "dataset_type": set_type,
             "hf_repo": hf_repo,
             "hf_revision": revision,
             "config_version": CONFIG_VERSION,
@@ -367,12 +423,18 @@ def main():
             indent=2, ensure_ascii=False,
         ))
         print(f"Saved: {out_path}")
-        acc = scores.get("accuracy", 0)
-        partial = scores.get("partial_credit_accuracy", acc)
-        print(f"Accuracy: {acc:.1%} ({scores.get('correct', 0)}/{scores.get('total', 0)})")
-        if partial != acc:
-            print(f"Partial credit: {partial:.1%}")
-        summary.append(f"  {ds_name}: {acc:.1%} (partial: {partial:.1%})")
+        if set_type == "mcq":
+            acc = scores.get("accuracy", 0)
+            partial = scores.get("partial_credit_accuracy", acc)
+            print(f"Accuracy: {acc:.1%} ({scores.get('correct', 0)}/{scores.get('total', 0)})")
+            if partial != acc:
+                print(f"Partial credit: {partial:.1%}")
+            summary.append(f"  {ds_name}: {acc:.1%} (partial: {partial:.1%})")
+        else:
+            n = scores.get("n_responses", 0)
+            empty = scores.get("n_empty_responses", 0)
+            print(f"Responses captured: {n} ({empty} empty). Judge scoring deferred to rescore_open_v2.")
+            summary.append(f"  {ds_name}: {n} responses ({empty} empty) — unscored (needs cluster judge)")
 
     print(f"\n{'='*60}")
     print(f"SUMMARY — device ({args.device_model_tag})  |  config: {CONFIG_VERSION}")
