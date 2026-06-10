@@ -105,6 +105,22 @@
 
 <p><strong>The blended <code>weighted_met</code> hides the real picture.</strong> The near-zero (oss_eval) and negative (hard) means are a <em>cancellation</em>: the model earns only 11–18% of achievable positive credit <em>and simultaneously</em> trips 38–46% of the available "should-not" penalty weight, and the two roughly offset. On <code>oss_eval</code> the per-row scores span −2.24 to 1.0 (43% net-negative, ~15% zero, 43% positive); on <code>hard</code>, two-thirds are net-negative. The decomposed columns — low positive credit, high penalty incurred — are the clearer view: two separable problems (under-coverage and "should-not" violations) that the blended ~0.00 masks. The penalty-incurred rate is the safety-relevant signal.</p>
 
+<h2>Where the lost points go</h2>
+
+<p>On <code>oss_eval</code> (no-RAG, the main subset) the shortfall from the ceiling has two sources — missed positive credit and incurred penalties. They are worth stating separately and each <em>in its own terms</em>, because they are not directly comparable: "met" is good for a positive criterion and bad for a penalty one.</p>
+
+<table>
+<thead>
+<tr><th>source of lost points (oss_eval, no-RAG)</th><th>points</th><th>per-criterion rate</th></tr>
+</thead>
+<tbody>
+<tr><td>missed positive credit (should-do, not met)</td><td class="cell-bad">52,786 of 64,661 lost (82%)</td><td>80% of positive criteria not met (model satisfies 20%)</td></tr>
+<tr><td>penalties incurred (should-not, met)</td><td class="cell-bad">11,145 of 30,620 incurred (36%)</td><td>37% of penalty criteria triggered (model avoids 63%)</td></tr>
+</tbody>
+</table>
+
+<p><strong>Read both, but don't cross-compare.</strong> In <em>absolute</em> terms most lost points are on the positive side (52,786 ≫ 11,145) — but largely because the positive pool is ~2× the penalty pool (64,661 vs 30,620 points), not because the model does proportionally better there. In <em>rate</em> terms it satisfies only 20% of should-dos and triggers 37% of should-nots; those two rates measure opposite behaviours (doing the encouraged thing vs avoiding the discouraged thing), so they are not apples-to-apples and we don't rank one against the other. The takeaway is just that <strong>both channels leak</strong>: pervasive under-coverage on the positive side, plus a non-trivial penalty-trigger rate.</p>
+
 <h2>Where the model fails — per axis</h2>
 
 <p>Every HealthBench criterion carries a native <code>axis</code> tag — the behavioural dimension it grades. This lets us see <em>where</em> failures concentrate, not just an overall number. The five axes in our data:</p>
