@@ -58,18 +58,19 @@
 <div class="callout">
   <p><strong>Diagnosis (consistent across all reports): the system is safe but unhelpful, and RAG currently adds noise instead of value.</strong></p>
   <ul>
-    <li>Zero "dangerous" safety ratings anywhere; active commission of wrong/harmful content ≈ 2%. Safety is not the bottleneck.</li>
+    <li>Zero "dangerous" safety ratings anywhere; active commission of wrong/harmful content ≈ 2%. Safety-by-commission is not the bottleneck — but the scope reflex <strong>refusing emergencies</strong> (choking child, anaphylaxis) is a deployment-blocking safety-by-omission bug.</li>
     <li>End-to-end usefulness is low: SAQ key-fact recall 0.178 (kenya), HealthBench weighted_met ≈ −0.016 (oss_eval) — driven by <em>deflection</em> (refusing scope or deferring to "see a doctor" without first-line content), not by knowledge gaps.</li>
     <li>The deployed retriever (Gecko, top-3, threshold 0.0) delivers a bundle with <em>no useful chunk</em> in ~19% of queries and no top-tier chunk in ~56% — and we inject it anyway. RAG measurably hurts (MCQ −1.8 pp; SAQ scope-refusals rise with RAG).</li>
     <li>When the generator does engage with good context, it is largely faithful (calibrated true-hallucination ≈ 9%, band 3–17%) — and a notable share of contradiction flags trace to the guideline corpus contradicting <em>itself</em>, a problem that grows as retrieval improves.</li>
   </ul>
-  <p><strong>Priorities:</strong> <span class="tag p0">P0</span> stop injecting noise (retrieval threshold), fix deflection (system prompt), and expand the corpus with high-quality sources (the coverage ceiling no retriever fix can raise). <span class="tag p1">P1</span> upgrade the on-device retriever (embedder bake-off / hybrid / rerank). <span class="tag p2">P2</span> query rewriting and corpus cleanup.</p>
+  <p><strong>Priorities:</strong> <span class="tag p0">P0</span> stop injecting noise (retrieval threshold), fix the system prompt (emergency override + deflection), and expand the corpus with high-quality sources (the coverage ceiling no retriever fix can raise). <span class="tag p1">P1</span> upgrade the on-device retriever (embedder bake-off / hybrid / rerank). <span class="tag p2">P2</span> query rewriting and corpus cleanup.</p>
 </div>
 
 <table>
   <tr><th>#</th><th>Improvement</th><th>Priority</th><th>Cost</th><th>What it fixes</th></tr>
   <tr><td>R1</td><td>Retrieval relevance threshold (abstain instead of injecting noise)</td><td><span class="tag p0">P0</span></td><td>Offline calibration + config change</td><td>RAG actively hurting (MCQ −1.8 pp, RAG-induced refusals)</td></tr>
-  <tr><td>G1</td><td>System-prompt revision against deflection / scope-refusal</td><td><span class="tag p0">P0</span></td><td>Prompt-only + A/B rerun</td><td>~91% of SAQ zero-recall rows; 61% of rubric failures</td></tr>
+  <tr><td>G1</td><td>System-prompt revision: emergency override + deflection / scope-refusal fixes</td><td><span class="tag p0">P0</span></td><td>Prompt-only + A/B rerun</td><td>Deployment-blocking emergency mis-refusals; ~91% of SAQ zero-recall rows; 61% of rubric failures</td></tr>
+  <tr><td>G2</td><td>Coverage / completeness of engaged answers</td><td><span class="tag p1">P1</span></td><td>Prompting first; then retrieval; base model last</td><td>Engaged answers miss ~80% of expected content — the capability ceiling after G1</td></tr>
   <tr><td>C1</td><td>Collect more high-quality relevant sources (corpus expansion)</td><td><span class="tag p0">P0</span></td><td>Sourcing + pipeline rerun + benchmark re-label</td><td>Coverage ceiling: a relevant chunk must exist before any retriever can find it</td></tr>
   <tr><td>R2</td><td>On-device retriever upgrade (embedder bake-off, hybrid, rerank)</td><td><span class="tag p1">P1</span></td><td>Offline sims free; device work moderate</td><td>Gecko's 2× precision gap; strict-content misses</td></tr>
   <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
@@ -166,22 +167,35 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 </div>
 
 <!-- ============================================================ -->
-<h2 id="generator">2. Generator-behavior improvements (system prompt) <span class="tag p0">P0</span></h2>
+<h2 id="generator">2. Generator-behavior improvements</h2>
 <p>Evidence base: Phase B SAQ + rubric reports (<code>phase-b-saq-result-20260609.html</code>, <code>phase-b-rubric-result-20260609.html</code>).</p>
 <ul>
   <li>SAQ: 26.7% of kenya responses convey <strong>zero</strong> key facts; of those, ~50% are scope refusals and ~41% defer-to-doctor without first-line content — i.e. ~91% behavioral, ~8% genuine knowledge misses.</li>
   <li>Rubric: 61% of failing criteria are deflection; active commission ≈ 2%. The model treats referral as a <em>substitute</em> for management instead of a complement.</li>
+  <li>Rubric, deployment-blocking: the scope reflex <strong>mis-fires on emergencies</strong> — the model refused a choking 2-year-old, peanut anaphylaxis, and a scalded toddler as "not a healthcare question" instead of at minimum advising to call emergency services.</li>
 </ul>
-<p><strong>Prompt levers (from the SAQ report, all prompt-only):</strong></p>
+
+<h3>G1 — Fix the scope / deflection reflex (prompt-only) <span class="tag p0">P0</span></h3>
+<p>Levers, in priority order (from the SAQ and rubric reports):</p>
 <ol>
+  <li><strong>Emergency override (safety-critical, first):</strong> for any red-flag / emergency presentation, always give minimal safety guidance (call emergency services + immediate steps) regardless of scope — never a refusal.</li>
   <li>Reframe "either/or" → "both/and": give concrete first-line management <em>and then</em> advise escalation.</li>
   <li>Authorize naming first-line drugs/doses with a "confirm against local protocol" caveat.</li>
   <li>Fix geographic over-refusal: the vignette's country must not trigger scope refusal.</li>
-  <li>Widen the in-scope definition (family planning, GBV care).</li>
+  <li>Widen the in-scope definition (family planning, GBV care) — and when something is genuinely out of scope, give a brief safe pointer, not a flat refusal.</li>
 </ol>
 <p><strong>Process:</strong> draft revised <code>system_en.txt</code>/<code>system_sw.txt</code> language, A/B on a stratified kenya sample (same judge, cluster) before committing to a full Phase B rerun. Watch the safety distribution for regressions — the current prompt's caution is also what keeps commission at 2%; the goal is moving "defer-only" mass to "manage-then-refer", not removing caution.</p>
 <div class="callout warn"><strong>Faithfulness must be re-checked after any deflection fix.</strong> A refusing model makes no claims and cannot hallucinate; today's faithfulness (~9%) and safety (zero "dangerous") numbers are measured on a model that deflects a third of the time. Prompting it to engage with concrete drugs/doses mechanically increases exposure to contradiction and unsupported addition. The G1 acceptance gate is therefore three-sided: SAQ recall up, safety distribution not worse, <em>and</em> a faithfulness spot-check (rerun the oracle-track Lynx pass, or a sample of it, on the new prompt) not materially worse.</div>
 <div class="callout"><strong>Interaction with retrieval:</strong> prompt fixes and R1 compound — part of the refusal behavior is context-triggered (injected Zanzibar chunks → geographic refusal). Fixing only the prompt leaves noise-triggered refusals; fixing only the threshold leaves the deflection reflex. Plan to A/B them jointly (2×2 if budget allows).</div>
+
+<h3>G2 — Coverage / completeness <span class="tag p1">P1</span> — the harder, later work</h3>
+<p>Distinct from deflection: even when the model <em>does</em> engage, it misses ~80% of expected content (82% of accuracy positives not met on oss_eval; completeness is the weakest axis at −0.19 oss / −0.48 hard; SAQ engaged-only recall still ~0.19–0.21). This is the genuine capability ceiling, and it will remain after G1 removes the deflection mass. Levers in order of cost:</p>
+<ol>
+  <li><strong>Thoroughness / structured-management prompting:</strong> instruct a consistent answer shape — assessment, first-line treatment, monitoring, escalation — so engaged answers cover the expected ground.</li>
+  <li><strong>Retrieval contribution:</strong> post-R1/R2, better bundles can supply the specifics the model omits — measure via the completeness axis and SAQ recall, not assumed.</li>
+  <li><strong>Stronger base model:</strong> the last resort, only worth considering once 1–2 plateau and with on-device constraints unchanged.</li>
+</ol>
+<p>Schedule as a dedicated follow-up after G1 lands — G1's A/B will re-baseline engaged-answer quality, which is G2's starting measurement.</p>
 
 <h3>Faithfulness — no generator-side fix recommended</h3>
 <p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and eval (E1) sections below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
@@ -204,6 +218,14 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 <ul>
   <li><strong>RAG is not the recall lever.</strong> Deltas are small or negative; the kenya +RAG regression (−4.9 pp) is the geographic-refusal artifact — fixed by the G1 scope language and the R1 threshold together, not by retrieval tuning.</li>
   <li><strong>What success looks like post-G1:</strong> the primary signal is the zero-recall mass collapsing (kenya: 26.7% no-RAG / 38.7% +RAG today) and the defer/refuse share of it shrinking — mean recall and the joint "passes" bar (6.1% today) follow. Read per-subset; whb stays out of headlines pending the section-5 decision on it.</li>
+</ul>
+
+<h3>H1 — HealthBench rubric track <span class="tag p0">P0</span> — system fix is G1 + G2</h3>
+<p>Evidence: <code>phase-b-rubric-result-20260609.html</code> (4,678 rows ±RAG, 38,308 criterion calls). weighted_met ≈ 0.00 (oss_eval) / −0.18 (hard) is a <em>cancellation</em>: 11–18% of positive credit earned vs 38–46% of penalty weight triggered. Deflection is 53–61% of sampled failures; commission ~2%; the emergency mis-refusals are this track's deployment-blocking finding (now G1 lever 1). Track notes:</p>
+<ul>
+  <li><strong>RAG is neutral here too</strong> (deltas ≤ ~2 pp, no CIs) — same conclusion as SAQ: retrieval is not this track's lever.</li>
+  <li><strong>Success post-G1:</strong> the penalty-incurred rate collapses (penalties are overwhelmingly omission/deflection-phrased) and the three emergency cases (choking child / anaphylaxis / scald — row IDs in the report) pass. <strong>Success post-G2:</strong> positive-credit rate climbs from 18% (oss_eval) and the completeness axis leaves negative territory.</li>
+  <li><strong>Read per-subset only:</strong> the three subsets are nested (consensus and most of hard are subsets of oss_eval under different grading lenses) — pooling double-counts conversations and mixes scales. Convention pinned in section 5.</li>
 </ul>
 
 <!-- ============================================================ -->
@@ -233,6 +255,11 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
   <li><strong>End-to-end gating for every retrieval change (non-negotiable):</strong> the SAQ report proves bundle content changes generator <em>behavior</em>, not just answer content. A retriever that wins HR@3 can still lose key-fact recall. Standard gate: stratified SAQ ±RAG A/B + safety distribution check + on-device latency budget.</li>
   <li><strong>Messy/Swahili query set</strong> (see R3.1): quantifies the optimism of the clean-English benchmark and provides the regression set for query rewriting and the multilingual bake-off.</li>
   <li><strong>Report recall honestly:</strong> all pool-recall numbers are relative to the 6-retriever top-20 union pool, with one judging process (graded 0–6) thresholded symmetrically (lenient ≥3 / strict ≥5) on both numerator and denominator. They are reliable for <em>comparing</em> retrievers, not as absolute "fraction of corpus knowledge". Judge label noise is higher at the strict cut (85% vs 95% agreement with Opus 4.7).</li>
+  <li><strong>Bootstrap CIs for the rubric track:</strong> the Phase B rubric report has none — all ±RAG deltas there are point estimates on a high-variance per-row metric. Compute them before reading any rubric delta as real.</li>
+  <li><strong>Account for measurement-strictness inflation (rubric):</strong> ~16–25% of sampled "failures" are pedantic criteria or grading artifacts, not capability gaps — raw failure rates overstate by roughly a fifth; carry the correction in reports.</li>
+  <li><strong>Targeted benchmark-logic fix:</strong> conditional emergency/self-harm criteria that fire when the triggering condition is absent — the one recurring grading artifact worth fixing now (the rest belongs to judge validation).</li>
+  <li><strong>Reporting convention: never pool the HealthBench subsets</strong> (nested construction; consensus is a forgiving lens over the same conversations) — pin it alongside the MCQ no-RAG convention.</li>
+  <li><strong>Verify the leaked-CoT artifact on the device path:</strong> ~1.8% of rubric responses are raw reasoning — most likely a host-eval artifact (llama.cpp manual template), not device behavior; confirm via <code>run_eval_device.py</code> rather than treating it as a model defect.</li>
   <li><strong>Make deflection a first-class metric (SAQ):</strong> add a behavior tag (refuse / defer-only / engage) to the judge output schema in <code>rescore_open_v2.py</code>. Today the refusal/defer split comes from a post-hoc regex plus a one-off hand audit — yet it is exactly the metric the G1 acceptance gate must track. With the tag, every rerun reports the deflection split automatically.</li>
   <li><strong>Clean debatable gold references in mamabench (SAQ report, lever 5):</strong> first audit a sample of zero/low-recall rows to size how much of the recall ceiling is reference quality vs model behavior, then fix the worst references (e.g. the PID-keyed pre-eclamptic vignette). Raises the ceiling and de-noises the G1 A/B.</li>
   <li><strong>Decide whb's status:</strong> n=20 with ~79% zero recall against ~10 checklist-granularity key facts per row — likely a reference-spec mismatch, not model signal. Re-spec its references or expand its n; otherwise formally demote it from headline tables instead of letting it add noise.</li>
@@ -248,6 +275,7 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
   <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible). Validate the chosen R1 threshold with the M1 MCQ ±RAG rerun — the −1.8 pp gap should collapse.</li>
   <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
   <li><strong>In parallel:</strong> C1 source collection (gap-targeted, starting from the kenya zero-recall topics); E1 messy/Swahili query set; C2 corpus-contradiction filing upstream.</li>
+  <li><strong>After G1 lands:</strong> G2 coverage/completeness work, starting from the re-baselined engaged-answer quality.</li>
   <li><strong>Later:</strong> R2d fine-tune/distill if the bake-off winner still leaves a strict-content gap; R3 LLM query rewrite only if the messy-query measurement shows real degradation that normalization + multilingual embedding don't fix.</li>
 </ol>
 
