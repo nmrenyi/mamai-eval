@@ -32,6 +32,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -301,6 +302,52 @@ def _score_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict
     return results, scores
 
 
+def _run_device_batched(serial, rows, set_type, use_retrieval, run_dir, ds_name,
+                        timeout_s, batch_size, max_retries=2):
+    """Run `rows` on the device, optionally in fresh-process batches.
+
+    Aggressive on-device process management (e.g. ColorOS) kills long sustained
+    LLM runs after a few minutes regardless of screen/wake state, but a fresh
+    app launch survives a short burst. With batch_size>0 we push/launch/pull one
+    small batch at a time (force-stop between batches frees memory) and retry any
+    batch the OS kills. Returns (combined_device_rows, elapsed_s).
+    """
+    batches = ([rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
+               if batch_size and batch_size > 0 else [rows])
+    per_batch_timeout = min(timeout_s, batch_size * 60 + 180) if batch_size and batch_size > 0 else timeout_s
+    all_rows: list[dict] = []
+    t0 = time.time()
+    # Per-batch push/pull files go to a temp scratch dir, NOT run_dir, so the
+    # result folder only ever holds the final {dataset}.json (no cleanup needed).
+    scratch = tempfile.mkdtemp(prefix=f"evaldev_{ds_name}_")
+    for bi, batch in enumerate(batches):
+        ei = _build_eval_input(batch, set_type, use_retrieval=use_retrieval)
+        local_input = os.path.join(scratch, f"{ds_name}.b{bi}.eval_input.json")
+        Path(local_input).write_text(json.dumps(ei, ensure_ascii=False, indent=2))
+        got: list[dict] = []
+        for attempt in range(max_retries + 1):
+            _push(serial, local_input, INPUT_PATH_ON_DEVICE)
+            subprocess.run(_adb(serial) + ["shell", "am", "force-stop", PACKAGE],
+                           capture_output=True, check=False)
+            _clear_logcat(serial)
+            _launch_eval(serial)
+            ok = _wait_for_completion(serial, timeout_s=per_batch_timeout)
+            if ok:
+                local_output = os.path.join(scratch, f"{ds_name}.b{bi}.eval_output.json")
+                _pull(serial, OUTPUT_PATH_ON_DEVICE, local_output)
+                got = json.loads(Path(local_output).read_text()).get("rows", [])
+                if len(got) >= len(batch):
+                    break
+                print(f"  batch {bi + 1}/{len(batches)}: {len(got)}/{len(batch)} rows "
+                      f"(attempt {attempt + 1}/{max_retries + 1}) — retrying")
+            else:
+                print(f"  batch {bi + 1}/{len(batches)}: killed/timeout "
+                      f"(attempt {attempt + 1}/{max_retries + 1}) — retrying")
+        print(f"  batch {bi + 1}/{len(batches)} done: {len(got)}/{len(batch)} rows")
+        all_rows.extend(got)
+    return all_rows, time.time() - t0
+
+
 # ── Driver ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -316,6 +363,11 @@ def main():
                         help="+RAG arm: instruct the device to run on-device retrieval "
                              "and the deployed context-injection (vs no-RAG verbatim). "
                              "Requires the eval-branch APK build with use_retrieval support.")
+    parser.add_argument("--batch-size", type=int, default=0,
+                        help="If >0, run each dataset in fresh-process batches of this many "
+                             "rows (force-stop + relaunch per batch), retrying batches the OS "
+                             "kills. Works around aggressive on-device process killing of long "
+                             "sustained runs. 0 = single run (default).")
     parser.add_argument("--row-ids", default=None,
                         help="Path to a calibration manifest JSON. When set, only rows whose "
                              "`id` appears in manifest['ids'] are evaluated. Pair with the "
@@ -377,30 +429,17 @@ def main():
             print(f"SKIP: {ds_name} produced 0 normalized rows")
             continue
 
-        # Stage input
-        local_input = os.path.join(run_dir, f"{ds_name}.eval_input.json")
-        Path(local_input).write_text(json.dumps(_build_eval_input(rows, set_type, use_retrieval=args.rag), ensure_ascii=False, indent=2))
-        _push(args.device_serial, local_input, INPUT_PATH_ON_DEVICE)
-
-        # Clear stale logcat, kick off eval, watch for completion
-        subprocess.run(_adb(args.device_serial) + ["shell", "am", "force-stop", PACKAGE],
-                       capture_output=True, check=False)
-        _clear_logcat(args.device_serial)
-        t0 = time.time()
-        _launch_eval(args.device_serial)
-        ok = _wait_for_completion(args.device_serial, timeout_s=args.timeout_s)
-        elapsed = time.time() - t0
-        if not ok:
-            print(f"ERROR: eval did not complete cleanly for {ds_name}")
+        # Run on device (batched + retry when --batch-size set, else single shot)
+        device_rows, elapsed = _run_device_batched(
+            args.device_serial, rows, set_type, args.rag, run_dir, ds_name,
+            timeout_s=args.timeout_s, batch_size=args.batch_size,
+        )
+        if not device_rows:
+            print(f"ERROR: no device rows returned for {ds_name}")
             continue
-
-        # Pull output
-        local_output = os.path.join(run_dir, f"{ds_name}.eval_output.json")
-        _pull(args.device_serial, OUTPUT_PATH_ON_DEVICE, local_output)
-        device_payload = json.loads(Path(local_output).read_text())
-        device_rows = device_payload.get("rows", [])
         if len(device_rows) != len(rows):
             print(f"  WARNING: device returned {len(device_rows)} rows, expected {len(rows)}")
+        device_payload = {}
 
         # Score (MCQ scored here; open_ended responses shaped for later judge rescore)
         if set_type == "mcq":
