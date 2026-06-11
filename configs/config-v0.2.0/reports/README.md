@@ -113,7 +113,7 @@ The open-ended tracks are LLM-judged, so the judge itself was validated first:
 
 | Report | What it is |
 |---|---|
-| `improvement-plan-20260611.html` | **Improvement advice for the next cycle**, synthesizing all three pillars. P0: retrieval relevance threshold (stop injecting noise) + system-prompt fixes for deflection. P1: on-device retriever upgrade (hybrid / rerank / multilingual embedder bake-off) + eval-side messy/Swahili query set. P2: query rewriting, corpus-contradiction cleanup. Includes the offline-simulation plan that uses existing audit labels (no new judging) to validate retrieval options before device work. |
+| `improvement-plan-20260611.html` | **Improvement advice for the next cycle**, synthesizing all three pillars. P0: retrieval relevance threshold (stop injecting noise), system-prompt revision (emergency override + deflection fixes, three-arm A/B incl. the G2 structure pilot), corpus expansion with high-quality sources. P1: coverage/completeness of engaged answers (G2), on-device retriever upgrade (hybrid / rerank / multilingual embedder bake-off), evaluation-protocol upgrades (deflection metric, rubric CIs, clinician calibration). P2: query rewriting, MCQ-track instrumentation, corpus-contradiction cleanup. Separates system improvements (§1–4) from evaluation-protocol improvements (§5); every item carries an acceptance gate. Offline simulations from existing audit labels (no new judging) validate the retrieval options before device work. |
 
 ## One-paragraph synthesis
 
