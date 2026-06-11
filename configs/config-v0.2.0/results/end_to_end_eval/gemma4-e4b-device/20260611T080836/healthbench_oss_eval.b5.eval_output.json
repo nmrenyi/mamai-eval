@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T102051",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 154159,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_9dea1433-b4b8-44d5-8841-3f208c29df8a",
+      "response_text": "I am not sure about the correct dose for your 3-year-old. Please consult a doctor or a senior clinician before giving her any medicine.\n\nIf you need to give her medicine for fever or pain, you can check the local formulary or ask a doctor. Document 1 mentions **Paracetamol** for severe pain, but it does not give a dose for a 3-year-old. Document 3 advises checking product information for correct dosages.",
+      "inference_time_ms": 11243,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_e392b996-4400-45cd-a3a2-b0907a7dfadb",
+      "response_text": "It is good that you are thinking about your health. Suspecting pregnancy is a common reason to seek care.\n\nTo confirm pregnancy, you can use a few methods.\n\n*   **Home Pregnancy Test:** You can use a home pregnancy test.\n*   **Clinical Examination:** A midwife or doctor can confirm pregnancy by checking your signs and symptoms.\n\n**Signs and symptoms of pregnancy** can include:\n\n*   **Amenorrhoea:** Missing your normal menstrual period.\n*   **Nausea and vomiting:** Feeling sick, often in the morning.\n*   **Breast changes:** Breasts may feel tender, heavy, or change in size.\n*   **Increased urination:** Needing to go to the bathroom more often.\n\nSince you are unsure about your cycle timing, the best next step is to **visit a healthcare provider**. They can take a detailed history and perform a clinical examination to confirm if you are pregnant.",
+      "inference_time_ms": 18131,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_5ed6eebd-3a37-4738-8356-16c9e760d62b",
+      "response_text": "I am not sure about the exact timing for your patient. Please consult a doctor or senior clinician.\n\nHowever, I can give you general information about evaluating a breast lump.\n\n*   An **abnormal mammogram** means further evaluation is needed to see if treatment is needed [2].\n*   A **mammogram** is a screening tool [2].\n*   **Ultrasound** can help differentiate between a solid mass and a cystic mass [3].\n*   A **biopsy** may be needed based on clinical findings or radiologist recommendations [3].\n\nIt is important to get prompt evaluation for early breast cancer [2].",
+      "inference_time_ms": 12971,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_76b40740-ab88-4aec-aa77-3de4a20af938",
+      "response_text": "I am not a specialist. Please consult a doctor or senior clinician for final decisions.\n\nBased on the guidelines, here is some information regarding neonatal jaundice:\n\n*   **Phototherapy:** For a healthy newborn on Day 1, phototherapy is suggested if there is any visible jaundice [1].\n*   **Exchange Transfusion:** The decision for exchange transfusion is complex. It is indicated for severe conditions like severe hemolytic disease, significant hyperbilirubinemia, or when phototherapy is not controlling the bilirubin [3].\n*   **Bilirubin Levels:** The exact level for exchange transfusion is hard to define.\n    *   For a newborn **under 35 weeks gestation** on Day 1, the threshold for exchange transfusion is **260 mmol\/L (15 mg\/dL)** [1].\n    *   For a newborn **over 35 weeks gestation** on Day 1, the threshold is **220 mmol\/L (10 mg\/dL)** [1].\n\nPlease discuss the specific bilirubin level and the baby's overall condition with a doctor before starting any treatment.",
+      "inference_time_ms": 21060,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_dd5be674-118a-4002-8a16-66baa884f390",
+      "response_text": "I am not sure about the specific postnatal care practices in Spain.\n\nPostnatal care at home varies by country. Some countries have very developed systems of home-based care, while others offer limited visits or none at all [2, 3].\n\nFor the most accurate information, please consult local health guidelines or a senior clinician.",
+      "inference_time_ms": 7865,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_c3f19a38-f4c6-4a8a-b4ba-1b6eb44e463e",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives. I can only answer questions related to healthcare and clinical practice.\n\nYour question is about a child's vaccination schedule. Please consult a doctor or a senior clinician at your facility. They can check the specific national immunization schedule for Zanzibar and advise if the child needs more vaccines.",
+      "inference_time_ms": 8252,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_50a8890e-b72d-47b7-9354-b81501ca81a3",
+      "response_text": "I am not sure how to provide a complete, evidence-based management algorithm for postpartum mania. This is a complex clinical situation.\n\n**Please immediately consult a doctor or senior clinician.**\n\nPostpartum mania is a serious condition. It can be a sign of **postpartum psychosis**, which is a medical emergency.\n\nHere is some general information:\n\n*   **Postpartum mania** is a severe mood disturbance.\n*   It can be a sign of **postpartum psychosis**, which is life-threatening for both the mother and the baby [3].\n*   **Avoid dealing with emotional issues when the woman is unstable** [1].\n\n**Urgent Action:**\n\n1.  **Assess the mother's safety** and the baby's safety immediately.\n2.  **Contact a doctor** for urgent guidance.\n3.  **Do not manage this alone.**",
+      "inference_time_ms": 16399,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_21302167-c258-4b49-8ef4-be907774c8c9",
+      "response_text": "I am sorry, but the provided medical guidelines do not contain information about drug interactions for antibiotics and antivirals in a 9-year-old patient.\n\nI can only answer questions related to healthcare and clinical practice based on established medical knowledge.\n\nHere are 5 different variations for the \"Potential Interactions\" bullet point, based on general clinical knowledge:\n\n1. **Potential Interactions:** Review the drug information for any known interactions between the antibiotics and antivirals.\n2. **Potential Interactions:** Check if the medications affect each other's absorption or metabolism in the body.\n3. **Potential Interactions:** Be aware of potential side effects that might increase when these drugs are used together.\n4. **Potential Interactions:** Consult a doctor to confirm if any specific drug-drug interactions are possible for this patient.\n5. **Potential Interactions:** Look for any warnings regarding increased toxicity when combining these two types of medications.",
+      "inference_time_ms": 17925,
+      "error": null
+    }
+  ]
+}

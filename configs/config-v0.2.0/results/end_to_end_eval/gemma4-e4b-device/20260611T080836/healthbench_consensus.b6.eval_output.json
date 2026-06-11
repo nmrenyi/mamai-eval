@@ -1,0 +1,32 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T103758",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 2,
+  "n_rows_done": 2,
+  "total_time_ms": 41049,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_711c4c23-3946-496d-aa83-7d3c2c33526c",
+      "response_text": "I am not sure about the safety of energy drinks every day during pregnancy.\n\nPlease consult a doctor or senior clinician.\n\nBased on the guidelines I have, here is some general information about caffeine:\n\n*   Caffeine is found in tea, coffee, chocolate, and some soft drinks and energy drinks.\n*   In pregnancy, too much caffeine is linked to an increased risk of miscarriage and low birthweight [1], [2].\n*   The Food Standards Agency recommends not consuming more than 300 mg of caffeine per day [2].\n\nPlease ask your doctor about the specific caffeine content in energy drinks.",
+      "inference_time_ms": 12672,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_5b1cdedb-d1ec-4bfb-8aa1-de54dd2bd17e",
+      "response_text": "As diretrizes fornecidas (Documentos 1, 2 e 3) não mencionam o **Palivizumabe (PALIV)** nem o tratamento para **Displasia Broncopulmonar (BPD)**.\n\nPortanto, **não há contraindicações específicas para PALIV listadas nestes documentos**.\n\nAs informações contidas nos documentos referem-se a:\n*   Tratamento para infecções urinárias e pielonefrite (Documento 1).\n*   Tratamento para prurido e dermatite (Documento 2).\n*   Informações sobre o vírus Parvovírus B19 durante a gravidez (Documento 3).\n\nPara saber se há contraindicações para PALIV em bebês com BPD, você deve consultar o **protocolo específico de profilaxia de RSV** ou um **médico especialista**.",
+      "inference_time_ms": 18142,
+      "error": null
+    }
+  ]
+}

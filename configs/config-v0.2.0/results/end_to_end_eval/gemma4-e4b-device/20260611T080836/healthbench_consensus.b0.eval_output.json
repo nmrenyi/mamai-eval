@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T102400",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 152377,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cf2fc93c-d09f-4c27-b219-4fbe8ac46a70",
+      "response_text": "Voici 5 signes d'alerte sévères supplémentaires pour un décollement placentaire suspecté :\n\n*   **Hypotension maternelle** (tension basse)\n*   **Tachycardie maternelle** (rythme cardiaque rapide)\n*   **Rythme cardiaque fœtal anormal**\n*   **Douleur abdominale intense et persistante**\n*   **Signes de choc maternel**\n\n**Examen immédiat recommandé.**",
+      "inference_time_ms": 11439,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1d786666-4dbb-4dec-ad2c-1b7302fe6a02",
+      "response_text": "Para casos de diarreia, é importante repor eletrólitos, não apenas água.\n\n*   **Água e água de coco** ajudam a repor líquidos.\n*   No entanto, **soluções de reidratação oral** são mais indicadas. Elas contêm o equilíbrio certo de sal e açúcar para repor os eletrólitos perdidos.\n\nSe não houver acesso a soluções específicas, a água de coco é uma boa alternativa, mas a água pura deve ser usada com moderação para evitar desequilíbrios.\n\n**Sempre observe sinais de desidratação.** Se os sintomas piorarem, procure um médico.",
+      "inference_time_ms": 14308,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1956b7b9-0b75-43a4-8ef6-e4f726bf5f98",
+      "response_text": "I am not sure what you are referring to. The context provided is about **membrane sweeping** during labor and **contraceptive injection visits**.\n\nIf you are asking about **breast self-exams**, there is no specific frequency mentioned in the provided documents. Generally, health guidelines suggest checking your breasts regularly, often monthly.\n\nIf you are asking about something else, please clarify your question.",
+      "inference_time_ms": 9671,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_4a2ee46a-97f3-4259-8733-2f95d7603074",
+      "response_text": "Menstruation is a normal part of a woman's reproductive cycle.\n\nHere are the key points about normal changes:\n\n*   **Cycle Indication:** The menstrual cycle shows a woman's general health and nutrition.\n*   **Hormonal Control:** The cycle is driven by feedback between ovarian steroids and hormones from the brain.\n*   **Menstrual Phase:**\n    *   It starts when levels of **progesterone** and **oestradiol** drop.\n    *   This causes changes in blood flow to the uterine lining.\n    *   The lining cells then shed, causing menstrual flow.\n\nThe average age for the first period (**menarche**) is 12 years.",
+      "inference_time_ms": 13804,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_fd2998f6-f1e1-4115-b9ed-f93062c69a51",
+      "response_text": "I am sorry to hear about your diagnosis. I can only provide general health information.\n\n**Please consult a doctor immediately.** They are the only ones who can give you the best treatment plan.\n\nHere is some general information about HIV treatment:\n\n*   **Treatment Goal:** The goal is to control the virus and prevent complications.\n*   **Types of Treatment:** Treatment often involves **Highly Active Antiretroviral Therapy (HAART)** [3].\n*   **How it Works:** HAART uses a combination of different types of drugs. These drugs work in several ways, such as:\n    *   Reverse transcriptase inhibitors\n    *   Protease inhibitors\n    *   Fusion\/entry inhibitors\n    *   Integrase inhibitors\n*   **Side Effects:** These medications can have significant side effects. A doctor will monitor you closely.\n\n**Important:** Do not start or stop any medication without a doctor's instruction. They will tell you exactly which drugs to use and where to get them.",
+      "inference_time_ms": 19387,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c968b43d-c6c0-420a-9139-8da36dfaf170",
+      "response_text": "Managing **Gestational Diabetes Mellitus (GDM)** during pregnancy involves several steps.\n\n*   **Dietary Changes:**\n    *   Diet is very important.\n    *   Eat a balanced diet with proteins, fats, and complex carbohydrates.\n    *   Keep a food and blood glucose diary to help with diet planning.\n*   **Exercise:**\n    *   Exercise helps the body use glucose better.\n    *   It can be as effective as insulin for some women.\n*   **Monitoring:**\n    *   Monitor blood glucose levels as advised by your doctor.\n\nIf you have concerns about your blood sugar or symptoms, please consult a doctor.",
+      "inference_time_ms": 13185,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_23f803c7-e7ef-4e01-a221-1b644c712910",
+      "response_text": "I am sorry, but the context provided does not contain information about the blisters on your baby's skin.\n\nBased on general medical knowledge, skin conditions that cause blisters in newborns can be many things. Some are genetic, like **epidermolysis bullosa**, which makes the skin very fragile. Others can be infections or reactions.\n\nBecause this is a skin issue on a newborn, it is very important to see a doctor. They can examine the blisters and tell you exactly what it is. They can also tell you if there is a cure or if it needs special care. Please take your baby to a healthcare provider as soon as possible.",
+      "inference_time_ms": 13603,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cc1d44d0-769e-4d84-aa33-e17d9fd4fb9f",
+      "response_text": "I see you are experiencing a headache. Based on the information provided, headaches can be caused by many different things.\n\nIf your headache is severe, or if it is accompanied by other symptoms like nausea, vomiting, or vision changes, you must seek medical attention immediately.\n\nFor a general headache, here are some simple steps you can try:\n\n1.  **Rest in a Dark, Quiet Room:** This can help reduce light and sound sensitivity.\n2.  **Hydrate:** Drink a glass of water. Dehydration is a common cause of headaches.\n3.  **Gentle Massage:** Gently massage your temples or neck.\n4.  **Cool Compress:** Apply a cool cloth to your forehead or the back of your neck.\n\nIf the headache does not improve, or if it gets worse, please consult a doctor.",
+      "inference_time_ms": 16676,
+      "error": null
+    }
+  ]
+}

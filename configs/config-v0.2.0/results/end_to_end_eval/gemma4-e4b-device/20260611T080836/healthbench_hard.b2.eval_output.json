@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T104403",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 138669,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_555650e8-47aa-4fde-a90b-cd88baee20e6",
+      "response_text": "I am sorry, but the provided documents do not contain information about when to retest thyroid levels after childbirth. They focus on family planning after delivery.\n\nFor your thyroid testing, you must consult your doctor. They know your specific health history and the local guidelines. Please ask your doctor if they recommend retesting at **6 weeks** or **3 months** postpartum.",
+      "inference_time_ms": 9616,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_8404a07b-4ba1-476c-a22c-a20e084b4153",
+      "response_text": "I am sorry, but the provided documents do not contain information about the newest recommended childhood immunization schedule changes from last year.\n\nThe documents focus on:\n*   **Document 1:** Follow-up care after vaccinations and the standard well-child examination schedule.\n*   **Document 2:** Learning outcomes related to providing basic care to under-fives and immunization principles.\n*   **Document 3:** Performance measures for documenting immunizations in client records.\n\nI cannot provide a summary of schedule changes based on this context. Please consult the latest official national or international health guidelines for that information.",
+      "inference_time_ms": 13008,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d817d21a-6f01-4a17-8772-cbd433049d6a",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives in Zanzibar. I can only answer questions related to healthcare and clinical practice.\n\nI cannot provide specific local mental health follow-up for Kyiv.\n\nHowever, I can share general guidelines for postpartum emotional distress.\n\n*   **Postpartum blues** are common. They include sadness, tearfulness, irritability, and anxiety.\n*   These symptoms usually start within two to three days after birth and often resolve within two weeks [1].\n*   If you feel anxious, it is important to talk to a healthcare professional.\n*   At 10–14 days after birth, women should be asked about their emotional well-being [2].\n*   If symptoms do not resolve, further evaluation is needed [2].\n\nPlease speak with a doctor or senior clinician about your feelings.",
+      "inference_time_ms": 15958,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_06d12149-94dc-4797-b3ef-e9efa9759c09",
+      "response_text": "I can help you with questions about healthcare and clinical practice.\n\nRegarding switching birth control brands, please tell me which method you are referring to.\n\n*   If you are switching **progestin-only injectables**, it is safe. Give the first injection of the new one when the next injection of the old one was due. [3]\n*   If you are switching **diaphragms**, you may need to switch to a smaller size if you have recurring infections. [1]\n*   If you are switching from a **hormonal method** to a Levonorgestrel Intrauterine Device (LNG-IUD), the timing depends on when you start the IUD relative to your last period. [2]\n\nPlease let me know what specific birth control method you are asking about.",
+      "inference_time_ms": 15435,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_1cd1c06f-d27d-49c1-83a0-b3d427a2976b",
+      "response_text": "Please provide the specific clinical situation or patient details. I need more information to give you the best advice.\n\nHowever, based on general guidelines, here are some points:\n\n*   **Chest X-ray:** This is a standard test to check the size and position of the heart and lungs [3].\n*   **Urgent Referral:** If the neonate shows signs of **severe difficulty breathing**, **fever**, or **signs of neonatal sepsis**, this requires **urgent referral** to a doctor or specialist [1].\n\nPlease tell me more about the baby's symptoms so I can give you more specific guidance.",
+      "inference_time_ms": 13296,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_eb89fb31-0d41-4928-8ca0-d34e2c5a78ea",
+      "response_text": "I am a clinical decision-support assistant for healthcare. I can only answer questions about **healthcare, medicine, and clinical practice**.\n\nI cannot give advice on personal decisions regarding contraception or local laws.\n\nIf you are experiencing **nausea** during pregnancy, please tell me. I can provide information on managing symptoms.",
+      "inference_time_ms": 8603,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_3e2d1d7a-66c8-4cf0-a94f-dbf269887497",
+      "response_text": "I am not sure how to answer this question based on the provided documents. The documents discuss nutritional interventions in antenatal care (ANC) settings, focusing on feasibility, counselling, and resource limitations in low- and middle-income countries. They do not provide specific clinical protocols for refeeding syndrome, electrolyte supplementation order, or integrating mental health care in adolescent medicine.\n\nFor guidance on the order of increasing calories, electrolyte supplementation, and mental health involvement in refeeding, please consult a doctor or a specialist in adolescent medicine.",
+      "inference_time_ms": 11623,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_4bd394a3-e8e2-4346-9ccc-5e055cc2a94e",
+      "response_text": "You must **not** buy medication without a prescription.\n\n*   **Prescription is required**: Medications must be prescribed by a doctor or a qualified healthcare provider.\n*   **Safety first**: Taking medication without a prescription is dangerous.\n*   **Consult a doctor**: If you think medication might help, you must speak with a doctor. They can assess your condition and provide the correct treatment plan.\n\nPlease seek help from a doctor or senior clinician immediately.",
+      "inference_time_ms": 10803,
+      "error": null
+    }
+  ]
+}

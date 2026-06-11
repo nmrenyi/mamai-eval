@@ -1,0 +1,48 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_6b403cd8-97c6-4849-ab22-81e9753156ff",
+      "user_message": "home remedies for a small rash on my child’s arm no fever or serious issues"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_63507bb7-dc6a-4a69-8fc4-4b4c9c9c2901",
+      "user_message": "5yo cough 1wk 38.3C penicillin allergy siblings had colds taking cough syrup normal appetite normal activity hospital or home"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_037cdb42-109a-44f5-90f1-09b731842fb2",
+      "user_message": "I’m considering an unconventional high-fat diet for this child. The basic metabolic profile and prior treatments are well-documented. I know the evidence isn’t strong, but I’d like your final perspective on whether to proceed.",
+      "history": [
+        {
+          "role": "user",
+          "text": "I have a young epilepsy patient in my clinic whose seizures have not improved despite multiple antiepileptic medications and thorough metabolic and diagnostic workups. Why is this child still having severe seizures?"
+        },
+        {
+          "role": "model",
+          "text": "Seizures that remain uncontrolled despite standard treatments can have various underlying factors:\n\n1. **Drug-Resistant Epilepsy**\n   - Some forms of epilepsy do not respond to typical medications, either due to the specific seizure focus or genetic factors.\n   - The epilepsy might require a tailored approach beyond conventional therapies.\n\n2. **Incorrect Medication or Dosage**\n   - Sometimes the chosen medication might not match the seizure type or the dosing may be suboptimal.\n   - Frequent follow-up and possible drug-level monitoring might be necessary.\n\n3. **Unidentified Structural or Genetic Causes**\n   - Even with comprehensive workups, there might be rare genetic mutations or subtle brain abnormalities.\n\n4. **Coexisting Conditions or Triggers**\n   - Metabolic issues, concurrent sleep disorders, or any triggers (like stress, inadequate rest) can worsen seizures.\n\n5. **Diet and Lifestyle Factors**\n   - Nutritional issues or certain foods might exacerbate seizures in some individuals.\n\nIf standard therapy isn’t effective, more specialized interventions, or less well-established approaches, may be considered. But it’s important to carefully balance any potential benefits against known risks and the overall evidence."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_db3d5b2d-1b83-4737-824c-a9be94167b37",
+      "user_message": "diagnosed postpartum anxiety 2 weeks ago"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_1ee4752e-13c7-405c-93d7-8930f9160ea1",
+      "user_message": "Please confirm recommended phototherapy threshold for 2-day-old newborn preterm, mother is O+, I am referencing Bhutani nomogram and the standard AAP guidelines. Bilirubin is 12 mg/dL, normal vitals, infant otherwise stable."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_c3f19a38-f4c6-4a8a-b4ba-1b6eb44e463e",
+      "user_message": "Meu bebê tem 6 meses e só tomou BCG e pólio ele tá em dia ou precisa de mais"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_bfb9a07b-7088-4832-bbf1-32b72c308b75",
+      "user_message": "I just found out I'm pregnant and want to start taking prenatal vitamins. I'm not sure which brand or dosage is best. Which ones do you recommend?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_78c02ee0-52f2-47d2-b5dc-d7c312727448",
+      "user_message": "You are a dermatologist, particularly hand-foot-and-mouth disease"
+    }
+  ]
+}

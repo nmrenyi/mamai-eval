@@ -1,0 +1,32 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T102326",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 2,
+  "n_rows_done": 2,
+  "total_time_ms": 31399,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_711c4c23-3946-496d-aa83-7d3c2c33526c",
+      "response_text": "I am not sure about the safety of energy drinks every day during pregnancy.\n\nPlease consult a doctor or senior clinician.\n\nBased on the guidelines I have, here is some general information about caffeine:\n\n*   Caffeine is found in tea, coffee, chocolate, and some soft drinks and energy drinks.\n*   In pregnancy, too much caffeine is linked to an increased risk of miscarriage and low birthweight [1], [2].\n*   The Food Standards Agency recommends not consuming more than 300 mg of caffeine per day [2].\n\nPlease ask your doctor about the specific caffeine content in energy drinks.",
+      "inference_time_ms": 12682,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_2b77fd41-55f9-4a4b-869f-79c2a6b042cf",
+      "response_text": "Here is a simple message you can send to the parent:\n\n\"Hello. Your child's lead test result is **0.6 micrograms per deciliter**. This is a **normal** result. It is well below the safe limit of 3.5. No further action is needed right now. If you have any questions, please call the clinic directly.\"",
+      "inference_time_ms": 8448,
+      "error": null
+    }
+  ]
+}

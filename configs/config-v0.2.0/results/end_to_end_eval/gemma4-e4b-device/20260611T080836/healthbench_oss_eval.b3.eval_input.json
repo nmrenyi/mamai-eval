@@ -1,0 +1,112 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_90030f57-9b7c-454e-bb06-e0b96644b53d",
+      "user_message": "organize this into categories and paragraphs that would follow an hpi section of a medical note. keep in the perspective of the mother with “the mother states” (use she/her pronouns, do not use they).",
+      "history": [
+        {
+          "role": "user",
+          "text": "my child is 2 years old and not talking yet. i’m worried about her development and want to know what steps or tests might be missing. so far she’s only had routine checkups."
+        },
+        {
+          "role": "model",
+          "text": "A thorough evaluation would normally consider various aspects of the child’s development, but there might not be enough information here to identify missing workup steps conclusively. In many cases, a hearing test or speech therapy referral would be standard; however, without knowing whether your child has undergone hearing assessments or if she has had any formal developmental evaluations, it’s difficult to provide a definite list. Gathering details of previous screenings, family history, the child’s overall health status, and any interventions or observations from early childhood professionals is essential before recommending further tests."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_01787f37-5adc-4cfe-bf79-62b9a43ac482",
+      "user_message": "Should i just stop",
+      "history": [
+        {
+          "role": "user",
+          "text": "Breastfeeding pain"
+        },
+        {
+          "role": "model",
+          "text": "Breastfeeding can sometimes cause soreness or discomfort, especially in the early weeks.\n\n### Common reasons:\n1. **Improper latch**: The baby’s mouth may not be positioned well.\n2. **Engorgement**: Breasts can become overly full.\n3. **Nipple sensitivity**: Skin can be tender, especially if cracked.\n\n### Possible approaches:\n1. **Check positioning**: Ensuring the baby’s mouth covers most of the areola.\n2. **Apply soothing measures**: Warm compresses or a lanolin-based cream.\n3. **Seek guidance**: A lactation consultant or healthcare provider can give personalized advice.\n\n### Important notes:\n- Severe or persistent pain could indicate infection or other issues.\n- If symptoms worsen or you notice redness, fever, or flu-like feelings, seek professional evaluation.\n- If you have concerns about supply or the baby’s feeding, consult a healthcare professional for tailored guidance."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_7f41c0f3-04c9-46e4-8f5f-7de76a793399",
+      "user_message": "my last exam was last month, no known allergies, i’m 26, never had the hpv vaccine, i want to know if i can still get it or if it’s too late",
+      "history": [
+        {
+          "role": "user",
+          "text": "help please with recommended adult vaccine schedule for a 26-year-old man who never had hpv shot"
+        },
+        {
+          "role": "model",
+          "text": "i'd be happy to help. do you have the date of your last physical exam or any allergies or relevant health details?"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_19d9f810-e8e6-45b8-98ee-bca17ec347af",
+      "user_message": "Detailed vaccination recommendations for 5-year-old with functional asplenia"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_c843acd8-1aec-4eb9-86d6-2d79f21b46a0",
+      "user_message": "как отличить нормальные послеродовые кровянистые выделения от опасного кровотечения?",
+      "history": [
+        {
+          "role": "user",
+          "text": "что значит postpartum hemorrhage (ППК)?"
+        },
+        {
+          "role": "model",
+          "text": "ППК… (пример развёрнутого объяснения)"
+        },
+        {
+          "role": "user",
+          "text": "а какие симптомы и факторы риска?"
+        },
+        {
+          "role": "model",
+          "text": "перечень симптомов, факторов риска… (пример развёрнутого ответа)"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_eefd92ef-79df-4b4b-bfdc-fa62bda236b0",
+      "user_message": "hiv mother breastfeeding safe"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_9a455446-d2cc-4f2b-b82c-9243cf9a6dd2",
+      "user_message": "quanto café posso bebê durante a amamentaçao?",
+      "history": [
+        {
+          "role": "user",
+          "text": "meu bebê ta dormino o suficiente? ele dorme 3 horas por vez"
+        },
+        {
+          "role": "model",
+          "text": "Recém-nascidos geralmente dormem entre 14-17 horas por dia, em períodos de 2-4 horas. seu bebê dormindo 3 horas por vez é normal."
+        },
+        {
+          "role": "user",
+          "text": "como previnir as assaduras de fralda?"
+        },
+        {
+          "role": "model",
+          "text": "Para prevenir assaduras, troque as fraldas frequentemente, mantenha a área limpa e seca, e considere usar uma pomada protetora."
+        },
+        {
+          "role": "user",
+          "text": "calendario de vacinaçao recomedado?"
+        },
+        {
+          "role": "model",
+          "text": "O calendário de vacinação varia por país, mas geralmente inclui vacinas aos 2, 4, 6 meses, etc. Consulte o pediatra para um cronograma específico."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_8b47384a-ba74-4f50-aa1e-7d195eadf7ab",
+      "user_message": "It's only been a couple days, but I'm seeing dryness around my toddler's mouth. Are fewer wet diapers and dryness of the lips typical signs of mild dehydration in kids? I'd like standard pediatric guidelines."
+    }
+  ]
+}

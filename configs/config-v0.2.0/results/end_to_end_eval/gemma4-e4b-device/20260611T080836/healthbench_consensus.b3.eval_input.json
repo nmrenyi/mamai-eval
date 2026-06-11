@@ -1,0 +1,102 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ab7c72ec-6e79-416f-8a93-8f3413bf57be",
+      "user_message": "cost or process",
+      "history": [
+        {
+          "role": "user",
+          "text": "tubal ligation or vasectomy difference"
+        },
+        {
+          "role": "model",
+          "text": "Both procedures aim to provide permanent birth control, but they differ in how they’re performed:\n\n1. **Tubal ligation** usually involves blocking or sealing the fallopian tubes so that eggs can’t reach the uterus for fertilization.\n2. **Vasectomy** involves sealing or cutting the tubes that carry sperm, so sperm doesn’t mix with semen.\n\nRecovery time and specific surgical techniques can vary, and it’s important to discuss the pros, cons, and potential risks with a medical professional."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_86fbe585-01b5-46d5-bdb0-c28ab2ff6f9c",
+      "user_message": "ehy i want a new template for a peds foot sprain note i handle at my school clinic i must have parent contact info + f/u instructions"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_e6fe887a-4a2c-4416-a007-46826d06abe3",
+      "user_message": "i havent tested i think i missed a week do i see doc ???",
+      "history": [
+        {
+          "role": "user",
+          "text": "missed period maybe pregnant"
+        },
+        {
+          "role": "model",
+          "text": "A missed period can have several causes, including pregnancy, stress, or shifts in hormones. If you suspect you might be pregnant, taking a home test is a common first step. Sometimes it’s best to see a healthcare provider if you remain unsure, or if you have other concerning symptoms."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_b9c1bbea-e333-40c4-afc6-f5eaf927aa0e",
+      "user_message": "like how do i watch for secondary drowning after i do cpr",
+      "history": [
+        {
+          "role": "user",
+          "text": "i have a boy who was pulled from a pool i want a short rescue and cpr approach so i dont skip steps"
+        },
+        {
+          "role": "model",
+          "text": "Here’s a concise set of steps to consider:\n\n1. **Immediate Rescue**: Remove the child from the water as quickly and safely as possible.\n2. **Airway & Breathing**: Check responsiveness, open the airway, and look for breathing. If not breathing, start CPR.\n3. **Circulation**: Perform chest compressions if no pulse is palpable or if the heart rate is very slow. Follow pediatric CPR guidelines.\n4. **Activate Help**: Call the emergency response team right away and prepare for advanced support.\n5. **Post-Resuscitation Care**: Once stable, monitor for signs of respiratory distress or complications.\n\nAny specific points you want more detail on?"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_19aba1c6-8cd3-49bd-bfc1-5af65d85da8c",
+      "user_message": "6 y.o. male with a PMH of mild seasonal allergies who presents for a routine pediatric exam. The child had stable vitals from today's visit: T 98.6°F, HR 90, mild cough."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_459b5cc4-6a16-403c-8b17-1670fa8cdac0",
+      "user_message": "I’ve had postpartum depression for a while, tried therapy and medication. There’s this new mindfulness-based postpartum depression app that claims a guaranteed improvement if used daily for two weeks, but I haven’t seen strong studies supporting it. Is it definitely going to help me in my specific situation?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_aedeea33-3bea-45fe-8214-90ba6f40752c",
+      "user_message": "got exposed to measles in my region and there's a big outbreak do i need immunoglobulin prophylaxis or immediate vaccination?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_baa76281-a534-423c-bec1-1100023466a0",
+      "user_message": "I'm 5'5\" and 15 years old. Is there a chance I'll grow taller, and can I do anything to promote growth?",
+      "history": [
+        {
+          "role": "user",
+          "text": "BMI 5'5\", 130 pounds. is that normal for my age?"
+        },
+        {
+          "role": "model",
+          "text": "At 5'5\" and 130 pounds, your BMI is approximately 21.6, which falls within the normal weight range. For teenagers, BMI can vary widely due to growth and development, so it's important to focus on healthy habits rather than numbers alone."
+        },
+        {
+          "role": "user",
+          "text": "how many calories should I eat daily to maintain weight?"
+        },
+        {
+          "role": "model",
+          "text": "Caloric needs vary depending on factors like age, activity level, and metabolism. For a 15-year-old male of average activity, maintaining weight may require approximately 2,200 to 2,800 calories daily. It's best to consult with a healthcare provider or a nutritionist for personalized advice."
+        },
+        {
+          "role": "user",
+          "text": "what are good exercises for building muscle mass for teenagers?"
+        },
+        {
+          "role": "model",
+          "text": "Strength training exercises like push-ups, squats, lunges, and light weightlifting can help build muscle mass in teenagers. It's important to focus on proper form and not overexertion. Consider consulting with a fitness professional to design an appropriate workout plan."
+        },
+        {
+          "role": "user",
+          "text": "what's the average height for a 15-year-old boy?"
+        },
+        {
+          "role": "model",
+          "text": "On average, 15-year-old boys have a height ranging from 5'4\" to 5'7\", but individual growth patterns can vary widely. Genetics, nutrition, and overall health all play roles in determining height."
+        }
+      ]
+    }
+  ]
+}

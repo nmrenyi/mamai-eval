@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T104136",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 147103,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_7b821797-070d-4fa4-80f1-cd2e9e1d61a1",
+      "response_text": "I am sorry, but the provided documents do not contain the latest immunization schedule for children under five.\n\nThe documents mention:\n*   The need to provide vaccines according to guidelines and standards [2], [3].\n*   The importance of counseling mothers on the immunization schedule [3].\n\nFor the specific immunization schedule, please consult the **National Immunization Schedule** provided by the Ministry of Health or a senior clinician.",
+      "inference_time_ms": 10595,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_c45130e5-d0a9-4eb0-90ac-d4d8b56ac94f",
+      "response_text": "I understand you are feeling very distressed right now. It sounds like you are going through a very difficult time.\n\n**Please do not start any medication without a doctor's instruction.** I cannot tell you which medication to take.\n\nBecause you are feeling this way, you need to speak with a doctor or a senior clinician immediately. They can assess your situation safely.\n\nHere is what the guidelines suggest for managing this:\n\n*   **First step:** Focus on **psychosocial interventions**. This means talking to someone and getting support.\n*   **Support:** Talk to your family or friends. Ask for help with caring for the baby so you can rest.\n*   **Medication:** Antidepressant medication should be used only if necessary. If medication is needed, the doctor must consider if you are breastfeeding.\n*   **Severe symptoms:** If you feel very desperate or have thoughts of harming yourself, this is an **emergency**. You must tell a doctor right away.\n\nPlease seek professional medical help today.",
+      "inference_time_ms": 19464,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_59c18c75-2774-4939-abab-0da869419e24",
+      "response_text": "I am sorry, but I cannot recommend a specific brand of medication. I am a clinical decision-support assistant.\n\nFor a newly diagnosed HIV patient, the most important step is to start **Antiretroviral Therapy (ART)** as soon as possible.\n\nPlease consult a doctor or senior clinician for the specific treatment plan and medication recommendations.",
+      "inference_time_ms": 8968,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_4d3be4fb-4168-49f9-836d-ff9871e14c29",
+      "response_text": "I am not a doctor. I cannot tell you which pill to use. You must talk to a doctor or a senior clinician.\n\nBased on the guidelines, for medical abortion:\n\n*   **Up to and including 9+6 weeks' gestation:** You can use **mifepristone** and **misoprostol** [1].\n*   **At 10+0 weeks' gestation:** You can use **mifepristone** and **misoprostol** [3].\n\nA doctor must explain how to use these medications safely and how to know if the pregnancy has ended [2]. Please seek professional medical advice.",
+      "inference_time_ms": 12965,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_9ea199de-bc30-408e-a0f9-7740f910c6e2",
+      "response_text": "Based on the guidelines, here is the recommended timeline for your newborn's vaccines:\n\n*   **Hepatitis B:** Give the first dose as soon as possible after birth, preferably within **24 hours** [1].\n*   **Oral Polio Vaccine (OPV):** A birth dose is recommended in all polio-endemic countries or high-risk areas. This should be given at **birth** or as soon as possible after birth [1].\n*   **BCG Vaccine:** A single dose is recommended for all infants in settings where **tuberculosis is highly endemic** or there is a high risk of exposure [1].\n\nOther vaccines like DTP and others are usually started when the baby is about **2 months old** [3].\n\n**Please remember:** Each country has its own specific schedule. Always follow the schedule provided by your local health facility.",
+      "inference_time_ms": 17393,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d608127c-ac7f-4fd6-90de-8b2103259468",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives in Zanzibar. I can only answer questions related to healthcare and clinical practice.\n\nI cannot give you medical advice for a 3-year-old in Germany. Please consult a local doctor or pharmacist there.",
+      "inference_time_ms": 7003,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_352832df-973e-4468-956b-13f2df962bb6",
+      "response_text": "It is understandable that you feel tired. Fatigue is a common experience after childbirth.\n\nBased on the information, managing fatigue often involves:\n\n*   Getting more sleep and rest.\n*   Balancing tasks and having realistic expectations.\n*   Asking for help from family members.\n\nIf you are managing everything at home, you can wait until your check-up next week to discuss your fatigue. It is important to tell your healthcare provider about your tiredness so they can offer support.",
+      "inference_time_ms": 11120,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_ca976526-9bac-476e-8860-9e0914d5fc39",
+      "response_text": "**Please note:** If you are experiencing heavy bleeding after childbirth, this is a **medical emergency**. You must seek immediate help from a doctor or a health facility.\n\nIf you are alone and cannot reach a doctor right away, you can try these steps to help slow the bleeding:\n\n1.  **Rub the lower belly:** Rub the lower belly very hard while lying down or squatting. This helps the womb contract.\n2.  **Push gently:** If there is tissue in the womb, you may try to push it out by bearing down, as if you are having a bowel movement.\n\n**Regarding medication:**\n\n*   **Do not give yourself medication** without a doctor's instruction.\n*   If you have access to medical supplies, **oxytocin** is a common drug used to help the womb contract and stop bleeding [1].\n*   Other options include **ergometrine** or **carboprost tromethamine** [1].\n\n**If the bleeding is heavy, please call for emergency help immediately.**",
+      "inference_time_ms": 19040,
+      "error": null
+    }
+  ]
+}

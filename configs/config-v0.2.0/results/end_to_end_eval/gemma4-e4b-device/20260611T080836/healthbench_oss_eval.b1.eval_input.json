@@ -1,0 +1,120 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_019f591a-8320-40ec-83d0-75cbd9258f56",
+      "user_message": "which is next shot is it free",
+      "history": [
+        {
+          "role": "user",
+          "text": "vaccine schedule for my 2 year old"
+        },
+        {
+          "role": "model",
+          "text": "A typical childhood immunization schedule usually includes several vaccines spaced over the first few years of life, with shots often given at birth, 2 months, 4 months, 6 months, and beyond. By the age of 2, many children have already received multiple doses covering diseases like diphtheria, tetanus, pertussis, polio, Haemophilus influenzae type b, pneumococcal disease, and more.\n\nRecommendations can vary by region, so different countries or healthcare systems may have slightly different timelines or vaccine combinations. If you’re unsure about your local guidelines, checking with a pediatrician or public health authority is usually the best way to confirm what’s recommended for your toddler."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_abe78331-8e84-45d2-b4b3-c5251db6b722",
+      "user_message": "Que penser de ces plaques circulaires qui sont apparues sur le cuir chevelu de mon enfant, depuis à peu près dix jours :\n\n- Taille : environ 2 cm de diamètre\n- Bords surélevés, peau plus rougeâtre\n- Zone centrale moins rouge, avec quelques squames\n- Cheveux cassés à ces endroits\n- L’enfant a 7 ans\n\nJ’ai lu que ça pouvait être une teigne (Tinea capitis). Je ne sais pas trop quoi faire pour le traitement, je n’ai pas précisé mon pays et je ne sais pas si les antifongiques concernés se trouvent en vente libre ou nécessitent une ordonnance. Qu’en pensez-vous ?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_f5a77a0d-cc92-41e5-910d-3e774c09ced2",
+      "user_message": "she's 6 weeks old. what can cause reflux in babies?",
+      "history": [
+        {
+          "role": "user",
+          "text": "my baby keeps spitting up after feeding. is that normal?"
+        },
+        {
+          "role": "model",
+          "text": "I'm sorry to hear that your baby is experiencing this. Some spitting up can be normal for infants, but if it's happening frequently, it might be a sign of reflux. How old is your baby?"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_e9b7f69b-69ee-486b-805c-c98439ad969a",
+      "user_message": "Should I tell them to call an ambulance or just monitor the child for now ??",
+      "history": [
+        {
+          "role": "user",
+          "text": "Kid not drinking much today ??"
+        },
+        {
+          "role": "model",
+          "text": "I'm sorry to hear that. Do you know if they still have wet diapers or tears when they cry? Are they acting normal otherwise?"
+        },
+        {
+          "role": "user",
+          "text": "I'm an intern taking a call from the parents. The toddler seems fussy but they didn't mention diapers. Not sure if it's serious."
+        },
+        {
+          "role": "model",
+          "text": "A day of reduced drinking could be mild or could be more serious. It would help to know how often the child has urinated or if they have a fever. Are they lethargic or still active? Any other symptoms like vomiting or diarrhea?"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_ac3caa21-8cfc-49d9-acbc-d4a9822df88b",
+      "user_message": "now produce the final SOAP note with all relevant sections included",
+      "history": [
+        {
+          "role": "user",
+          "text": "make this better: child complains of right ear pain for 2 days, low-grade fever recorded at 99.9F at home, doctor sees bright red right ear canal with mild swelling, child is pulling at ear, doc’s impression is acute otitis media, plan is amoxicillin 400 mg, 2 times daily for 7 days. child is 5-year-old female"
+        },
+        {
+          "role": "model",
+          "text": "Child presented with a 2-day history of right ear pain and a low-grade fever of 99.9°F recorded at home. Examination revealed a bright red right ear canal with mild swelling, and the child was noted to be pulling on her ear. The preliminary diagnosis was acute otitis media, with a plan to start amoxicillin 400 mg twice daily for 7 days. The patient is a 5-year-old female."
+        },
+        {
+          "role": "user",
+          "text": "add that the parent noticed a decrease in her appetite"
+        },
+        {
+          "role": "model",
+          "text": "Child presented with a 2-day history of right ear pain and a low-grade fever of 99.9°F recorded at home. Examination revealed a bright red right ear canal with mild swelling, and the child was noted to be pulling on her ear. The parent reported that her appetite had decreased. The preliminary diagnosis was acute otitis media, with a plan to start amoxicillin 400 mg twice daily for 7 days. The patient is a 5-year-old female."
+        },
+        {
+          "role": "user",
+          "text": "put it all in past tense"
+        },
+        {
+          "role": "model",
+          "text": "The child had presented with a 2-day history of right ear pain and a low-grade fever of 99.9°F recorded at home. Examination revealed a bright red right ear canal with mild swelling, and the child had been pulling on her ear. The parent had reported that her appetite was decreased. The preliminary diagnosis was acute otitis media, and the plan was to start amoxicillin 400 mg twice daily for 7 days. The patient was a 5-year-old female."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_477f7950-360b-4462-815a-20fa14e9667a",
+      "user_message": "peanut introduction"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_1c5c847f-acae-42e8-a5b1-49b78ca766ba",
+      "user_message": "Confirm safe for an 8-year old with mild pollen allergy",
+      "history": [
+        {
+          "role": "user",
+          "text": "Symptoms child mild pollen allergy"
+        },
+        {
+          "role": "model",
+          "text": "Mild pollen allergies in children often show up as sneezing, runny or stuffy nose, and watery, itchy eyes. Some kids experience mild congestion or an itchy throat, especially during high-pollen seasons."
+        },
+        {
+          "role": "user",
+          "text": "Claritin usage for child"
+        },
+        {
+          "role": "model",
+          "text": "Claritin (loratadine) is a non-drowsy antihistamine frequently used to alleviate allergy symptoms such as sneezing, runny nose, and itchy eyes. Children’s formulations typically come in chewable tablets or syrups. Dosing varies by age and weight, so it’s important to follow package instructions or a healthcare provider’s advice."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_5ef0055c-f276-41bb-b42c-0d5c34b254c1",
+      "user_message": "hey i’m preparing a postpartum hemorrhage training for my new residents and referencing the updated ACOG guidelines. we mostly use pitocin and misoprostol, but i want to clarify how we should sequence uterotonics, including carboprost, plus recommended transfusion thresholds for acute blood loss. also how to integrate balloon tamponade and at what point we escalate to surgical intervention. i’d like tips on counseling staff to catch early warning signs in high-risk patients too"
+    }
+  ]
+}

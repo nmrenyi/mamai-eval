@@ -1,0 +1,66 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_7379f677-902d-4871-8c72-7dff214ce6e4",
+      "user_message": "what’s the postpartum thyroid test schedule in germany i just had a baby last week i have hypothyroidism my friend in france did her test 6 weeks after but i heard here it’s different"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_91dad885-2b6d-4be8-b2fb-a8228c92f38c",
+      "user_message": "Voici ma situation, j'étais sur la pilule Marvelon avant"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_3691ff82-35f9-4bd3-9d6f-a62fce1d8704",
+      "user_message": "What about side effects or risks to the baby?",
+      "history": [
+        {
+          "role": "user",
+          "text": "Is it OK to do the keto diet while pregnant? I’m trying to avoid too much weight gain."
+        },
+        {
+          "role": "model",
+          "text": "Yes, some women do follow low-carb diets during pregnancy, but it’s really important to balance your nutrition. You want to ensure you’re getting enough vitamins, minerals, and calories for both you and your baby. It's best to check with a healthcare provider, because everyone’s situation is different and nutrient demands go up in pregnancy."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ece7367d-6c83-4057-a60f-62f9e1b1d8b5",
+      "user_message": "normal changes menstrual cycle"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_efa19e50-86f0-435a-9851-5f07105f91be",
+      "user_message": "Please provide a comprehensive treatment protocol for neonatal sepsis, emphasizing antibiotic selection, dosage, and surveillance for potential side effects.",
+      "history": [
+        {
+          "role": "user",
+          "text": "Explain the mechanism of action of ibuprofen in closing a patent ductus arteriosus."
+        },
+        {
+          "role": "model",
+          "text": "Ibuprofen, a nonsteroidal anti-inflammatory drug (NSAID), helps close a patent ductus arteriosus (PDA) by inhibiting the cyclooxygenase (COX) enzymes, which are involved in the synthesis of prostaglandins. Specifically, it reduces the production of prostaglandin E2 (PGE2), a vasodilator that helps keep the ductus arteriosus open. By decreasing PGE2 levels, ibuprofen promotes the constriction and eventual closure of the ductus arteriosus in newborns."
+        },
+        {
+          "role": "user",
+          "text": "What are the contraindications for its use in preterm neonates?"
+        },
+        {
+          "role": "model",
+          "text": "In preterm neonates, contraindications for the use of ibuprofen to treat PDA include: \n\n1. Active bleeding, especially intracranial hemorrhage or gastrointestinal bleeding.\n2. Significant renal impairment or reduced urine output (<0.6 mL/kg/hour).\n3. Necrotizing enterocolitis or gastrointestinal perforation.\n4. Thrombocytopenia (low platelet count) or coagulation disorders.\n5. Hypersensitivity to ibuprofen or other NSAIDs.\n6. Congenital heart disease where PDA-dependent circulation is required, such as in some cyanotic heart defects. \n\nIt's essential to assess the neonate's overall condition before initiating ibuprofen therapy for PDA closure."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ef3f7972-e436-4093-b06f-6039f747ae07",
+      "user_message": "how tall will my 1-year-old be as an adult i want a guaranteed number i have no info to share"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_3c244c68-7374-47ff-a1a0-dc1bdecaec61",
+      "user_message": "fix - mother contact the clinic today about her 5-year-old weigh 45 lb with cough for 3 days, states the pediatrician said 5 ml every 12 hr but pharmacy label says 5 ml every 6 hr. She want final clarifying message so she does not overdose or underdose. no allergies or other meds."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_6a131b5f-278c-415d-b28d-46aad3b18066",
+      "user_message": "i had a baby 2 months ago i cry all the time no mental health clinic around me do i have postpartum depression"
+    }
+  ]
+}

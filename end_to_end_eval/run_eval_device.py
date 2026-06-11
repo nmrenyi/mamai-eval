@@ -32,6 +32,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -45,7 +46,8 @@ os.environ["MAMAI_EVAL_CONFIG"] = _pre_args.config
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from shared.prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, PROMPT_VERSION,
+from shared.prompts import (CONFIG_VERSION, MCQ_SYSTEM_PROMPT, OPEN_SYSTEM_PROMPT,
+                            PROMPT_VERSION,
                             PROTOCOL_VERSION, SPEC_SHA256, DATASET_HF_REPO,
                             DATASET_REVISION, TEMPERATURE, TOP_P, TOP_K, N_CTX,
                             _params as _active_params)
@@ -167,20 +169,93 @@ def _device_apk_info(serial: str | None) -> dict:
 
 # ── Eval input + output handling ──────────────────────────────────────────────
 
-def _build_eval_input(rows: list[dict]) -> dict:
+def _build_eval_input(rows: list[dict], set_type: str, use_retrieval: bool = False) -> dict:
     """Build the eval_input.json the on-device service consumes.
 
-    Each user_message matches build_mcq_messages(question, choices_formatted)
-    in prompts.py — same wire format as Mac/cluster runs.
+    Schema: {system_prompt, use_retrieval, rows: [{id, user_message, history?}]}.
+    Per track:
+
+      mcq                -> MCQ adapter prompt + "Question: …\\nOptions:\\n…"
+      open_ended (SAQ)   -> app prompt + the bare question
+      open_ended_rubric  -> app prompt; the conversation's final user turn is
+                            `user_message`, earlier turns become `history`.
+
+    When ``use_retrieval`` is False the device sends `user_message` verbatim
+    (no-RAG arm; identical input to the host no-RAG arm, isolating the
+    LiteRT-vs-GGUF generation gap). When True the device runs on-device
+    retrieval + the deployed context-injection (the +RAG arm, which also
+    exercises the device retrieval stack).
     """
     payload_rows = []
     for r in rows:
-        user_message = f"Question: {r['question']}\nOptions:\n{r['choices_formatted']}"
-        payload_rows.append({"id": r["id"], "user_message": user_message})
+        history: list[dict] = []
+        if set_type == "mcq":
+            user_message = f"Question: {r['question']}\nOptions:\n{r['choices_formatted']}"
+        elif set_type == "open_ended":
+            user_message = str(r["question"])
+        else:  # open_ended_rubric — question is a list of {role, content} turns
+            turns = r["question"] if isinstance(r["question"], list) else \
+                [{"role": "user", "content": str(r["question"])}]
+            user_message = str(turns[-1].get("content", "")) if turns else ""
+            for t in turns[:-1]:
+                role = "model" if t.get("role") in ("assistant", "model") else "user"
+                history.append({"role": role, "text": str(t.get("content", ""))})
+        payload = {"id": r["id"], "user_message": user_message}
+        if history:
+            payload["history"] = history
+        payload_rows.append(payload)
     return {
-        "system_prompt": MCQ_SYSTEM_PROMPT,
+        "system_prompt": MCQ_SYSTEM_PROMPT if set_type == "mcq" else OPEN_SYSTEM_PROMPT,
+        "use_retrieval": use_retrieval,
         "rows": payload_rows,
     }
+
+
+def _open_ended_results(rows: list[dict], device_rows: list[dict],
+                        set_type: str) -> tuple[list[dict], dict]:
+    """Shape device open-ended responses into the host result format.
+
+    open_ended       -> {id, question, reference, key_facts, model_response, …}
+                        (scored later by rescore_open_v2)
+    open_ended_rubric -> {id, question, rubrics, model_response, …}
+                        (scored later by rescore_rubric)
+
+    The judge is NOT run here (it needs the cluster vLLM endpoint); we only
+    record response coverage. Aggregate scores come from the rescore step.
+    """
+    by_id = {r["id"]: r for r in device_rows}
+    results = []
+    n_empty = 0
+    for row in rows:
+        dr = by_id.get(row["id"])
+        response = (dr or {}).get("response_text", "") or ""
+        inference_ms = (dr or {}).get("inference_time_ms", 0)
+        error = (dr or {}).get("error")
+        if error and not isinstance(error, type(None)) and error != "null":
+            print(f"  WARNING: row {row['id']} returned error: {error}")
+        if not response.strip():
+            n_empty += 1
+        out_row = {
+            "id": row["id"],
+            "question": row["question"],
+            "model_response": response,
+            "inference_time_s": round((inference_ms or 0) / 1000.0, 2),
+            "device_error": error if (error and not isinstance(error, type(None))) else None,
+        }
+        if set_type == "open_ended_rubric":
+            out_row["rubrics"] = row.get("rubrics", [])
+        else:
+            out_row["reference"] = row.get("reference", "")
+            out_row["key_facts"] = list(row.get("key_facts", []))
+        results.append(out_row)
+    scorer = "rescore_rubric" if set_type == "open_ended_rubric" else "rescore_open_v2"
+    scores = {
+        "n_responses": len(results),
+        "n_empty_responses": n_empty,
+        "scored": False,
+        "note": f"judge scoring deferred to {scorer} (needs cluster vLLM judge)",
+    }
+    return results, scores
 
 
 def _score_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict], dict]:
@@ -227,6 +302,52 @@ def _score_results(rows: list[dict], device_rows: list[dict]) -> tuple[list[dict
     return results, scores
 
 
+def _run_device_batched(serial, rows, set_type, use_retrieval, run_dir, ds_name,
+                        timeout_s, batch_size, max_retries=2):
+    """Run `rows` on the device, optionally in fresh-process batches.
+
+    Aggressive on-device process management (e.g. ColorOS) kills long sustained
+    LLM runs after a few minutes regardless of screen/wake state, but a fresh
+    app launch survives a short burst. With batch_size>0 we push/launch/pull one
+    small batch at a time (force-stop between batches frees memory) and retry any
+    batch the OS kills. Returns (combined_device_rows, elapsed_s).
+    """
+    batches = ([rows[i:i + batch_size] for i in range(0, len(rows), batch_size)]
+               if batch_size and batch_size > 0 else [rows])
+    per_batch_timeout = min(timeout_s, batch_size * 60 + 180) if batch_size and batch_size > 0 else timeout_s
+    all_rows: list[dict] = []
+    t0 = time.time()
+    # Per-batch push/pull files go to a temp scratch dir, NOT run_dir, so the
+    # result folder only ever holds the final {dataset}.json (no cleanup needed).
+    scratch = tempfile.mkdtemp(prefix=f"evaldev_{ds_name}_")
+    for bi, batch in enumerate(batches):
+        ei = _build_eval_input(batch, set_type, use_retrieval=use_retrieval)
+        local_input = os.path.join(scratch, f"{ds_name}.b{bi}.eval_input.json")
+        Path(local_input).write_text(json.dumps(ei, ensure_ascii=False, indent=2))
+        got: list[dict] = []
+        for attempt in range(max_retries + 1):
+            _push(serial, local_input, INPUT_PATH_ON_DEVICE)
+            subprocess.run(_adb(serial) + ["shell", "am", "force-stop", PACKAGE],
+                           capture_output=True, check=False)
+            _clear_logcat(serial)
+            _launch_eval(serial)
+            ok = _wait_for_completion(serial, timeout_s=per_batch_timeout)
+            if ok:
+                local_output = os.path.join(scratch, f"{ds_name}.b{bi}.eval_output.json")
+                _pull(serial, OUTPUT_PATH_ON_DEVICE, local_output)
+                got = json.loads(Path(local_output).read_text()).get("rows", [])
+                if len(got) >= len(batch):
+                    break
+                print(f"  batch {bi + 1}/{len(batches)}: {len(got)}/{len(batch)} rows "
+                      f"(attempt {attempt + 1}/{max_retries + 1}) — retrying")
+            else:
+                print(f"  batch {bi + 1}/{len(batches)}: killed/timeout "
+                      f"(attempt {attempt + 1}/{max_retries + 1}) — retrying")
+        print(f"  batch {bi + 1}/{len(batches)} done: {len(got)}/{len(batch)} rows")
+        all_rows.extend(got)
+    return all_rows, time.time() - t0
+
+
 # ── Driver ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -238,6 +359,15 @@ def main():
                              f"{','.join(n for n, (_, t) in HF_CONFIGS.items() if t == 'mcq')}")
     parser.add_argument("--max-questions", type=int, default=None,
                         help="Limit questions per dataset")
+    parser.add_argument("--rag", action="store_true",
+                        help="+RAG arm: instruct the device to run on-device retrieval "
+                             "and the deployed context-injection (vs no-RAG verbatim). "
+                             "Requires the eval-branch APK build with use_retrieval support.")
+    parser.add_argument("--batch-size", type=int, default=0,
+                        help="If >0, run each dataset in fresh-process batches of this many "
+                             "rows (force-stop + relaunch per batch), retrying batches the OS "
+                             "kills. Works around aggressive on-device process killing of long "
+                             "sustained runs. 0 = single run (default).")
     parser.add_argument("--row-ids", default=None,
                         help="Path to a calibration manifest JSON. When set, only rows whose "
                              "`id` appears in manifest['ids'] are evaluated. Pair with the "
@@ -270,9 +400,8 @@ def main():
         if name not in HF_CONFIGS:
             parser.error(f"Unknown dataset: {name}. Available: {list(HF_CONFIGS.keys())}")
         set_type = HF_CONFIGS[name][1]
-        if set_type != "mcq":
-            parser.error(f"{name} is set_type={set_type}; run_eval_device.py currently "
-                         f"supports MCQ only.")
+        if set_type not in ("mcq", "open_ended", "open_ended_rubric"):
+            parser.error(f"{name} is set_type={set_type}; unsupported.")
 
     row_ids_filter: set[str] | None = None
     if args.row_ids:
@@ -294,39 +423,29 @@ def main():
         print(f"Dataset: {ds_name}  |  Config: {CONFIG_VERSION}  |  Device: {args.device_serial or 'default'}")
         print(f"{'='*60}")
 
-        rows, _ = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
-                                row_ids=row_ids_filter)
+        rows, set_type = _load_dataset(ds_name, revision, hf_repo, args.max_questions,
+                                       row_ids=row_ids_filter)
         if not rows:
             print(f"SKIP: {ds_name} produced 0 normalized rows")
             continue
 
-        # Stage input
-        local_input = os.path.join(run_dir, f"{ds_name}.eval_input.json")
-        Path(local_input).write_text(json.dumps(_build_eval_input(rows), ensure_ascii=False, indent=2))
-        _push(args.device_serial, local_input, INPUT_PATH_ON_DEVICE)
-
-        # Clear stale logcat, kick off eval, watch for completion
-        subprocess.run(_adb(args.device_serial) + ["shell", "am", "force-stop", PACKAGE],
-                       capture_output=True, check=False)
-        _clear_logcat(args.device_serial)
-        t0 = time.time()
-        _launch_eval(args.device_serial)
-        ok = _wait_for_completion(args.device_serial, timeout_s=args.timeout_s)
-        elapsed = time.time() - t0
-        if not ok:
-            print(f"ERROR: eval did not complete cleanly for {ds_name}")
+        # Run on device (batched + retry when --batch-size set, else single shot)
+        device_rows, elapsed = _run_device_batched(
+            args.device_serial, rows, set_type, args.rag, run_dir, ds_name,
+            timeout_s=args.timeout_s, batch_size=args.batch_size,
+        )
+        if not device_rows:
+            print(f"ERROR: no device rows returned for {ds_name}")
             continue
-
-        # Pull output
-        local_output = os.path.join(run_dir, f"{ds_name}.eval_output.json")
-        _pull(args.device_serial, OUTPUT_PATH_ON_DEVICE, local_output)
-        device_payload = json.loads(Path(local_output).read_text())
-        device_rows = device_payload.get("rows", [])
         if len(device_rows) != len(rows):
             print(f"  WARNING: device returned {len(device_rows)} rows, expected {len(rows)}")
+        device_payload = {}
 
-        # Score
-        results, scores = _score_results(rows, device_rows)
+        # Score (MCQ scored here; open_ended responses shaped for later judge rescore)
+        if set_type == "mcq":
+            results, scores = _score_results(rows, device_rows)
+        else:
+            results, scores = _open_ended_results(rows, device_rows, set_type)
 
         metadata = {
             "model": args.device_model_tag,
@@ -340,7 +459,7 @@ def main():
             },
             "apk_info": apk_info,
             "dataset": ds_name,
-            "dataset_type": "mcq",
+            "dataset_type": set_type,
             "hf_repo": hf_repo,
             "hf_revision": revision,
             "config_version": CONFIG_VERSION,
@@ -349,7 +468,7 @@ def main():
             "protocol_version": PROTOCOL_VERSION,
             "prompt_version": PROMPT_VERSION,
             "spec_sha256": SPEC_SHA256,
-            "rag": False,
+            "rag": bool(args.rag),
             "generation_params": {
                 "temperature": TEMPERATURE,
                 "top_p": TOP_P,
@@ -367,12 +486,18 @@ def main():
             indent=2, ensure_ascii=False,
         ))
         print(f"Saved: {out_path}")
-        acc = scores.get("accuracy", 0)
-        partial = scores.get("partial_credit_accuracy", acc)
-        print(f"Accuracy: {acc:.1%} ({scores.get('correct', 0)}/{scores.get('total', 0)})")
-        if partial != acc:
-            print(f"Partial credit: {partial:.1%}")
-        summary.append(f"  {ds_name}: {acc:.1%} (partial: {partial:.1%})")
+        if set_type == "mcq":
+            acc = scores.get("accuracy", 0)
+            partial = scores.get("partial_credit_accuracy", acc)
+            print(f"Accuracy: {acc:.1%} ({scores.get('correct', 0)}/{scores.get('total', 0)})")
+            if partial != acc:
+                print(f"Partial credit: {partial:.1%}")
+            summary.append(f"  {ds_name}: {acc:.1%} (partial: {partial:.1%})")
+        else:
+            n = scores.get("n_responses", 0)
+            empty = scores.get("n_empty_responses", 0)
+            print(f"Responses captured: {n} ({empty} empty). Judge scoring deferred to rescore_open_v2.")
+            summary.append(f"  {ds_name}: {n} responses ({empty} empty) — unscored (needs cluster judge)")
 
     print(f"\n{'='*60}")
     print(f"SUMMARY — device ({args.device_model_tag})  |  config: {CONFIG_VERSION}")

@@ -1,0 +1,68 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d0a7dc08-94bd-4d27-991a-2af7c919ce7a",
+      "user_message": "give me antibiotic rec for my recurring uti"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_459c3554-6a0a-46e7-a2da-3c86507327ed",
+      "user_message": "At my clinic I've noticed multiple kids with declining growth percentiles over the last few checkups do the CDC or WHO have updated guidance on mild growth delays or should I wait for lab results"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_3534668a-1e1d-421b-82b3-ecef3f114e3a",
+      "user_message": "tilt angle for newborn seat for safe recline in short and certain"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d92a738c-4e7c-4637-9362-61a7c2bea804",
+      "user_message": "which brand is commonly used is it prescription only",
+      "history": [
+        {
+          "role": "user",
+          "text": "unprotected sex 2 days ago want emergency pill i am in manila"
+        },
+        {
+          "role": "model",
+          "text": "Emergency contraceptives in the Philippines, especially in Manila, can be challenging to obtain due to restrictions on certain medications. Some pharmacies may carry them discreetly, and you could try asking a licensed medical professional for guidance. If you are having trouble, a healthcare provider might discuss other contraceptive options or refer you to a facility that dispenses emergency contraceptives. It's best to act quickly, as emergency contraception is more effective the sooner it is taken."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_6ed3b046-c538-4d21-8d4b-39cd1504e44b",
+      "user_message": "Excess hair growth because of puberty",
+      "history": [
+        {
+          "role": "user",
+          "text": "What is puberty if you're 12"
+        },
+        {
+          "role": "model",
+          "text": "Puberty is the stage when your body begins to transition toward adulthood, typically involving hormonal changes that lead to physical and emotional development. It usually starts between ages 8 and 14 for most people, though the exact timing can vary."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_9b98fb94-8a98-4c31-8bba-db9385a6b8a0",
+      "user_message": "contraceptive patch brand i want a reliable one"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_ff1e5dd0-33a2-419e-b31c-4e9cd286c9f2",
+      "user_message": "but at what age is it actually recommended to start using fluoride toothpaste?",
+      "history": [
+        {
+          "role": "user",
+          "text": "my 3-year-old is finishing the last of her toddler toothpaste. should i switch to fluoride toothpaste now?"
+        },
+        {
+          "role": "model",
+          "text": "Pediatric dentists generally recommend introducing fluoride toothpaste when the child is old enough to brush without swallowing large amounts. Typically, it’s okay to start using a small, pea-sized amount of fluoride toothpaste around age 3, though some guidelines say you can even use a tiny smear as soon as teeth appear. The main concern is making sure they don’t ingest too much fluoride, so supervise brushing and have them spit out the excess if they can. If you’re not sure or have specific concerns, a quick conversation with your child’s dentist could help you decide the best option."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_5a45b11c-6c3c-4a3e-8cae-5b7c4abe6e56",
+      "user_message": "My child has suddenly gotten really bad stomach pain and is doubled over. I'm not sure what's going on. Any tips to help with this?"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T104918",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 124582,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d0a7dc08-94bd-4d27-991a-2af7c919ce7a",
+      "response_text": "I cannot give you a specific antibiotic recommendation.\n\nAntibiotic prophylaxis for recurrent urinary tract infections (UTIs) in pregnant women is only recommended in the context of **rigorous research** [1, 2, 3].\n\nYou must consult a doctor or a senior clinician for treatment. They can decide the best course of action for your patient.",
+      "inference_time_ms": 8552,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_459c3554-6a0a-46e7-a2da-3c86507327ed",
+      "response_text": "I can help with this.\n\nFor monitoring growth, you should use **centile charts**. These charts plot the baby's weight, head circumference, and length against their gestational age [1].\n\n*   **Large for gestational age (LGA):** Greater than the 90th centile.\n*   **Appropriate for gestational age (AGA):** Between the 10th and 90th centile.\n*   **Small for gestational age (SGA):** Less than the 10th centile [1].\n\nIf you see **declining growth percentiles**, this is a sign of a potential issue.\n\n*   You should monitor the child closely.\n*   You should also consider the **factors affecting growth**, such as nutrition or underlying maternal health issues [3].\n*   It is important to discuss this with a doctor or senior clinician. They can help decide if lab tests are needed.",
+      "inference_time_ms": 17486,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_3534668a-1e1d-421b-82b3-ecef3f114e3a",
+      "response_text": "I am not sure about a specific \"tilt angle\" for a newborn seat for safe recline.\n\nFor newborn care, the general advice is to place the baby in the **supine position** (on their back) when sleeping [3].\n\nIf you are performing **neonatal resuscitation**, the baby should be placed on its back, with the head facing downwards [1]. The head should be in a **neutral position**—neither flexed forward nor extended backward [1].",
+      "inference_time_ms": 10472,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d92a738c-4e7c-4637-9362-61a7c2bea804",
+      "response_text": "I am not sure which specific brand you are asking about. Please clarify which medication you are referring to.\n\nIf you are asking about the injectable contraceptives mentioned in the guidelines:\n\n*   **Depo-Provera®** is a common injectable contraceptive.\n*   **Sayana Press®** is another injectable option.\n*   **Noristerat®** is also an injectable contraceptive.\n\nThese medications are **prescription only**. You must consult a doctor or a qualified healthcare provider for a prescription.",
+      "inference_time_ms": 10801,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_6ed3b046-c538-4d21-8d4b-39cd1504e44b",
+      "response_text": "I am not sure how to answer this question using the provided documents. The documents discuss hair growth during **pregnancy** [1, 3], but they do not provide information about **puberty** and excess hair growth.\n\nFor questions about puberty and hair changes, please consult a doctor or a senior clinician.",
+      "inference_time_ms": 7793,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_9b98fb94-8a98-4c31-8bba-db9385a6b8a0",
+      "response_text": "I am sorry, but I cannot recommend a specific brand of contraceptive patch.\n\nI am a clinical decision-support assistant. I can provide information on how the patch works and how to use it.\n\nPlease consult a doctor or a sexual health clinic to choose a reliable brand for your patient.",
+      "inference_time_ms": 7462,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_ff1e5dd0-33a2-419e-b31c-4e9cd286c9f2",
+      "response_text": "I am sorry, but the provided medical guidelines do not contain information about the recommended age to start using fluoride toothpaste.\n\nI can only answer questions related to healthcare, medicine, and clinical practice based on the documents or established medical knowledge. For advice on when to start fluoride toothpaste, please consult a pediatrician or a dental professional.",
+      "inference_time_ms": 8662,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_5a45b11c-6c3c-4a3e-8cae-5b7c4abe6e56",
+      "response_text": "This is a serious situation. **Severe abdominal pain** in a pregnant woman is an emergency.\n\n**Please immediately escalate this to a doctor or arrange urgent referral.**\n\nYou must seek urgent medical help because:\n\n*   Severe abdominal pain can be a sign of a serious problem, such as **placental abruption** (the placenta coming off the womb wall) [3].\n*   It could also be a sign of infection or other complications.\n\nWhile waiting for help, try to keep the mother calm and comfortable. Do not give her any food or drink.",
+      "inference_time_ms": 12472,
+      "error": null
+    }
+  ]
+}

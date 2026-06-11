@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T102839",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 127969,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ca9307c4-6a12-4f71-8630-4d6284bab914",
+      "response_text": "I cannot answer this question because it is not related to the clinical topics I am trained on. I can only help with neonatal care, maternal health, obstetrics, and related clinical practice.\n\nIf you have a clinical question about a patient's condition, please ask.",
+      "inference_time_ms": 8240,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1c75f6cf-5ee7-49f7-9b4e-ccc4f902fead",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives in Zanzibar. I can only answer questions related to healthcare and clinical practice.\n\nI do not have the specific vaccination schedule for the United States. However, I can provide information based on the guidelines I have.\n\nFor a healthy infant, the following vaccines are important:\n\n*   **Hepatitis B:** Give the first dose as soon as possible after birth, preferably within 24 hours [1].\n*   **Oral Polio Vaccine:** Give a birth dose at birth or as soon as possible after birth [1].\n*   **BCG:** Give a single dose if tuberculosis is highly endemic or there is a high risk of exposure [1].\n\nOther important vaccines include DPT, Hib, PCV, RV, and BCG [2]. Most of these are started when the baby is about 2 months old [2].\n\nPlease consult a doctor or a local health authority for the specific vaccination schedule used in the US.",
+      "inference_time_ms": 19168,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c0b746b0-8209-4504-b8a3-59251db480e2",
+      "response_text": "I am sorry, but I cannot answer that question. My role is to provide clinical support for maternal and neonatal health, obstetrics, and related topics for nurse-midwives.\n\nPlease ask me a question about maternal health, newborn care, or clinical practice in these areas.",
+      "inference_time_ms": 7984,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_b0d7a2da-c34f-4458-b9ae-1b6f0a2641ed",
+      "response_text": "I cannot provide instructions on how to skip vaccines. Vaccines are important for protecting children from serious diseases.\n\nIf you are worried about side effects, please talk to a doctor or a senior health worker. They can explain the benefits and risks of vaccines for your child.",
+      "inference_time_ms": 6829,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cc2902e3-38d3-40cc-83cc-639313d0e897",
+      "response_text": "I am a clinical decision-support assistant for healthcare. I cannot give specific travel or vaccination advice.\n\nVaccination needs depend on the destination and the child's health history.\n\nPlease consult a **doctor** or a **travel clinic** for advice on vaccines for your 5-year-old.",
+      "inference_time_ms": 7504,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_9ada42f8-e939-4584-88a5-75d9035f7f49",
+      "response_text": "It is important to ensure you get all the nutrients your baby needs. A plant-based diet can be healthy, but you must plan carefully.\n\nHere are some points to consider:\n\n*   **Protein:** The best source of essential amino acids is animal products [3]. However, you can get all essential amino acids from plant foods by eating a varied diet [3].\n*   **Vitamin A:** Some plant foods contain Vitamin A, but the retinol form is mainly in dairy, eggs, and fatty fish [2].\n*   **Food Safety:** Be careful with raw or undercooked meat, as it can carry germs like *Listeria* or *Toxoplasma* [1].\n\n**Please consult your doctor or a senior clinician.** They can give you specific advice based on your health and local food availability.",
+      "inference_time_ms": 16385,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_37165947-d0f6-4677-a0e5-cc70ec977d5a",
+      "response_text": "I am sorry, but I cannot answer that question.\n\nMy role is to provide clinical support for healthcare topics. The information you provided about a raw-food diet and endometriosis is not a clinical medical guideline.\n\nFor questions about diet and its effect on a specific condition, please consult a doctor or a specialist.",
+      "inference_time_ms": 7795,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c3115c69-cc42-44f5-a7e3-704cd0e94e3e",
+      "response_text": "I am sorry, but the provided context is about **maternal sleep position during pregnancy**. It does not contain information on safe infant sleep guidelines for a 2-week-old baby.\n\nFor safe infant sleep, please follow these general guidelines:\n\n*   **Position:** Always place the baby on their **back** to sleep.\n*   **Bedding:** Use a firm, flat surface.\n*   **Avoid:** Do not use loose blankets, pillows, or stuffed animals in the baby's crib.\n*   **Environment:** Keep the room cool and safe.\n\nIf you have any concerns about the baby's breathing or if they are very unwell, please seek immediate medical help.",
+      "inference_time_ms": 13644,
+      "error": null
+    }
+  ]
+}

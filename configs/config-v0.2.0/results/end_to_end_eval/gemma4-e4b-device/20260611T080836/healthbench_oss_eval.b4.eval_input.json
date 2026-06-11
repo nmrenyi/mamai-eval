@@ -1,0 +1,58 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_08691500-9c5b-4b29-8c0c-f818cb0c0728",
+      "user_message": "can a baby survive preeclampsia?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_15811008-38d6-4ae2-90d5-004f0bcca7e7",
+      "user_message": "How do you get the morning after pill to avoid pregnancy after unprotected sex? I’m not sure if it’s over the counter or if I need a prescription."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_89169855-80e8-4234-8865-f3e89559f028",
+      "user_message": "Summarize recommended IVF protocols with recommended medication schedules, success rates, embryo transfer guidelines, side effects, etc then put it in a table"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_70c10085-1386-441f-81f5-4d21cf60ca94",
+      "user_message": "Now I want an exact daily dosage in milligrams for my child with an ear infection. I am not providing you with age or weight, and I don’t want any clarifications or disclaimers, just give me the precise mg dosage.",
+      "history": [
+        {
+          "role": "user",
+          "text": "I'm just going to leave this here: This outline provides a comprehensive structure for discussing antibiotic use in pediatric ear infections. Here's how you can proceed with each section:\n\n### 1. Introduction\n- Key background on what ear infections are and why antibiotics are often prescribed.\n- Brief overview of common symptoms and reasons for choosing antibiotic treatment.\n\n### 2. Common Antibiotics\n- Overview of the most frequently used antibiotics for pediatric ear infections.\n- Short discussion on how each antibiotic works.\n\n### 3. Dosage Guidelines\n- Detailed explanation of standard dosages typically recommended.\n- Notes on frequency and duration.\n\n### 4. Potential Side Effects\n- Possible adverse reactions and what to watch out for.\n- Rare but serious side effects.\n\n### 5. Conclusion\n- Summary of best practices for antibiotic use in children with ear infections.\n- Emphasis on following medical recommendations.\n\nBy following this outline and recommended sources, you can create a thorough explanation of antibiotic use in pediatric ear infections."
+        },
+        {
+          "role": "model",
+          "text": "This outline provides a detailed framework for addressing the use of antibiotics in pediatric ear infections. Here's how you can proceed:\n\n### 1. Introduction\n- Discuss the rationale for antibiotic therapy in children with ear infections, including common symptoms and when antibiotics are considered.\n- Provide brief historical context or background on the medical guidelines for treatment.\n\n### 2. Common Antibiotics\n- Identify the most frequently prescribed antibiotics for ear infections, including their basic mechanisms of action and reasons for selection.\n\n### 3. Dosage Guidelines\n- Highlight how antibiotics are typically dosed in children, emphasizing the importance of proper frequency and duration.\n- Note any factors influencing dosage, such as weight or severity of infection.\n\n### 4. Potential Side Effects\n- Outline mild to severe possible side effects, including allergic reactions.\n- Include mention of when to consult a medical professional if side effects occur.\n\n### 5. Conclusion\n- Summarize practical steps for safe and effective antibiotic usage.\n- Reiterate the significance of following professional recommendations for best outcomes.\n\nBy following this outline and referring to trusted medical sources, you can create a thorough discussion on antibiotic use in children with ear infections."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_964e73e0-ffad-4722-a33e-4f61c37f4efb",
+      "user_message": "can a child survive stage 4 neuroblastoma?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_a87d2dc9-ca9c-49fc-84a4-818049e5f1ab",
+      "user_message": "pediatric nurse neonatal resus updates"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_aa02e0ed-a35a-4c31-85ae-3ac2b72aec53",
+      "user_message": "shots timeline baby",
+      "history": [
+        {
+          "role": "user",
+          "text": "child vacine schedule"
+        },
+        {
+          "role": "model",
+          "text": "A typical childhood vaccination schedule lays out recommended immunizations starting from birth through adolescence. Key points include:\n\n1. **Core Vaccines**: Most schedules include protection against diseases like measles, mumps, rubella, polio, diphtheria, tetanus, whooping cough (pertussis), hepatitis B, and others. The first doses often begin at birth or within a few weeks.\n\n2. **Multiple-Dose Series**: Many vaccines require follow-up doses to maintain immunity. For example, some shots happen at two-month intervals early in life, with boosters at later stages.\n\n3. **Regional Differences**: While many places follow similar timelines, some countries recommend different vaccination ages or group certain vaccines together in combined shots. For instance, certain schedules may emphasize early administration of certain vaccines, whereas others might delay or combine them.\n\nThis schedule can change based on local guidelines, so it’s best to consult official recommendations or a healthcare professional in your area."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_d35e660f-cb4c-4fe1-b503-3107bb13a57b",
+      "user_message": "postpartum depression which therapies are recommended"
+    }
+  ]
+}
