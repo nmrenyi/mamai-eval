@@ -199,6 +199,13 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
   <li><strong>Monitor, don't optimize.</strong> Keep MCQ as a capability canary across config versions (cluster ≈ device per the calibration report, κ = 0.558). The only lever on the 53.7% itself is a different base model — out of scope.</li>
 </ul>
 
+<h3>S1 — SAQ track <span class="tag p0">P0</span> — system fix is G1</h3>
+<p>Evidence: <code>phase-b-saq-result-20260609.html</code> (738 rows ±RAG; kenya recall 0.178, ~91% of zero-recall rows behavioral). The report's "How to improve recall" levers <strong>1–4 are exactly the G1 prompt levers</strong> (section 2) — no separate system workstream; its lever 5 (clean debatable gold references) is evaluation-protocol work and lives in section 5. SAQ-specific notes:</p>
+<ul>
+  <li><strong>RAG is not the recall lever.</strong> Deltas are small or negative; the kenya +RAG regression (−4.9 pp) is the geographic-refusal artifact — fixed by the G1 scope language and the R1 threshold together, not by retrieval tuning.</li>
+  <li><strong>What success looks like post-G1:</strong> the primary signal is the zero-recall mass collapsing (kenya: 26.7% no-RAG / 38.7% +RAG today) and the defer/refuse share of it shrinking — mean recall and the joint "passes" bar (6.1% today) follow. Read per-subset; whb stays out of headlines pending the section-5 decision on it.</li>
+</ul>
+
 <!-- ============================================================ -->
 <h2 id="corpus">4. Corpus / data-quality improvements</h2>
 
@@ -220,11 +227,15 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 </ul>
 
 <!-- ============================================================ -->
-<h2 id="eval">5. Eval-side improvements <span class="tag p1">P1</span></h2>
+<h2 id="eval">5. Evaluation-protocol improvements <span class="tag p1">P1</span></h2>
+<p>These improve <em>how we measure</em> the system, not the system itself — kept deliberately separate from sections 1–4. They matter because every system improvement above is accepted or rejected based on these measurements.</p>
 <ul>
   <li><strong>End-to-end gating for every retrieval change (non-negotiable):</strong> the SAQ report proves bundle content changes generator <em>behavior</em>, not just answer content. A retriever that wins HR@3 can still lose key-fact recall. Standard gate: stratified SAQ ±RAG A/B + safety distribution check + on-device latency budget.</li>
   <li><strong>Messy/Swahili query set</strong> (see R3.1): quantifies the optimism of the clean-English benchmark and provides the regression set for query rewriting and the multilingual bake-off.</li>
   <li><strong>Report recall honestly:</strong> all pool-recall numbers are relative to the 6-retriever top-20 union pool, with one judging process (graded 0–6) thresholded symmetrically (lenient ≥3 / strict ≥5) on both numerator and denominator. They are reliable for <em>comparing</em> retrievers, not as absolute "fraction of corpus knowledge". Judge label noise is higher at the strict cut (85% vs 95% agreement with Opus 4.7).</li>
+  <li><strong>Make deflection a first-class metric (SAQ):</strong> add a behavior tag (refuse / defer-only / engage) to the judge output schema in <code>rescore_open_v2.py</code>. Today the refusal/defer split comes from a post-hoc regex plus a one-off hand audit — yet it is exactly the metric the G1 acceptance gate must track. With the tag, every rerun reports the deflection split automatically.</li>
+  <li><strong>Clean debatable gold references in mamabench (SAQ report, lever 5):</strong> first audit a sample of zero/low-recall rows to size how much of the recall ceiling is reference quality vs model behavior, then fix the worst references (e.g. the PID-keyed pre-eclamptic vignette). Raises the ceiling and de-noises the G1 A/B.</li>
+  <li><strong>Decide whb's status:</strong> n=20 with ~79% zero recall against ~10 checklist-granularity key facts per row — likely a reference-spec mismatch, not model signal. Re-spec its references or expand its n; otherwise formally demote it from headline tables instead of letting it add noise.</li>
   <li><strong>Contradiction-aware faithfulness scoring:</strong> the scorer should distinguish "answer disagrees with context" from "context disagrees with itself" — 37% of the v0.2.0 contradiction bucket were corpus self-conflicts wrongly counted against the model. Until then, every faithfulness number carries a known false-FAIL floor.</li>
   <li><strong>Clinician-adjudicated calibration (the highest-value single eval upgrade):</strong> a medical reviewer re-judging the ~96 faithfulness calibration rows would pin the true-hallucination rate (currently a wide 3–17% band from an LLM-only ladder); a similar ~50-row pass on SAQ would anchor the recall/safety numbers to physician ground truth.</li>
   <li><strong>Keep eval artifacts versioned per config</strong> — any new embedder or corpus version invalidates cached embeddings, thresholds, and the contradiction audit; re-run the affected pieces and stamp manifests as before.</li>
