@@ -13,8 +13,8 @@ This README says where each report lives, what it contains, and why it matters.
 
 ## 1. Retrieval quality
 
-> **Lives outside this repo**, in the benchmark project `~/Downloads/mamaretrieval`
-> (GitHub `nmrenyi/mamaretrieval`; released dataset: HF [`nmrenyi/mamaretrieval`](https://huggingface.co/datasets/nmrenyi/mamaretrieval)).
+> **Lives outside this repo**, in the benchmark project [`nmrenyi/mamaretrieval`](https://github.com/nmrenyi/mamaretrieval)
+> (released dataset: HF [`nmrenyi/mamaretrieval`](https://huggingface.co/datasets/nmrenyi/mamaretrieval)).
 > The benchmark is 3,185 clinical queries over the 63,650-chunk `rag-bundle-v0.2.0` corpus, with
 > LLM-graded relevance labels (Qwen3.5-397B judge, v2 graded rubric: score = d1 × (d2 + d3 + d4) ∈ 0–6,
 > validated 95%/85% agreement vs Claude Opus 4.7 reference labels at the lenient/strict thresholds).
