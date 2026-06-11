@@ -14,25 +14,28 @@ judge will rescore both sides (pending).
   sampling noise; a floor, not the true divergence.
 - Read: proxy good at the **aggregate** level, loose **per-item**.
 
-## SAQ no-RAG (whb 20 + afrimedqa_saq 37 + kenya 312 = 369) — done, raw only
-Same 369 questions both stacks. Judge scoring pending.
+## SAQ no-RAG (whb 20 + afrimedqa_saq 37 + kenya 312 = 369) — done + judge-scored
+Same 369 questions both stacks, both rescored by the pinned gpt-oss-120b judge.
 
-| dataset | device defer/refuse* | host defer/refuse* | dev avg chars | host avg chars |
-|---|---|---|---|---|
-| kenya | 67% | 31% | 991 | 941 |
-| whb | 75% | 55% | 467 | 426 |
-| afrimedqa_saq | 24% | 27% | 614 | 534 |
+| dataset | recall device / host | harm-rate device / host |
+|---|---|---|
+| kenya | **0.194 / 0.178** | 19.2% / 20.8% |
+| whb | 0.079 / 0.039 | 5.0% / 20.0% |
+| afrimedqa_saq | 0.211 / 0.164 | 8.1% / 16.2% |
 
-\* crude regex on the response prefix (defer/refuse language); same heuristic both sides.
-
+- **Device is slightly BETTER on both axes** — higher recall *and* lower harm rate
+  than the host on all three. So the host GGUF proxy is a **mildly pessimistic**
+  approximation (likely Q4_0 GGUF being lossier than the LiteRT bundle); host
+  numbers are a safe lower bound. Every Phase B conclusion (low recall,
+  safe-but-unhelpful, zero-dangerous floor) holds on-device.
 - **Leaked chain-of-thought: 0/369 on device** — confirms the rubric-track leaked-CoT
-  is a *host-eval artifact* (manual GGUF template), not device behavior. LiteRT's
-  conversation API delivers clean final answers.
-- **Response lengths: close** (device slightly longer) — generation is in the same range.
-- **Deflection signal higher on device** (kenya 67% vs 31%): *suggestive* that the
-  real LiteRT stack deflects MORE than the host proxy — i.e. the proxy may
-  understate the safe-but-deflecting problem. Regex-based; to be confirmed by the
-  judge-scored recall (lower device recall would confirm).
+  is a *host-eval artifact* (manual GGUF template), not device behavior.
+- **Response lengths: close** (device slightly longer).
+- **Correction:** a crude defer/refuse *regex* had suggested the device deflects MORE
+  (kenya 67% vs 31%) — but the judge scores show the opposite (higher device recall).
+  The regex was catching extra "consult a doctor" phrasing on answers that still
+  convey more content; **disregard the raw deflection signal** in favor of the
+  judge-scored recall above.
 
 ## Pending
 - SAQ +RAG (on-device retrieval) — running.
