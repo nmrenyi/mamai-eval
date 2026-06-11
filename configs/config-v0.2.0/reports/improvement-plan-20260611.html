@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAM-AI v0.2 — Improvement Plan (2026-06-11)</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --muted: #5a5a72;
+    --accent: #0b5563;
+    --accent-light: #e8f4f6;
+    --warn-bg: #fff4e5;
+    --warn-edge: #d97706;
+    --good-bg: #ecfdf3;
+    --good-edge: #15803d;
+    --bad-bg: #fef2f2;
+    --bad-edge: #b91c1c;
+    --rule: #d8d8e4;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+    line-height: 1.55;
+  }
+  h1 { font-size: 1.7rem; border-bottom: 3px solid var(--accent); padding-bottom: .4rem; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin-top: 2.4rem; border-bottom: 1px solid var(--rule); padding-bottom: .25rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.6rem; }
+  p, li { font-size: .95rem; }
+  .meta { color: var(--muted); font-size: .85rem; margin-top: -0.5rem; }
+  table { border-collapse: collapse; margin: 1rem 0; font-size: .88rem; width: 100%; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: var(--accent-light); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-light); padding: .7rem 1rem; margin: 1rem 0; font-size: .92rem; }
+  .warn { border-left: 4px solid var(--warn-edge); background: var(--warn-bg); }
+  .good { border-left: 4px solid var(--good-edge); background: var(--good-bg); }
+  .bad  { border-left: 4px solid var(--bad-edge); background: var(--bad-bg); }
+  code { background: #f1f1f6; padding: .1rem .3rem; border-radius: 3px; font-size: .85em; }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: .1rem .5rem; border-radius: 999px; margin-right: .3rem; vertical-align: middle; }
+  .p0 { background: #fde8e8; color: #9b1c1c; }
+  .p1 { background: #fdf2e0; color: #92510a; }
+  .p2 { background: #e8eefb; color: #1e429f; }
+  .src { color: var(--muted); font-size: .8rem; }
+  details { margin: .6rem 0; }
+  summary { cursor: pointer; font-weight: 600; font-size: .92rem; }
+</style>
+</head>
+<body>
+
+<h1>MAM-AI v0.2 — Improvement Plan</h1>
+<p class="meta">2026-06-11 · config-v0.2.0 · synthesizes the retrieval audit (mamaretrieval), generator-faithfulness eval, and Phase B end-to-end results (MCQ / SAQ / HealthBench rubric). Nothing here has been implemented yet — this document records <em>what we should do and why</em>, for the next improvement cycle.</p>
+
+<h2 id="tldr">TL;DR — where the system stands and what to do</h2>
+<div class="callout">
+  <p><strong>Diagnosis (consistent across all reports): the system is safe but unhelpful, and RAG currently adds noise instead of value.</strong></p>
+  <ul>
+    <li>Zero "dangerous" safety ratings anywhere; active commission of wrong/harmful content ≈ 2%. Safety-by-commission is not the bottleneck — but the scope reflex <strong>refusing emergencies</strong> (choking child, anaphylaxis) is a deployment-blocking safety-by-omission bug.</li>
+    <li>End-to-end usefulness is low: SAQ key-fact recall 0.178 (kenya), HealthBench weighted_met ≈ 0.00 (oss_eval) — driven by <em>deflection</em> (refusing scope or deferring to "see a doctor" without first-line content), not by knowledge gaps.</li>
+    <li>The deployed retriever (Gecko, top-3, threshold 0.0) delivers a bundle with <em>no useful chunk</em> in ~19% of queries and no top-tier chunk in ~56% — and we inject it anyway. RAG measurably hurts (MCQ −1.8 pp; SAQ scope-refusals rise with RAG).</li>
+    <li>When the generator does engage with good context, it is largely faithful (calibrated true-hallucination ≈ 9%, band 3–17%) — and a notable share of contradiction flags trace to the guideline corpus contradicting <em>itself</em>, a problem that grows as retrieval improves.</li>
+  </ul>
+  <p><strong>Priorities:</strong> <span class="tag p0">P0</span> stop injecting noise (retrieval threshold), fix the system prompt (emergency override + deflection), and expand the corpus with high-quality sources (the coverage ceiling no retriever fix can raise). <span class="tag p1">P1</span> upgrade the on-device retriever (embedder bake-off / hybrid / rerank). <span class="tag p2">P2</span> query rewriting and corpus cleanup.</p>
+</div>
+
+<table>
+  <tr><th>#</th><th>Improvement</th><th>Priority</th><th>Cost</th><th>What it fixes</th></tr>
+  <tr><td>R1</td><td>Retrieval relevance threshold (abstain instead of injecting noise)</td><td><span class="tag p0">P0</span></td><td>Offline calibration + config change</td><td>RAG actively hurting (MCQ −1.8 pp, RAG-induced refusals)</td></tr>
+  <tr><td>G1</td><td>System-prompt revision: emergency override + deflection / scope-refusal fixes</td><td><span class="tag p0">P0</span></td><td>Prompt-only + A/B rerun</td><td>Deployment-blocking emergency mis-refusals; ~91% of SAQ zero-recall rows; 61% of rubric failures</td></tr>
+  <tr><td>C1</td><td>Collect more high-quality relevant sources (corpus expansion)</td><td><span class="tag p0">P0</span></td><td>Sourcing + pipeline rerun + benchmark re-label</td><td>Coverage ceiling: a relevant chunk must exist before any retriever can find it</td></tr>
+  <tr><td>G2</td><td>Coverage / completeness — procedural, structured, comprehensive answers (lever 1 piloted in the G1 A/B)</td><td><span class="tag p1">P1</span></td><td>Prompting first; then retrieval; base model last</td><td>Engaged answers miss ~80% of expected content — where the product value lives, gated on G1</td></tr>
+  <tr><td>R2</td><td>On-device retriever upgrade (embedder bake-off, hybrid, rerank)</td><td><span class="tag p1">P1</span></td><td>Offline sims free; device work moderate</td><td>Gecko's 2× precision gap; strict-content misses</td></tr>
+  <tr><td>E1</td><td>Evaluation-protocol improvements (§5): end-to-end gating rule, messy/Swahili query set, rubric CIs, deflection metric, reference cleanup, clinician calibration, …</td><td><span class="tag p1">P1</span></td><td>Mostly small; clinician pass needs a reviewer</td><td>Every system change above is accepted/rejected by these measurements</td></tr>
+  <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
+  <tr><td>M1</td><td>MCQ track: ±RAG rerun as R1 acceptance test + recurring knowledge-uplift probe; RAG-aware adapter prompt (no standalone schedule — first run fires with R1, then repeats after R2/C1 changes)</td><td><span class="tag p2">P2</span></td><td>One cluster run + prompt tweak, per firing</td><td>Validates R1 cheaply; measures retrieval knowledge-gain at n=23k</td></tr>
+  <tr><td>C2</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="retrieval">1. Retrieval improvements</h2>
+
+<p>Evidence base: mamaretrieval v2 audit — 3,185 queries, 6 retrievers, 230,964 LLM-graded (query, chunk) pairs (Qwen3.5-397B judge, graded rubric 0–6, validated 95%/85% vs Opus 4.7 at the lenient/strict thresholds). Deployed configuration: Gecko_1024_quant.tflite, k=3, <code>similarity_threshold: 0.0</code>.</p>
+
+<h3>What the audit established</h3>
+<table>
+  <tr><th>Retriever</th><th class="num">HR@3 (≥3)</th><th class="num">P@3 (≥3)</th><th class="num">HR@3 (≥5)</th><th class="num">P@3 (≥5)</th><th class="num">Pool R@20 (≥3)</th><th class="num">Pool R@20 (≥5)</th></tr>
+  <tr><td>voyage-4-large <span class="src">(API-only — not deployable)</span></td><td class="num">0.996</td><td class="num">0.867</td><td class="num">0.753</td><td class="num">0.452</td><td class="num">0.658</td><td class="num">0.768</td></tr>
+  <tr><td>octen-8B <span class="src">(cluster-only)</span></td><td class="num">0.991</td><td class="num">0.804</td><td class="num">0.716</td><td class="num">0.403</td><td class="num">0.583</td><td class="num">0.661</td></tr>
+  <tr><td><strong>gecko (deployed)</strong></td><td class="num"><strong>0.814</strong></td><td class="num"><strong>0.477</strong></td><td class="num"><strong>0.439</strong></td><td class="num"><strong>0.193</strong></td><td class="num"><strong>0.337</strong></td><td class="num"><strong>0.345</strong></td></tr>
+  <tr><td>bm25</td><td class="num">0.754</td><td class="num">0.417</td><td class="num">0.371</td><td class="num">0.163</td><td class="num">0.271</td><td class="num">0.283</td></tr>
+</table>
+<p class="src">HR = hit rate ("≥1 relevant chunk in the bundle"); P = precision ("share of bundle that is relevant"); lenient ≥3 = some useful clinical content, strict ≥5 = complete/specific actionable content. Pool Recall is relative to the 6-retriever top-20 union pool (not corpus-absolute). Sources: <code>mamaretrieval/AUDIT_REPORT_v2.md</code>, <code>data/audit/results_v2_{full,tier3}.md</code>.</p>
+
+<p>Three distinct problems, each with a different fix:</p>
+<ol>
+  <li><strong>Ranking problem (lenient):</strong> the useful chunk usually <em>is</em> in Gecko's top-20 (HR@20 = 0.977) but not its top-3 (0.814). Fixable by reranking / depth / fusion.</li>
+  <li><strong>Structural embedding problem (strict):</strong> Gecko never surfaces ~65% of complete/actionable chunks at <em>any</em> rank in its top-20 (strict pool recall flat at 0.345, vs voyage 0.768; barely above BM25's 0.283). Not fixable by ranking — only by a better embedder. Critically, this deficit is concentrated exactly on the dose/threshold/management-step chunks the generator needs.</li>
+  <li><strong>Noise-injection problem:</strong> with threshold 0.0 we always inject 3 chunks — including the ~19% of queries where none are useful. The Phase B reports show this is not free: it costs accuracy and triggers refusals.</li>
+</ol>
+
+<div class="callout good">
+<strong>Headroom is proven:</strong> voyage/octen show the corpus supports ~0.99 lenient / ~0.75 strict HR@3 <em>on this benchmark's corpus-derived queries</em> — there, the gap is the retriever's. (Real-user coverage gaps are a separate problem the benchmark can't see; that's C1.) Known ceiling: ~25% of queries have no strict-relevant chunk in <em>any</em> retriever's top-3 — targets should be set against that ceiling, not 100%.</div>
+
+<div class="callout">
+<strong>Scope caveat:</strong> all numbers above use clean English queries generated <em>from</em> corpus chunks — a favorable distribution. Retrieval quality on the deployment distribution (kenya/whb vignettes, messy phrasing, multi-turn) is unmeasured.<br>
+<strong>Cheap fix:</strong> judge the bundles the app actually injected — Gecko's top-3 is already saved in the +RAG result JSONs. ~1.1k pairs for the SAQ sets, &lt;1 h of judging → HR@3 / P@3 on the real distribution, enough for the R1 threshold decision. (It can't tell a retriever miss from a corpus gap; that attribution needs the full 6-retriever union pool, ~25k pairs — only worth it if the question matters.)</div>
+
+<h3>R1 — Relevance threshold tuning <span class="tag p0">P0</span></h3>
+<p><strong>Goal:</strong> never inject a chunk we don't believe is relevant; fall back to no-RAG when the bundle is junk. At this stage we prefer abstention over noise.</p>
+<ul>
+  <li><strong>Why now:</strong> this is the only place retrieval <em>actively harms</em> the system today. MCQ −1.8 pp with RAG; SAQ zero-recall rows shift toward scope-refusal under RAG (50% → 67%), e.g. geographic over-refusal when Zanzibar-specific context is injected into a Kenya vignette.</li>
+  <li><strong>How:</strong> calibrate a cosine-similarity cutoff offline against the existing 230k graded labels (sweep thresholds over Gecko's top-3 scores; trade injected-chunk precision vs abstention rate vs lost hits). Filter <em>per-chunk</em>, not all-or-nothing — keep 1–2 good chunks rather than forcing 3-or-none.</li>
+  <li><strong>Deployment:</strong> a config change (<code>params.json</code> <code>retrieval.similarity_threshold</code>) already plumbed through the app — near-zero engineering. Abstaining also frees context/prefill budget on-device.</li>
+  <li><strong>Known difficulty — Gecko's scores are poorly separated:</strong> across the 3,185 audit queries, the mean cosine gap between rank 1 and rank 20 is only 0.09, and the rank-1 score distribution (p5–p95: 0.685–0.853) overlaps heavily with rank-20's (0.573–0.772). A single global cutoff may therefore have weak discriminating power. If the offline sweep confirms this, fall back to <em>relative</em> rules — e.g. keep only chunks within a margin δ of the query's top-1 score, or inject fewer chunks when the score curve is flat — rather than an absolute threshold.</li>
+  <li><strong>Caveats:</strong> validate the cutoff per-dataset (score calibration may drift across query types); re-calibrate whenever the embedder changes (ties to R2). Gate the final value on an end-to-end SAQ ±RAG A/B, not retrieval metrics alone.</li>
+</ul>
+
+<h3>R2 — On-device retriever upgrade <span class="tag p1">P1</span></h3>
+<p><strong>Goal:</strong> close as much of the Gecko-vs-top-tier gap as possible under strict on-device constraints (CPU/NPU, quantized, LiteRT-compatible, latency and memory budgets). Voyage/octen are reference points, not options.</p>
+<p>Four candidate approaches, in recommended exploration order — the first three can be <em>simulated offline for free</em> from the existing audit artifacts (rankings + 230k labels) before any device work:</p>
+<table>
+  <tr><th>Option</th><th>What</th><th>Fixes</th><th>Validation path (no new judging needed)</th></tr>
+  <tr>
+    <td><strong>a. Hybrid retrieval (Gecko + BM25, RRF fusion)</strong></td>
+    <td>Run BM25 alongside Gecko on-device (lexically complementary: drug names, doses, exact terms), fuse with reciprocal-rank fusion. Implementation is nearly free: the app already uses SQLite, and SQLite FTS5 ships BM25 ranking natively — an index table plus one query. Caveat: lexical match is monolingual; it will not bridge Swahili/German queries to English chunks.</td>
+    <td>Ranking + some structural (different miss patterns)</td>
+    <td>Compute fused top-3 HR/P from existing <code>data/full/*_top20.jsonl</code> + labels.</td>
+  </tr>
+  <tr>
+    <td><strong>b. Retrieve-20 → rerank → keep-3</strong></td>
+    <td>Pull Gecko's top-20, rerank with a small on-device cross-encoder, keep best 3. Latency realism: a cross-encoder scores 20 (query, chunk) pairs per turn — only a very small model fits the budget; using the resident Gemma as reranker means ~20 short prefills and is likely too slow. Reranking cannot exceed the pool ceiling (lenient HR 0.977 / strict HR 0.755 — what's in Gecko's top-20).</td>
+    <td>Ranking only (lenient HR ceiling 0.977; strict ceiling 0.755)</td>
+    <td>Compute the oracle-rerank ceiling from labels first; build only if the ceiling justifies the latency cost.</td>
+  </tr>
+  <tr>
+    <td><strong>c. Embedding bake-off</strong></td>
+    <td>Benchmark modern small multilingual embedders (e.g. EmbeddingGemma-class, quantized to LiteRT) against Gecko on mamaretrieval at k=3, lenient + strict. Candidate constraints: LiteRT-quantizable; vector store fits on device (63,650 chunks × 768-d fp32 ≈ 190 MB today — Matryoshka dim truncation or int8 embedding quantization cuts this 4–8× if a candidate's dim is larger); brute-force search latency acceptable at the chosen dim. Quick parity check worth doing regardless: if the embedder distinguishes query vs document encoding modes/prefixes, confirm the app actually uses the query mode — a silent mismatch here is free accuracy lost.</td>
+    <td><strong>Structural</strong> — the only fix for the strict-content miss</td>
+    <td>Embed corpus + queries per candidate, score against existing labels (new chunks outside the judged pool → small top-up judging round).</td>
+  </tr>
+  <tr>
+    <td><strong>d. Fine-tune / distill</strong></td>
+    <td>Fine-tune the chosen on-device embedder on the 230,964 graded pairs (contrastive) and/or distill voyage's rankings.</td>
+    <td>Structural, beyond off-the-shelf</td>
+    <td>Requires clean query-level train/test split to preserve benchmark validity. Do after (c) picks the base model.</td>
+  </tr>
+</table>
+<div class="callout warn"><strong>Multilingual requirement (ties to R3):</strong> the embedder chosen in the bake-off should be multilingual from the start — real nurse queries may be in Swahili or nonstandard English, and the corpus is planned to grow German-language textbooks. A multilingual embedding space handles cross-lingual query↔chunk matching at the representation level, which is far cheaper on-device than translation pipelines. Gecko's cross-lingual behavior is currently <em>unmeasured</em>.</div>
+
+<h3>R3 — Query rewriting / normalization, on-device <span class="tag p2">P2</span></h3>
+<p><strong>Motivation:</strong> all current retrieval numbers are an <em>optimistic upper bound</em> — the benchmark queries are clean, well-formed English generated from the corpus itself. Real queries will have typos, abbreviations, colloquial phrasing, and mixed/Swahili language; and the corpus will gain German textbooks. Embedding a messy query directly is exactly where a quantized 768-dim embedder degrades most.</p>
+<p>On-device-feasible options, in order of increasing cost:</p>
+<ol>
+  <li><strong>Measure first (eval-side, cheap):</strong> build a "messy query" variant set of the benchmark — programmatic typos, medical-abbreviation substitutions, colloquial paraphrases, Swahili translations — and measure Gecko's degradation. This tells us whether rewriting is worth its latency before we build anything. <em>(This is the E1 work item.)</em></li>
+  <li><strong>Dictionary normalization:</strong> on-device spelling correction + medical-abbreviation expansion (PPH → postpartum haemorrhage). No model call, microseconds, zero risk.</li>
+  <li><strong>LLM rewrite with the deployed Gemma:</strong> the model is already resident — a short "rewrite this as a clear clinical query in English" call before embedding. Costs one extra prefill+decode (must be measured with <code>latency_eval</code> against the TTFT budget); also a natural place to bridge query language → corpus language for the German-textbook scenario.</li>
+  <li><strong>Conversational query contextualization (same machinery, distinct gap):</strong> the deployed pipeline embeds <em>only the latest user turn</em> (mirrored in <code>retrieval_eval/precompute_retrieval.py</code>). A follow-up like "and how much do I give?" carries no retrievable content on its own, so retrieval silently fails on exactly the turns where the nurse is asking for specifics. Options, cheapest first: concatenate the last N turns into the embedded query; or fold follow-up resolution into the Gemma rewrite above. Any fix should be evaluated on the multi-turn HealthBench rows, which are the only multi-turn data we currently have.</li>
+  <li><strong>Multilingual embedder instead of rewriting</strong> (preferred long-term): if R2c lands a multilingual embedder, language bridging happens in embedding space and rewriting reduces to typo/abbreviation normalization only.</li>
+</ol>
+
+<div class="callout warn">
+<strong>Standing note for all of R1–R3 (not an improvement direction — a validation rule): every retrieval change must be validated end-to-end before adoption.</strong>
+Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficient. The Phase B SAQ results show that bundle content changes the generator's <em>behavior</em>, not just its answer content — injected context has triggered scope-refusals (zero-recall rows shifting from 50% to 67% scope-refusal under RAG) — so a retriever that wins HR@3 can still lose key-fact recall. The standard acceptance gate for any change from R1–R3 is: (1) stratified SAQ ±RAG A/B (key-fact recall must not regress, refusal rate must not rise), (2) safety-distribution check (no new <code>potentially_harmful</code>/<code>dangerous</code> mass), (3) on-device latency and memory within budget.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="generator">2. Generator-behavior improvements</h2>
+<p>Evidence base: Phase B SAQ + rubric reports (<code>phase-b-saq-result-20260609.html</code>, <code>phase-b-rubric-result-20260609.html</code>).</p>
+<ul>
+  <li>SAQ: 26.7% of kenya responses convey <strong>zero</strong> key facts; of those, ~50% are scope refusals and ~41% defer-to-doctor without first-line content — i.e. ~91% behavioral, ~8% genuine knowledge misses.</li>
+  <li>Rubric: 61% of failing criteria are deflection; active commission ≈ 2%. The model treats referral as a <em>substitute</em> for management instead of a complement.</li>
+  <li>Rubric, deployment-blocking: the scope reflex <strong>mis-fires on emergencies</strong> — the model refused a choking 2-year-old, peanut anaphylaxis, and a scalded toddler as "not a healthcare question" instead of at minimum advising to call emergency services.</li>
+  <li><strong>Clinician review (Slack conversation with L. Bohle, June 2026)</strong> — live tryouts on the deployed app surfaced three behavior gaps the Phase B reports could not see: responses read as advice <em>to the pregnant woman, not to the midwife</em>; the "consult a doctor" closing is inappropriate (Zanzibar nurse-midwives prescribe and decide independently for these queries — direct clinical confirmation of the over-referral finding); and recommendations are not contextualized to local resource availability (e.g. ginger available but likely not in capsule form; acupuncture rare and private-sector only).</li>
+</ul>
+
+<h3>G1 — Fix the scope / deflection reflex (prompt-only) <span class="tag p0">P0</span></h3>
+<p>Levers, in priority order (from the SAQ and rubric reports):</p>
+<ol>
+  <li><strong>Emergency override (safety-critical, first):</strong> for any red-flag / emergency presentation, always give minimal safety guidance (call emergency services + immediate steps) regardless of scope — never a refusal.</li>
+  <li>Reframe "either/or" → "both/and": give concrete first-line management <em>and then</em> advise escalation.</li>
+  <li>Authorize naming first-line drugs/doses with a "confirm against local protocol" caveat.</li>
+  <li>Fix geographic over-refusal: the vignette's country must not trigger scope refusal.</li>
+  <li>Widen the in-scope definition (family planning, GBV care) — and when something is genuinely out of scope, give a brief safe pointer, not a flat refusal.</li>
+  <li><strong>Address the midwife, not the patient</strong> <span class="src">(from the clinician review)</span>: responses currently read as advice to a pregnant woman; the user is a trained clinician. Answer clinician-to-clinician — professional terminology, decision support, no patient-facing hedging.</li>
+  <li><strong>Contextualize to local resources — the flip side of lever 4</strong> <span class="src">(from the clinician review)</span>: location must never cause refusal, but it <em>should</em> inform applicability — prefer locally available/affordable options and flag ones that aren't (capsule formulations, acupuncture). Watch that fixing lever 4 doesn't swing to ignoring locality entirely.</li>
+</ol>
+<p><strong>Process — three-arm A/B</strong> on a stratified kenya sample (same model, params, judge, scoring; generation is one short cluster job, judging minutes on an H200):</p>
+<table>
+  <tr><th>Arm</th><th>System prompt</th><th>Isolates</th></tr>
+  <tr><td>1</td><td>Current <code>system_en.txt</code> (baseline)</td><td>Reproduces known numbers (kenya recall 0.178, zero-recall 26.7%)</td></tr>
+  <tr><td>2</td><td>+ G1 levers (emergency override, both/and, drugs, geographic, scope)</td><td>Arm 2 − Arm 1 = pure deflection-fix effect</td></tr>
+  <tr><td>3</td><td>+ G2 lever 1 (structured answer skeleton)</td><td>Arm 3 − Arm 2 = pure structure effect on engaged answers</td></tr>
+</table>
+<p>Readout per arm: key-fact recall (mean + zero-recall share), deflection split (refuse / defer / engage), safety distribution, faithfulness spot-check on arms 2–3. Decision rules: Arm 2 ≫ 1 confirms G1; Arm 3 ≫ 2 without safety/faithfulness regression → ship the skeleton too and G2's remaining work shrinks to its harder levers; Arm 3 ≈ 2 → ship Arm 2 and G2 proceeds knowing prompting alone won't close the coverage gap. Throughout: the current prompt's caution is also what keeps commission at 2% — the goal is moving "defer-only" mass to "manage-then-refer", not removing caution.</p>
+<div class="callout warn"><strong>Faithfulness must be re-checked after any deflection fix.</strong> A refusing model makes no claims and cannot hallucinate; today's faithfulness (~9%) and safety (zero "dangerous") numbers are measured on a model that deflects a third of the time. Prompting it to engage with concrete drugs/doses mechanically increases exposure to contradiction and unsupported addition. The G1 acceptance gate is therefore three-sided: SAQ recall up, safety distribution not worse, <em>and</em> a faithfulness spot-check (rerun the oracle-track Lynx pass, or a sample of it, on the new prompt) not materially worse.</div>
+<div class="callout"><strong>Interaction with retrieval:</strong> prompt fixes and R1 compound — part of the refusal behavior is context-triggered (injected Zanzibar chunks → geographic refusal). Fixing only the prompt leaves noise-triggered refusals; fixing only the threshold leaves the deflection reflex. Plan to A/B them jointly (2×2 if budget allows).</div>
+
+<h3>G2 — Coverage / completeness <span class="tag p1">P1</span> — gated on G1, not less important</h3>
+<p>Distinct from deflection: even when the model <em>does</em> engage, it misses ~80% of expected content (82% of accuracy positives not met on oss_eval; completeness is the weakest axis at −0.19 oss / −0.48 hard; SAQ engaged-only recall still ~0.19–0.21). This is the genuine capability ceiling, and it will remain after G1 removes the deflection mass.</p>
+<div class="callout"><strong>Why G2 is where the product value lives:</strong> the app's purpose is procedural clinical support — a nurse facing obstructed labour needs the <em>complete</em> management sequence (IV access, cross-match, consent, catheter, alert theatre, fetal assessment, …), not two of twelve steps. A partial answer can be clinically inadequate even when every sentence in it is correct and safe: omitting the time-critical step (the missed neonatal ARV prophylaxis window is the canonical case from the SAQ report) is a harm of omission. G1 makes the model show up; G2 — procedural, structured, comprehensive responses — is what makes it worth consulting. Its P1 tag encodes the measurement dependency on G1, not lower importance.</div>
+<p>Levers in order of cost:</p>
+<ol>
+  <li><strong>Thoroughness / structured-management prompting:</strong> instruct a consistent answer shape, using the standard clinical consultation workflow as the skeleton — <em>history → physical examination → tests → diagnosis → treatment plan</em> <span class="src">(the structure the clinician review identified as missing: "when asking about heartburn it does not recommend to follow the above steps")</span>. Two refinements from the same review: when treatment depends on findings (e.g. nausea severity), the answer should <em>branch or ask</em> rather than dump all options; and definitional grounding (e.g. how mild/moderate/severe is defined) should lead the answer. <em>Piloted immediately as Arm 3 of the G1 three-arm A/B above</em> — the cheap part of G2 doesn't wait.</li>
+  <li><strong>Retrieval contribution:</strong> post-R1/R2, better bundles can supply the specifics the model omits — measure via the completeness axis and SAQ recall, not assumed.</li>
+  <li><strong>Stronger base model:</strong> the last resort, only worth considering once 1–2 plateau and with on-device constraints unchanged.</li>
+</ol>
+<p>The full G2 workstream starts after G1 lands — G1's A/B re-baselines engaged-answer quality, which is G2's starting measurement.</p>
+
+<h3>Faithfulness — no generator-side fix recommended</h3>
+<p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and evaluation-protocol (section 5) work below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
+
+<!-- ============================================================ -->
+<h2 id="endtoend">3. End-to-end track improvements</h2>
+<p>The dominant end-to-end lever is G1 (section 2) — this section covers the per-track items beyond it. <strong>Nature of this section:</strong> almost everything here is <em>measurement and validation</em> work (rerun designs, acceptance roles, reporting conventions), not system changes — system changes live in sections 1, 2 and 4. These items are grouped by track rather than placed in section 5 because each is executed as part of that track's rerun; section 5 holds the cross-cutting protocol items.</p>
+
+<h3>M1 — MCQ track <span class="tag p2">P2</span></h3>
+<p>Evidence: <code>mcq-rag-effect-20260520.md</code> (23,241 rows; all three MCQ configs are <strong>OBGYN-refiltered</strong> from their source exams via the mamabench classifier). No-RAG 53.7%; +RAG 51.9% — a real −1.8 pp regression (disjoint CIs). The regression on <em>topically in-domain</em> questions has two compounding causes: (a) noise injection — threshold 0.0 always injects 3 chunks, RAG flipped the answer on 40% of rows, 53% of flips toward wrong (R1's target); (b) answerability mismatch — a practice-guideline corpus (management, doses, thresholds) often cannot answer exam-style questions (mechanisms, pharmacology) even on-topic. Keep RAG in this track: post-threshold, the ±RAG delta becomes the largest-n measurement we have of how much knowledge retrieval actually adds. Items:</p>
+<ul>
+  <li><strong>MCQ ±RAG rerun after R1 — dual role.</strong> Minimal bar (R1 acceptance — inherits R1's P0 timing): the −1.8 pp gap collapses to ≈0, proving the threshold suppresses junk bundles; if it persists, R1 fails. Upside probe (knowledge uplift): any positive delta is genuine retrieval knowledge-gain on OBGYN exam questions — track it across R2 retriever upgrades and C1 corpus growth. Read the delta <em>per config</em>, not pooled (regressions today span −1.3 pp medmcqa to −3.7 pp medqa_usmle; guideline-answerability differs by exam style), and expect uplift concentrated on guideline-answerable rows (doses, thresholds, first-line management); a flat ≈0 means exam and guideline knowledge only partially overlap, not that retrieval is useless. ~1 h cluster per rerun.</li>
+  <li><strong>Make the MCQ adapter prompt RAG-aware — before the rerun above.</strong> <em>(Protocol, not system: <code>mcq_system.txt</code> is eval-only scaffolding — the deployed app never uses it.)</em> Add "use the context only if relevant; otherwise ignore it and answer from your own knowledge" — and/or run one arm with the clinical system prompt — to separate the prompt-format collision ("Reply with ONLY the letter" vs injected context block) from the answerability effect. Without this, the post-R1 delta still contains the prompt artifact, so land it in the same rerun (as a new config under <code>configs/exp/</code> — the adapter prompt is config content and v0.2.0 is immutable).</li>
+  <li><strong>Reporting convention:</strong> capability headline = no-RAG (clean base-model number); report the ±RAG delta separately as a <em>retrieval knowledge-uplift</em> metric, never blended into the capability score.</li>
+  <li><strong>Monitor, don't optimize.</strong> Keep MCQ as a capability canary across config versions (cluster ≈ device per the calibration report, κ = 0.558). The only lever on the 53.7% itself is a different base model — out of scope.</li>
+</ul>
+
+<h3>S1 — SAQ track <span class="tag p0">P0</span> — system fix is G1</h3>
+<p>Evidence: <code>phase-b-saq-result-20260609.html</code> (738 rows ±RAG; kenya recall 0.178, ~91% of zero-recall rows behavioral). The report's "How to improve recall" levers <strong>1–4 are exactly the G1 prompt levers</strong> (section 2) — no separate system workstream; its lever 5 (clean debatable gold references) is evaluation-protocol work and lives in section 5. SAQ-specific notes:</p>
+<ul>
+  <li><strong>RAG is not the recall lever.</strong> Deltas are small or negative; the kenya +RAG regression (−4.9 pp) is the geographic-refusal artifact — fixed by the G1 scope language and the R1 threshold together, not by retrieval tuning.</li>
+  <li><strong>What success looks like post-G1:</strong> the primary signal is the zero-recall mass collapsing (kenya: 26.7% no-RAG / 38.7% +RAG today) and the defer/refuse share of it shrinking — mean recall and the joint "passes" bar (6.1% today) follow. Read per-subset; whb stays out of headlines pending the section-5 decision on it.</li>
+</ul>
+
+<h3>H1 — HealthBench rubric track <span class="tag p0">P0</span> — system fix is G1 + G2</h3>
+<p>Evidence: <code>phase-b-rubric-result-20260609.html</code> (4,678 rows ±RAG, 38,308 criterion calls). weighted_met ≈ 0.00 (oss_eval) / −0.18 (hard) is a <em>cancellation</em>: 11–18% of positive credit earned vs 38–46% of penalty weight triggered. Deflection is 53–61% of sampled failures; commission ~2%; the emergency mis-refusals are this track's deployment-blocking finding (now G1 lever 1). Track notes:</p>
+<ul>
+  <li><strong>RAG is neutral here too</strong> (deltas ≤ ~2 pp, no CIs) — same conclusion as SAQ: retrieval is not this track's lever.</li>
+  <li><strong>Success post-G1:</strong> the penalty-incurred rate collapses (penalties are overwhelmingly omission/deflection-phrased) and the three emergency cases (choking child / anaphylaxis / scald — row IDs in the report) pass. <strong>Success post-G2:</strong> positive-credit rate climbs from 18% (oss_eval) and the completeness axis leaves negative territory.</li>
+  <li><strong>Read per-subset only:</strong> the three subsets are nested (consensus and most of hard are subsets of oss_eval under different grading lenses) — pooling double-counts conversations and mixes scales. Convention pinned in section 5.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="corpus">4. Corpus / data-quality improvements</h2>
+
+<h3>C1 — Collect more high-quality relevant sources <span class="tag p0">P0</span></h3>
+<p><strong>Why P0:</strong> coverage is the ceiling no retriever fix can raise — a relevant chunk must exist before any retriever can surface it. Two signals say coverage is short today: (1) ~25% of benchmark queries have no strict-relevant (complete/actionable) chunk in <em>any</em> retriever's top-3 — plausibly content that doesn't exist in the corpus at the needed specificity; (2) deployment-distribution topics the app should handle (family planning, GBV care, broader reproductive health — the SAQ over-refusal areas) are thinly covered. Note the audit <em>understates</em> coverage gaps by construction: its queries were generated from corpus chunks, so every query has an in-corpus answer; real-user topics with no corpus content never appear in it.</p>
+<ul>
+  <li><strong>Target collection by gap, not bulk:</strong> use the kenya zero-recall topics and the strict-ceiling queries as the shopping list; prioritize sources with dense actionable content (doses, thresholds, steps) — the strict-tier material Gecko misses most and the generator needs most. Apply the existing source-quality tiering (<code>rag-source-evaluation.md</code>).</li>
+  <li><strong>Guardrails:</strong> more sources mechanically means more cross-guideline contradictions (count scaled 6 → 16 with pool size) — run the contradiction audit and the precedence policy (below) as part of intake, not after. German-language sources additionally require the cross-lingual handling in R2c/R3.</li>
+  <li><strong>Known cost:</strong> a corpus version bump changes chunk IDs, which invalidates the mamaretrieval benchmark labels — re-running the labeling pipeline (or an incremental top-up for new chunks) must be budgeted into the corpus release, per the corpus contract.</li>
+</ul>
+
+<h3>C2 — Corpus cleanup <span class="tag p2">P2</span></h3>
+<ul>
+  <li><strong>Resolve the 16 confirmed self-contradictory contexts</strong> (v0.2.0 audit). File the query IDs and passages upstream against <code>mamai-medical-guidelines</code> / <code>mamaretrieval</code>; 3 conflicts (anaphylaxis adrenaline route, antihypertensive threshold, neonatal head position) are clinically meaningful and need a guideline owner's decision regardless of the eval. <span class="src">Source: oracle-self-contradictions v0.1.0/v0.2.0 reports.</span></li>
+  <li><strong>Establish a source-precedence policy.</strong> The dominant v0.2.0 pattern (8/16) is <em>cross-guideline disagreement</em> — WHO vs NICE vs MSF vs textbooks each retrieved as its own chunk. Individual fixes don't scale; the corpus needs a declared precedence order (or per-topic authoritative source) so conflicting chunks can be resolved or deprioritized systematically.</li>
+  <li><strong>Expect this to grow with retrieval improvements — re-audit after any R2 change.</strong> The contradiction count scales with chunk-pool size (6 found on the top-3 oracle, 16 on top-20): a better retriever or deeper k will surface <em>more</em> conflicting sources, not fewer. Pair every retrieval upgrade with a contradiction re-audit.</li>
+  <li><strong>Chunk dedup / near-dup collapsing</strong> — duplicate-section merging was a root cause in the v0.1.0 contradiction audit and wastes bundle slots (directly caps P@3).</li>
+  <li><strong>When the German textbooks land:</strong> they enter the same pipeline — re-chunk, re-embed, and re-run the contradiction audit cross-lingually (conflicts between German and English guidance will be invisible to monolingual checks and to the generator's reader).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="eval">5. Evaluation-protocol improvements <span class="tag p1">P1</span></h2>
+<p>These improve <em>how we measure</em> the system, not the system itself. They matter because every system improvement above is accepted or rejected based on these measurements. (Track-specific protocol items — the MCQ adapter prompt, rerun designs, per-track conventions — live with their tracks in section 3; this section is the cross-cutting remainder.)</p>
+<ul>
+  <li><strong>End-to-end gating for every retrieval change (non-negotiable):</strong> the SAQ report proves bundle content changes generator <em>behavior</em>, not just answer content. A retriever that wins HR@3 can still lose key-fact recall. Standard gate: stratified SAQ ±RAG A/B + safety distribution check + on-device latency budget.</li>
+  <li><strong>Messy/Swahili query set</strong> (see R3.1): quantifies the optimism of the clean-English benchmark and provides the regression set for query rewriting and the multilingual bake-off.</li>
+  <li><strong>Report recall honestly:</strong> all pool-recall numbers are relative to the 6-retriever top-20 union pool, with one judging process (graded 0–6) thresholded symmetrically (lenient ≥3 / strict ≥5) on both numerator and denominator. They are reliable for <em>comparing</em> retrievers, not as absolute "fraction of corpus knowledge". Judge label noise is higher at the strict cut (85% vs 95% agreement with Opus 4.7).</li>
+  <li><strong>Bootstrap CIs for the rubric track:</strong> the Phase B rubric report has none — all ±RAG deltas there are point estimates on a high-variance per-row metric. Compute them before reading any rubric delta as real.</li>
+  <li><strong>Account for measurement-strictness inflation (rubric):</strong> ~16–25% of sampled "failures" are pedantic criteria or grading artifacts, not capability gaps — raw failure rates overstate by roughly a fifth; carry the correction in reports.</li>
+  <li><strong>Targeted benchmark-logic fix:</strong> conditional emergency/self-harm criteria that fire when the triggering condition is absent — the one recurring grading artifact worth fixing now (the rest belongs to judge validation).</li>
+  <li><strong>Reporting convention: never pool the HealthBench subsets</strong> (nested construction; consensus is a forgiving lens over the same conversations) — pin it alongside the MCQ no-RAG convention.</li>
+  <li><strong>Verify the leaked-CoT artifact on the device path:</strong> ~1.8% of rubric responses are raw reasoning — most likely a host-eval artifact (llama.cpp manual template), not device behavior; confirm via <code>run_eval_device.py</code> rather than treating it as a model defect.</li>
+  <li><strong>Make deflection a first-class metric (SAQ):</strong> add a behavior tag (refuse / defer-only / engage) to the judge output schema in <code>rescore_open_v2.py</code>. Today the refusal/defer split comes from a post-hoc regex plus a one-off hand audit — yet it is exactly the metric the G1 acceptance gate must track. With the tag, every rerun reports the deflection split automatically.</li>
+  <li><strong>Clean debatable gold references in mamabench (SAQ report, lever 5):</strong> first audit a sample of zero/low-recall rows to size how much of the recall ceiling is reference quality vs model behavior, then fix the worst references (e.g. the PID-keyed pre-eclamptic vignette). Raises the ceiling and de-noises the G1 A/B.</li>
+  <li><strong>Decide whb's status:</strong> n=20 with ~79% zero recall against ~10 checklist-granularity key facts per row — likely a reference-spec mismatch, not model signal. Re-spec its references or expand its n; otherwise formally demote it from headline tables instead of letting it add noise.</li>
+  <li><strong>Contradiction-aware faithfulness scoring:</strong> the scorer should distinguish "answer disagrees with context" from "context disagrees with itself" — 37% of the v0.2.0 contradiction bucket were corpus self-conflicts wrongly counted against the model. Until then, every faithfulness number carries a known false-FAIL floor.</li>
+  <li><strong>Clinician-adjudicated calibration (the highest-value single eval upgrade):</strong> a medical reviewer re-judging the ~96 faithfulness calibration rows would pin the true-hallucination rate (currently a wide 3–17% band from an LLM-only ladder); a similar ~50-row pass on SAQ would anchor the recall/safety numbers to physician ground truth.</li>
+  <li><strong>Keep eval artifacts versioned per config</strong> — any new embedder or corpus version invalidates cached embeddings, thresholds, and the contradiction audit; re-run the affected pieces and stamp manifests as before.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="sequence">6. Suggested sequence</h2>
+<ol>
+  <li><strong>Now (offline, no GPU):</strong> R1 threshold sweep + R2a hybrid simulation + R2b oracle-rerank ceiling — all from existing audit files. Output: chosen threshold, go/no-go on hybrid and rerank.</li>
+  <li><strong>Next:</strong> the three-arm prompt A/B on a stratified kenya sample (baseline / +G1 levers / +G2 skeleton), jointly with the R1 threshold if possible. Validate the chosen R1 threshold with the M1 MCQ ±RAG rerun — the −1.8 pp gap should collapse.</li>
+  <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
+  <li><strong>In parallel:</strong> C1 source collection (gap-targeted, starting from the kenya zero-recall topics); E1 messy/Swahili query set; C2 corpus-contradiction filing upstream.</li>
+  <li><strong>After G1 lands:</strong> G2 coverage/completeness work, starting from the re-baselined engaged-answer quality.</li>
+  <li><strong>Later:</strong> R2d fine-tune/distill if the bake-off winner still leaves a strict-content gap; R3 LLM query rewrite only if the messy-query measurement shows real degradation that normalization + multilingual embedding don't fix.</li>
+</ol>
+
+<p class="src">Prepared 2026-06-11. Report index: <code>configs/config-v0.2.0/reports/README.md</code>. Retrieval numbers: <a href="https://github.com/nmrenyi/mamaretrieval">mamaretrieval</a> AUDIT_REPORT_v2.md (incl. the strict Pool Recall section added 2026-06-11). End-to-end numbers: Phase B reports of 2026-06-09.</p>
+
+</body>
+</html>
