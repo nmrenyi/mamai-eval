@@ -222,7 +222,7 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
   <li><strong>Now (offline, no GPU):</strong> R1 threshold sweep + R2a hybrid simulation + R2b oracle-rerank ceiling — all from existing audit files. Output: chosen threshold, go/no-go on hybrid and rerank.</li>
   <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible).</li>
   <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
-  <li><strong>In parallel:</strong> E1 messy/Swahili query set; C1 corpus-contradiction filing upstream.</li>
+  <li><strong>In parallel:</strong> C1 source collection (gap-targeted, starting from the kenya zero-recall topics); E1 messy/Swahili query set; C2 corpus-contradiction filing upstream.</li>
   <li><strong>Later:</strong> R2d fine-tune/distill if the bake-off winner still leaves a strict-content gap; R3 LLM query rewrite only if the messy-query measurement shows real degradation that normalization + multilingual embedding don't fix.</li>
 </ol>
 
