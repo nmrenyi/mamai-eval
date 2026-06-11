@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T103245",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 157907,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_7379f677-902d-4871-8c72-7dff214ce6e4",
+      "response_text": "I am sorry, but I do not have specific information about the postpartum thyroid test schedule in Germany.\n\nI can provide general information about thyroid conditions during pregnancy and after birth.\n\n*   **During pregnancy:** Thyroid-stimulating hormone (**TSH**) and free thyroxine (**FT4**) levels are used to diagnose thyroid disease [1].\n*   **Postpartum:** Postpartum thyroiditis can affect some women [2]. It often starts 3 to 6 months after birth [2].\n*   **Postnatal thyroid dysfunction:** Some women develop thyroid issues between 1 and 3 months after delivery [3].\n\nFor specific testing schedules in Germany, please consult your doctor or a local healthcare provider.",
+      "inference_time_ms": 13987,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_91dad885-2b6d-4be8-b2fb-a8228c92f38c",
+      "response_text": "I am sorry, but I cannot answer this question. I do not have information about the Marvelon pill in the context provided.\n\nPlease ask a question about maternal health, neonatal care, obstetrics, or clinical practice. I can help you with those topics.",
+      "inference_time_ms": 7090,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_3691ff82-35f9-4bd3-9d6f-a62fce1d8704",
+      "response_text": "I am not sure if the provided documents contain specific information about the risks of the keto diet on a baby.\n\nHowever, I can tell you that when considering anything during pregnancy, you must assess the risks and benefits.\n\n*   Drug use during pregnancy is restricted if it causes known harm to the baby.\n*   Even if a drug is not known to cause malformations, it can still affect the baby's growth, birthweight, or health.\n\nFor your question about the keto diet, please consult a doctor or a senior clinician. They can give you advice based on your specific health needs.",
+      "inference_time_ms": 12080,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ece7367d-6c83-4057-a60f-62f9e1b1d8b5",
+      "response_text": "The menstrual cycle shows how a woman's body prepares for pregnancy.\n\nHere are the key points about normal changes:\n\n*   **Cycle Function:** The uterus helps sperm travel to the fallopian tube. The inner lining of the uterus prepares to receive and nourish a fertilized egg (blastocyst) [1].\n*   **Hormonal Control:** The cycle is controlled by hormones from the ovaries, the uterus, and the brain. These hormones work through feedback loops [1].\n*   **Menstruation:** Menstruation starts when levels of **progesterone** and **oestradiol** drop. This causes changes in blood flow to the uterine lining, leading to the shedding of the lining [3].\n*   **Normal Range:** The average age for the first period (**menarche**) is 12 years, but between 8 and 16 years is considered normal [2].\n\nIf you have concerns about a woman's cycle, please check for signs of infection or severe pain.",
+      "inference_time_ms": 18385,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_efa19e50-86f0-435a-9851-5f07105f91be",
+      "response_text": "I can provide information on antibiotic selection and treatment duration for suspected neonatal sepsis based on the provided guidelines.\n\n**Antibiotic Selection and Treatment**\n\n*   **First Line Treatment:** For neonates with signs of sepsis, the first-line treatment is **ampicillin** (preferably IV) and **gentamicin** (IM) for at least 10 days [1].\n*   **Alternative for Staphylococcus Risk:** If the neonate has risk factors for staphylococcus infection (like abscess or omphalitis), use **cloxacillin** and gentamicin instead of penicillin and gentamicin [1].\n*   **Prophylaxis:** For neonates with risk factors for infection (e.g., ruptured membranes >18 hours, mother had fever), use **ampicillin** (IM or IV) and **gentamicin** for at least 2 days [2].\n*   **Meningitis:** If meningitis is suspected, do not use procaine benzylpenicillin [3].\n*   **Cutaneous Infection:** If the infection is from the skin, replace ampicillin with **cloxacillin** IV [3].\n\n**Dosage and Surveillance**\n\n*   **Dosage:** Please consult a doctor or the local formulary for specific drug dosages.\n*   **Duration:** Total treatment duration is 7 to 10 days, depending on the clinical response [3]. Gentamicin should be stopped after 5 days of treatment [3].\n*   **Surveillance:**\n    *   Obtain blood cultures before starting antibiotics if possible [1].\n    *   If the infant does not improve in 2–3 days, change the antibiotic or refer for further management [1].\n    *   After 2 days of prophylactic treatment, reassess the neonate and continue only if signs of sepsis are present or blood cultures are positive [2].\n\n**Disclaimer:** I am an AI assistant. This information is for guidance only. **Always consult a doctor or senior clinician** for definitive diagnosis and treatment decisions.",
+      "inference_time_ms": 35263,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ef3f7972-e436-4093-b06f-6039f747ae07",
+      "response_text": "I am a clinical decision-support assistant for healthcare. I cannot give you a guaranteed height for an adult.\n\nPredicting adult height is complex and depends on many factors. It is not something that can be determined with a single measurement.\n\nPlease consult a doctor or a specialist for advice on growth and development.",
+      "inference_time_ms": 8501,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_3c244c68-7374-47ff-a1a0-dc1bdecaec61",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives. I can help with healthcare and clinical practice questions.\n\nThis question is about a child's medication dosage and frequency. **I cannot give specific medical advice or confirm a dosage change.**\n\n**Please advise the mother to contact the pediatrician or a doctor immediately.**\n\nIt is very important to clarify the correct dose and timing before giving any medication. Do not change the dose or frequency based on this information.",
+      "inference_time_ms": 10186,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_6a131b5f-278c-415d-b28d-46aad3b18066",
+      "response_text": "I am not a doctor. I cannot diagnose you.\n\nHowever, I can give you some information.\n\n*   **Postpartum blues** usually happen within the first few days after birth and go away.\n*   **Postpartum depression** can last longer.\n\nSince you are two months postpartum and crying all the time, you should see a doctor.\n\n**Please seek help from a healthcare professional.** They can properly assess your symptoms and give you the right care.",
+      "inference_time_ms": 12009,
+      "error": null
+    }
+  ]
+}

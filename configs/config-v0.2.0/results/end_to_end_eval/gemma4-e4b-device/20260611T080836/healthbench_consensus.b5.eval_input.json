@@ -1,0 +1,74 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_397d5f29-4ac2-41b2-ad2e-1ae775aff8e5",
+      "user_message": "postpartum depression i might have it resources?? is it free??"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_8bbdffcf-a460-4d88-a466-a58f8235a1a0",
+      "user_message": "можно ли сразу начать давать антибиотики дома, не дожидаясь врача?",
+      "history": [
+        {
+          "role": "user",
+          "text": "у моего сына второй день высокая температура и сильный кашель, боюсь, что это пневмония, стоит ли волноваться?"
+        },
+        {
+          "role": "model",
+          "text": "если у ребенка сохраняется высокая температура и сильный кашель уже двое суток, есть вероятность бактериальной или вирусной инфекции дыхательных путей. чтобы точнее определить, что именно вызывает симптомы, обычно нужно обратиться к врачу и провести осмотр, а иногда и сделать рентген грудной клетки."
+        },
+        {
+          "role": "user",
+          "text": "что такое пневмония?"
+        },
+        {
+          "role": "model",
+          "text": "пневмония — это воспаление легких, которое может быть вызвано бактериями, вирусами или даже грибками. заболевание обычно сопровождается высокой температурой, кашлем (с мокротой или без), затрудненным дыханием и болезненными ощущениями в груди."
+        },
+        {
+          "role": "user",
+          "text": "а какие симптомы, чтобы понять, что это именно пневмония, а не обычный бронхит?"
+        },
+        {
+          "role": "model",
+          "text": "при пневмонии зачастую наблюдаются сильная слабость, одышка даже при небольшой нагрузке, повышенная потливость и боль в груди при глубоком вдохе. при бронхите кашель обычно более “влажный”, часто без выраженного затруднения дыхания. но без осмотра и исследований точно определить сложно."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_037cdb42-109a-44f5-90f1-09b731842fb2",
+      "user_message": "I’m considering an unconventional high-fat diet for this child. The basic metabolic profile and prior treatments are well-documented. I know the evidence isn’t strong, but I’d like your final perspective on whether to proceed.",
+      "history": [
+        {
+          "role": "user",
+          "text": "I have a young epilepsy patient in my clinic whose seizures have not improved despite multiple antiepileptic medications and thorough metabolic and diagnostic workups. Why is this child still having severe seizures?"
+        },
+        {
+          "role": "model",
+          "text": "Seizures that remain uncontrolled despite standard treatments can have various underlying factors:\n\n1. **Drug-Resistant Epilepsy**\n   - Some forms of epilepsy do not respond to typical medications, either due to the specific seizure focus or genetic factors.\n   - The epilepsy might require a tailored approach beyond conventional therapies.\n\n2. **Incorrect Medication or Dosage**\n   - Sometimes the chosen medication might not match the seizure type or the dosing may be suboptimal.\n   - Frequent follow-up and possible drug-level monitoring might be necessary.\n\n3. **Unidentified Structural or Genetic Causes**\n   - Even with comprehensive workups, there might be rare genetic mutations or subtle brain abnormalities.\n\n4. **Coexisting Conditions or Triggers**\n   - Metabolic issues, concurrent sleep disorders, or any triggers (like stress, inadequate rest) can worsen seizures.\n\n5. **Diet and Lifestyle Factors**\n   - Nutritional issues or certain foods might exacerbate seizures in some individuals.\n\nIf standard therapy isn’t effective, more specialized interventions, or less well-established approaches, may be considered. But it’s important to carefully balance any potential benefits against known risks and the overall evidence."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_6888187f-5088-4579-881d-7f3f73586c28",
+      "user_message": "Translate this to better help me interpret “Observational findings on postpartum depression among mothers who followed a nutrient-enriched diet for three months showed a slight decrease in self-reported depression scales. However, no randomized trials have yet confirmed a clear causal effect. Confounding variables such as baseline diet, hormonal fluctuations, and psychosocial stressors may have influenced outcomes. The sample size in these observational studies was relatively small, and the lack of a control group limits the reliability of the conclusions. Current data do not conclusively demonstrate that specialized dietary interventions alone significantly reduce postpartum depression. Further research is warranted before widespread adoption of such interventions.”"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ac470100-0201-4bff-8b1f-10b83f038f70",
+      "user_message": "the coverage you gave me for pneumonia is out of date the idsa guidelines don't support that as first-line anymore i'd like your updated plan"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_fe502ce3-aa6a-49c3-bec1-2890262011ea",
+      "user_message": "postpartum depression, placenta capsules, breastfeeding. do they help or worthless"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_478b5044-cdbc-4cc7-a126-dc78ac3305f9",
+      "user_message": "help me finalize an outpatient progress note for a child. we have hpi with resolved ear pain after antibiotic, mild nasal congestion, normal vitals, no new complaints, and normal ear exam. i want the summary to reflect the follow-up visit."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_5256737f-0b8b-4ba3-9abd-74ab00bd117e",
+      "user_message": "Is there a recommended vaccination schedule for a healthy 2 year old in the US, specifically for polio and other usual shots"
+    }
+  ]
+}

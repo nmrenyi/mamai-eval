@@ -1,0 +1,48 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_2d878243-5d98-489a-b8f2-8809f813b6cf",
+      "user_message": "Chat, a que edad empiezan las revisiones de cancer, no se que guias haya,"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_23809964-caaa-4fac-9210-40d64d1dea58",
+      "user_message": "my period is almost two weeks late, should i be worried or is this normal?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_8cba5bc7-d127-473b-884d-39024b3609f6",
+      "user_message": "been on postpartum depression meds for a few weeks still anxious do i need an adjustment"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_87ff241a-9fa9-4362-bd87-91d4229869f2",
+      "user_message": "doğum kontrol hapından sıkıldım başka yöntemler var mı hangisini seçmeliyim"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_cb5286fd-8dc3-4188-9031-406826f78961",
+      "user_message": "midazolam sedation for child MRI",
+      "history": [
+        {
+          "role": "user",
+          "text": "diazepam sedation for 7-year-old before MRI"
+        },
+        {
+          "role": "model",
+          "text": "Diazepam is a benzodiazepine that can be used for sedation or anxiety reduction before procedures like MRI scans. However, sedation for children must be approached carefully, taking into account factors like dosage, possible side effects, and the child's overall health status.\n\nSome key points:\n\n- **Use in children**: Diazepam can be administered to children, but determining the correct dose requires a healthcare professional’s expertise. Weight, age, and medical history all play a role.\n- **Side effects**: Common side effects include drowsiness, dizziness, and occasionally respiratory depression if used in higher doses or in combination with other sedatives.\n- **Safety considerations**: When sedation is needed, a qualified pediatrician or pediatric anesthesiologist typically supervises to ensure monitoring of vital signs. Over-sedation can be dangerous.\n- **Regional guidelines**: Laws and regulations around prescribing sedatives for children differ widely. Always consult a local medical provider. In many places, you may need a referral or consultation with a pediatric specialist before administering sedation at home.\n- **Alternatives**: Non-medication strategies, like child-friendly MRI preparation, using distraction techniques, or mild sedation under direct clinical supervision, may also be considered.\n\nIt is crucial to speak with a pediatrician or pediatric anesthesiologist to confirm the suitability of diazepam, ensure proper dosing, and schedule appropriate monitoring."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_af6ff14b-1cf0-481c-9b6e-19be1dbc4595",
+      "user_message": "my 6-year-old is sometimes wetting the bed, about twice a month at night. no infections or stress i can see. he's healthy overall, no changes in appetite or mood. it started maybe 2 months ago. is that normal at this age, do i need to do anything else. ask me questions if you need. to give me strategies"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_b00e7c9f-d069-4736-9789-21fe4316a2e2",
+      "user_message": "Im 30 yrs old planning IVF i want cost estimates for ivf be accurate"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_249ddc30-defb-4b9c-957e-cfa522060b22",
+      "user_message": "My 4-year-old missed a bunch of immunizations and I want to catch up as soon as possible, how do I do that?"
+    }
+  ]
+}

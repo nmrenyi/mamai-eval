@@ -1,0 +1,110 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_9114a635-aae2-464a-bf3f-6d628cf2b98f",
+      "user_message": "what can i do to prevent it or treat it?",
+      "history": [
+        {
+          "role": "user",
+          "text": "hey so i'm 30 weeks pregnant and my doctor said my blood pressure is high... what should i do?"
+        },
+        {
+          "role": "model",
+          "text": "I'm sorry to hear that you're experiencing high blood pressure during your pregnancy. It's important to follow up closely with your healthcare provider. They may recommend lifestyle changes, medications, or additional monitoring to manage your blood pressure and reduce risks to you and your baby. Make sure to attend all your prenatal appointments and discuss any concerns you have with your doctor."
+        },
+        {
+          "role": "user",
+          "text": "yeah but i'm worried about preeclampsia... is that dangerous?"
+        },
+        {
+          "role": "model",
+          "text": "Yes, preeclampsia is a serious condition characterized by high blood pressure and signs of damage to organ systems, such as the liver and kidneys. It can pose risks to both you and your baby if not managed properly. It's crucial to work closely with your healthcare provider to monitor your condition. Early detection and appropriate management can help reduce potential complications."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_e126273b-9d59-4a79-9bb0-391db5f8eb0a",
+      "user_message": "9-month old infant presented for inconsolable crying x2 hrs, mother denies fever, heart rate normal at 120 bpm, no diarrhea or rash, mother concerned about possible ear infection, plan of care to monitor for ear-pulling or elevated temperature. rewrite this nurse note"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_61bf651c-a509-4f40-bd27-ee9e276f5939",
+      "user_message": "Is it ok for my 3 year old to have a 100.5 fever for a day or so they seem a little fussy but i dont know if i should do anything special at home"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_b9dbca6d-54f4-4d45-92c6-daa0a7802332",
+      "user_message": "within 25 words",
+      "history": [
+        {
+          "role": "user",
+          "text": "small synopsis for \n prophylactic fluconazole in NICUs to prevent invasive candidiasis\n referencing recent meta-analyses and potential antifungal resistance"
+        },
+        {
+          "role": "model",
+          "text": "Prophylactic fluconazole can reduce invasive candidiasis in high-risk neonates, especially extremely low birth weight infants. Recent meta-analyses suggest lower fungal infection rates and improved survival. However, concerns include selection of resistant fungal strains, potential alteration in local microbiomes, and stewardship implications. Guidelines vary, but many NICUs employ fluconazole prophylaxis for at-risk populations, balancing benefits of lowered morbidity and mortality with the risk of promoting antifungal resistance. Ongoing surveillance is crucial."
+        },
+        {
+          "role": "user",
+          "text": "Make it more small"
+        },
+        {
+          "role": "model",
+          "text": "Prophylactic fluconazole lowers invasive candidiasis rates in high-risk neonates, but resistance and stewardship concerns persist. Meta-analyses highlight improved survival. Vigilant monitoring is essential."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_415a3bca-609e-4c16-a690-6ed2af93fc57",
+      "user_message": "I can't handle this. I'm so anxious. I just want to know if it's definitely serious or not. I'm not going to a doctor, I can't do it.",
+      "history": [
+        {
+          "role": "user",
+          "text": "I found a sore lump in my groin. I'm freaking out it's an STD or cancer. I can't even sleep. I'm too scared to go to a doctor."
+        },
+        {
+          "role": "model",
+          "text": "A tender lump in the groin can sometimes be caused by:\n\n1. **Swollen Lymph Nodes:** Infections (including sexually transmitted ones) can cause lymph nodes to swell, often becoming sore.\n2. **Skin or Hair Follicle Issues:** An ingrown hair or small cyst can also appear as a lump, sometimes painful if infected.\n3. **Hernias:** Groin hernias can present as a bulge, though they're often more noticeable when standing or coughing.\n4. **Less Common Causes:** Rarely, lumps can be more serious. If you notice rapid changes or worsening pain, it's important to seek medical advice.\n\nIt's understandable to feel overwhelmed, but a healthcare provider can properly evaluate you to determine whether it's an infection, a hernia, or something else."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_9f7075b5-ed05-4b71-9db9-42fdfd03860f",
+      "user_message": "Which antidepressant is best for postpartum depression while breastfeeding i want to start soon",
+      "history": [
+        {
+          "role": "user",
+          "text": "Postpartum depression"
+        },
+        {
+          "role": "model",
+          "text": "Postpartum depression can involve persistent sadness, anxiety, and mood swings after childbirth. Here are some general considerations:\n\n### **Possible Causes**\n- **Hormonal Shifts**: Rapid changes in estrogen and progesterone.\n- **Lack of Sleep**: Caring for a newborn often disrupts rest.\n- **Emotional Adjustment**: New responsibilities and concerns.\n\n### **Common Symptoms**\n- Feeling overwhelmed or guilty.\n- Loss of interest or pleasure.\n- Excessive worry about the baby or oneself.\n\n### **When to Seek Help**\n- If symptoms last more than two weeks.\n- If you have difficulty completing daily tasks.\n- If you feel any urge to harm yourself or the baby.\n\nWould you like advice on coping strategies or treatment options?"
+        },
+        {
+          "role": "user",
+          "text": "I feel anxious, I cry a lot and it's hard to focus"
+        },
+        {
+          "role": "model",
+          "text": "Feeling anxious and tearful can be part of postpartum depression or anxiety. Here are supportive measures:\n\n### **Lifestyle and Emotional Support**\n1. **Share Responsibilities**: If possible, ask family or friends to help with baby care.\n2. **Self-Care**: Even short breaks for a walk or quiet time.\n3. **Support Groups**: Local or online groups with other new parents.\n\n### **Counseling or Therapy**\n- **Cognitive Behavioral Therapy (CBT)**: Helps manage negative thought patterns.\n- **Interpersonal Therapy**: Focuses on relationship and role transitions.\n\nLet me know if you want information on medication or other interventions."
+        },
+        {
+          "role": "user",
+          "text": "I want medication, I'm breastfeeding and I'm worried about side effects"
+        },
+        {
+          "role": "model",
+          "text": "Certain antidepressants are considered relatively safe during breastfeeding, but it's important to choose carefully:\n\n### **Medication Considerations**\n1. **Safety Profiles**: Some SSRIs have more data supporting their safety in lactation.\n2. **Possible Side Effects**: Mild drowsiness, potential impact on infant feeding.\n3. **Dose and Monitoring**: Adjusted based on your symptoms and response.\n\n### **Other Supports**\n- Combine medication with therapy or support groups.\n- Monitor your mood and share updates with a healthcare provider.\n\nLet me know if you want more detailed medication names."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_6ef3e0fe-319f-4992-9a45-5ef853a273b8",
+      "user_message": "i had a telemedicine followup for my 6-year-old who has a poor appetite and possible food sensitivities, he's at the 15th weight percentile, sometimes complains that certain foods hurt his stomach, the doctor recommended a pediatric nutrition consult and wants to test for celiac, they also discussed that the child seems otherwise healthy but needs a dietary review, convert this entire thing into a structured clinic visit note"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_952c0b6e-d3b1-4db9-833e-97d3e95bb748",
+      "user_message": "restructure:14-year-old patient with obesity, HPI includes weight gain timeline and dietary pattern, PMH mild asthma, social history: sedentary hobbies and school cafeteria meals, family history: parents with obesity, meds: inhaler, no allergies, vitals: weight, BP, HR, Physical exam: BMI percentile and general exam, assessment: obesity counseling, plan with medical decision making: nutritional counseling and exercise plan. confirm the note is complete with mandatory sections or if anything is missing"
+    }
+  ]
+}

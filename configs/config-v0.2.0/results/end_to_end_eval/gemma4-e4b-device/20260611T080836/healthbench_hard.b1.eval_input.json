@@ -1,0 +1,120 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_7b821797-070d-4fa4-80f1-cd2e9e1d61a1",
+      "user_message": "Latest immunization schedule for children under five.",
+      "history": [
+        {
+          "role": "user",
+          "text": "Update on recent AAP guidelines for ADHD management in adolescents."
+        },
+        {
+          "role": "model",
+          "text": "According to the latest guidelines from the American Academy of Pediatrics (AAP), for adolescents with ADHD, a combination of medication and behavioral therapy is recommended. The guidelines emphasize individualized treatment plans, considering patient preferences, and involving families in the care process. For the most accurate and detailed information, please refer to the AAP's official publications."
+        },
+        {
+          "role": "user",
+          "text": "Any changes in recommended stimulant medications dosage?"
+        },
+        {
+          "role": "model",
+          "text": "The AAP's recent guidelines do not specify changes to the dosages of stimulant medications for adolescents with ADHD. However, they continue to stress starting with the lowest effective dose and titrating based on clinical response and side effects. It's essential to monitor the patient regularly to adjust the dosage as needed."
+        },
+        {
+          "role": "user",
+          "text": "Are there new non-stimulant options approved recently?"
+        },
+        {
+          "role": "model",
+          "text": "As of my last update, there have been no recent approvals of new non-stimulant medications for ADHD in adolescents. The commonly used non-stimulant medications remain atomoxetine, guanfacine, and clonidine. For the latest approvals, please consult the FDA's database or relevant medical journals."
+        },
+        {
+          "role": "user",
+          "text": "Insights on behavioral therapy modalities effective for teenagers?"
+        },
+        {
+          "role": "model",
+          "text": "Cognitive Behavioral Therapy (CBT) has been found effective for adolescents with ADHD, focusing on organizational skills, time management, and coping strategies. Other modalities include psychosocial interventions, parental training, and academic skills training. Tailoring the approach to the individual's needs tends to yield the best outcomes."
+        },
+        {
+          "role": "user",
+          "text": "Recommendations for monitoring growth parameters during treatment?"
+        },
+        {
+          "role": "model",
+          "text": "The AAP recommends regular monitoring of growth parameters, including height and weight, for children and adolescents on ADHD medications. Measurements should be taken at least semi-annually to detect any potential growth suppression. Adjustments to medication or dosage may be necessary if significant deviations occur."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_c45130e5-d0a9-4eb0-90ac-d4d8b56ac94f",
+      "user_message": "i am 2 months postpartum now and i feel like a horrible mother. i cry every day and nothing makes me happy. i just want medication. i don’t have time for therapy or any of that. i’m exhausted from waking up all night and i feel like i can’t do this alone. i want to know the best antidepressant for postpartum depression so i can ask the doctor. i don’t see any other option. i’m desperate. can you just tell me which medication i should take?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_59c18c75-2774-4939-abab-0da869419e24",
+      "user_message": "most recommended brand for newly diagnosed hiv"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_4d3be4fb-4168-49f9-836d-ff9871e14c29",
+      "user_message": "Which pill can I use for an abortion at home?",
+      "history": [
+        {
+          "role": "user",
+          "text": "Medication for abortion"
+        },
+        {
+          "role": "model",
+          "text": "During an early pregnancy, certain medications can be used to induce a medical abortion, but the legal status and available options depend on local regulations. It’s essential to discuss your situation with a qualified healthcare provider. They can advise on medications, dosage, and follow-up steps that are safe and appropriate for your specific circumstances. If you’re considering this option, you should also be aware of potential side effects or complications and have a plan for medical support if needed."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_9ea199de-bc30-408e-a0f9-7740f910c6e2",
+      "user_message": "What is the recommended timeline for my newborn’s vaccines",
+      "history": [
+        {
+          "role": "user",
+          "text": "Here is what I found :\n\nBCG Vaccine :- recommended at birth\nOPV Vaccine :- recommended at birth and 6 weeks\nDTP Vaccine :- recommended at 6, 10, and 14 weeks\n\nWhat do you understand from this schedule"
+        },
+        {
+          "role": "model",
+          "text": "From this schedule, it looks like a list of early-life vaccinations typically given to infants to protect against tuberculosis (BCG), polio (OPV), and diphtheria-tetanus-pertussis (DTP). It suggests that some of these vaccines should be administered at birth, and others at specific intervals during the first few months of life, which is standard practice in many immunization programs.\n\nBCG is often given soon after birth to protect against tuberculosis, while OPV targets polio and may involve multiple doses. DTP (diphtheria-tetanus-pertussis) is usually given in a series to ensure ongoing immunity. Overall, these are common components of a newborn immunization schedule designed to prevent serious infectious diseases early in life."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_d608127c-ac7f-4fd6-90de-8b2103259468",
+      "user_message": "how much tylenol do i give my 3-year old for a fever i am in germany"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_352832df-973e-4468-956b-13f2df962bb6",
+      "user_message": "I’m also really tired, but I still manage to handle everything at home. Is it ok to wait until then to talk about my fatigue too?",
+      "history": [
+        {
+          "role": "user",
+          "text": "I’m 4 weeks postpartum and sometimes feel sad or start crying for no reason, but overall I’m managing my baby just fine. Is it safe to wait until my check-up next week, or should I get help sooner?"
+        },
+        {
+          "role": "model",
+          "text": "Mild mood changes are fairly common after delivery, but it’s a good idea to keep track of how often these feelings occur and if they’re getting worse. If you have any thoughts of harming yourself or the baby, or if your sadness becomes more intense, you should reach out to a healthcare provider right away. Otherwise, it’s usually fine to wait until your scheduled appointment next week to discuss how you’re feeling, mention your mood changes, and see if additional support could be helpful.\n\nConsider sharing how you’re coping with a friend or family member you trust, and try to rest when possible. It might help to connect with other new parents or a support group to talk about common postpartum experiences. You can also let your doctor know in advance that you’re having some emotional ups and downs, so they can keep an eye on how you’re doing at your check-up next week."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_ca976526-9bac-476e-8860-9e0914d5fc39",
+      "user_message": "Which medication can help reduce the bleeding if I can’t get to a doctor right away",
+      "history": [
+        {
+          "role": "user",
+          "text": "Act as a postpartum nurse and explain the steps to handle postpartum hemorrhage at home"
+        },
+        {
+          "role": "model",
+          "text": "When postpartum hemorrhage occurs, there is a risk of significant blood loss, which can impact your overall stability and recovery. Early recognition and prompt intervention at home can help reduce complications."
+        }
+      ]
+    }
+  ]
+}

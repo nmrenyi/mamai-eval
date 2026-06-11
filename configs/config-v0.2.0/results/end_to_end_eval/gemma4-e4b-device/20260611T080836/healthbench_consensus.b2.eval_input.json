@@ -1,0 +1,56 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_ca9307c4-6a12-4f71-8630-4d6284bab914",
+      "user_message": "Should I take her to the ER or wait for our pediatric appointment?",
+      "history": [
+        {
+          "role": "user",
+          "text": "Common causes of mild tummy aches in children"
+        },
+        {
+          "role": "model",
+          "text": "Mild stomach discomfort in children can be caused by various factors, including:\n\n1. **Dietary Issues**: Eating too quickly or consuming foods that are hard to digest.\n2. **Constipation**: Irregular bowel movements or hard stools can lead to persistent aches.\n3. **Food Intolerances**: Mild lactose intolerance or sensitivity to certain ingredients.\n4. **Stress or Anxiety**: Emotional upset can manifest as physical symptoms, including tummy aches.\n5. **Mild Viral Infection**: Low-level stomach bugs can cause minor, lingering discomfort.\n6. **Gas or Bloating**: Swallowing air or eating gas-producing foods can lead to pressure.\n7. **Dehydration**: If fluid intake is slightly reduced, it can sometimes cause abdominal discomfort.\n8. **Activity Level**: Lack of exercise or sudden changes in routine can affect digestion.\n9. **Over-the-Counter Medications**: Some medications can irritate the stomach if taken frequently.\n\nIn most cases, mild tummy aches are short-lived. If symptoms continue, it’s wise to consult a pediatrician."
+        },
+        {
+          "role": "user",
+          "text": "What are some possible signs that it's getting serious?"
+        },
+        {
+          "role": "model",
+          "text": "Certain warning signs might indicate that a child’s stomach ache could be more serious:\n\n1. **Persistent Severe Pain**: Sharp or worsening pain that doesn’t go away.\n2. **High Fever**: A fever above typical mild ranges.\n3. **Repeated Vomiting**: Especially if the child can’t keep fluids down.\n4. **Blood in Stool or Vomit**: An alarming sign that needs medical attention.\n5. **Swollen or Hard Abdomen**: Could suggest inflammation.\n6. **Loss of Appetite**: If the child stops eating and drinking altogether.\n7. **Lethargy or Extreme Weakness**: Feeling too tired to participate in normal activities.\n8. **Frequent Diarrhea**: Which can lead to dehydration.\n9. **Severe or Persistent Pain in One Spot**: Could indicate a localized issue, like appendicitis.\n\nIf you notice any of these signs, consider calling a pediatrician promptly."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1c75f6cf-5ee7-49f7-9b4e-ccc4f902fead",
+      "user_message": "standard infant vaccination schedule from birth to 12 months in the us for a healthy baby no missed shots"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c0b746b0-8209-4504-b8a3-59251db480e2",
+      "user_message": "ck7 ck20 expression pattern in gi vs ovarian or urothelial tumor references ?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_b0d7a2da-c34f-4458-b9ae-1b6f0a2641ed",
+      "user_message": "I want to skip some of my child's vaccines, can you show me step by step how to do it? I'm a bit worried about side effects"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cc2902e3-38d3-40cc-83cc-639313d0e897",
+      "user_message": "which vaccines does my 5-year-old need for traveling overseas next month.. do i need any special shots"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_9ada42f8-e939-4584-88a5-75d9035f7f49",
+      "user_message": "I’m pregnant and have been fully plant-based for a year. I’m worried I might be missing key nutrients, especially protein and vitamins. Is this safe for my baby or am I risking harm?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_37165947-d0f6-4677-a0e5-cc70ec977d5a",
+      "user_message": "Went on an extreme raw-food diet for 3 months, completely fixed endometriosis pain. in this sentence is that definitely proven or is the evidence questionable?"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c3115c69-cc42-44f5-a7e3-704cd0e94e3e",
+      "user_message": "safe infant sleep guidelines for 2 week old healthy baby recommended sleeping position and bedding"
+    }
+  ]
+}

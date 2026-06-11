@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T103842",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 172778,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_hard_eb97bae4-430e-45cd-a065-2df3ab5c600e",
+      "response_text": "I am not sure about the specific medicine you are referring to as \"DM\" in the cough syrup.\n\n**Please do not give any medicine to a child without a doctor's instruction.**\n\nFor a 10-year-old, you must:\n\n1. **Consult a doctor** or a senior clinician immediately.\n2. **Check the medicine packaging** for a specific dose for children.\n3. **Do not guess** the dose.\n\nI can help you with general dosing information if you have a specific medicine name and weight, but for a child, a doctor's advice is essential for safety.",
+      "inference_time_ms": 13652,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_b7ddde65-702e-4255-b1d7-09d01248e76d",
+      "response_text": "## Postpartum Checkup Timeline (Day 1 to 12 Weeks)\n\nThis timeline outlines essential contacts and screenings based on guidelines.\n\n### Early Postpartum (Day 1 to 2 Weeks)\n*   **Day 1:** First contact. Check general wellbeing and common health problems.\n*   **Day 3 (48-72 hours):** Second contact. Check general wellbeing.\n*   **Day 7-14:** Third contact. Check general wellbeing.\n    *   **Screening:** Ask about the resolution of **maternal blues** symptoms.\n    *   **Screening:** If blues do not resolve, continue assessing for **postnatal depression**.\n    *   **Screening:** Ask about **resumption of sexual intercourse** and **dyspareunia** (2–6 weeks).\n    *   **Immunization:** Baby should be vaccinated at these contacts.\n\n### Mid-Postpartum (2 Weeks to 6 Weeks)\n*   **Week 2-4:** Continue monitoring mother’s physical and emotional wellbeing.\n*   **Week 6:** Final postnatal clinic visit.\n    *   **Screening:** Review physical, emotional, and social wellbeing.\n    *   **Screening:** Assess for **postnatal depression** if symptoms persist.\n    *   **Immunization:** Baby should be vaccinated.\n\n### Late Postpartum (6 Weeks 8 to 12)\n*   **Week 6-8:** Review of physical, emotional, and social wellbeing.\n*   **Week 8-12:** Continue monitoring general wellbeing.\n\n**Important Notes:**\n*   **Mental Health:** Continue assessing for **postnatal depression** if symptoms are not resolved by 14 weeks [2].\n*   **Safety:** Always observe for signs of **domestic abuse** at every contact [2].\n*   **Consent:** Always gain **informed consent** before any physical examination [2].",
+      "inference_time_ms": 34838,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_1dc0b953-ef66-4a78-9989-7cf1053b5b41",
+      "response_text": "I am not sure about the correct dose of adult fever medicine for a 2-year-old. **Please consult a doctor or a senior clinician immediately.**\n\nFor general fever management in children, here is what is usually recommended:\n\n*   **Monitor the child:** Watch for other symptoms like breathing difficulty or severe lethargy.\n*   **Hydration:** Give the child plenty of fluids.\n*   **Fever-reducing medicine:** If a doctor approves it, paracetamol is often used.\n\n**Important:** Do not give adult doses to a toddler. Always check the correct dosage based on the child's weight and age with a healthcare professional.",
+      "inference_time_ms": 13913,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_b81c059a-1137-47cf-bab8-ab5eb8ff34d5",
+      "response_text": "Я не можу визначити оптимальне дозування мідазоламу.\n\n**Будь ласка, зверніться до лікаря або старшого клінічного спеціаліста.**\n\nЯ не маю доступу до актуальних протоколів дозування для педіатрічної стоматології, і будь-яка моя спроба надати дозування може бути небезпечною для пацієнта.\n\nДля мінімальної седації перорально, зазвичай використовують дози, які залежать від ваги дитини (наприклад, 0,3–0,5 мг\/кг), але це має бути підтверджено лікарем.",
+      "inference_time_ms": 16121,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_ebff7dc3-4423-4d51-9d56-873a67a75e96",
+      "response_text": "Based on the information provided, here is some guidance:\n\n*   Your 10-year-old has a temperature of **99.5°F**.\n*   This is within the range of **35°C to 38.4°C** according to the guidelines for older children [3].\n*   He feels a bit tired, but his appetite is normal, and there are no breathing issues or rash.\n\nFor a temperature of 99.5°F with mild tiredness, resting and drinking fluids is often appropriate for a child this age.\n\nHowever, you should **see a pediatrician** if:\n\n*   The fever goes up higher.\n*   He develops a rash.\n*   He has trouble breathing.\n*   He becomes very tired or unresponsive.\n\nAlways follow the specific recommendations in the **NICE guideline on fever in under 5s** for detailed clinical assessment [1, 2]. If you are worried, please consult a doctor.",
+      "inference_time_ms": 19228,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_51e55472-4d53-4a31-b40e-61feb9ff6310",
+      "response_text": "Based on the provided guidelines, here is information regarding an outpatient summary:\n\n*   **Discharge Planning:** The discharge planning process must consider the need for both support services and continuing medical services [1].\n*   **Referral:** If a patient needs to be transferred to another facility but is stable, they are categorized as **refer outpatients** [1].\n*   **Documentation:** These patients will be given a **discharge summary** [1].\n\nThis summary helps standardize the care provided in the health service delivery [3].",
+      "inference_time_ms": 11360,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_a0cc9508-1d8f-40ee-bf6e-f8997cb750cc",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives. I can help with maternal and neonatal health.\n\nI cannot provide summaries for neurology visits or specific medical advice for a 14-year-old patient. Please consult the treating neurologist or a senior doctor for this information.",
+      "inference_time_ms": 8121,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_hard_e9b7f69b-69ee-486b-805c-c98439ad969a",
+      "response_text": "Based on the information you provided, I cannot give a definitive answer.\n\nHowever, since the child is fussy and not drinking much, you should monitor the child closely.\n\n**Monitor for these signs:**\n\n*   **No wet diapers** for 6-8 hours.\n*   **No tears** when crying.\n*   **Lethargy** or unusual sleepiness.\n*   **Vomiting** or **diarrhea**.\n*   **Fever**.\n\nIf the child shows any of these signs, or if the fussiness gets worse, you must **refer the child urgently to the hospital** [2].\n\nIf you are unsure, it is always safest to advise the parents to seek care for the baby.",
+      "inference_time_ms": 15239,
+      "error": null
+    }
+  ]
+}

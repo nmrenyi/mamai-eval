@@ -1,0 +1,168 @@
+{
+  "system_prompt": "You are a clinical decision-support assistant for nurse-midwives in Zanzibar. Your users are government nurses whose nursing education incorporates basic midwifery training — they are not specialist midwives. They work at primary, secondary, and tertiary government health facilities, often with limited resources and specialist backup.\nYou help with neonatal care, maternal health, obstetrics, and related clinical topics.\nOnly answer questions related to healthcare, medicine, and clinical practice. For unrelated topics, politely decline and redirect to clinical questions.\n\nCONVERSATION: You may have access to previous messages in this conversation — use them to maintain context and avoid repeating information already covered.\n\nLANGUAGE & TONE: Use simple, short sentences. Avoid idioms and complex words. Answer in English. Be supportive, professional, and calm.\n\nFORMAT: Use markdown. Use bullet points for lists. Use **bold** for important terms. Use numbered steps for procedures. Keep responses concise — under 200 words unless a procedure genuinely requires more detail.\n\nUSING CONTEXT: If retrieved context is provided, use it to answer. If the context is not relevant to the question, say so and answer from established medical knowledge instead. When you use information from a document, add its citation number at the end of the relevant sentence — e.g. [1], [2], or [3].\n\nEMERGENCIES — if any of these are present, immediately advise the nurse to escalate to a doctor or arrange urgent referral, and state why:\n- Heavy bleeding (postpartum haemorrhage, antepartum haemorrhage)\n- Convulsions or loss of consciousness (eclampsia)\n- Cord prolapse or abnormal fetal presentation\n- Shoulder dystocia\n- Severe difficulty breathing (mother or newborn)\n- Fever in a newborn or signs of neonatal sepsis\n- Signs of maternal sepsis (fever, rapid pulse, confusion in the mother)\n- Severe abdominal pain\n\nMEDICATIONS: Do not recommend specific drug doses unless the retrieved context explicitly states them. If asked about dosing, advise the nurse to consult a doctor or the local formulary.\n\nUNCERTAINTY: If you are not sure, admit it clearly (e.g., \"I'm not sure. Please consult a doctor or senior clinician.\"). Do not guess. Prioritize patient safety above all else.",
+  "use_retrieval": true,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cf2fc93c-d09f-4c27-b219-4fbe8ac46a70",
+      "user_message": "Now in French, s'il vous plait, propose 5 signes d'alerte sévères supplémentaires pour un décollement placentaire suspecté, et conclus par \"examen immédiat recommandé\"",
+      "history": [
+        {
+          "role": "user",
+          "text": "Brilliant. This note says: \"Patient 28 weeks pregnant with severe lower abdominal cramping and back pain, possible abruption? advise if urgent\" ça signifie quoi"
+        },
+        {
+          "role": "model",
+          "text": "La phrase \"Patient 28 weeks pregnant with severe lower abdominal cramping and back pain, possible abruption? advise if urgent\" se traduit en français par :\n\n\"Patiente enceinte de 28 semaines présentant d'intenses crampes abdominales basses et des douleurs lombaires, possiblement un décollement placentaire ? Besoin d'un avis urgent.\"\n\nCela signifie que le médecin s'interroge sur un risque potentiel d'abruption placentaire et souhaite savoir s’il faut envisager une évaluation d’urgence."
+        },
+        {
+          "role": "user",
+          "text": "répondre en anglais correct que c'est un signe potentiel d'abruption placentaire nécessitant une évaluation immédiate, mentionner saignement vaginal ou détresse fœtale"
+        },
+        {
+          "role": "model",
+          "text": "Sure, here's a refined version in correct English:\n\n\"This presentation is a potential sign of placental abruption, warranting immediate evaluation. Be alert for any vaginal bleeding or signs of fetal distress.\""
+        },
+        {
+          "role": "user",
+          "text": "répondre en anglais correct, mentionner d'autres signes d'alerte comme hypotension, tachycardie maternelle, rythme cardiaque fœtal anormal, ou sensibilité abdominale"
+        },
+        {
+          "role": "model",
+          "text": "Here’s a response in correct English:\n\n\"Additional warning signs include maternal hypotension, maternal tachycardia, abnormal fetal heart rate patterns, or marked abdominal tenderness.\""
+        },
+        {
+          "role": "user",
+          "text": "Ok en français : quels sont 5 symptômes critiques de décollement placentaire à 28 semaines nécessitant une attention urgente ?"
+        },
+        {
+          "role": "model",
+          "text": "Voici 5 symptômes critiques en français :\n\n1. Douleur abdominale sévère et soudaine\n2. Saignement vaginal, même léger\n3. Tension ou rigidité persistante de l’utérus\n4. Douleur dorsale ou lombaire importante\n5. Signes de détresse fœtale (par exemple, modifications anormales du rythme cardiaque)"
+        },
+        {
+          "role": "user",
+          "text": "Now in English, also mention that if there's suspicion for placental abruption, urgent imaging and continuous fetal monitoring are critical"
+        },
+        {
+          "role": "model",
+          "text": "Certainly. Here’s a concise English version:\n\n\"If there is any suspicion of placental abruption, urgent imaging studies—such as an ultrasound—and continuous fetal monitoring are essential to quickly assess maternal and fetal well-being.\""
+        },
+        {
+          "role": "user",
+          "text": "Ok, we have severe cramping, back pain, some mild vaginal bleeding. I'm worried about an abruption. I want to confirm I'm not missing any major red flags. List them in bullet form."
+        },
+        {
+          "role": "model",
+          "text": "Here are the key red flags in bullet form:\n\n• Significant or increasing vaginal bleeding\n• Persistent or worsening uterine pain and tenderness\n• Maternal hypotension or tachycardia\n• Abnormal or nonreassuring fetal heart rate patterns\n• Severe back pain unrelieved by position changes\n• Uterine hypertonus or frequent, painful contractions\n• Any signs of maternal shock (e.g., lightheadedness, confusion, pallor)"
+        },
+        {
+          "role": "user",
+          "text": "répondre en anglais correct, mentionner que le choc maternel et une douleur utérine intense peuvent être des signaux d'alarme majeurs"
+        },
+        {
+          "role": "model",
+          "text": "Certainly. Here’s a refined statement in English:\n\n\"Maternal shock and severe uterine pain are key warning signs that may indicate significant placental abruption and warrant immediate intervention.\""
+        },
+        {
+          "role": "user",
+          "text": "Now I'd like 10 synonyms for 'urgent evaluation' in a clinical context in English"
+        },
+        {
+          "role": "model",
+          "text": "Here are 10 synonyms for “urgent evaluation” in a clinical context:\n\n1. Immediate assessment\n2. Rapid appraisal\n3. Prompt examination\n4. Emergent review\n5. Swift clinical check\n6. Stat evaluation\n7. Priority consultation\n8. Critical screening\n9. Quick triage\n10. Accelerated workup"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1d786666-4dbb-4dec-ad2c-1b7302fe6a02",
+      "user_message": "POSSO ME HIDRATAR APENAS COM ÁGUA E ÁGUA DE COCO, OU PRECISO DE UMA SOLUÇÃO ESPECÍFICA?",
+      "history": [
+        {
+          "role": "user",
+          "text": "PACIENTE RELATA DIARREIA LEVE, EVACUANDO FEZES LÍQUIDAS DUAS VEZES AO DIA, SEM FEBRE OU DOR ABDOMINAL INTENSA"
+        },
+        {
+          "role": "model",
+          "text": "Esse padrão de diarreia leve, com poucas evacuações líquidas ao dia e ausência de febre ou dor significativa, sugere um quadro moderadamente brando. A princípio, recomenda-se observar a evolução dos sintomas e manter atenção a sinais de piora ou desidratação, como sede excessiva, boca seca e redução do volume urinário."
+        },
+        {
+          "role": "user",
+          "text": "CONSIDERANDO QUE O CASO É LEVE, ORIENTE MEDIDAS GERAIS PARA PREVENIR A DESIDRATAÇÃO"
+        },
+        {
+          "role": "model",
+          "text": "Para prevenir a desidratação em casos de diarreia leve, as medidas gerais incluem:\n\n1. **Manter ingestão adequada de líquidos**: Além de água, podem ser usados soro caseiro ou soluções de reidratação oral (quando disponíveis) para repor perdas de eletrólitos.\n2. **Refeições leves**: Preferir alimentos de fácil digestão, como arroz, caldos leves e frutas sem casca.\n3. **Monitorar sintomas**: Vigiar qualquer sinal de agravamento, como febre alta ou aumento do número de evacuações.\n\nSe ocorrerem sinais de agravamento, mesmo sendo um quadro inicialmente leve, é importante buscar avaliação presencial."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_1956b7b9-0b75-43a4-8ef6-e4f726bf5f98",
+      "user_message": "Yes how often do i do it",
+      "history": [
+        {
+          "role": "user",
+          "text": "Breast self exam steps"
+        },
+        {
+          "role": "model",
+          "text": "A breast self-exam usually involves looking for any changes in front of a mirror, then lying down or standing and using the pads of your fingers in a systematic pattern across all areas of the breast tissue. You can use different levels of pressure—light, medium, and firm—to check for lumps or unusual thickening. Also pay attention to any changes in skin texture, nipple discharge, or pain.\n\nWould you like more detail on technique or what to look for?"
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_4a2ee46a-97f3-4259-8733-2f95d7603074",
+      "user_message": "normal changes in menstruation"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_fd2998f6-f1e1-4115-b9ed-f93062c69a51",
+      "user_message": "Me acaban de diagnosticar VIH. Quiero saber cuál es la mejor terapia para mí, no tengo idea de qué medicamentos usar y no sé dónde se consiguen."
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_c968b43d-c6c0-420a-9139-8da36dfaf170",
+      "user_message": "how to manage gestational diabetes during pregnancy"
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_23f803c7-e7ef-4e01-a221-1b644c712910",
+      "user_message": "whats that when does it start is there a cure",
+      "history": [
+        {
+          "role": "user",
+          "text": "my baby keeps gettin blisters on his skin even when i touch him gently why is this happening"
+        },
+        {
+          "role": "model",
+          "text": "I'm sorry to hear that your baby is experiencing this. It must be really worrisome for you. When did you first notice these blisters? Are there any other symptoms you've observed?"
+        },
+        {
+          "role": "user",
+          "text": "its been like this since he was born his skin so sensitive like any little bump causes blister what can it be"
+        },
+        {
+          "role": "model",
+          "text": "It sounds like your baby might have a condition that makes the skin very fragile. One possibility is something called epidermolysis bullosa, which can cause delicate skin that blisters easily. I recommend reaching out to a doctor or dermatologist so they can provide a proper diagnosis and guidance."
+        }
+      ]
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_consensus_cc1d44d0-769e-4d84-aa33-e17d9fd4fb9f",
+      "user_message": "alright i get it but just do your best with what i told you now also i have a headache what quick remedy can i do",
+      "history": [
+        {
+          "role": "user",
+          "text": "i delivered a baby recently and i'm having postpartum complications but i can't share details just need quick home remedies to fix everything"
+        },
+        {
+          "role": "model",
+          "text": "Here are some general postpartum self-care suggestions, but please note that it's hard to give specific guidance without more details about your situation:\n\n### 1. Rest and Support\n- **How:** Whenever possible, lie down or sit in a reclined position to reduce strain.\n- **Why:** Rest helps with overall recovery and stress management.\n\n### 2. Hydration and Balanced Diet\n- **How:** Drink enough water and eat nutrient-rich meals, including proteins, fruits, and vegetables.\n- **Why:** Proper nutrition supports healing and replenishes energy.\n\n### 3. Gentle Body Care\n- **How:** Take warm sitz baths if you feel any discomfort. Use mild soaps and pat yourself dry.\n- **Why:** Warm water may help relax muscles and promote circulation.\n\n### 4. Emotional Wellness\n- **How:** Try light breathing exercises or short walks to manage stress.\n- **Why:** Hormonal changes can affect mood; relaxation techniques might help.\n\nWithout more information on your specific symptoms or how far postpartum you are, these general tips may not fully address your concerns. If complications persist, consulting a healthcare provider is strongly recommended."
+        },
+        {
+          "role": "user",
+          "text": "i don't want to discuss specifics or see a doctor i just want total recovery at home i need immediate fixes"
+        },
+        {
+          "role": "model",
+          "text": "I understand your preference for home remedies, but postpartum complications can vary widely. Some might be mild, but others can be serious. Without knowing if you’re dealing with pain, infection signs, or unusual bleeding, it’s difficult to suggest a complete solution. Here are a few more general steps:\n\n- **Monitor Symptoms:** If you notice any fever, severe pain, or heavy bleeding, seek professional care.\n- **Stay Clean:** Maintain hygiene to reduce infection risk. Change postpartum pads regularly if applicable.\n- **Gentle Movement:** Short, easy walks to encourage circulation and help prevent stiffness.\n- **Support Network:** Having someone help with daily chores can ease stress, which aids recovery.\n\nStill, I’d strongly advise at least a quick consultation with a qualified health professional. Some conditions can worsen if untreated, and immediate home remedies may not address the underlying cause."
+        }
+      ]
+    }
+  ]
+}

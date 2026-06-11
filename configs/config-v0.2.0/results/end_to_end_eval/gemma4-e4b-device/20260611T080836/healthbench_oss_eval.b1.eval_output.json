@@ -1,0 +1,68 @@
+{
+  "eval_version": 1,
+  "timestamp": "20260611T101038",
+  "device": {
+    "manufacturer": "OnePlus",
+    "model": "OPD2413",
+    "device": "OP615EL1",
+    "hardware": "qcom",
+    "board": "sun",
+    "soc": "SM8750P",
+    "android_version": "15",
+    "sdk_int": 35,
+    "abi": "arm64-v8a"
+  },
+  "n_rows": 8,
+  "n_rows_done": 8,
+  "total_time_ms": 183479,
+  "rows": [
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_019f591a-8320-40ec-83d0-75cbd9258f56",
+      "response_text": "I am sorry, but the provided documents are about **injectable contraceptives** for women. They do not contain information about the vaccine schedule for a 2-year-old child.\n\nFor the vaccine schedule of a 2-year-old, please consult a doctor or a senior clinician at your health facility.",
+      "inference_time_ms": 8875,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_abe78331-8e84-45d2-b4b3-c5251db6b722",
+      "response_text": "I am a clinical decision-support assistant for nurse-midwives. I can help with healthcare questions.\n\nBased on your description, the lesions on your child's scalp sound like **Tinea capitis**.\n\n**Tinea capitis** is a fungal infection of the scalp.\n\n**What to do:**\n\n1.  **See a doctor.** You must show the child to a doctor for a proper diagnosis and treatment plan.\n2.  **Do not treat it yourself.** The treatment depends on the type of fungus and the child's health.\n\n**Treatment information:**\n\n*   Treatment usually involves **oral antifungal medication**.\n*   Some treatments are available over the counter, but for a child, a doctor must prescribe the correct medication.\n*   The doctor will decide on the best treatment for the infection.\n\nPlease consult a healthcare professional immediately.",
+      "inference_time_ms": 17168,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_f5a77a0d-cc92-41e5-910d-3e774c09ced2",
+      "response_text": "At 6 weeks old, spitting up is common. This is often called **gastro-oesophageal reflux**.\n\nCauses of reflux in babies include:\n\n*   **Incompetent sphincter:** The muscle between the esophagus and stomach is not strong enough [1].\n*   **Other factors:** This can happen in babies who are preterm or have neurological issues [1].\n\n**What you can do:**\n\n*   **Feed the baby in a prone position:** Tilt the cot up by 30–40° [1].\n*   **Thicken feeds:** Use products like Nestargel or Carobel [1].\n\nIf the spitting up is severe or the baby is not gaining weight, please consult a doctor.",
+      "inference_time_ms": 15089,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_e9b7f69b-69ee-486b-805c-c98439ad969a",
+      "response_text": "Based on the information you provided, I cannot give a definitive answer.\n\nHowever, since the child is fussy and not drinking much, you should monitor the child closely.\n\n**Monitor for these signs:**\n\n*   **No wet diapers** for 6-8 hours.\n*   **No tears** when crying.\n*   **Lethargy** or unusual sleepiness.\n*   **Vomiting** or **diarrhea**.\n*   **Fever**.\n\nIf the child shows any of these signs, or if the fussiness gets worse, you must **refer the child urgently to the hospital** [2].\n\nIf you are unsure, it is always safest to advise the parents to seek care for the baby.",
+      "inference_time_ms": 15244,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_ac3caa21-8cfc-49d9-acbc-d4a9822df88b",
+      "response_text": "Based on the information provided, here is the SOAP note format.\n\n**S (Subjective):**\n*   **Chief Complaint:** Right ear pain for 2 days.\n*   **History:**\n    *   Low-grade fever (99.9°F) noted at home.\n    *   Decreased appetite reported by the parent.\n    *   Child is pulling at the ear.\n\n**O (Objective):**\n*   **Physical Exam:**\n    *   Right ear canal: Bright red with mild swelling.\n    *   Vitals: Fever noted at 99.9°F.\n\n**A (Assessment):**\n*   **Diagnosis:** Acute Otitis Media (Right Ear).\n\n**P (Plan):**\n*   **Treatment:** Amoxicillin 400 mg, 2 times daily for 7 days.\n*   **Follow-up:** Monitor for improvement.",
+      "inference_time_ms": 18522,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_477f7950-360b-4462-815a-20fa14e9667a",
+      "response_text": "Here is the advice regarding peanut introduction:\n\n*   **For infants:**\n    *   Breastfeed exclusively for the first 6 months.\n    *   If you introduce solid food before 6 months, avoid peanuts and other common allergens (nuts, seeds, milk, eggs, wheat, fish).\n    *   Introduce new foods one at a time to watch for reactions.\n*   **For mothers:**\n    *   Pregnant or breastfeeding women can eat peanuts if they want to, even if family members have allergies.\n    *   There is no need to avoid peanuts unless the mother herself has a peanut allergy.\n*   **For high-risk infants:**\n    *   If an infant has a known allergy or eczema, or has a family history of peanut allergy, consult a doctor before giving peanuts for the first time.\n    *   Avoiding peanuts until age 3 does not prevent allergies.\n\nPlease consult a doctor for specific advice for your patient.",
+      "inference_time_ms": 17758,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_1c5c847f-acae-42e8-a5b1-49b78ca766ba",
+      "response_text": "I cannot confirm if a specific medication is safe for an 8-year-old child.\n\n**Please consult a doctor or senior clinician.**\n\nI can provide general information about allergies, but I cannot give medical advice or confirm safety for a specific patient.",
+      "inference_time_ms": 6756,
+      "error": null
+    },
+    {
+      "id": "mamabench_v0.2_healthbench_oss-eval_5ef0055c-f276-41bb-b42c-0d5c34b254c1",
+      "response_text": "I can help you with the sequence of uterotonics for postpartum hemorrhage (PPH) based on the guidelines.\n\n**Uterotonic Sequence for PPH (Uterine Atony)**\n\nThe recommended treatment depends on what uterotonic was used during labor.\n\n*   **If Carbetocin was used:**\n    *   **First-line:** Ergometrine intramuscular injection [1].\n    *   **Second-line:** Carboprost intramuscular injection [1].\n    *   **Additional:** Carboprost (repeat every 15 minutes, max 8 doses) or Misoprostol 800 micrograms sublingually or rectally [1].\n\n*   **If Oxytocin plus Ergometrine was used:**\n    *   **First-line:** Carboprost intramuscular injection, or Oxytocin infusion once IV access is available [2].\n    *   **Second-line:** Repeat Carboprost after 15 minutes [2].\n    *   **Additional:** Carboprost (repeat every 15 minutes, max 8 doses) or Misoprostol 800 micrograms sublingually or rectally (can be used earlier if IV is not available) [2].\n\n*   **If No uterotonic was used (Physiological Management):**\n    *   **First-line:** Oxytocin plus Ergometrine by intramuscular injection (or Carboprost if contraindicated), or Oxytocin infusion once IV access is available [3].\n    *   **Second-line:** Carboprost intramuscular injection [3].\n    *   **Additional:** Carboprost (repeat every 15 minutes, max 8 doses) or Misoprostol 800 micrograms sublingually or rectally (can be used earlier if IV is not available) [3].\n\n**Important Notes:**\n\n*   **Blood Transfusion:** I do not have specific transfusion thresholds in the provided documents. Please consult your local blood bank protocols or a senior doctor for this information.\n*   **Balloon Tamponade and Surgery:** The provided documents do not detail the use of balloon tamponade or the specific points for surgical escalation. Please refer to your facility's advanced PPH protocols or consult a specialist.\n*   **Early Warning Signs:** For counseling staff, focus on signs of **heavy bleeding** (PPH), **severe abdominal pain**, and **signs of maternal sepsis** (fever, rapid pulse, confusion) as immediate escalation triggers.\n\nPlease let me know if you have questions about other clinical topics.",
+      "inference_time_ms": 43721,
+      "error": null
+    }
+  ]
+}
