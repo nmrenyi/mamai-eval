@@ -59,7 +59,7 @@
   <p><strong>Diagnosis (consistent across all reports): the system is safe but unhelpful, and RAG currently adds noise instead of value.</strong></p>
   <ul>
     <li>Zero "dangerous" safety ratings anywhere; active commission of wrong/harmful content ≈ 2%. Safety-by-commission is not the bottleneck — but the scope reflex <strong>refusing emergencies</strong> (choking child, anaphylaxis) is a deployment-blocking safety-by-omission bug.</li>
-    <li>End-to-end usefulness is low: SAQ key-fact recall 0.178 (kenya), HealthBench weighted_met ≈ −0.016 (oss_eval) — driven by <em>deflection</em> (refusing scope or deferring to "see a doctor" without first-line content), not by knowledge gaps.</li>
+    <li>End-to-end usefulness is low: SAQ key-fact recall 0.178 (kenya), HealthBench weighted_met ≈ 0.00 (oss_eval) — driven by <em>deflection</em> (refusing scope or deferring to "see a doctor" without first-line content), not by knowledge gaps.</li>
     <li>The deployed retriever (Gecko, top-3, threshold 0.0) delivers a bundle with <em>no useful chunk</em> in ~19% of queries and no top-tier chunk in ~56% — and we inject it anyway. RAG measurably hurts (MCQ −1.8 pp; SAQ scope-refusals rise with RAG).</li>
     <li>When the generator does engage with good context, it is largely faithful (calibrated true-hallucination ≈ 9%, band 3–17%) — and a notable share of contradiction flags trace to the guideline corpus contradicting <em>itself</em>, a problem that grows as retrieval improves.</li>
   </ul>
@@ -76,7 +76,7 @@
   <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
   <tr><td>M1</td><td>MCQ track: ±RAG rerun as R1 acceptance test + knowledge-uplift probe; RAG-aware adapter prompt</td><td><span class="tag p2">P2</span></td><td>One cluster run + prompt tweak</td><td>Validates R1 cheaply; measures retrieval knowledge-gain at n=23k</td></tr>
   <tr><td>C2</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
-  <tr><td>E1</td><td>Eval-side: messy/Swahili query set; end-to-end gating for all retrieval changes</td><td><span class="tag p1">P1</span></td><td>Small dataset work</td><td>Benchmark optimism; retrieval metrics ≠ end-to-end gains</td></tr>
+  <tr><td>E1</td><td>Evaluation-protocol improvements (§5): end-to-end gating rule, messy/Swahili query set, rubric CIs, deflection metric, reference cleanup, clinician calibration, …</td><td><span class="tag p1">P1</span></td><td>Mostly small; clinician pass needs a reviewer</td><td>Every system change above is accepted/rejected by these measurements</td></tr>
 </table>
 
 <!-- ============================================================ -->
@@ -102,7 +102,7 @@
 </ol>
 
 <div class="callout good">
-<strong>Headroom is proven:</strong> voyage/octen show the corpus supports ~0.99 lenient / ~0.75 strict HR@3. The gap is in our retriever, not the corpus. Known ceiling: ~25% of queries have no strict-relevant chunk in <em>any</em> retriever's top-3 — targets should be set against that ceiling, not 100%.</div>
+<strong>Headroom is proven:</strong> voyage/octen show the corpus supports ~0.99 lenient / ~0.75 strict HR@3 <em>on this benchmark's corpus-derived queries</em> — there, the gap is the retriever's. (Real-user coverage gaps are a separate problem the benchmark can't see; that's C1.) Known ceiling: ~25% of queries have no strict-relevant chunk in <em>any</em> retriever's top-3 — targets should be set against that ceiling, not 100%.</div>
 
 <div class="callout">
 <strong>Scope caveat:</strong> all numbers above use clean English queries generated <em>from</em> corpus chunks — a favorable distribution. Retrieval quality on the deployment distribution (kenya/whb vignettes, messy phrasing, multi-turn) is unmeasured.<br>
@@ -207,11 +207,11 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 <p>The full G2 workstream starts after G1 lands — G1's A/B re-baselines engaged-answer quality, which is G2's starting measurement.</p>
 
 <h3>Faithfulness — no generator-side fix recommended</h3>
-<p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and eval (E1) sections below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
+<p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and evaluation-protocol (section 5) work below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
 
 <!-- ============================================================ -->
 <h2 id="endtoend">3. End-to-end track improvements</h2>
-<p>The dominant end-to-end lever is G1 (section 2) — this section covers the per-track items beyond it. <em>(SAQ and HealthBench track items to be added as those reviews complete.)</em></p>
+<p>The dominant end-to-end lever is G1 (section 2) — this section covers the per-track items beyond it.</p>
 
 <h3>M1 — MCQ track <span class="tag p2">P2</span></h3>
 <p>Evidence: <code>mcq-rag-effect-20260520.md</code> (23,241 rows; all three MCQ configs are <strong>OBGYN-refiltered</strong> from their source exams via the mamabench classifier). No-RAG 53.7%; +RAG 51.9% — a real −1.8 pp regression (disjoint CIs). The regression on <em>topically in-domain</em> questions has two compounding causes: (a) noise injection — threshold 0.0 always injects 3 chunks, RAG flipped the answer on 40% of rows, 53% of flips toward wrong (R1's target); (b) answerability mismatch — a practice-guideline corpus (management, doses, thresholds) often cannot answer exam-style questions (mechanisms, pharmacology) even on-topic. Keep RAG in this track: post-threshold, the ±RAG delta becomes the largest-n measurement we have of how much knowledge retrieval actually adds. Items:</p>
@@ -281,7 +281,7 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 <h2 id="sequence">6. Suggested sequence</h2>
 <ol>
   <li><strong>Now (offline, no GPU):</strong> R1 threshold sweep + R2a hybrid simulation + R2b oracle-rerank ceiling — all from existing audit files. Output: chosen threshold, go/no-go on hybrid and rerank.</li>
-  <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible). Validate the chosen R1 threshold with the M1 MCQ ±RAG rerun — the −1.8 pp gap should collapse.</li>
+  <li><strong>Next:</strong> the three-arm prompt A/B on a stratified kenya sample (baseline / +G1 levers / +G2 skeleton), jointly with the R1 threshold if possible. Validate the chosen R1 threshold with the M1 MCQ ±RAG rerun — the −1.8 pp gap should collapse.</li>
   <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
   <li><strong>In parallel:</strong> C1 source collection (gap-targeted, starting from the kenya zero-recall topics); E1 messy/Swahili query set; C2 corpus-contradiction filing upstream.</li>
   <li><strong>After G1 lands:</strong> G2 coverage/completeness work, starting from the re-baselined engaged-answer quality.</li>
