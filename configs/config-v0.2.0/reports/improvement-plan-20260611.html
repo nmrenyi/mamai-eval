@@ -153,6 +153,11 @@
   <li><strong>Multilingual embedder instead of rewriting</strong> (preferred long-term): if R2c lands a multilingual embedder, language bridging happens in embedding space and rewriting reduces to typo/abbreviation normalization only.</li>
 </ol>
 
+<div class="callout warn">
+<strong>Standing note for all of R1–R3 (not an improvement direction — a validation rule): every retrieval change must be validated end-to-end before adoption.</strong>
+Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficient. The Phase B SAQ results show that bundle content changes the generator's <em>behavior</em>, not just its answer content — injected context has triggered scope-refusals (zero-recall rows shifting from 50% to 67% scope-refusal under RAG) — so a retriever that wins HR@3 can still lose key-fact recall. The standard acceptance gate for any change from R1–R3 is: (1) stratified SAQ ±RAG A/B (key-fact recall must not regress, refusal rate must not rise), (2) safety-distribution check (no new <code>potentially_harmful</code>/<code>dangerous</code> mass), (3) on-device latency and memory within budget.
+</div>
+
 <!-- ============================================================ -->
 <h2 id="generator">2. Generator-behavior improvements (system prompt) <span class="tag p0">P0</span></h2>
 <p>Evidence base: Phase B SAQ + rubric reports (<code>phase-b-saq-result-20260609.html</code>, <code>phase-b-rubric-result-20260609.html</code>).</p>
