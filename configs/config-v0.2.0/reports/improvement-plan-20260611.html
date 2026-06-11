@@ -70,10 +70,10 @@
   <tr><th>#</th><th>Improvement</th><th>Priority</th><th>Cost</th><th>What it fixes</th></tr>
   <tr><td>R1</td><td>Retrieval relevance threshold (abstain instead of injecting noise)</td><td><span class="tag p0">P0</span></td><td>Offline calibration + config change</td><td>RAG actively hurting (MCQ −1.8 pp, RAG-induced refusals)</td></tr>
   <tr><td>G1</td><td>System-prompt revision against deflection / scope-refusal</td><td><span class="tag p0">P0</span></td><td>Prompt-only + A/B rerun</td><td>~91% of SAQ zero-recall rows; 61% of rubric failures</td></tr>
-  <tr><td>C0</td><td>Collect more high-quality relevant sources (corpus expansion)</td><td><span class="tag p0">P0</span></td><td>Sourcing + pipeline rerun + benchmark re-label</td><td>Coverage ceiling: a relevant chunk must exist before any retriever can find it</td></tr>
+  <tr><td>C1</td><td>Collect more high-quality relevant sources (corpus expansion)</td><td><span class="tag p0">P0</span></td><td>Sourcing + pipeline rerun + benchmark re-label</td><td>Coverage ceiling: a relevant chunk must exist before any retriever can find it</td></tr>
   <tr><td>R2</td><td>On-device retriever upgrade (embedder bake-off, hybrid, rerank)</td><td><span class="tag p1">P1</span></td><td>Offline sims free; device work moderate</td><td>Gecko's 2× precision gap; strict-content misses</td></tr>
   <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
-  <tr><td>C1</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
+  <tr><td>C2</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
   <tr><td>E1</td><td>Eval-side: messy/Swahili query set; end-to-end gating for all retrieval changes</td><td><span class="tag p1">P1</span></td><td>Small dataset work</td><td>Benchmark optimism; retrieval metrics ≠ end-to-end gains</td></tr>
 </table>
 
@@ -183,12 +183,12 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 <div class="callout"><strong>Interaction with retrieval:</strong> prompt fixes and R1 compound — part of the refusal behavior is context-triggered (injected Zanzibar chunks → geographic refusal). Fixing only the prompt leaves noise-triggered refusals; fixing only the threshold leaves the deflection reflex. Plan to A/B them jointly (2×2 if budget allows).</div>
 
 <h3>Faithfulness — no generator-side fix recommended</h3>
-<p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C1) and eval (E1) sections below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
+<p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and eval (E1) sections below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
 
 <!-- ============================================================ -->
 <h2 id="corpus">3. Corpus / data-quality improvements</h2>
 
-<h3>C0 — Collect more high-quality relevant sources <span class="tag p0">P0</span></h3>
+<h3>C1 — Collect more high-quality relevant sources <span class="tag p0">P0</span></h3>
 <p><strong>Why P0:</strong> coverage is the ceiling no retriever fix can raise — a relevant chunk must exist before any retriever can surface it. Two signals say coverage is short today: (1) ~25% of benchmark queries have no strict-relevant (complete/actionable) chunk in <em>any</em> retriever's top-3 — plausibly content that doesn't exist in the corpus at the needed specificity; (2) deployment-distribution topics the app should handle (family planning, GBV care, broader reproductive health — the SAQ over-refusal areas) are thinly covered. Note the audit <em>understates</em> coverage gaps by construction: its queries were generated from corpus chunks, so every query has an in-corpus answer; real-user topics with no corpus content never appear in it.</p>
 <ul>
   <li><strong>Target collection by gap, not bulk:</strong> use the kenya zero-recall topics and the strict-ceiling queries as the shopping list; prioritize sources with dense actionable content (doses, thresholds, steps) — the strict-tier material Gecko misses most and the generator needs most. Apply the existing source-quality tiering (<code>rag-source-evaluation.md</code>).</li>
@@ -196,7 +196,7 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
   <li><strong>Known cost:</strong> a corpus version bump changes chunk IDs, which invalidates the mamaretrieval benchmark labels — re-running the labeling pipeline (or an incremental top-up for new chunks) must be budgeted into the corpus release, per the corpus contract.</li>
 </ul>
 
-<h3>Corpus cleanup <span class="tag p2">P2</span></h3>
+<h3>C2 — Corpus cleanup <span class="tag p2">P2</span></h3>
 <ul>
   <li><strong>Resolve the 16 confirmed self-contradictory contexts</strong> (v0.2.0 audit). File the query IDs and passages upstream against <code>mamai-medical-guidelines</code> / <code>mamaretrieval</code>; 3 conflicts (anaphylaxis adrenaline route, antihypertensive threshold, neonatal head position) are clinically meaningful and need a guideline owner's decision regardless of the eval. <span class="src">Source: oracle-self-contradictions v0.1.0/v0.2.0 reports.</span></li>
   <li><strong>Establish a source-precedence policy.</strong> The dominant v0.2.0 pattern (8/16) is <em>cross-guideline disagreement</em> — WHO vs NICE vs MSF vs textbooks each retrieved as its own chunk. Individual fixes don't scale; the corpus needs a declared precedence order (or per-topic authoritative source) so conflicting chunks can be resolved or deprioritized systematically.</li>
