@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAM-AI v0.2 — Improvement Plan (2026-06-11)</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --muted: #5a5a72;
+    --accent: #0b5563;
+    --accent-light: #e8f4f6;
+    --warn-bg: #fff4e5;
+    --warn-edge: #d97706;
+    --good-bg: #ecfdf3;
+    --good-edge: #15803d;
+    --bad-bg: #fef2f2;
+    --bad-edge: #b91c1c;
+    --rule: #d8d8e4;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+    line-height: 1.55;
+  }
+  h1 { font-size: 1.7rem; border-bottom: 3px solid var(--accent); padding-bottom: .4rem; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin-top: 2.4rem; border-bottom: 1px solid var(--rule); padding-bottom: .25rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.6rem; }
+  p, li { font-size: .95rem; }
+  .meta { color: var(--muted); font-size: .85rem; margin-top: -0.5rem; }
+  table { border-collapse: collapse; margin: 1rem 0; font-size: .88rem; width: 100%; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: var(--accent-light); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-light); padding: .7rem 1rem; margin: 1rem 0; font-size: .92rem; }
+  .warn { border-left: 4px solid var(--warn-edge); background: var(--warn-bg); }
+  .good { border-left: 4px solid var(--good-edge); background: var(--good-bg); }
+  .bad  { border-left: 4px solid var(--bad-edge); background: var(--bad-bg); }
+  code { background: #f1f1f6; padding: .1rem .3rem; border-radius: 3px; font-size: .85em; }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: .1rem .5rem; border-radius: 999px; margin-right: .3rem; vertical-align: middle; }
+  .p0 { background: #fde8e8; color: #9b1c1c; }
+  .p1 { background: #fdf2e0; color: #92510a; }
+  .p2 { background: #e8eefb; color: #1e429f; }
+  .src { color: var(--muted); font-size: .8rem; }
+  details { margin: .6rem 0; }
+  summary { cursor: pointer; font-weight: 600; font-size: .92rem; }
+</style>
+</head>
+<body>
+
+<h1>MAM-AI v0.2 — Improvement Plan</h1>
+<p class="meta">2026-06-11 · config-v0.2.0 · synthesizes the retrieval audit (mamaretrieval), generator-faithfulness eval, and Phase B end-to-end results (MCQ / SAQ / HealthBench rubric). Nothing here has been implemented yet — this document records <em>what we should do and why</em>, for the next improvement cycle.</p>
+
+<h2 id="tldr">TL;DR — where the system stands and what to do</h2>
+<div class="callout">
+  <p><strong>Diagnosis (consistent across all reports): the system is safe but unhelpful, and RAG currently adds noise instead of value.</strong></p>
+  <ul>
+    <li>Zero "dangerous" safety ratings anywhere; active commission of wrong/harmful content ≈ 2%. Safety is not the bottleneck.</li>
+    <li>End-to-end usefulness is low: SAQ key-fact recall 0.178 (kenya), HealthBench weighted_met ≈ −0.016 (oss_eval) — driven by <em>deflection</em> (refusing scope or deferring to "see a doctor" without first-line content), not by knowledge gaps.</li>
+    <li>The deployed retriever (Gecko, top-3, threshold 0.0) delivers a bundle with <em>no useful chunk</em> in ~19% of queries and no top-tier chunk in ~56% — and we inject it anyway. RAG measurably hurts (MCQ −1.8 pp; SAQ scope-refusals rise with RAG).</li>
+    <li>When the generator does engage with good context, it is largely faithful — and a share of residual "hallucination" flags trace to contradictions inside the guideline corpus itself.</li>
+  </ul>
+  <p><strong>Priorities:</strong> <span class="tag p0">P0</span> stop injecting noise (retrieval threshold) and fix deflection (system prompt) — both cheap, both attack proven harms. <span class="tag p1">P1</span> upgrade the on-device retriever (embedder bake-off / hybrid / rerank). <span class="tag p2">P2</span> query rewriting and corpus cleanup.</p>
+</div>
+
+<table>
+  <tr><th>#</th><th>Improvement</th><th>Priority</th><th>Cost</th><th>What it fixes</th></tr>
+  <tr><td>R1</td><td>Retrieval relevance threshold (abstain instead of injecting noise)</td><td><span class="tag p0">P0</span></td><td>Offline calibration + config change</td><td>RAG actively hurting (MCQ −1.8 pp, RAG-induced refusals)</td></tr>
+  <tr><td>G1</td><td>System-prompt revision against deflection / scope-refusal</td><td><span class="tag p0">P0</span></td><td>Prompt-only + A/B rerun</td><td>~91% of SAQ zero-recall rows; 61% of rubric failures</td></tr>
+  <tr><td>R2</td><td>On-device retriever upgrade (embedder bake-off, hybrid, rerank)</td><td><span class="tag p1">P1</span></td><td>Offline sims free; device work moderate</td><td>Gecko's 2× precision gap; strict-content misses</td></tr>
+  <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
+  <tr><td>C1</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
+  <tr><td>E1</td><td>Eval-side: messy/Swahili query set; end-to-end gating for all retrieval changes</td><td><span class="tag p1">P1</span></td><td>Small dataset work</td><td>Benchmark optimism; retrieval metrics ≠ end-to-end gains</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="retrieval">1. Retrieval improvements</h2>
+
+<p>Evidence base: mamaretrieval v2 audit — 3,185 queries, 6 retrievers, 230,964 LLM-graded (query, chunk) pairs (Qwen3.5-397B judge, graded rubric 0–6, validated 95%/85% vs Opus 4.7 at the lenient/strict thresholds). Deployed configuration: Gecko_1024_quant.tflite, k=3, <code>similarity_threshold: 0.0</code>.</p>
+
+<h3>What the audit established</h3>
+<table>
+  <tr><th>Retriever</th><th class="num">HR@3 (≥3)</th><th class="num">P@3 (≥3)</th><th class="num">HR@3 (≥5)</th><th class="num">P@3 (≥5)</th><th class="num">Pool R@20 (≥3)</th><th class="num">Pool R@20 (≥5)</th></tr>
+  <tr><td>voyage-4-large <span class="src">(API-only — not deployable)</span></td><td class="num">0.996</td><td class="num">0.867</td><td class="num">0.753</td><td class="num">0.452</td><td class="num">0.658</td><td class="num">0.768</td></tr>
+  <tr><td>octen-8B <span class="src">(cluster-only)</span></td><td class="num">0.991</td><td class="num">0.804</td><td class="num">0.716</td><td class="num">0.403</td><td class="num">0.583</td><td class="num">0.661</td></tr>
+  <tr><td><strong>gecko (deployed)</strong></td><td class="num"><strong>0.814</strong></td><td class="num"><strong>0.477</strong></td><td class="num"><strong>0.439</strong></td><td class="num"><strong>0.193</strong></td><td class="num"><strong>0.337</strong></td><td class="num"><strong>0.345</strong></td></tr>
+  <tr><td>bm25</td><td class="num">0.754</td><td class="num">0.417</td><td class="num">0.371</td><td class="num">0.163</td><td class="num">0.271</td><td class="num">0.283</td></tr>
+</table>
+<p class="src">HR = hit rate ("≥1 relevant chunk in the bundle"); P = precision ("share of bundle that is relevant"); lenient ≥3 = some useful clinical content, strict ≥5 = complete/specific actionable content. Pool Recall is relative to the 6-retriever top-20 union pool (not corpus-absolute). Sources: <code>mamaretrieval/AUDIT_REPORT_v2.md</code>, <code>data/audit/results_v2_{full,tier3}.md</code>.</p>
+
+<p>Three distinct problems, each with a different fix:</p>
+<ol>
+  <li><strong>Ranking problem (lenient):</strong> the useful chunk usually <em>is</em> in Gecko's top-20 (HR@20 = 0.977) but not its top-3 (0.814). Fixable by reranking / depth / fusion.</li>
+  <li><strong>Structural embedding problem (strict):</strong> Gecko never surfaces ~65% of complete/actionable chunks at <em>any</em> rank in its top-20 (strict pool recall flat at 0.345, vs voyage 0.768; barely above BM25's 0.283). Not fixable by ranking — only by a better embedder. Critically, this deficit is concentrated exactly on the dose/threshold/management-step chunks the generator needs.</li>
+  <li><strong>Noise-injection problem:</strong> with threshold 0.0 we always inject 3 chunks — including the ~19% of queries where none are useful. The Phase B reports show this is not free: it costs accuracy and triggers refusals.</li>
+</ol>
+
+<div class="callout good">
+<strong>Headroom is proven:</strong> voyage/octen show the corpus supports ~0.99 lenient / ~0.75 strict HR@3. The gap is in our retriever, not the corpus. Known ceiling: ~25% of queries have no strict-relevant chunk in <em>any</em> retriever's top-3 — targets should be set against that ceiling, not 100%.</div>
+
+<h3>R1 — Relevance threshold tuning <span class="tag p0">P0</span></h3>
+<p><strong>Goal:</strong> never inject a chunk we don't believe is relevant; fall back to no-RAG when the bundle is junk. At this stage we prefer abstention over noise.</p>
+<ul>
+  <li><strong>Why now:</strong> this is the only place retrieval <em>actively harms</em> the system today. MCQ −1.8 pp with RAG; SAQ zero-recall rows shift toward scope-refusal under RAG (50% → 67%), e.g. geographic over-refusal when Zanzibar-specific context is injected into a Kenya vignette.</li>
+  <li><strong>How:</strong> calibrate a cosine-similarity cutoff offline against the existing 230k graded labels (sweep thresholds over Gecko's top-3 scores; trade injected-chunk precision vs abstention rate vs lost hits). Filter <em>per-chunk</em>, not all-or-nothing — keep 1–2 good chunks rather than forcing 3-or-none.</li>
+  <li><strong>Deployment:</strong> a config change (<code>params.json</code> <code>retrieval.similarity_threshold</code>) already plumbed through the app — near-zero engineering.</li>
+  <li><strong>Caveats:</strong> raw cosine from a quantized embedder may be poorly calibrated across query types — validate the cutoff per-dataset; re-calibrate whenever the embedder changes (ties to R2). Gate the final value on an end-to-end SAQ ±RAG A/B, not retrieval metrics alone.</li>
+</ul>
+
+<h3>R2 — On-device retriever upgrade <span class="tag p1">P1</span></h3>
+<p><strong>Goal:</strong> close as much of the Gecko-vs-top-tier gap as possible under strict on-device constraints (CPU/NPU, quantized, LiteRT-compatible, latency and memory budgets). Voyage/octen are reference points, not options.</p>
+<p>Four candidate approaches, in recommended exploration order — the first three can be <em>simulated offline for free</em> from the existing audit artifacts (rankings + 230k labels) before any device work:</p>
+<table>
+  <tr><th>Option</th><th>What</th><th>Fixes</th><th>Validation path (no new judging needed)</th></tr>
+  <tr>
+    <td><strong>a. Hybrid retrieval (Gecko + BM25, RRF fusion)</strong></td>
+    <td>Run BM25 alongside Gecko on-device (trivially cheap, no GPU; lexically complementary: drug names, doses, exact terms), fuse with reciprocal-rank fusion.</td>
+    <td>Ranking + some structural (different miss patterns)</td>
+    <td>Compute fused top-3 HR/P from existing <code>data/full/*_top20.jsonl</code> + labels.</td>
+  </tr>
+  <tr>
+    <td><strong>b. Retrieve-20 → rerank → keep-3</strong></td>
+    <td>Pull Gecko's top-20, rerank with a small on-device cross-encoder (or even the deployed Gemma scoring chunks), keep best 3.</td>
+    <td>Ranking only (lenient HR ceiling 0.977; strict ceiling 0.755)</td>
+    <td>Compute the oracle-rerank ceiling from labels first; build only if the ceiling justifies the latency cost.</td>
+  </tr>
+  <tr>
+    <td><strong>c. Embedding bake-off</strong></td>
+    <td>Benchmark modern small multilingual embedders (e.g. EmbeddingGemma-class, quantized to LiteRT) against Gecko on mamaretrieval at k=3, lenient + strict.</td>
+    <td><strong>Structural</strong> — the only fix for the strict-content miss</td>
+    <td>Embed corpus + queries per candidate, score against existing labels (new chunks outside the judged pool → small top-up judging round).</td>
+  </tr>
+  <tr>
+    <td><strong>d. Fine-tune / distill</strong></td>
+    <td>Fine-tune the chosen on-device embedder on the 230,964 graded pairs (contrastive) and/or distill voyage's rankings.</td>
+    <td>Structural, beyond off-the-shelf</td>
+    <td>Requires clean query-level train/test split to preserve benchmark validity. Do after (c) picks the base model.</td>
+  </tr>
+</table>
+<div class="callout warn"><strong>Multilingual requirement (ties to R3):</strong> the embedder chosen in the bake-off should be multilingual from the start — real nurse queries may be in Swahili or nonstandard English, and the corpus is planned to grow German-language textbooks. A multilingual embedding space handles cross-lingual query↔chunk matching at the representation level, which is far cheaper on-device than translation pipelines. Gecko's cross-lingual behavior is currently <em>unmeasured</em>.</div>
+
+<h3>R3 — Query rewriting / normalization, on-device <span class="tag p2">P2</span></h3>
+<p><strong>Motivation:</strong> all current retrieval numbers are an <em>optimistic upper bound</em> — the benchmark queries are clean, well-formed English generated from the corpus itself. Real queries will have typos, abbreviations, colloquial phrasing, and mixed/Swahili language; and the corpus will gain German textbooks. Embedding a messy query directly is exactly where a quantized 768-dim embedder degrades most.</p>
+<p>On-device-feasible options, in order of increasing cost:</p>
+<ol>
+  <li><strong>Measure first (eval-side, cheap):</strong> build a "messy query" variant set of the benchmark — programmatic typos, medical-abbreviation substitutions, colloquial paraphrases, Swahili translations — and measure Gecko's degradation. This tells us whether rewriting is worth its latency before we build anything. <em>(This is the E1 work item.)</em></li>
+  <li><strong>Dictionary normalization:</strong> on-device spelling correction + medical-abbreviation expansion (PPH → postpartum haemorrhage). No model call, microseconds, zero risk.</li>
+  <li><strong>LLM rewrite with the deployed Gemma:</strong> the model is already resident — a short "rewrite this as a clear clinical query in English" call before embedding. Costs one extra prefill+decode (must be measured with <code>latency_eval</code> against the TTFT budget); also a natural place to bridge query language → corpus language for the German-textbook scenario.</li>
+  <li><strong>Multilingual embedder instead of rewriting</strong> (preferred long-term): if R2c lands a multilingual embedder, language bridging happens in embedding space and rewriting reduces to typo/abbreviation normalization only.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="generator">2. Generator-behavior improvements (system prompt) <span class="tag p0">P0</span></h2>
+<p>Evidence base: Phase B SAQ + rubric reports (<code>phase-b-saq-result-20260609.html</code>, <code>phase-b-rubric-result-20260609.html</code>).</p>
+<ul>
+  <li>SAQ: 26.7% of kenya responses convey <strong>zero</strong> key facts; of those, ~50% are scope refusals and ~41% defer-to-doctor without first-line content — i.e. ~91% behavioral, ~8% genuine knowledge misses.</li>
+  <li>Rubric: 61% of failing criteria are deflection; active commission ≈ 2%. The model treats referral as a <em>substitute</em> for management instead of a complement.</li>
+</ul>
+<p><strong>Prompt levers (from the SAQ report, all prompt-only):</strong></p>
+<ol>
+  <li>Reframe "either/or" → "both/and": give concrete first-line management <em>and then</em> advise escalation.</li>
+  <li>Authorize naming first-line drugs/doses with a "confirm against local protocol" caveat.</li>
+  <li>Fix geographic over-refusal: the vignette's country must not trigger scope refusal.</li>
+  <li>Widen the in-scope definition (family planning, GBV care).</li>
+</ol>
+<p><strong>Process:</strong> draft revised <code>system_en.txt</code>/<code>system_sw.txt</code> language, A/B on a stratified kenya sample (same judge, cluster) before committing to a full Phase B rerun. Watch the safety distribution for regressions — the current prompt's caution is also what keeps commission at 2%; the goal is moving "defer-only" mass to "manage-then-refer", not removing caution.</p>
+<div class="callout"><strong>Interaction with retrieval:</strong> prompt fixes and R1 compound — part of the refusal behavior is context-triggered (injected Zanzibar chunks → geographic refusal). Fixing only the prompt leaves noise-triggered refusals; fixing only the threshold leaves the deflection reflex. Plan to A/B them jointly (2×2 if budget allows).</div>
+
+<!-- ============================================================ -->
+<h2 id="corpus">3. Corpus / data-quality improvements <span class="tag p2">P2</span></h2>
+<ul>
+  <li><strong>Fix the 16 confirmed self-contradictory contexts</strong> (dosing-table vs prose conflicts, cross-guideline disagreements — e.g. misoprostol interval, prolonged-labour thresholds). These produce false hallucination flags downstream and, worse, contradictory bundles for the live app. File upstream against <code>mamai-medical-guidelines</code> / <code>mamaretrieval</code>. <span class="src">Source: oracle-self-contradictions v0.1.0/v0.2.0 reports.</span></li>
+  <li><strong>Chunk dedup / near-dup collapsing</strong> — duplicate-section merging was a root cause in the v0.1.0 contradiction audit and wastes bundle slots (directly caps P@3).</li>
+  <li><strong>When the German textbooks land:</strong> they enter the same pipeline — re-chunk, re-embed, and re-run the contradiction audit cross-lingually (conflicts between German and English guidance will be invisible to monolingual checks and to the generator's reader).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="eval">4. Eval-side improvements <span class="tag p1">P1</span></h2>
+<ul>
+  <li><strong>End-to-end gating for every retrieval change (non-negotiable):</strong> the SAQ report proves bundle content changes generator <em>behavior</em>, not just answer content. A retriever that wins HR@3 can still lose key-fact recall. Standard gate: stratified SAQ ±RAG A/B + safety distribution check + on-device latency budget.</li>
+  <li><strong>Messy/Swahili query set</strong> (see R3.1): quantifies the optimism of the clean-English benchmark and provides the regression set for query rewriting and the multilingual bake-off.</li>
+  <li><strong>Report recall honestly:</strong> all pool-recall numbers are relative to the 6-retriever top-20 union pool, with one judging process (graded 0–6) thresholded symmetrically (lenient ≥3 / strict ≥5) on both numerator and denominator. They are reliable for <em>comparing</em> retrievers, not as absolute "fraction of corpus knowledge". Judge label noise is higher at the strict cut (85% vs 95% agreement with Opus 4.7).</li>
+  <li><strong>Keep eval artifacts versioned per config</strong> — any new embedder or corpus version invalidates cached embeddings, thresholds, and the contradiction audit; re-run the affected pieces and stamp manifests as before.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="sequence">5. Suggested sequence</h2>
+<ol>
+  <li><strong>Now (offline, no GPU):</strong> R1 threshold sweep + R2a hybrid simulation + R2b oracle-rerank ceiling — all from existing audit files. Output: chosen threshold, go/no-go on hybrid and rerank.</li>
+  <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible).</li>
+  <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
+  <li><strong>In parallel:</strong> E1 messy/Swahili query set; C1 corpus-contradiction filing upstream.</li>
+  <li><strong>Later:</strong> R2d fine-tune/distill if the bake-off winner still leaves a strict-content gap; R3 LLM query rewrite only if the messy-query measurement shows real degradation that normalization + multilingual embedding don't fix.</li>
+</ol>
+
+<p class="src">Prepared 2026-06-11 on branch <code>docs/v0.2-improvement-plan-20260611</code>. Report index: <code>configs/config-v0.2.0/reports/README.md</code>. Retrieval numbers: mamaretrieval AUDIT_REPORT_v2.md (incl. the strict Pool Recall section added 2026-06-11). End-to-end numbers: Phase B reports of 2026-06-09.</p>
+
+</body>
+</html>

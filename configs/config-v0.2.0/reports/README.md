@@ -109,6 +109,12 @@ The open-ended tracks are LLM-judged, so the judge itself was validated first:
 
 ---
 
+## Improvement plan
+
+| Report | What it is |
+|---|---|
+| `improvement-plan-20260611.html` | **Improvement advice for the next cycle**, synthesizing all three pillars. P0: retrieval relevance threshold (stop injecting noise) + system-prompt fixes for deflection. P1: on-device retriever upgrade (hybrid / rerank / multilingual embedder bake-off) + eval-side messy/Swahili query set. P2: query rewriting, corpus-contradiction cleanup. Includes the offline-simulation plan that uses existing audit labels (no new judging) to validate retrieval options before device work. |
+
 ## One-paragraph synthesis
 
 The v0.2 evidence converges: **the system is safe but unhelpful, and the bottlenecks are
