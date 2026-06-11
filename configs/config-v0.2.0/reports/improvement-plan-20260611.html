@@ -101,6 +101,9 @@
 <div class="callout good">
 <strong>Headroom is proven:</strong> voyage/octen show the corpus supports ~0.99 lenient / ~0.75 strict HR@3. The gap is in our retriever, not the corpus. Known ceiling: ~25% of queries have no strict-relevant chunk in <em>any</em> retriever's top-3 — targets should be set against that ceiling, not 100%.</div>
 
+<div class="callout">
+<strong>Scope caveat on all numbers above:</strong> the benchmark's queries are clean English questions generated <em>from</em> single corpus chunks — a favorable distribution for any retriever. The deployment distribution — clinical vignettes (kenya/whb), messy phrasing, multi-turn conversations — is unmeasured on the retrieval axis. Cheap fix worth doing: the +RAG end-to-end runs already saved the retrieved bundles for the kenya/whb/HealthBench rows; judging a small stratified sample of those bundles with the same graded rubric would give retrieval-quality numbers on the actual deployment distribution for one small judging round.</div>
+
 <h3>R1 — Relevance threshold tuning <span class="tag p0">P0</span></h3>
 <p><strong>Goal:</strong> never inject a chunk we don't believe is relevant; fall back to no-RAG when the bundle is junk. At this stage we prefer abstention over noise.</p>
 <ul>
@@ -150,6 +153,7 @@
   <li><strong>Measure first (eval-side, cheap):</strong> build a "messy query" variant set of the benchmark — programmatic typos, medical-abbreviation substitutions, colloquial paraphrases, Swahili translations — and measure Gecko's degradation. This tells us whether rewriting is worth its latency before we build anything. <em>(This is the E1 work item.)</em></li>
   <li><strong>Dictionary normalization:</strong> on-device spelling correction + medical-abbreviation expansion (PPH → postpartum haemorrhage). No model call, microseconds, zero risk.</li>
   <li><strong>LLM rewrite with the deployed Gemma:</strong> the model is already resident — a short "rewrite this as a clear clinical query in English" call before embedding. Costs one extra prefill+decode (must be measured with <code>latency_eval</code> against the TTFT budget); also a natural place to bridge query language → corpus language for the German-textbook scenario.</li>
+  <li><strong>Conversational query contextualization (same machinery, distinct gap):</strong> the deployed pipeline embeds <em>only the latest user turn</em> (mirrored in <code>retrieval_eval/precompute_retrieval.py</code>). A follow-up like "and how much do I give?" carries no retrievable content on its own, so retrieval silently fails on exactly the turns where the nurse is asking for specifics. Options, cheapest first: concatenate the last N turns into the embedded query; or fold follow-up resolution into the Gemma rewrite above. Any fix should be evaluated on the multi-turn HealthBench rows, which are the only multi-turn data we currently have.</li>
   <li><strong>Multilingual embedder instead of rewriting</strong> (preferred long-term): if R2c lands a multilingual embedder, language bridging happens in embedding space and rewriting reduces to typo/abbreviation normalization only.</li>
 </ol>
 
