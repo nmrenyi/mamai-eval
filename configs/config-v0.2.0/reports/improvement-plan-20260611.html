@@ -73,6 +73,7 @@
   <tr><td>C1</td><td>Collect more high-quality relevant sources (corpus expansion)</td><td><span class="tag p0">P0</span></td><td>Sourcing + pipeline rerun + benchmark re-label</td><td>Coverage ceiling: a relevant chunk must exist before any retriever can find it</td></tr>
   <tr><td>R2</td><td>On-device retriever upgrade (embedder bake-off, hybrid, rerank)</td><td><span class="tag p1">P1</span></td><td>Offline sims free; device work moderate</td><td>Gecko's 2× precision gap; strict-content misses</td></tr>
   <tr><td>R3</td><td>Query rewriting / normalization (on-device)</td><td><span class="tag p2">P2</span></td><td>Eval set first, then prototype</td><td>Messy real-world queries; future German-textbook corpus</td></tr>
+  <tr><td>M1</td><td>MCQ track: R1 negative-control rerun, RAG-aware adapter prompt, no-RAG headline convention</td><td><span class="tag p2">P2</span></td><td>One cluster run + prompt tweak</td><td>Validates R1 cheaply; cleans the capability canary</td></tr>
   <tr><td>C2</td><td>Corpus cleanup (self-contradictions, dedup)</td><td><span class="tag p2">P2</span></td><td>Upstream guideline-repo work</td><td>16 confirmed contradictory contexts; false hallucination flags</td></tr>
   <tr><td>E1</td><td>Eval-side: messy/Swahili query set; end-to-end gating for all retrieval changes</td><td><span class="tag p1">P1</span></td><td>Small dataset work</td><td>Benchmark optimism; retrieval metrics ≠ end-to-end gains</td></tr>
 </table>
@@ -186,7 +187,20 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 <p>The oracle-track result (calibrated true-hallucination ≈ 9%, wide band 3–17%, strict rubric) does not motivate generator-side work: most raw Lynx flags are omission/refusal — the same deflection reflex G1 targets — and ~37% of the genuine contradiction flags trace to the <em>corpus contradicting itself</em>, not the model. The improvement work it does motivate lives in the corpus (C2) and eval (E1) sections below: contradiction cleanup, contradiction-aware scoring, and a clinician pass to pin the rate.</p>
 
 <!-- ============================================================ -->
-<h2 id="corpus">3. Corpus / data-quality improvements</h2>
+<h2 id="endtoend">3. End-to-end track improvements</h2>
+<p>The dominant end-to-end lever is G1 (section 2) — this section covers the per-track items beyond it. <em>(SAQ and HealthBench track items to be added as those reviews complete.)</em></p>
+
+<h3>M1 — MCQ track <span class="tag p2">P2</span></h3>
+<p>Evidence: <code>mcq-rag-effect-20260520.md</code> (23,241 rows). No-RAG 53.7%; +RAG 51.9% — a real −1.8 pp regression (disjoint CIs), worst on the most off-domain dataset (medqa_usmle −3.7 pp). Mechanism: with threshold 0.0, every USMLE question gets 3 maternal/neonatal chunks injected; RAG flipped the answer on 40% of rows, 53% of flips toward wrong. MCQ accuracy itself tracks base-model capability and is not a product goal — the track's value is as a <strong>negative control</strong> for retrieval noise. Four items, none of which is "improve MCQ accuracy":</p>
+<ul>
+  <li><strong>Use MCQ ±RAG as the R1 acceptance test.</strong> Nearly every MCQ retrieval is off-domain junk that a working abstention threshold should suppress — so after calibrating R1, rerun MCQ ±RAG (~1 h cluster): the −1.8 pp gap should collapse toward zero. If it persists, the threshold isn't doing its job. This is the cheapest pass/fail signal R1 can get.</li>
+  <li><strong>Make the MCQ adapter prompt RAG-aware</strong> (eval hygiene): add "use the context only if relevant; otherwise ignore it and answer from your own knowledge" — and/or run one arm with the clinical system prompt — to separate the prompt-format collision ("Reply with ONLY the letter" vs injected context block) from the domain-mismatch effect.</li>
+  <li><strong>Reporting convention: MCQ headline = no-RAG.</strong> Adding RAG to MCQ tests the wrong thing; pin the convention so future config reports don't quote the +RAG number.</li>
+  <li><strong>Monitor, don't optimize.</strong> Keep MCQ as a capability canary across config versions (cluster ≈ device per the calibration report, κ = 0.558). The only lever on the 53.7% itself is a different base model — out of scope.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="corpus">4. Corpus / data-quality improvements</h2>
 
 <h3>C1 — Collect more high-quality relevant sources <span class="tag p0">P0</span></h3>
 <p><strong>Why P0:</strong> coverage is the ceiling no retriever fix can raise — a relevant chunk must exist before any retriever can surface it. Two signals say coverage is short today: (1) ~25% of benchmark queries have no strict-relevant (complete/actionable) chunk in <em>any</em> retriever's top-3 — plausibly content that doesn't exist in the corpus at the needed specificity; (2) deployment-distribution topics the app should handle (family planning, GBV care, broader reproductive health — the SAQ over-refusal areas) are thinly covered. Note the audit <em>understates</em> coverage gaps by construction: its queries were generated from corpus chunks, so every query has an in-corpus answer; real-user topics with no corpus content never appear in it.</p>
@@ -206,7 +220,7 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 </ul>
 
 <!-- ============================================================ -->
-<h2 id="eval">4. Eval-side improvements <span class="tag p1">P1</span></h2>
+<h2 id="eval">5. Eval-side improvements <span class="tag p1">P1</span></h2>
 <ul>
   <li><strong>End-to-end gating for every retrieval change (non-negotiable):</strong> the SAQ report proves bundle content changes generator <em>behavior</em>, not just answer content. A retriever that wins HR@3 can still lose key-fact recall. Standard gate: stratified SAQ ±RAG A/B + safety distribution check + on-device latency budget.</li>
   <li><strong>Messy/Swahili query set</strong> (see R3.1): quantifies the optimism of the clean-English benchmark and provides the regression set for query rewriting and the multilingual bake-off.</li>
@@ -217,10 +231,10 @@ Retrieval metrics (HR / Precision / pool recall) are necessary but not sufficien
 </ul>
 
 <!-- ============================================================ -->
-<h2 id="sequence">5. Suggested sequence</h2>
+<h2 id="sequence">6. Suggested sequence</h2>
 <ol>
   <li><strong>Now (offline, no GPU):</strong> R1 threshold sweep + R2a hybrid simulation + R2b oracle-rerank ceiling — all from existing audit files. Output: chosen threshold, go/no-go on hybrid and rerank.</li>
-  <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible).</li>
+  <li><strong>Next:</strong> G1 prompt revision drafted and A/B'd on a stratified kenya sample (jointly with the R1 threshold if possible). Validate the chosen R1 threshold with the M1 MCQ ±RAG rerun — the −1.8 pp gap should collapse.</li>
   <li><strong>Then:</strong> R2c multilingual embedder bake-off on mamaretrieval; winner gets the on-device feasibility pass (quantization, latency, memory).</li>
   <li><strong>In parallel:</strong> C1 source collection (gap-targeted, starting from the kenya zero-recall topics); E1 messy/Swahili query set; C2 corpus-contradiction filing upstream.</li>
   <li><strong>Later:</strong> R2d fine-tune/distill if the bake-off winner still leaves a strict-content gap; R3 LLM query rewrite only if the messy-query measurement shows real degradation that normalization + multilingual embedding don't fix.</li>
