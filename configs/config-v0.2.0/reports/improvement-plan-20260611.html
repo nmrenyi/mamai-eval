@@ -106,8 +106,9 @@
 <ul>
   <li><strong>Why now:</strong> this is the only place retrieval <em>actively harms</em> the system today. MCQ −1.8 pp with RAG; SAQ zero-recall rows shift toward scope-refusal under RAG (50% → 67%), e.g. geographic over-refusal when Zanzibar-specific context is injected into a Kenya vignette.</li>
   <li><strong>How:</strong> calibrate a cosine-similarity cutoff offline against the existing 230k graded labels (sweep thresholds over Gecko's top-3 scores; trade injected-chunk precision vs abstention rate vs lost hits). Filter <em>per-chunk</em>, not all-or-nothing — keep 1–2 good chunks rather than forcing 3-or-none.</li>
-  <li><strong>Deployment:</strong> a config change (<code>params.json</code> <code>retrieval.similarity_threshold</code>) already plumbed through the app — near-zero engineering.</li>
-  <li><strong>Caveats:</strong> raw cosine from a quantized embedder may be poorly calibrated across query types — validate the cutoff per-dataset; re-calibrate whenever the embedder changes (ties to R2). Gate the final value on an end-to-end SAQ ±RAG A/B, not retrieval metrics alone.</li>
+  <li><strong>Deployment:</strong> a config change (<code>params.json</code> <code>retrieval.similarity_threshold</code>) already plumbed through the app — near-zero engineering. Abstaining also frees context/prefill budget on-device.</li>
+  <li><strong>Known difficulty — Gecko's scores are poorly separated:</strong> across the 3,185 audit queries, the mean cosine gap between rank 1 and rank 20 is only 0.09, and the rank-1 score distribution (p5–p95: 0.685–0.853) overlaps heavily with rank-20's (0.573–0.772). A single global cutoff may therefore have weak discriminating power. If the offline sweep confirms this, fall back to <em>relative</em> rules — e.g. keep only chunks within a margin δ of the query's top-1 score, or inject fewer chunks when the score curve is flat — rather than an absolute threshold.</li>
+  <li><strong>Caveats:</strong> validate the cutoff per-dataset (score calibration may drift across query types); re-calibrate whenever the embedder changes (ties to R2). Gate the final value on an end-to-end SAQ ±RAG A/B, not retrieval metrics alone.</li>
 </ul>
 
 <h3>R2 — On-device retriever upgrade <span class="tag p1">P1</span></h3>
@@ -117,19 +118,19 @@
   <tr><th>Option</th><th>What</th><th>Fixes</th><th>Validation path (no new judging needed)</th></tr>
   <tr>
     <td><strong>a. Hybrid retrieval (Gecko + BM25, RRF fusion)</strong></td>
-    <td>Run BM25 alongside Gecko on-device (trivially cheap, no GPU; lexically complementary: drug names, doses, exact terms), fuse with reciprocal-rank fusion.</td>
+    <td>Run BM25 alongside Gecko on-device (lexically complementary: drug names, doses, exact terms), fuse with reciprocal-rank fusion. Implementation is nearly free: the app already uses SQLite, and SQLite FTS5 ships BM25 ranking natively — an index table plus one query. Caveat: lexical match is monolingual; it will not bridge Swahili/German queries to English chunks.</td>
     <td>Ranking + some structural (different miss patterns)</td>
     <td>Compute fused top-3 HR/P from existing <code>data/full/*_top20.jsonl</code> + labels.</td>
   </tr>
   <tr>
     <td><strong>b. Retrieve-20 → rerank → keep-3</strong></td>
-    <td>Pull Gecko's top-20, rerank with a small on-device cross-encoder (or even the deployed Gemma scoring chunks), keep best 3.</td>
+    <td>Pull Gecko's top-20, rerank with a small on-device cross-encoder, keep best 3. Latency realism: a cross-encoder scores 20 (query, chunk) pairs per turn — only a very small model fits the budget; using the resident Gemma as reranker means ~20 short prefills and is likely too slow. Reranking cannot exceed the pool ceiling (lenient HR 0.977 / strict HR 0.755 — what's in Gecko's top-20).</td>
     <td>Ranking only (lenient HR ceiling 0.977; strict ceiling 0.755)</td>
     <td>Compute the oracle-rerank ceiling from labels first; build only if the ceiling justifies the latency cost.</td>
   </tr>
   <tr>
     <td><strong>c. Embedding bake-off</strong></td>
-    <td>Benchmark modern small multilingual embedders (e.g. EmbeddingGemma-class, quantized to LiteRT) against Gecko on mamaretrieval at k=3, lenient + strict.</td>
+    <td>Benchmark modern small multilingual embedders (e.g. EmbeddingGemma-class, quantized to LiteRT) against Gecko on mamaretrieval at k=3, lenient + strict. Candidate constraints: LiteRT-quantizable; vector store fits on device (63,650 chunks × 768-d fp32 ≈ 190 MB today — Matryoshka dim truncation or int8 embedding quantization cuts this 4–8× if a candidate's dim is larger); brute-force search latency acceptable at the chosen dim. Quick parity check worth doing regardless: if the embedder distinguishes query vs document encoding modes/prefixes, confirm the app actually uses the query mode — a silent mismatch here is free accuracy lost.</td>
     <td><strong>Structural</strong> — the only fix for the strict-content miss</td>
     <td>Embed corpus + queries per candidate, score against existing labels (new chunks outside the judged pool → small top-up judging round).</td>
   </tr>
