@@ -1,5 +1,5 @@
 {
-  "created_at_utc": "2026-06-12T12:44:59Z",
+  "created_at_utc": "2026-06-12T12:47:02Z",
   "table_dir": "configs/config-v0.2.0/results/retrieval_eval/r1-threshold",
   "fig1": {
     "top3_grade3": {
@@ -70,13 +70,13 @@
           "n": 369,
           "top1_mean": 0.6527
         },
-        "neutral": {
-          "n": 505,
-          "top1_mean": 0.6315
-        },
         "helped": {
           "n": 335,
           "top1_mean": 0.6436
+        },
+        "neutral": {
+          "n": 505,
+          "top1_mean": 0.6315
         }
       },
       "helped_vs_hurt": {

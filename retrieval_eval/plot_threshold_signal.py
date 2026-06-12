@@ -205,44 +205,34 @@ def _fig2_healthbench_row(table_b2: list[dict], axes, plt) -> dict:
     from scipy.stats import mannwhitneyu, spearmanr
 
     rows = [r for r in table_b2 if r["cosines"]]
-    top1 = np.array([r["cosines"][0] for r in rows])
+    top1_all = np.array([r["cosines"][0] for r in rows])
     delta = np.array([r["delta"] for r in rows])
-
-    axes[0].scatter(top1, delta, s=6, alpha=0.25, color="#4a6fa5")
-    # Binned means over cosine deciles, with standard-error bars.
-    edges = np.quantile(top1, np.linspace(0, 1, 11))
-    mids, means, ses = [], [], []
-    for lo, hi in zip(edges[:-1], edges[1:]):
-        m = (top1 >= lo) & (top1 <= hi)
-        if m.sum():
-            mids.append(top1[m].mean())
-            means.append(delta[m].mean())
-            ses.append(delta[m].std() / np.sqrt(m.sum()))
-    axes[0].errorbar(mids, means, yerr=ses, fmt="o-", color="#b3372f",
-                     label="decile mean ± SE")
-    axes[0].axhline(0, ls=":", color="gray")
-    rho, pval = spearmanr(top1, delta)
-    axes[0].set_xlabel("top-1 Gecko cosine")
-    axes[0].set_ylabel("weighted_met delta (+RAG − no-RAG)")
-    axes[0].set_title(f"HealthBench: per-row RAG effect vs bundle score "
-                      f"(Spearman ρ={rho:.3f}, p={pval:.2g})")
-    axes[0].legend(fontsize=8)
+    rho, pval = spearmanr(top1_all, delta)
 
     groups = {"hurt": [r for r in rows if r["delta"] <= -NEUTRAL_DEADBAND],
               "neutral": [r for r in rows if abs(r["delta"]) < NEUTRAL_DEADBAND],
               "helped": [r for r in rows if r["delta"] >= NEUTRAL_DEADBAND]}
-    colors = {"hurt": "#b3372f", "neutral": "#888888", "helped": "#2c7a3f"}
-    order = ["hurt", "neutral", "helped"]
-    data = [np.array([r["cosines"][0] for r in groups[o]]) for o in order]
-    parts = axes[1].violinplot(data, showmedians=True)
-    for body, o in zip(parts["bodies"], order):
-        body.set_facecolor(colors[o])
-        body.set_alpha(0.6)
-    axes[1].set_xticks([1, 2, 3])
-    axes[1].set_xticklabels([f"{o}\nn={len(groups[o]):,}" for o in order])
-    axes[1].set_ylabel("top-1 Gecko cosine")
-    axes[1].set_title(
-        f"HealthBench: bundle score by RAG outcome (|delta| >= {NEUTRAL_DEADBAND})")
+    colors = {"hurt": "#b3372f", "helped": "#2c7a3f", "neutral": "#888888"}
+    order = ["hurt", "helped", "neutral"]
+
+    def top1(rows_):
+        return np.array([r["cosines"][0] for r in rows_])
+
+    def mean3(rows_):
+        return np.array([float(np.mean(r["cosines"])) for r in rows_])
+
+    for ax, fn, title in (
+            (axes[0], top1, "HealthBench: top-1 cosine"),
+            (axes[1], mean3, "HealthBench: mean cosine of injected bundle")):
+        data = [fn(groups[o]) for o in order]
+        parts = ax.violinplot(data, showmedians=True)
+        for body, o in zip(parts["bodies"], order):
+            body.set_facecolor(colors[o])
+            body.set_alpha(0.6)
+        ax.set_xticks([1, 2, 3])
+        ax.set_xticklabels([f"{o}\nn={len(groups[o]):,}" for o in order])
+        ax.set_ylabel("Gecko cosine")
+        ax.set_title(f"{title} (|delta| >= {NEUTRAL_DEADBAND})")
 
     metrics = {
         "n_rows": len(rows),
