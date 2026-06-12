@@ -4,6 +4,17 @@
 `configs/config-v0.2.0/reports/improvement-plan-20260611.html`. Work branch:
 `feat/r1-retrieval-threshold-20260611`.*
 
+> **CLOSED 2026-06-12 — negative result.** Both pre-registered gates failed, on
+> three surfaces: Figure 1 (label gate) AUC 0.572 / concordance 0.623 / bundle
+> AUC 0.574 — all rule families lack their required signal; Figure 2 (outcome
+> gate) helped-vs-hurt AUC 0.553 on MCQ and 0.472 (inverted) on HealthBench.
+> **No threshold ships** (`similarity_threshold` stays `0.0`); Figures 3–5 and
+> Tiers 2–3 below were cancelled as moot. Result of record:
+> [`configs/config-v0.2.0/reports/r1-threshold/r1-threshold-negative-result-20260612.html`](../configs/config-v0.2.0/reports/r1-threshold/r1-threshold-negative-result-20260612.html).
+> The Tables A/B/B2 builders and the Fig 1–2 gate remain live as the
+> score-quality screen for R2 candidate embedders (Stage 1 — label gate — is
+> ~free per candidate; Stage 2 — outcome gate — only for candidates that pass).
+
 ---
 
 ## Goal
