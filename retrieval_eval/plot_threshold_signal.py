@@ -56,20 +56,24 @@ def fig1(table_a: list[dict], report_dir: Path) -> dict:
         "top3": [r for r in table_a if r["gecko_rank"] <= 3],
         "top20": [r for r in table_a if r["gecko_rank"] <= 20],
     }
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
+    fig, axes2d = plt.subplots(2, 2, figsize=(12, 9))
+    axes = [axes2d[0, 0], axes2d[1, 0], axes2d[1, 1]]
 
     rows3 = pops["top3"]
     cos3 = np.array([r["cosine"] for r in rows3])
-    rel3 = np.array([r["grade"] >= 3 for r in rows3])
     bins = np.linspace(min(cos3), max(cos3), 60)
-    axes[0].hist(cos3[rel3], bins=bins, density=True, alpha=0.55,
-                 label=f"relevant (grade>=3), n={rel3.sum():,}", color="#2c7a3f")
-    axes[0].hist(cos3[~rel3], bins=bins, density=True, alpha=0.55,
-                 label=f"junk (grade<3), n={(~rel3).sum():,}", color="#b3372f")
-    axes[0].set_xlabel("Gecko cosine score")
-    axes[0].set_ylabel("density")
-    axes[0].set_title("Gecko top-3 chunks: score by relevance")
-    axes[0].legend(fontsize=8)
+    for ax, grade_cut in ((axes2d[0, 0], 3), (axes2d[0, 1], 5)):
+        rel = np.array([r["grade"] >= grade_cut for r in rows3])
+        ax.hist(cos3[rel], bins=bins, density=True, alpha=0.55,
+                label=f"relevant (grade>={grade_cut}), n={rel.sum():,}",
+                color="#2c7a3f")
+        ax.hist(cos3[~rel], bins=bins, density=True, alpha=0.55,
+                label=f"junk (grade<{grade_cut}), n={(~rel).sum():,}",
+                color="#b3372f")
+        ax.set_xlabel("Gecko cosine score")
+        ax.set_ylabel("density")
+        ax.set_title(f"top-3 chunks: score by relevance (grade>={grade_cut})")
+        ax.legend(fontsize=8)
 
     for pop_name, rows in pops.items():
         cos = np.array([r["cosine"] for r in rows])
