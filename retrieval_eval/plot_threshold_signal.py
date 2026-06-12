@@ -109,6 +109,42 @@ def fig1(table_a: list[dict], report_dir: Path) -> dict:
     axes[2].set_ylabel("precision of kept chunks")
     axes[2].set_title("Precision-recall")
     axes[2].legend(fontsize=8)
+
+    # Supplementary statistics cited in the report (not plotted):
+    # (a) within-query concordance — among (relevant, junk) pairs drawn from the
+    #     SAME top-3 bundle, how often does the relevant chunk score higher?
+    #     This is the signal available to relative rules (margin-from-top-1).
+    # (b) bundle-level AUC — does a bundle's top-1/mean score predict whether
+    #     the bundle contains ANY relevant chunk? The signal available to
+    #     gated-abstention rules.
+    from sklearn.metrics import roc_auc_score
+    by_q: dict[str, list[dict]] = {}
+    for r in pops["top3"]:
+        by_q.setdefault(r["query_id"], []).append(r)
+    conc, tot = 0, 0
+    b_top1, b_mean, b_hasrel = [], [], []
+    for ch in by_q.values():
+        rel_ch = [c for c in ch if c["grade"] >= 3]
+        junk_ch = [c for c in ch if c["grade"] < 3]
+        for a in rel_ch:
+            for b in junk_ch:
+                tot += 1
+                conc += a["cosine"] > b["cosine"]
+        cs = [c["cosine"] for c in ch]
+        b_top1.append(max(cs))
+        b_mean.append(float(np.mean(cs)))
+        b_hasrel.append(bool(rel_ch))
+    metrics["top3_within_query_concordance"] = {
+        "value": round(conc / tot, 4), "n_pairs": tot,
+        "definition": "share of same-bundle (relevant, junk) pairs where the "
+                      "relevant chunk has the higher cosine",
+    }
+    metrics["bundle_any_relevant_auc"] = {
+        "top1": round(float(roc_auc_score(b_hasrel, b_top1)), 4),
+        "mean3": round(float(roc_auc_score(b_hasrel, b_mean)), 4),
+        "n_bundles": len(b_hasrel),
+        "base_rate": round(float(np.mean(b_hasrel)), 4),
+    }
     fig.suptitle("Figure 1 — does Gecko's cosine separate relevant from junk? "
                  "(Table A: mamaretrieval grades)", y=1.02)
     fig.tight_layout()
