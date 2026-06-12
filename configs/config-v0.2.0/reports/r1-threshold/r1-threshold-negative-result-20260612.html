@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R1 — Retrieval relevance threshold: negative result (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --bad: #9b1c1c; --badbg: #fde8e8;
+          --good: #14532d; --goodbg: #e7f3ea; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  h3 { font-size: 1rem; margin-top: 1.6rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--badbg); color: var(--bad); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .fail { color: var(--bad); font-weight: 600; }
+  .pass { color: var(--good); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px;
+        margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px;
+         font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R1 — Retrieval relevance threshold: negative result</h1>
+<p class="meta">2026-06-12 · config-v0.2.0 · branch <code>feat/r1-retrieval-threshold-20260611</code> ·
+closes the P0 item “R1 — Relevance threshold tuning” of the
+<a href="../improvement-plan-20260611.html">v0.2 improvement plan</a></p>
+
+<div class="verdict">
+Gecko’s cosine similarity score carries no usable information about whether a
+retrieved chunk — or a whole bundle — is relevant. No threshold rule on it
+(absolute, relative-margin, or gated) can suppress the harmful RAG injections
+without abstaining on a comparable share of the helpful ones.
+<strong>No threshold ships: <code>retrieval.similarity_threshold</code> stays
+<code>0.0</code>, and the planned sweep/election/ratification stages (Figures 3–5,
+Tiers 2–3) are cancelled as moot.</strong>
+</div>
+
+<h2>1. Question and pre-registered decision rule</h2>
+<p>
+RAG currently harms the system: −1.8 pp on MCQ accuracy, and SAQ zero-recall rows
+shift toward scope-refusal when off-topic chunks are injected. R1 proposed the
+cheapest fix: calibrate a per-chunk relevance cutoff on Gecko’s cosine scores so
+junk bundles trigger fall-back to no-RAG (“abstention over noise”).
+</p>
+<p>
+Per <code>docs/r1-threshold-tuning-plan.md</code>, two fail-fast gates were fixed
+<em>before</em> looking at the data:
+</p>
+<ul>
+  <li><strong>Figure 1 (label gate):</strong> can the score separate relevant
+      (judge grade ≥ 3) from junk chunks? AUC ≳ 0.80 → absolute cutoff viable;
+      0.65–0.80 → relative rules; <strong>≤ 0.60 → stop, file a negative
+      result</strong>.</li>
+  <li><strong>Figure 2 (outcome gate):</strong> do the bundles that actually
+      flipped end-to-end outcomes for the worse sit at visibly lower scores than
+      those that helped? If not, filtering cannot close the −1.8 pp gap.</li>
+</ul>
+<p>Both gates failed, on three independent test surfaces.</p>
+
+<h2>2. Data</h2>
+<table>
+  <tr><th>Table</th><th>Contents</th><th>Provenance / integrity</th></tr>
+  <tr>
+    <td>A — judged chunks</td>
+    <td>63,700 (query, chunk) pairs: Gecko’s top-20 for the 3,185 mamaretrieval
+        audit queries, each with cosine score and 0–6 relevance grade
+        (Qwen3.5-397B judge, validated 95%/85% vs Opus&nbsp;4.7)</td>
+    <td>Joined from <code>nmrenyi/mamaretrieval@v0.2.0</code>
+        (<code>rankings.parquet</code> × judgments). 100% of Gecko’s top-20 is
+        judged. Base-rate precision reproduces the audit’s P@3 = 0.477 exactly.</td>
+  </tr>
+  <tr>
+    <td>B — MCQ outcomes</td>
+    <td>23,241 rows: the committed ±RAG Gemma runs joined per question
+        (hurt 3,403 / helped 2,980 / unchanged 16,858 — net −423 rows
+        ≡ the −1.8 pp gap), with locally recomputed bundle cosines</td>
+    <td>Runs <code>20260520T032705-cluster-norag</code> /
+        <code>20260520T082028-cluster-rag</code>. Recomputed contexts match the
+        stored injected contexts on 97.4% of rows; mismatching rows are excluded
+        from score statistics.</td>
+  </tr>
+  <tr>
+    <td>B2 — HealthBench outcomes</td>
+    <td>1,209 oss_eval rows: ±RAG rubric runs joined on judge-scored
+        <code>weighted_met</code> (gpt-oss-120b), delta = RAG − no-RAG, with
+        locally recomputed bundle cosines (latest-user-turn retrieval, app
+        parity)</td>
+    <td>Runs <code>20260521T123051-cluster-norag-rubric</code> /
+        <code>20260521T122626-cluster-rag-rubric</code>. Rubric rows store no
+        context, so per-row parity is not verifiable; inherited from the same
+        pipeline’s 97.4% MCQ verification.</td>
+  </tr>
+</table>
+<p class="note">
+All tables, manifests and figures are committed under
+<code>configs/config-v0.2.0/results/retrieval_eval/r1-threshold/</code> and
+<code>configs/config-v0.2.0/reports/r1-threshold/</code>.
+</p>
+
+<h2>3. Figure 1 — the label gate <span class="fail">FAILED</span></h2>
+<figure>
+  <img src="fig1_score_separation.png" alt="Figure 1: score separation histograms, ROC, PR">
+  <figcaption>Cosine distributions of relevant vs junk chunks in Gecko’s top-3
+  (top row: grade ≥ 3 and grade ≥ 5 definitions), with ROC and precision–recall
+  curves (bottom row).</figcaption>
+</figure>
+<table>
+  <tr><th>Test (top-3 population, n = 9,555)</th><th class="num">Result</th>
+      <th class="num">Viability bar</th></tr>
+  <tr><td>Chunk-level AUC, grade ≥ 3 (absolute cutoff)</td>
+      <td class="num fail">0.572</td><td class="num">≥ 0.80 (stop ≤ 0.60)</td></tr>
+  <tr><td>Chunk-level AUC, grade ≥ 5 (strict relevance)</td>
+      <td class="num fail">0.540</td><td class="num">—</td></tr>
+  <tr><td>Within-query concordance (margin / relative rules)</td>
+      <td class="num fail">0.623</td><td class="num">≈ 1 would be ideal; 0.5 = chance</td></tr>
+  <tr><td>Bundle top-1 AUC for “any relevant chunk in bundle” (gated abstention)</td>
+      <td class="num fail">0.574</td><td class="num">—</td></tr>
+</table>
+<p class="note">
+All four statistics are computed from Table A’s top-3 rows by
+<code>retrieval_eval/plot_threshold_signal.py</code> (values in
+<code>threshold_signal_metrics.json</code>). The chunk-level AUCs pool all
+9,555 chunks, so most compared pairs come from different queries — they test
+whether score <em>magnitudes</em> are comparable corpus-wide, the assumption
+behind an absolute cutoff. The <strong>within-query concordance</strong>
+restricts the comparison to pairs from the <em>same</em> bundle: across the
+4,182 (relevant, junk) pairs that co-occur in a top-3 bundle, the relevant
+chunk has the higher cosine 62.3% of the time — the signal available to
+relative rules, which only compare a bundle against itself. The bundle-level
+AUC scores each of the 3,185 bundles by its top-1 (or mean) cosine and asks
+whether that predicts containing any relevant chunk (base rate 81.4%) — the
+signal available to gated abstention.
+</p>
+<p>
+The practical reading is in the PR panel: today’s unfiltered bundle precision is
+0.477 and the R1 target was ~0.7–0.8. Even at τ = 0.80 — which discards 75% of
+the genuinely relevant chunks and keeps only 21% of all chunks — precision
+reaches just 0.563. The target region is unreachable at any threshold.
+</p>
+
+<h2>4. Figure 2 — the outcome gate <span class="fail">FAILED</span> (both surfaces)</h2>
+<figure>
+  <img src="fig2_outcome_separation.png" alt="Figure 2: bundle scores by RAG outcome, MCQ and HealthBench">
+  <figcaption>Bundle scores by ±RAG outcome. Top: MCQ accuracy flips (tune half,
+  parity-matched rows). Bottom: HealthBench oss_eval rubric-score deltas
+  (|delta| ≥ 0.05 deadband for grouping).</figcaption>
+</figure>
+<table>
+  <tr><th>Surface</th><th class="num">helped-vs-hurt AUC (top-1 cosine)</th><th>Reading</th></tr>
+  <tr><td>MCQ (n = 1,655 hurt / 1,449 helped)</td><td class="num fail">0.553</td>
+      <td>Statistically real (Mann-Whitney p = 1.6×10⁻⁷) but tiny: mean score
+          gap 0.016 on near-fully-overlapping distributions.</td></tr>
+  <tr><td>HealthBench oss_eval (369 hurt / 335 helped)</td><td class="num fail">0.472</td>
+      <td>Direction <em>inverted</em>: harmful bundles score slightly
+          <em>higher</em>. Spearman(top-1, delta) = −0.05 (p = 0.085).</td></tr>
+</table>
+<h3>Deadband sensitivity (HealthBench grouping)</h3>
+<p>The 0.05 “neutral” deadband is a presentation choice, not evidence; the
+conclusion is invariant to it:</p>
+<table>
+  <tr><th class="num">deadband</th><th class="num">0.00</th><th class="num">0.02</th>
+      <th class="num">0.05</th><th class="num">0.10</th><th class="num">0.15</th>
+      <th class="num">0.20</th></tr>
+  <tr><td>helped-vs-hurt AUC</td><td class="num">0.480</td><td class="num">0.484</td>
+      <td class="num">0.472</td><td class="num">0.444</td><td class="num">0.432</td>
+      <td class="num">0.435</td></tr>
+</table>
+
+<h3>Reconciling this with Gecko’s 81% hit rate</h3>
+<p>
+These results do not say Gecko is useless — per query, it does real work. HR@3 =
+0.814 means four of five bundles contain at least one relevant chunk. A random
+baseline makes the contrast concrete. The true number of relevant chunks per
+query is unknown: the judged pool (union of six retrievers’ top-20) finds ~20
+per query, but that is a lower bound, and the pool is demonstrably unsaturated —
+41.5% of relevant chunks were surfaced by only one of the six retrievers, so
+more presumably exist outside the pool. The comparison therefore inverts the
+question instead of estimating: for random top-3 draws from the 63,650-chunk
+corpus to match Gecko’s 81% hit rate, a query would need
+1 − (1 − R/63,650)³ = 0.814, i.e. R ≈ 27,000 relevant chunks — <em>43% of the
+entire corpus</em> relevant to a single clinical question. Even a modest 10% hit
+rate would require ~2,200 relevant chunks per query (3.5% of the corpus).
+Whatever the true count is, it is nowhere near that, so Gecko’s lift over random
+is orders of magnitude: it reliably finds chunks <em>on the right topic</em>.
+</p>
+<p>
+The threshold, however, needed a different ability: among the on-topic chunks
+that already made the top-3, tell the ones that actually answer the question
+(47.7%) from the ones that merely share its vocabulary. There the score fails
+twice over. Across queries, score magnitudes are not comparable — one query’s
+0.75 is no more trustworthy than another’s 0.68 — so no fixed cutoff works
+(AUC 0.572). And within a single bundle, the ordering is nearly random with
+respect to true relevance — the genuinely useful chunk outscores the junk one
+only 62% of the time — so margin-from-top-1 rules fail too. <strong>Gecko can
+find the topic but cannot grade usefulness within it</strong>, and a threshold
+can only act on the second ability: by the time scores are compared, the
+topic-finding work is already done.
+</p>
+
+<h2>5. Secondary finding — platform-dependent scores</h2>
+<p>
+The same quantized Gecko TFLite model produces different cosine scores per
+platform: comparing the cluster (x86) audit rankings against a local
+Apple-silicon run of the identical script and assets over 1,793 shared pairs —
+median |Δ| 0.004, p90 0.012, max 0.063; <strong>top-3 membership agrees only
+84.3%</strong> at chunk level. The deployment target (Android/ARM) is a third
+platform. Consequence: any absolute score threshold would carry a ~±0.02
+platform noise band on top of its (absent) signal, and <em>future score-based
+logic must be calibrated on the deployment platform, not the cluster</em>.
+</p>
+
+<h2>6. Is thresholding dead in general, or just for Gecko?</h2>
+<p>
+The Stage-1 gate costs nothing to run for the other five audit retrievers —
+their top-20 rankings are in <code>rankings.parquet</code> against the same
+judgments. medcpt and octen published rank-only data, so the two pooled
+score statistics are not computable for them; the within-bundle concordance
+survives, because inside a bundle rank order <em>is</em> score order. Stage 2
+is not computable for any of them, as no end-to-end runs used their
+retrievals.
+</p>
+<figure>
+  <img src="fig_retriever_gate_comparison.png"
+       alt="Stage-1 gate statistics for voyage, bm25, gecko, lateon">
+  <figcaption>The three Stage-1 statistics per retriever, top-3 population.
+  Dotted line = chance (0.5); dashed = the 0.80 viability bar. Gecko in red.</figcaption>
+</figure>
+<table>
+  <tr><th>Retriever</th><th class="num">chunk AUC ≥3</th>
+      <th class="num">concordance</th><th class="num">bundle AUC</th>
+      <th class="num">P@3</th><th>Note</th></tr>
+  <tr><td>octen-8B</td><td class="num">—</td><td class="num">0.762</td>
+      <td class="num">—</td><td class="num">0.804</td>
+      <td>cluster-only; rank-only data (pooled stats n/a)</td></tr>
+  <tr><td>voyage-4-large</td><td class="num">0.734</td><td class="num">0.755</td>
+      <td class="num">0.750</td><td class="num">0.867</td>
+      <td>API-only reference ceiling</td></tr>
+  <tr><td>lateon</td><td class="num">0.501</td><td class="num">0.708</td>
+      <td class="num">0.538</td><td class="num">0.738</td>
+      <td>scores incomparable across queries, decent within-bundle</td></tr>
+  <tr><td>bm25</td><td class="num">0.646</td><td class="num">0.658</td>
+      <td class="num">0.684</td><td class="num">0.417</td>
+      <td>on-device feasible (SQLite FTS5, R2a)</td></tr>
+  <tr><td><strong>gecko (deployed)</strong></td><td class="num fail">0.572</td>
+      <td class="num fail">0.623</td><td class="num fail">0.574</td>
+      <td class="num">0.477</td><td>second-worst concordance, worst pooled scores</td></tr>
+  <tr><td>medcpt</td><td class="num">—</td><td class="num">0.603</td>
+      <td class="num">—</td><td class="num">0.335</td>
+      <td>rank-only data (pooled stats n/a)</td></tr>
+</table>
+<p>Three readings:</p>
+<ul>
+  <li><strong>No retriever passes the bar.</strong> Even voyage — the API-only
+      quality ceiling — sits at 0.73–0.76 on all three score statistics, below
+      the 0.80 viability bar, and octen (the strongest cluster-feasible ranker,
+      concordance 0.762) is the only value that touches it. Score-based
+      filtering is at best marginal even with the best retrievers tested, and
+      hopeless on Gecko’s scores. Thresholding should not be assumed to revive
+      automatically under R2.</li>
+  <li><strong>Score quality is a separate axis from ranking quality.</strong>
+      lateon ranks well (P@3 = 0.738, HR@3 = 0.971) yet its pooled chunk AUC is
+      0.501 — its score <em>magnitudes</em> carry zero cross-query meaning,
+      while its within-bundle ordering (0.708) is strong. medcpt is the inverse
+      cautionary case: weak ranking (P@3 = 0.335) and the weakest concordance
+      (0.603) of all six. A bake-off that only checked P@k would see none of
+      this — which is exactly why both gate statistics belong in the R2 screen.</li>
+  <li><strong>BM25’s scores beat Gecko’s on every computable statistic</strong>
+      — notably bundle-level junk detection (0.684 vs 0.574) — while being
+      deployable on-device. This strengthens the R2a hybrid case: lexical scores
+      add not just complementary recall but a more meaningful confidence signal
+      than the embedding provides.</li>
+</ul>
+
+<h2>7. Decision</h2>
+<ul>
+  <li><strong>No threshold ships.</strong> <code>params.json</code> →
+      <code>retrieval.similarity_threshold</code> remains <code>0.0</code>; a
+      nonzero value would be a placebo with platform-noise side effects.</li>
+  <li><strong>Figures 3–5 and Tiers 2–3 of the plan are cancelled.</strong>
+      Frontier curves over a near-chance classifier and an H200 election among
+      indistinguishable candidates would spend compute to no end.</li>
+  <li><strong>The M1 “gap collapses” acceptance rerun is moot</strong> for R1
+      (nothing changed to validate); it remains the standing probe for R2/C1
+      changes.</li>
+</ul>
+
+<h2>8. Implications for the improvement plan</h2>
+<ul>
+  <li><strong>R2 (retriever upgrade) inherits R1’s priority.</strong> The harm
+      mechanism is not “low-scoring junk we failed to filter” — Gecko retrieves
+      junk <em>confidently</em>. Score quality must become an explicit R2
+      bake-off criterion: every candidate embedder gets a Figure-1 AUC on these
+      same committed tables before any device work. The table builders in
+      <code>retrieval_eval/</code> are the harness for exactly that.</li>
+  <li><strong>R2 candidates must be score-checked on the deployment
+      platform</strong> (see §5) if any score-based logic is ever revisited.</li>
+  <li><strong>G1 (prompt-side robustness to junk context) is now the only
+      near-term lever</strong> for the RAG-hurts problem, since the retrieval-side
+      cheap fix is ruled out. The G1/R1 2×2 A/B planned for SAQ reduces to a
+      prompt-only A/B.</li>
+  <li><strong>SAQ stays untouched.</strong> The 369 open-ended rows were never
+      consumed by this analysis and remain a clean held-out set for the next
+      cycle.</li>
+</ul>
+
+<h2>9. Reproducibility</h2>
+<pre># Table A — audit labels × Gecko rankings (seconds; no GPU)
+python -m retrieval_eval.build_sweep_table \
+    --output-dir configs/config-v0.2.0/results/retrieval_eval/r1-threshold
+
+# Table B — MCQ ±RAG outcomes × recomputed bundle scores (~3 h laptop CPU, or cluster)
+python -m retrieval_eval.build_mcq_outcome_table \
+    --norag-dir configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260520T032705-cluster-norag \
+    --rag-dir   configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260520T082028-cluster-rag \
+    --output-dir configs/config-v0.2.0/results/retrieval_eval/r1-threshold
+
+# Table B2 — HealthBench ±RAG rubric outcomes (~10 min)
+python -m retrieval_eval.build_rubric_outcome_table \
+    --norag-dir configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T123051-cluster-norag-rubric \
+    --rag-dir   configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260521T122626-cluster-rag-rubric \
+    --datasets healthbench_oss_eval \
+    --output-dir configs/config-v0.2.0/results/retrieval_eval/r1-threshold
+
+# Figures 1–2 + metrics JSON
+python -m retrieval_eval.plot_threshold_signal \
+    --table-dir  configs/config-v0.2.0/results/retrieval_eval/r1-threshold \
+    --report-dir configs/config-v0.2.0/reports/r1-threshold --figures 1,2
+
+# §6 — Stage-1 gate across all audit retrievers (seconds; joins only)
+python -m retrieval_eval.compare_retriever_gates \
+    --report-dir configs/config-v0.2.0/reports/r1-threshold</pre>
+<p class="meta">
+Assets: <code>Gecko_1024_quant.tflite</code> + <code>sentencepiece.model</code>
+(deployed app artifacts) and the rag-bundle-v0.2.0 <code>embeddings.sqlite</code>;
+exact paths and counts in the per-table <code>*.manifest.json</code>. Metrics:
+<code>threshold_signal_metrics.json</code>.
+</p>
+
+</body>
+</html>

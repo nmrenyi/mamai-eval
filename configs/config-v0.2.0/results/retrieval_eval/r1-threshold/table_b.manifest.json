@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "name": "r1-threshold-table-b",
+  "created_at_utc": "2026-06-12T11:29:55Z",
+  "source_runs": {
+    "norag": "configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260520T032705-cluster-norag",
+    "rag": "configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260520T082028-cluster-rag"
+  },
+  "assets": {
+    "db": "embeddings.sqlite",
+    "gecko_model": "Gecko_1024_quant.tflite",
+    "tokenizer": "sentencepiece.model"
+  },
+  "retrieval": {
+    "top_k": 3
+  },
+  "counts": {
+    "n_rows": 23241,
+    "per_dataset": {
+      "medmcqa": {
+        "norag": 18508,
+        "rag": 18508,
+        "joined": 18508
+      },
+      "medqa_usmle": {
+        "norag": 4199,
+        "rag": 4199,
+        "joined": 4199
+      },
+      "afrimedqa": {
+        "norag": 534,
+        "rag": 534,
+        "joined": 534
+      }
+    },
+    "outcomes": {
+      "unchanged": 16858,
+      "hurt": 3403,
+      "helped": 2980
+    },
+    "context_parity_rate": 0.9742
+  },
+  "split_rule": "md5(id) % 2 \u2014 tune if even; selection uses tune only",
+  "data_file": "table_b.jsonl.gz"
+}

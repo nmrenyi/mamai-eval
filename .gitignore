@@ -227,3 +227,4 @@ configs/**/results/generator/**/calibration_rubric.txt
 # macOS Finder metadata
 .DS_Store
 */.DS_Store
+.venv-r1/

@@ -1,0 +1,91 @@
+{
+  "created_at_utc": "2026-06-12T13:35:26Z",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.2.0"
+  },
+  "gate": "Stage 1 (label gate) only \u2014 no end-to-end runs exist for non-deployed retrievers, so Stage 2 (outcome gate) is not computable here",
+  "retrievers": {
+    "bm25": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.4174,
+      "hr_at_3": 0.7542,
+      "chunk_auc_grade3": 0.6461,
+      "chunk_auc_grade5": 0.6358,
+      "within_bundle_concordance": 0.6585,
+      "concordance_n_pairs": 4050,
+      "bundle_any_relevant_auc_top1": 0.6841,
+      "n_unjudged_top20": 0,
+      "note": "lexical \u2014 on-device feasible via SQLite FTS5 (R2a)"
+    },
+    "gecko": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.4771,
+      "hr_at_3": 0.8135,
+      "chunk_auc_grade3": 0.5724,
+      "chunk_auc_grade5": 0.5404,
+      "within_bundle_concordance": 0.6231,
+      "concordance_n_pairs": 4182,
+      "bundle_any_relevant_auc_top1": 0.5744,
+      "n_unjudged_top20": 0,
+      "note": "deployed on-device retriever"
+    },
+    "lateon": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.7378,
+      "hr_at_3": 0.9711,
+      "chunk_auc_grade3": 0.5012,
+      "chunk_auc_grade5": 0.5259,
+      "within_bundle_concordance": 0.7078,
+      "concordance_n_pairs": 3330,
+      "bundle_any_relevant_auc_top1": 0.5384,
+      "n_unjudged_top20": 0,
+      "note": "audit comparator"
+    },
+    "medcpt": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.3345,
+      "hr_at_3": 0.6443,
+      "chunk_auc_grade3": null,
+      "chunk_auc_grade5": null,
+      "within_bundle_concordance": 0.6032,
+      "concordance_n_pairs": 3632,
+      "bundle_any_relevant_auc_top1": null,
+      "rank_only": true,
+      "n_unjudged_top20": 0,
+      "note": "audit comparator"
+    },
+    "octen": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.8037,
+      "hr_at_3": 0.9906,
+      "chunk_auc_grade3": null,
+      "chunk_auc_grade5": null,
+      "within_bundle_concordance": 0.762,
+      "concordance_n_pairs": 2786,
+      "bundle_any_relevant_auc_top1": null,
+      "rank_only": true,
+      "n_unjudged_top20": 0,
+      "note": "cluster-only (8B) \u2014 not deployable on-device"
+    },
+    "voyage": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.8668,
+      "hr_at_3": 0.9956,
+      "chunk_auc_grade3": 0.734,
+      "chunk_auc_grade5": 0.6129,
+      "within_bundle_concordance": 0.7553,
+      "concordance_n_pairs": 1990,
+      "bundle_any_relevant_auc_top1": 0.7505,
+      "n_unjudged_top20": 0,
+      "note": "API-only \u2014 reference ceiling, not deployable"
+    }
+  },
+  "skipped": {}
+}
