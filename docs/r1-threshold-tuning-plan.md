@@ -66,6 +66,33 @@ Steps:
 Train/test hygiene: split the MCQ rows in half — tune on one half, reserve the other
 for acceptance. Open-ended rows are never used in Tier 1.
 
+#### Tier 1 deliverables — five figures
+
+All Tier-1 analysis reduces to two tables and five figures.
+
+Table A (audit sweep table, Source A): one row per judged (query, chunk) pair —
+`query_id | chunk_id | rank | cosine | grade(0–6)`; relevant = grade ≥ 3.
+Table B (MCQ outcome table, Source B): one row per MCQ question —
+`row_id | dataset | top-3 cosines | correct_noRAG | correct_RAG`; each row labelled
+hurt (right→wrong), helped (wrong→right), or unchanged.
+
+| Fig | What | Based on | Question it answers / decision it drives |
+|---|---|---|---|
+| 1 | Cosine histograms, relevant vs junk, + ROC/AUC and PR curve | Table A | Fail-fast: does cosine carry any signal about chunk quality? AUC ≳ 0.80 → absolute cutoff viable; ~0.65–0.80 → lean on relative rules; ≲ 0.60 → stop, file negative result, redirect to R2. |
+| 2 | Bundle-score distributions (top-1, mean) for hurt vs helped vs unchanged rows | Table B (tune half) | End-to-end mirror of Fig 1: do the injections that actually flipped answers sit at low scores? If Fig 1 passes but Fig 2 fails, filtering won't fix the −1.8 pp problem — also a stopping signal. |
+| 3 | Trade-off frontiers: injected-chunk precision (y) vs abstention rate (x), one curve per rule family; companion panel for lost-hit rate | Table A | Which rule family dominates (highest curve), and where are sensible operating points (precision ≥ ~0.7–0.8 at sane abstention)? Produces the shortlist. |
+| 4 | Simulated gap-collapse: estimated ±RAG accuracy gap vs threshold, with best/worst-case band for shrunk bundles (those rows can't be simulated without regeneration) | Table B (tune half) | Outcome veto: which shortlisted points actually collapse the −1.8 pp gap? |
+| 5 | Overlaid CDFs of top-1/top-3 cosines per query population (audit, MCQ, SAQ, HealthBench) — retrieval side only, no outcomes, no leakage | query embeddings only | Score-scale transfer: if SAQ skews low, an absolute cutoff calibrated on audit+MCQ over-abstains on deployment-realistic queries → favour scale-invariant relative rules. |
+
+Indicator definitions (Fig 3): **injected-chunk precision** = relevant kept / all
+kept; **lost-hit rate** = relevant dropped / all relevant in top-3 (today, at
+threshold 0.0: precision = P@3 = 0.477, abstention = 0); **abstention rate** =
+queries with zero surviving chunks / all queries.
+
+**Current scope (2026-06-12): produce Figures 1 and 2 first.** They are the gates —
+Figures 3–5 are only worth drawing if 1 and 2 show signal. Later figures proceed
+after the Fig 1–2 results are reviewed.
+
 Distribution-shift caveat: audit queries were generated from corpus chunks, so every
 audit query has an in-corpus answer — the audit under-represents the all-junk-bundle
 case R1 exists for. MCQ (Source B) covers that shifted distribution. Also compare
