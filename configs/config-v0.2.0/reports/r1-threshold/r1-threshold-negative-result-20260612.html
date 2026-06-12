@@ -225,7 +225,58 @@ platform noise band on top of its (absent) signal, and <em>future score-based
 logic must be calibrated on the deployment platform, not the cluster</em>.
 </p>
 
-<h2>6. Decision</h2>
+<h2>6. Is thresholding dead in general, or just for Gecko?</h2>
+<p>
+The Stage-1 gate costs nothing to run for the other audit retrievers — their
+top-20 scores are in <code>rankings.parquet</code> against the same judgments
+(medcpt and octen published rank-only data, so their score gates are not
+computable; Stage 2 is not computable for any of them, as no end-to-end runs
+used their retrievals).
+</p>
+<figure>
+  <img src="fig_retriever_gate_comparison.png"
+       alt="Stage-1 gate statistics for voyage, bm25, gecko, lateon">
+  <figcaption>The three Stage-1 statistics per retriever, top-3 population.
+  Dotted line = chance (0.5); dashed = the 0.80 viability bar. Gecko in red.</figcaption>
+</figure>
+<table>
+  <tr><th>Retriever</th><th class="num">chunk AUC ≥3</th>
+      <th class="num">concordance</th><th class="num">bundle AUC</th>
+      <th class="num">P@3</th><th>Note</th></tr>
+  <tr><td>voyage-4-large</td><td class="num">0.734</td><td class="num">0.755</td>
+      <td class="num">0.750</td><td class="num">0.867</td>
+      <td>API-only reference ceiling</td></tr>
+  <tr><td>bm25</td><td class="num">0.646</td><td class="num">0.658</td>
+      <td class="num">0.684</td><td class="num">0.417</td>
+      <td>on-device feasible (SQLite FTS5, R2a)</td></tr>
+  <tr><td><strong>gecko (deployed)</strong></td><td class="num fail">0.572</td>
+      <td class="num fail">0.623</td><td class="num fail">0.574</td>
+      <td class="num">0.477</td><td>worst score quality of the four</td></tr>
+  <tr><td>lateon</td><td class="num">0.501</td><td class="num">0.708</td>
+      <td class="num">0.538</td><td class="num">0.738</td>
+      <td>scores incomparable across queries, decent within-bundle</td></tr>
+</table>
+<p>Three readings:</p>
+<ul>
+  <li><strong>The failure is Gecko-specific in degree, but no retriever passes.</strong>
+      Even voyage — the quality ceiling — sits at 0.73–0.76 on all three
+      statistics, below the 0.80 viability bar. Score-based filtering would be
+      <em>marginally</em> workable on voyage-grade scores and is hopeless on
+      Gecko’s; nothing tested clears the bar comfortably.</li>
+  <li><strong>Score quality is a separate axis from ranking quality.</strong>
+      lateon ranks well (P@3 = 0.738) yet its pooled chunk AUC is 0.501 — its
+      score magnitudes carry zero cross-query meaning, while its within-bundle
+      ordering (0.708) beats Gecko’s. A bake-off that only checked P@k would
+      never see this. This validates measuring both gate statistics per R2
+      candidate.</li>
+  <li><strong>BM25’s scores beat Gecko’s on every statistic</strong> — notably
+      bundle-level junk detection (0.684 vs 0.574) — while being deployable
+      on-device. This strengthens the R2a hybrid case: lexical scores add not
+      just complementary recall but more meaningful confidence signal than the
+      embedding provides.</li>
+</ul>
+
+<h2>7. Decision</h2>
 <ul>
   <li><strong>No threshold ships.</strong> <code>params.json</code> →
       <code>retrieval.similarity_threshold</code> remains <code>0.0</code>; a
@@ -238,7 +289,7 @@ logic must be calibrated on the deployment platform, not the cluster</em>.
       changes.</li>
 </ul>
 
-<h2>7. Implications for the improvement plan</h2>
+<h2>8. Implications for the improvement plan</h2>
 <ul>
   <li><strong>R2 (retriever upgrade) inherits R1’s priority.</strong> The harm
       mechanism is not “low-scoring junk we failed to filter” — Gecko retrieves
@@ -257,7 +308,7 @@ logic must be calibrated on the deployment platform, not the cluster</em>.
       cycle.</li>
 </ul>
 
-<h2>8. Reproducibility</h2>
+<h2>9. Reproducibility</h2>
 <pre># Table A — audit labels × Gecko rankings (seconds; no GPU)
 python -m retrieval_eval.build_sweep_table \
     --output-dir configs/config-v0.2.0/results/retrieval_eval/r1-threshold
@@ -278,7 +329,11 @@ python -m retrieval_eval.build_rubric_outcome_table \
 # Figures 1–2 + metrics JSON
 python -m retrieval_eval.plot_threshold_signal \
     --table-dir  configs/config-v0.2.0/results/retrieval_eval/r1-threshold \
-    --report-dir configs/config-v0.2.0/reports/r1-threshold --figures 1,2</pre>
+    --report-dir configs/config-v0.2.0/reports/r1-threshold --figures 1,2
+
+# §6 — Stage-1 gate across all audit retrievers (seconds; joins only)
+python -m retrieval_eval.compare_retriever_gates \
+    --report-dir configs/config-v0.2.0/reports/r1-threshold</pre>
 <p class="meta">
 Assets: <code>Gecko_1024_quant.tflite</code> + <code>sentencepiece.model</code>
 (deployed app artifacts) and the rag-bundle-v0.2.0 <code>embeddings.sqlite</code>;
