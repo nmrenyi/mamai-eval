@@ -1,5 +1,5 @@
 {
-  "created_at_utc": "2026-06-12T09:40:38Z",
+  "created_at_utc": "2026-06-12T11:30:17Z",
   "table_dir": "configs/config-v0.2.0/results/retrieval_eval/r1-threshold",
   "fig1": {
     "top3_grade3": {
@@ -29,6 +29,32 @@
       "base_rate_precision": 0.1054,
       "auc": 0.6039,
       "average_precision": 0.1436
+    }
+  },
+  "fig2": {
+    "n_tune": 11562,
+    "n_usable": 11255,
+    "n_excluded_parity": 307,
+    "groups": {
+      "hurt": {
+        "n": 1655,
+        "top1_mean": 0.6604,
+        "mean3_mean": 0.6449
+      },
+      "helped": {
+        "n": 1449,
+        "top1_mean": 0.6763,
+        "mean3_mean": 0.6596
+      },
+      "unchanged": {
+        "n": 8151,
+        "top1_mean": 0.6635,
+        "mean3_mean": 0.6484
+      }
+    },
+    "helped_vs_hurt": {
+      "top1_auc": 0.5532,
+      "mannwhitney_p_hurt_lower": 1.551133212706554e-07
     }
   }
 }
