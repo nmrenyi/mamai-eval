@@ -31,6 +31,13 @@ from pathlib import Path
 import numpy as np
 
 
+# Continuous-outcome deadband: rubric-score deltas with |delta| below this are
+# binned 'neutral' in the violin panel. weighted_met is a sum of ~5-20 graded
+# criteria, so 0.05 ≈ one small criterion flipping — below that is judge noise.
+# Visual grouping only; the headline Spearman statistic uses no deadband.
+NEUTRAL_DEADBAND = 0.05
+
+
 def load_jsonl_gz(path: Path) -> list[dict]:
     with gzip.open(path, "rt") as f:
         return [json.loads(line) for line in f]
@@ -111,7 +118,10 @@ def fig1(table_a: list[dict], report_dir: Path) -> dict:
     return metrics
 
 
-def fig2(table_b: list[dict], report_dir: Path) -> dict:
+def fig2(table_b: list[dict], report_dir: Path,
+         table_b2: list[dict] | None = None) -> dict:
+    """2x2 when table_b2 (HealthBench) is given: MCQ violins on the top row,
+    HealthBench delta-scatter + violins on the bottom row."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -128,10 +138,14 @@ def fig2(table_b: list[dict], report_dir: Path) -> dict:
     def mean3(rows):
         return np.array([float(np.mean(r["cosines"])) for r in rows])
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
+    if table_b2 is not None:
+        fig, axes2d = plt.subplots(2, 2, figsize=(13, 9.5))
+        axes = axes2d[0]
+    else:
+        fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
     colors = {"hurt": "#b3372f", "helped": "#2c7a3f", "unchanged": "#888888"}
-    for ax, fn, title in ((axes[0], top1, "top-1 cosine"),
-                          (axes[1], mean3, "mean cosine of injected bundle")):
+    for ax, fn, title in ((axes[0], top1, "MCQ: top-1 cosine"),
+                          (axes[1], mean3, "MCQ: mean cosine of injected bundle")):
         data = [fn(groups[o]) for o in ("hurt", "helped", "unchanged")]
         parts = ax.violinplot(data, showmedians=True)
         for body, o in zip(parts["bodies"], ("hurt", "helped", "unchanged")):
@@ -142,8 +156,16 @@ def fig2(table_b: list[dict], report_dir: Path) -> dict:
                             for o in ("hurt", "helped", "unchanged")])
         ax.set_ylabel("Gecko cosine")
         ax.set_title(title)
-    fig.suptitle("Figure 2 — bundle scores by RAG outcome on MCQ "
-                 "(Table B, tune half, parity-matched rows)", y=1.02)
+
+    hb_metrics = None
+    if table_b2 is not None:
+        hb_metrics = _fig2_healthbench_row(table_b2, axes2d[1], plt)
+        fig.suptitle("Figure 2 — bundle scores vs RAG outcome: MCQ accuracy flips "
+                     "(top, tune half, parity-matched) and HealthBench oss_eval "
+                     "rubric-score deltas (bottom)", y=1.0)
+    else:
+        fig.suptitle("Figure 2 — bundle scores by RAG outcome on MCQ "
+                     "(Table B, tune half, parity-matched rows)", y=1.02)
     fig.tight_layout()
     fig.savefig(report_dir / "fig2_outcome_separation.png", dpi=150,
                 bbox_inches="tight")
@@ -166,6 +188,78 @@ def fig2(table_b: list[dict], report_dir: Path) -> dict:
         metrics["helped_vs_hurt"] = {
             "top1_auc": round(float(1 - u / (len(h) * len(p))), 4),
             "mannwhitney_p_hurt_lower": float(pval),
+        }
+    if hb_metrics is not None:
+        metrics = {"mcq": metrics, "healthbench": hb_metrics}
+    return metrics
+
+
+def _fig2_healthbench_row(table_b2: list[dict], axes, plt) -> dict:
+    """Bottom row of Figure 2: continuous weighted_met delta vs bundle score.
+
+    'Unchanged' has no exact analogue for a continuous outcome; the violin
+    panel uses a |delta| < 0.05 deadband (see NEUTRAL_DEADBAND) purely for
+    visual comparability with the MCQ panel. The primary statistic is the
+    deadband-free Spearman correlation in the left panel.
+    """
+    from scipy.stats import mannwhitneyu, spearmanr
+
+    rows = [r for r in table_b2 if r["cosines"]]
+    top1 = np.array([r["cosines"][0] for r in rows])
+    delta = np.array([r["delta"] for r in rows])
+
+    axes[0].scatter(top1, delta, s=6, alpha=0.25, color="#4a6fa5")
+    # Binned means over cosine deciles, with standard-error bars.
+    edges = np.quantile(top1, np.linspace(0, 1, 11))
+    mids, means, ses = [], [], []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        m = (top1 >= lo) & (top1 <= hi)
+        if m.sum():
+            mids.append(top1[m].mean())
+            means.append(delta[m].mean())
+            ses.append(delta[m].std() / np.sqrt(m.sum()))
+    axes[0].errorbar(mids, means, yerr=ses, fmt="o-", color="#b3372f",
+                     label="decile mean ± SE")
+    axes[0].axhline(0, ls=":", color="gray")
+    rho, pval = spearmanr(top1, delta)
+    axes[0].set_xlabel("top-1 Gecko cosine")
+    axes[0].set_ylabel("weighted_met delta (+RAG − no-RAG)")
+    axes[0].set_title(f"HealthBench: per-row RAG effect vs bundle score "
+                      f"(Spearman ρ={rho:.3f}, p={pval:.2g})")
+    axes[0].legend(fontsize=8)
+
+    groups = {"hurt": [r for r in rows if r["delta"] <= -NEUTRAL_DEADBAND],
+              "neutral": [r for r in rows if abs(r["delta"]) < NEUTRAL_DEADBAND],
+              "helped": [r for r in rows if r["delta"] >= NEUTRAL_DEADBAND]}
+    colors = {"hurt": "#b3372f", "neutral": "#888888", "helped": "#2c7a3f"}
+    order = ["hurt", "neutral", "helped"]
+    data = [np.array([r["cosines"][0] for r in groups[o]]) for o in order]
+    parts = axes[1].violinplot(data, showmedians=True)
+    for body, o in zip(parts["bodies"], order):
+        body.set_facecolor(colors[o])
+        body.set_alpha(0.6)
+    axes[1].set_xticks([1, 2, 3])
+    axes[1].set_xticklabels([f"{o}\nn={len(groups[o]):,}" for o in order])
+    axes[1].set_ylabel("top-1 Gecko cosine")
+    axes[1].set_title(
+        f"HealthBench: bundle score by RAG outcome (|delta| >= {NEUTRAL_DEADBAND})")
+
+    metrics = {
+        "n_rows": len(rows),
+        "spearman_top1_vs_delta": {"rho": round(float(rho), 4), "p": float(pval)},
+        "mean_delta": round(float(delta.mean()), 4),
+        "groups": {o: {"n": len(groups[o]),
+                       "top1_mean": round(float(np.mean([r["cosines"][0] for r in groups[o]])), 4)
+                       if groups[o] else None}
+                   for o in order},
+    }
+    if groups["hurt"] and groups["helped"]:
+        h = np.array([r["cosines"][0] for r in groups["hurt"]])
+        p_ = np.array([r["cosines"][0] for r in groups["helped"]])
+        u, pv = mannwhitneyu(h, p_, alternative="less")
+        metrics["helped_vs_hurt"] = {
+            "top1_auc": round(float(1 - u / (len(h) * len(p_))), 4),
+            "mannwhitney_p_hurt_lower": float(pv),
         }
     return metrics
 
@@ -191,7 +285,9 @@ def main():
         print("Figure 1 metrics:", json.dumps(out["fig1"], indent=2))
     if "2" in figures:
         table_b = load_jsonl_gz(table_dir / "table_b.jsonl.gz")
-        out["fig2"] = fig2(table_b, report_dir)
+        b2_path = table_dir / "table_b2_healthbench.jsonl.gz"
+        table_b2 = load_jsonl_gz(b2_path) if b2_path.exists() else None
+        out["fig2"] = fig2(table_b, report_dir, table_b2=table_b2)
         print("Figure 2 metrics:", json.dumps(out["fig2"], indent=2))
 
     with open(report_dir / "threshold_signal_metrics.json", "w") as f:
