@@ -108,11 +108,12 @@ def main():
     skipped = {}
     for retriever in sorted(rk["retriever"].unique()):
         sub = rk[rk["retriever"] == retriever]
-        if sub["score"].isna().all():
-            skipped[retriever] = ("rank-only in rankings.parquet (no scores "
-                                  "published) — score gate not computable")
-            print(f"{retriever:8s}  SKIPPED: rank-only, no scores", flush=True)
-            continue
+        rank_only = sub["score"].isna().all()
+        if rank_only:
+            # Within-bundle rank order IS score order, so the concordance
+            # statistic survives without published scores; the two pooled
+            # (cross-query) AUCs genuinely need magnitudes and do not.
+            sub = sub.assign(score=-sub["rank"].astype(float))
         rows, missing = [], 0
         for r in sub.itertuples():
             g = grade.get((r.query_id, r.chunk_id))
@@ -122,14 +123,23 @@ def main():
             rows.append({"query_id": r.query_id, "rank": int(r.rank),
                          "score": float(r.score), "grade": int(g)})
         stats = gate_stats(rows)
+        if rank_only:
+            # Cross-query statistics computed from negated ranks are not score
+            # statistics — null them; only the within-bundle concordance and
+            # the base rates survive.
+            stats["chunk_auc_grade3"] = None
+            stats["chunk_auc_grade5"] = None
+            stats["bundle_any_relevant_auc_top1"] = None
+            stats["rank_only"] = True
         stats["n_unjudged_top20"] = missing
         stats["note"] = RETRIEVER_NOTES.get(retriever, "")
         results[retriever] = stats
-        print(f"{retriever:8s}  AUC3={stats['chunk_auc_grade3']:.3f}  "
-              f"conc={stats['within_bundle_concordance']:.3f}  "
-              f"bundleAUC={stats['bundle_any_relevant_auc_top1']}  "
-              f"P@3={stats['p_at_3']:.3f}  HR@3={stats['hr_at_3']:.3f}",
-              flush=True)
+        fmt = lambda v: f"{v:.3f}" if v is not None else "  —  "
+        print(f"{retriever:8s}  AUC3={fmt(stats['chunk_auc_grade3'])}  "
+              f"conc={fmt(stats['within_bundle_concordance'])}  "
+              f"bundleAUC={fmt(stats['bundle_any_relevant_auc_top1'])}  "
+              f"P@3={stats['p_at_3']:.3f}  HR@3={stats['hr_at_3']:.3f}"
+              + ("  [rank-only]" if rank_only else ""), flush=True)
 
     out = {
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -148,7 +158,7 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    names = sorted(results, key=lambda n: -results[n]["chunk_auc_grade3"])
+    names = sorted(results, key=lambda n: -(results[n]["within_bundle_concordance"] or 0))
     stats_to_plot = [
         ("chunk_auc_grade3", "chunk-level AUC (grade>=3)\nabsolute cutoffs"),
         ("within_bundle_concordance", "within-bundle concordance\nrelative rules"),
@@ -156,9 +166,15 @@ def main():
     ]
     fig, axes = plt.subplots(1, 3, figsize=(14, 4.2), sharey=True)
     for ax, (key, title) in zip(axes, stats_to_plot):
-        vals = [results[n][key] for n in names]
         colors = ["#b3372f" if n == "gecko" else "#4a6fa5" for n in names]
-        ax.barh(range(len(names)), vals, color=colors, alpha=0.85)
+        for i, n in enumerate(names):
+            v = results[n][key]
+            if v is None:
+                ax.text(0.405, i, "rank-only — n/a", va="center", fontsize=8,
+                        color="#999")
+            else:
+                ax.barh(i, v, color=colors[i], alpha=0.85)
+                ax.text(v + 0.008, i, f"{v:.3f}", va="center", fontsize=8)
         ax.set_yticks(range(len(names)))
         ax.set_yticklabels(names)
         ax.invert_yaxis()
@@ -166,8 +182,6 @@ def main():
         ax.axvline(0.8, ls="--", color="#14532d", lw=1)
         ax.set_xlim(0.4, 1.0)
         ax.set_title(title, fontsize=9)
-        for i, v in enumerate(vals):
-            ax.text(v + 0.008, i, f"{v:.3f}", va="center", fontsize=8)
     fig.suptitle("Stage-1 score-quality gate across audit retrievers "
                  "(top-3 population; dotted = chance, dashed = viability bar)",
                  y=1.04)

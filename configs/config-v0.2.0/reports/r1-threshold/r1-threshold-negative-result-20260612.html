@@ -227,11 +227,13 @@ logic must be calibrated on the deployment platform, not the cluster</em>.
 
 <h2>6. Is thresholding dead in general, or just for Gecko?</h2>
 <p>
-The Stage-1 gate costs nothing to run for the other audit retrievers — their
-top-20 scores are in <code>rankings.parquet</code> against the same judgments
-(medcpt and octen published rank-only data, so their score gates are not
-computable; Stage 2 is not computable for any of them, as no end-to-end runs
-used their retrievals).
+The Stage-1 gate costs nothing to run for the other five audit retrievers —
+their top-20 rankings are in <code>rankings.parquet</code> against the same
+judgments. medcpt and octen published rank-only data, so the two pooled
+score statistics are not computable for them; the within-bundle concordance
+survives, because inside a bundle rank order <em>is</em> score order. Stage 2
+is not computable for any of them, as no end-to-end runs used their
+retrievals.
 </p>
 <figure>
   <img src="fig_retriever_gate_comparison.png"
@@ -243,37 +245,46 @@ used their retrievals).
   <tr><th>Retriever</th><th class="num">chunk AUC ≥3</th>
       <th class="num">concordance</th><th class="num">bundle AUC</th>
       <th class="num">P@3</th><th>Note</th></tr>
+  <tr><td>octen-8B</td><td class="num">—</td><td class="num">0.762</td>
+      <td class="num">—</td><td class="num">0.804</td>
+      <td>cluster-only; rank-only data (pooled stats n/a)</td></tr>
   <tr><td>voyage-4-large</td><td class="num">0.734</td><td class="num">0.755</td>
       <td class="num">0.750</td><td class="num">0.867</td>
       <td>API-only reference ceiling</td></tr>
+  <tr><td>lateon</td><td class="num">0.501</td><td class="num">0.708</td>
+      <td class="num">0.538</td><td class="num">0.738</td>
+      <td>scores incomparable across queries, decent within-bundle</td></tr>
   <tr><td>bm25</td><td class="num">0.646</td><td class="num">0.658</td>
       <td class="num">0.684</td><td class="num">0.417</td>
       <td>on-device feasible (SQLite FTS5, R2a)</td></tr>
   <tr><td><strong>gecko (deployed)</strong></td><td class="num fail">0.572</td>
       <td class="num fail">0.623</td><td class="num fail">0.574</td>
-      <td class="num">0.477</td><td>worst score quality of the four</td></tr>
-  <tr><td>lateon</td><td class="num">0.501</td><td class="num">0.708</td>
-      <td class="num">0.538</td><td class="num">0.738</td>
-      <td>scores incomparable across queries, decent within-bundle</td></tr>
+      <td class="num">0.477</td><td>second-worst concordance, worst pooled scores</td></tr>
+  <tr><td>medcpt</td><td class="num">—</td><td class="num">0.603</td>
+      <td class="num">—</td><td class="num">0.335</td>
+      <td>rank-only data (pooled stats n/a)</td></tr>
 </table>
 <p>Three readings:</p>
 <ul>
-  <li><strong>The failure is Gecko-specific in degree, but no retriever passes.</strong>
-      Even voyage — the quality ceiling — sits at 0.73–0.76 on all three
-      statistics, below the 0.80 viability bar. Score-based filtering would be
-      <em>marginally</em> workable on voyage-grade scores and is hopeless on
-      Gecko’s; nothing tested clears the bar comfortably.</li>
+  <li><strong>No retriever passes the bar.</strong> Even voyage — the API-only
+      quality ceiling — sits at 0.73–0.76 on all three score statistics, below
+      the 0.80 viability bar, and octen (the strongest cluster-feasible ranker,
+      concordance 0.762) is the only value that touches it. Score-based
+      filtering is at best marginal even with the best retrievers tested, and
+      hopeless on Gecko’s scores. Thresholding should not be assumed to revive
+      automatically under R2.</li>
   <li><strong>Score quality is a separate axis from ranking quality.</strong>
-      lateon ranks well (P@3 = 0.738) yet its pooled chunk AUC is 0.501 — its
-      score magnitudes carry zero cross-query meaning, while its within-bundle
-      ordering (0.708) beats Gecko’s. A bake-off that only checked P@k would
-      never see this. This validates measuring both gate statistics per R2
-      candidate.</li>
-  <li><strong>BM25’s scores beat Gecko’s on every statistic</strong> — notably
-      bundle-level junk detection (0.684 vs 0.574) — while being deployable
-      on-device. This strengthens the R2a hybrid case: lexical scores add not
-      just complementary recall but more meaningful confidence signal than the
-      embedding provides.</li>
+      lateon ranks well (P@3 = 0.738, HR@3 = 0.971) yet its pooled chunk AUC is
+      0.501 — its score <em>magnitudes</em> carry zero cross-query meaning,
+      while its within-bundle ordering (0.708) is strong. medcpt is the inverse
+      cautionary case: weak ranking (P@3 = 0.335) and the weakest concordance
+      (0.603) of all six. A bake-off that only checked P@k would see none of
+      this — which is exactly why both gate statistics belong in the R2 screen.</li>
+  <li><strong>BM25’s scores beat Gecko’s on every computable statistic</strong>
+      — notably bundle-level junk detection (0.684 vs 0.574) — while being
+      deployable on-device. This strengthens the R2a hybrid case: lexical scores
+      add not just complementary recall but a more meaningful confidence signal
+      than the embedding provides.</li>
 </ul>
 
 <h2>7. Decision</h2>

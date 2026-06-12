@@ -1,5 +1,5 @@
 {
-  "created_at_utc": "2026-06-12T13:31:39Z",
+  "created_at_utc": "2026-06-12T13:35:26Z",
   "source": {
     "hf_repo": "nmrenyi/mamaretrieval",
     "revision": "v0.2.0"
@@ -45,6 +45,34 @@
       "n_unjudged_top20": 0,
       "note": "audit comparator"
     },
+    "medcpt": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.3345,
+      "hr_at_3": 0.6443,
+      "chunk_auc_grade3": null,
+      "chunk_auc_grade5": null,
+      "within_bundle_concordance": 0.6032,
+      "concordance_n_pairs": 3632,
+      "bundle_any_relevant_auc_top1": null,
+      "rank_only": true,
+      "n_unjudged_top20": 0,
+      "note": "audit comparator"
+    },
+    "octen": {
+      "n_top3_pairs": 9555,
+      "n_queries": 3185,
+      "p_at_3": 0.8037,
+      "hr_at_3": 0.9906,
+      "chunk_auc_grade3": null,
+      "chunk_auc_grade5": null,
+      "within_bundle_concordance": 0.762,
+      "concordance_n_pairs": 2786,
+      "bundle_any_relevant_auc_top1": null,
+      "rank_only": true,
+      "n_unjudged_top20": 0,
+      "note": "cluster-only (8B) \u2014 not deployable on-device"
+    },
     "voyage": {
       "n_top3_pairs": 9555,
       "n_queries": 3185,
@@ -59,8 +87,5 @@
       "note": "API-only \u2014 reference ceiling, not deployable"
     }
   },
-  "skipped": {
-    "medcpt": "rank-only in rankings.parquet (no scores published) \u2014 score gate not computable",
-    "octen": "rank-only in rankings.parquet (no scores published) \u2014 score gate not computable"
-  }
+  "skipped": {}
 }
