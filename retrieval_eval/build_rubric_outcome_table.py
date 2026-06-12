@@ -143,8 +143,11 @@ def main():
         "name": "r1-threshold-table-b2-healthbench",
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source_runs": {"norag": args.norag_dir, "rag": args.rag_dir},
-        "assets": {"db_path": args.db_path, "gecko_model": args.gecko_model,
-                   "tokenizer": args.tokenizer},
+        # Record asset basenames only — absolute paths are machine-specific and
+        # leak the developer's filesystem layout into committed manifests.
+        "assets": {"db": Path(args.db_path).name,
+                   "gecko_model": Path(args.gecko_model).name,
+                   "tokenizer": Path(args.tokenizer).name},
         "retrieval": {"top_k": args.top_k,
                       "query": "latest user turn (precompute_retrieval parity)"},
         "parity": "not verifiable per-row (rubric results store no rag_context); "

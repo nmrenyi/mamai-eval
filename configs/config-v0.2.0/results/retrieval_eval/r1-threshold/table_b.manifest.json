@@ -7,9 +7,9 @@
     "rag": "configs/config-v0.2.0/results/end_to_end_eval/gemma4-e4b/20260520T082028-cluster-rag"
   },
   "assets": {
-    "db_path": "/Users/renyi/Downloads/mamai-medical-guidelines/releases/rag-bundle-v0.2.0/runtime/embeddings.sqlite",
-    "gecko_model": "/Users/renyi/Downloads/mamai/device_push/models/Gecko_1024_quant.tflite",
-    "tokenizer": "/Users/renyi/Downloads/mamai/device_push/models/sentencepiece.model"
+    "db": "embeddings.sqlite",
+    "gecko_model": "Gecko_1024_quant.tflite",
+    "tokenizer": "sentencepiece.model"
   },
   "retrieval": {
     "top_k": 3
