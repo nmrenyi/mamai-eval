@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "name": "r2c-query-split",
+  "created_at_utc": "2026-06-13T17:49:08Z",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.2.0"
+  },
+  "rule": "by-query 70/15/15, stratified on has_strict (grade>=5 in the hybrid top-20 pool, RRF alpha=0.5 k=60), deterministic md5(query_id) hash within stratum",
+  "stratum_pool": {
+    "hybrid_alpha": 0.5,
+    "rrf_k": 60,
+    "top_k": 20
+  },
+  "fractions": {
+    "train": 0.7,
+    "dev": 0.15,
+    "test": 0.15
+  },
+  "overall": {
+    "n": 3185,
+    "strict_rate": 0.778
+  },
+  "by_split": {
+    "train": {
+      "n": 2189,
+      "strict_rate": 0.7784
+    },
+    "dev": {
+      "n": 505,
+      "strict_rate": 0.7743
+    },
+    "test": {
+      "n": 491,
+      "strict_rate": 0.78
+    }
+  },
+  "data_file": "split.json"
+}
