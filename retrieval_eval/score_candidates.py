@@ -215,7 +215,7 @@ def main():
             with open(out_dir / f"{key}.error.json", "w") as f:
                 json.dump({"key": key, "id": cand["id"], "error": f"{type(e).__name__}: {e}"}, f, indent=2)
             continue
-        col = f"score_{key}"
+        col = "score_" + key.replace("-", "_")  # valid identifier for itertuples()
         te[col] = scores
         rec = {"created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                "key": key, "id": cand["id"], "type": cand["type"], "size_m": cand["size_m"],
