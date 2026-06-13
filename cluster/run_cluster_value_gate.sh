@@ -32,6 +32,7 @@ OUT_DIR="${OUT_DIR:-/lightscratch/users/yiren/eval_output/value_gate}"
 SAQ_DS="${SAQ_DS:-kenya,afrimedqa_saq}"
 MCQ_DS="${MCQ_DS:-afrimedqa}"
 MCQ_MAX="${MCQ_MAX:-600}"
+ARMS="${ARMS:-gecko hybrid hybrid_rerank}"   # override to run one arm per GPU job
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 
 mkdir -p "$OUT_DIR" "$HF_CACHE_DIR"
@@ -52,7 +53,7 @@ run_arm() {
     $extra
 }
 
-for ARM in gecko hybrid hybrid_rerank; do
+for ARM in $ARMS; do
   run_arm "$ARM" "$SAQ_DS" ""                       # SAQ — generation only, judged later
   run_arm "$ARM" "$MCQ_DS" "--max-questions $MCQ_MAX" # MCQ — auto-scored inline
 done
