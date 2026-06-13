@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2a — Hybrid Gecko + BM25 (RRF): offline simulation (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--warnbg); color: var(--warn); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { color: var(--good); font-weight: 600; }
+  .flat { color: var(--warn); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2a — Hybrid Gecko + BM25 (RRF): offline simulation</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+step R2a of <a href="../../../../docs/r2-retriever-upgrade-plan.md">the R2 plan</a></p>
+
+<div class="verdict">
+Fusing BM25 into Gecko via reciprocal-rank fusion is a real but modest win, and
+essentially free to deploy (SQLite FTS5). Best config (alpha≈0.5–0.75) lifts
+bundle precision P@3 from 0.477 → 0.516 and hit rate HR@3 from 0.814 → 0.860 —
+but closes only ~10% of the Gecko→voyage gap and does <strong>not</strong> move
+the strict-content miss (P@3≥5: 0.193 → 0.208). Worth adopting as a cheap
+improvement; not sufficient on its own — R2c (better embedder) / C1 (corpus)
+remain necessary for the structural gap.
+</div>
+
+<h2>Method</h2>
+<p>
+Weighted reciprocal-rank fusion over Gecko's and BM25's published audit top-20
+rankings: <code>score(c) = α·[c∈gecko]/(k+rank_gecko) + (1−α)·[c∈bm25]/(k+rank_bm25)</code>,
+fused top-3 scored against the mamaretrieval 0–6 judgments (n=3,185 queries).
+α=1 is Gecko-only, α=0 BM25-only. Pure offline arithmetic on
+<code>rankings.parquet</code> — both retrievers already ran in the audit and 100%
+of each one's top-20 is judged, so no embedding, GPU, or new judging. Baselines
+reproduce the known audit numbers exactly (Gecko P@3 0.477, BM25 0.417, voyage
+0.867), confirming the join.
+</p>
+
+<h2>Results</h2>
+<figure>
+  <img src="fig_hybrid_sweep.png" alt="Hybrid sweep over alpha and k, four metric panels">
+  <figcaption>Four metrics vs α, one line per RRF constant k; dashed lines are the
+  single-retriever baselines. k barely matters (0.504→0.516 across k=10–100); α is
+  the real knob, optimal around 0.5–0.75.</figcaption>
+</figure>
+<table>
+  <tr><th>Config (k=60)</th><th class="num">P@3 ≥3</th><th class="num">HR@3 ≥3</th>
+      <th class="num">P@3 ≥5</th><th class="num">HR@3 ≥5</th></tr>
+  <tr><td>BM25 only (α=0)</td><td class="num">0.417</td><td class="num">0.754</td>
+      <td class="num">0.163</td><td class="num">0.371</td></tr>
+  <tr><td>Gecko only (α=1)</td><td class="num">0.477</td><td class="num">0.814</td>
+      <td class="num">0.193</td><td class="num">0.439</td></tr>
+  <tr><td>Hybrid α=0.5</td><td class="num win">0.513</td><td class="num win">0.860</td>
+      <td class="num">0.207</td><td class="num">0.460</td></tr>
+  <tr><td>Hybrid α=0.75</td><td class="num win">0.515</td><td class="num">0.852</td>
+      <td class="num">0.208</td><td class="num">0.463</td></tr>
+  <tr><td><em>voyage ceiling</em></td><td class="num"><em>0.867</em></td>
+      <td class="num"><em>0.996</em></td><td class="num"><em>0.452</em></td>
+      <td class="num"><em>0.753</em></td></tr>
+</table>
+
+<h2>Readings</h2>
+<ul>
+  <li><strong>Fusion beats both parents.</strong> At α≈0.5–0.75 the hybrid exceeds
+      Gecko-alone and BM25-alone on every metric — the classic RRF benefit, driven
+      by BM25's lexical complementarity (drug names, doses, exact terms Gecko's
+      embedding blurs). HR@3 gains most (+4.6 pp): more bundles contain at least
+      one relevant chunk.</li>
+  <li><strong>The absolute gap stays large.</strong> Best P@3 0.516 closes ~10% of
+      the 0.477→0.867 Gecko→voyage gap. Fusion reshuffles what these two retrievers
+      already surface; it cannot add content neither found.</li>
+  <li><strong class="flat">The strict-content miss is unfixed.</strong> P@3≥5 moves
+      only 0.193→0.208. BM25 doesn't surface the complete/actionable chunks Gecko
+      misses either — consistent with the audit's flat strict pool-recall. Only a
+      better embedder (R2c) or richer corpus (C1) addresses this.</li>
+  <li><strong>α is the knob, k is not.</strong> Optimal α is Gecko-leaning but
+      strictly interior (0.5–0.75), so BM25 genuinely contributes; k=10–100 changes
+      P@3 by ~0.01. A deployable default: α=0.5, k=60.</li>
+</ul>
+
+<h2>Recommendation</h2>
+<ul>
+  <li><strong>Adopt the hybrid</strong> (α≈0.5, FTS5 BM25 + Gecko, RRF k=60) — a
+      cheap, on-device-feasible lift, strongest on hit rate. Gate on the end-to-end
+      checks per the R2 plan before shipping: the M1 MCQ ±RAG rerun and a SAQ A/B
+      (offline retrieval metrics alone don't gate adoption).</li>
+  <li><strong>Do not expect it to fix RAG-hurts on its own.</strong> The structural
+      gap and the strict-content miss remain — proceed to R2b (rerank ceiling) and
+      scope R2c (embedder bake-off).</li>
+</ul>
+
+<h2>Reproducibility</h2>
+<pre>python -m retrieval_eval.simulate_hybrid \
+    --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-hybrid \
+    --report-dir  configs/config-v0.2.0/reports/r2-hybrid</pre>
+<p class="meta">Full sweep grid + baselines: <code>hybrid_sweep.json</code>.</p>
+
+</body>
+</html>
