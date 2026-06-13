@@ -78,11 +78,23 @@ late-interaction (ColBERT/MICE — storage cost not worth it at 10–20 chunks).
 | 4 | cross-encoder/ms-marco-TinyBERT-L-2-v2 | ~tiny (single-digit M) | Fastest possible; the latency floor if L6 is too slow on-device | Latency fallback |
 | 5 | **Feature-LTR** (GBDT over BM25 score, Gecko cosine, both rank positions, term overlap) | trivial | No transformer to convert — zero deployment risk | Safe fallback |
 
-**Offline quality-reference** (never on the phone; Phase 1 scoring only):
+**Offline quality-reference** (never on the phone; Phase 1 scoring only — run on
+the cluster H200, so size/convertibility/latency don't apply). The reference is
+*not* another ceiling — the R2b oracle is the absolute ceiling. It's the best
+*real* reranker point, filling the curve between the deployable-small candidates
+and the oracle: it tells us how much of the oracle headroom a strong reranker
+actually captures, and therefore how much (if anything) going small for
+on-device costs us.
 
 | Model | Params | Role |
 |---|---|---|
-| **bge-reranker-v2-m3** | 568M | Strong-cross-encoder ceiling on our corpus — the reranker analogue of voyage in R1/R2. Tells us how much the small deployable models leave on the table. Re-enters the deployment conversation later when Swahili/German arrive (latency permitting). |
+| **Qwen3-Reranker-8B** | 8B | **Strong reference** — near-best open reranker (top of current reranking leaderboards), multilingual (bonus for when Swahili/German return). Free on the H200. This is the primary "what a strong real reranker achieves on our corpus" anchor. |
+| **bge-reranker-v2-m3** | 568M | **Mid reference** — strong open multilingual cross-encoder; sits between the small deployable models and Qwen3-8B, so the three tiers trace the quality/size curve. |
+
+(A frontier-LLM listwise reranker would be even stronger, but our mamaretrieval
+grades were produced by an LLM judge, so an LLM reranker approaches the oracle
+and is partly redundant with it — skipped unless we specifically want to probe
+the near-oracle regime.)
 
 ### The decision that matters: #1 vs #2
 
@@ -204,12 +216,14 @@ should be de-risked **first**, not last:
    doubt and feature-LTR becomes the lead — a conclusion worth reaching cheaply
    and early.
 2. **Phase 1 — offline quality (as planned).** Score the deployable shortlist
-   (#1–#5) plus the bge-reranker-v2-m3 reference on the hybrid top-20 pool against
-   our labels: P@3/HR@3 (lenient + strict) vs the R2b floor and oracle ceiling,
-   plus the R1 Stage-1 gate on the reranker score (the threshold-revival test; a
-   trained cross-encoder is the best candidate yet to clear the 0.80 bar). The
-   key contrast is #1 (tiny general) vs #2 (MedCPT, domain-matched). Reserve the
-   by-query train/dev/test split first.
+   (#1–#5) plus the offline reference spectrum (bge-reranker-v2-m3 568M →
+   Qwen3-Reranker-8B) on the hybrid top-20 pool against our labels: P@3/HR@3
+   (lenient + strict) vs the R2b floor and oracle ceiling, plus the R1 Stage-1
+   gate on the reranker score (the threshold-revival test; a trained cross-encoder
+   is the best candidate yet to clear the 0.80 bar). Two contrasts to read: #1
+   (tiny general) vs #2 (MedCPT, domain-matched), and small-deployable vs the
+   strong reference (how much does going small cost?). Reserve the by-query
+   train/dev/test split first.
 3. **Phase 2 — fine-tune.** Fine-tune the winning candidate on the 230k pairs and
    measure the reranker-specific delta vs its zero-shot baseline. (Swahili eval
    returns when multilingual does — out of scope for now per §0.)
