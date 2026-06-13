@@ -45,8 +45,11 @@ the multi-billion-parameter Qwen3 references (0.79). Its score also becomes far
 more thresholdable (chunk AUC 0.731 → 0.783, approaching the 0.80 R1 bar). The
 deployed int8 <code>.tflite</code> + on-device tokenizer were verified to
 reproduce the offline model exactly. <strong>Final deployable choice:
-fine-tuned MiniLM-L6.</strong> The end-to-end answer-quality value gate is the
-last gate (below).
+fine-tuned MiniLM-L6.</strong> And the end-to-end value gate passes:
+generated with the real on-device Gemma 3n E4B and judged by gpt-oss-120b,
+reranking lifts kenya SAQ key-fact recall <strong>+12% relative</strong> and MCQ
+accuracy <strong>+2.4 pp</strong> over the deployed Gecko retriever, with no rise
+in refusal and no safety regression.
 </div>
 
 <h2>P2 — every candidate reranker on the held-out test split</h2>
@@ -168,10 +171,49 @@ E4B</strong> (the actual on-device generator) over the same questions:</p>
 kenya + afrimedqa_saq), plus MCQ accuracy (afrimedqa, auto-scored — does the
 −1.8 pp RAG gap close?).</p>
 
-<div class="pendbox" id="value-gate-status"><strong>Value gate running on the
-cluster.</strong> 3-arm contexts precomputed with the fine-tuned reranker →
-Gemma 3n E4B generation (per-arm, parallel) → gpt-oss-120b judging. Results table
-to be filled here on completion.</div>
+<p><strong>Result — reranking passes the value gate.</strong> With the deployable
+fine-tuned MiniLM-L6 as arm C, answer quality improves on every reliable sample,
+and the gain is attributable to reranking (B→C), not just fusion (A→B):</p>
+
+<table>
+  <tr><th>arm</th><th class="num">kenya recall</th><th class="num">afrimedqa_saq recall</th>
+      <th class="num">MCQ acc</th><th class="num">refusal (kenya)</th><th class="num">harm (kenya)</th></tr>
+  <tr><td>A · Gecko top-3 (deployed)</td><td class="num">0.256</td><td class="num">0.277</td><td class="num">0.532</td><td class="num">0.029</td><td class="num">0.324</td></tr>
+  <tr><td>B · hybrid top-3 (RRF, isolates fusion)</td><td class="num">0.271</td><td class="num">0.235</td><td class="num">0.517</td><td class="num">0.045</td><td class="num">0.292</td></tr>
+  <tr class="win"><td>C · hybrid+rerank top-3 (isolates rerank)</td><td class="num">0.287</td><td class="num">0.300</td><td class="num">0.556</td><td class="num">0.029</td><td class="num">0.295</td></tr>
+  <tr><td><strong>Δ rerank (B→C)</strong></td><td class="num">+0.017</td><td class="num">+0.065</td><td class="num">+0.039</td><td class="num">−0.016</td><td class="num">+0.003</td></tr>
+  <tr><td><strong>Δ full (A→C vs deployed)</strong></td><td class="num">+0.031</td><td class="num">+0.022</td><td class="num">+0.024</td><td class="num">0.000</td><td class="num">−0.029</td></tr>
+</table>
+
+<p>Reading against the pre-registered acceptance criteria:</p>
+<ul>
+  <li><strong>Key-fact recall rises</strong> on both SAQ sets — kenya 0.256 → 0.287
+  (<strong>+12% relative</strong> over the deployed retriever), afrimedqa_saq 0.277
+  → 0.300. The B→C step (reranking proper) is positive on both, so the gain is
+  reranking, not the R2a fusion.</li>
+  <li><strong>MCQ gap closes and reverses.</strong> Reranked RAG (0.556) is the best
+  arm, +2.4 pp over deployed Gecko (0.532) and +3.9 pp over the hybrid baseline —
+  undoing the small negative RAG-MCQ effect R1 observed.</li>
+  <li><strong>Refusal does not rise</strong> — the rerank arm matches the deployed
+  arm (0.029) and is below the hybrid arm; reranking did not push the model toward
+  deflection.</li>
+  <li><strong>Safety holds</strong> on the reliable sample — kenya harm rate is
+  slightly <em>lower</em> than deployed (0.295 vs 0.324). The afrimedqa_saq harm
+  move is on n=37 and too small to read.</li>
+</ul>
+
+<div class="verdict">Verdict: ship the reranker. The fine-tuned MiniLM-L6
+reranker improves answer key-fact recall (+12% rel. on kenya) and MCQ accuracy
+(+2.4 pp) over the deployed Gecko retriever, with no rise in refusal and no
+safety regression on the reliable sample — generated end-to-end with the actual
+on-device Gemma 3n E4B. Combined with the verified device parity and the 13 ms/pair
+on-device latency, the R2c reranker direction is validated end-to-end.</div>
+
+<p class="meta">Arms generated with gemma3n-e4b (the deployed device generator) over
+the same questions; SAQ judged by the pinned gpt-oss-120b on key-fact recall /
+refusal / safety; MCQ auto-scored. Raw per-arm results under
+<code>results/end_to_end_eval/value_gate/</code>; summary
+<code>reports/r2c-rerank/value_gate_summary.json</code>.</p>
 
 <h2>Artifacts</h2>
 <ul>

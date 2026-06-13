@@ -7,6 +7,35 @@ and the Phase-0 spike report.*
 
 ---
 
+## Status update (2026-06-13, evening) — P0/P1/P2/P2.5 executed
+
+Full results in
+[`configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html`](../configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html).
+
+- **P0 (correctness) — PASSED.** Deployed int8 `.tflite` + Kotlin-port tokenizer
+  reproduce the offline torch-fp32 model at seq-256: P@3 0.626 vs 0.627, tokenizer
+  99.97% exact, rank-identical (Pearson 1.0, top-3 agreement 1.0). The
+  "approximate tokenizer parity" caveat is closed.
+- **P2 (model menu) — DONE.** All deployable cross-encoders + Qwen3-4B/8B
+  references scored on the test split @256. Best zero-shot deployable = mxbai-base
+  (P@3 0.714); MiniLM-L6 0.627; MedCPT (medical) worst (0.561); Qwen3 refs ~0.79.
+- **P2.5 (fine-tune) — DONE, the decisive lever.** Fine-tuning on the 159k
+  in-domain pairs: MiniLM-L6 (23M) 0.627→**0.756** (AUC 0.731→0.783), beating
+  zero-shot mxbai-base; mxbai-base 0.714→**0.821** with AUC **0.859** — first
+  reranker to *cross R1's 0.80 thresholdability bar* (threshold revival is now
+  worth re-testing on a fine-tuned score). **Final deployable choice: fine-tuned
+  MiniLM-L6**; fine-tuned mxbai-base is the size-upgrade ceiling.
+- **P1 (value gate) — PASSED.** 3 arms (Gecko / hybrid / hybrid+rerank) generated
+  with on-device Gemma 3n E4B, SAQ judged by gpt-oss-120b. Reranking lifts kenya
+  SAQ key-fact recall 0.256→0.287 (+12% rel), afrimedqa_saq 0.277→0.300, MCQ
+  accuracy 0.532→0.556 (+2.4 pp), refusal flat, kenya harm slightly down. Gain is
+  attributable to reranking (B→C positive), not just fusion.
+
+**Remaining (deployment):** convert the fine-tuned MiniLM-L6 to int8 `.tflite`
+(same proven path) + re-run P0 parity on it; then P3 latency/batching + P4 PRs.
+
+---
+
 ## Where we are
 
 Established so far:
