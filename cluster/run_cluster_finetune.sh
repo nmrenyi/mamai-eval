@@ -48,6 +48,8 @@ FEATURES_DIR="configs/config-v0.2.0/results/retrieval_eval/r2c-rerank"
 OUT_DIR="$FEATURES_DIR/finetune"
 
 nvidia-smi || true
+# Copy per-model right after each finishes (with `|| true` around training) so
+# one model's failure can't lose another's results/weights.
 for spec in $MODELS; do
   KEY="${spec%%=*}"; MODEL="${spec#*=}"
   echo "=== FINE-TUNE $KEY ($MODEL) ==="
@@ -56,12 +58,10 @@ for spec in $MODELS; do
   python3 -m retrieval_eval.finetune_reranker \
     --model "$MODEL" --key "$KEY" \
     --features-dir "$FEATURES_DIR" --out-dir "$OUT_DIR" \
-    --epochs "$EPOCHS" --seq-len "$SEQ_LEN" "${EXTRA[@]}"
+    --epochs "$EPOCHS" --seq-len "$SEQ_LEN" "${EXTRA[@]}" || echo "WARN: $KEY failed"
+  cp -v "$OUT_DIR/$KEY-finetuned.json" "$OUT_SCRATCH/" 2>/dev/null || true
+  cp -rv "$OUT_DIR/$KEY-finetuned-model" "$OUT_SCRATCH/" 2>/dev/null || true
 done
 
-echo "=== COPYING RESULTS TO SCRATCH ==="
-cp -rv "$OUT_DIR"/*.json "$OUT_SCRATCH/" || true
-# fine-tuned models too (for later tflite conversion) — only the small ones
-cp -rv "$OUT_DIR"/*-finetuned-model "$OUT_SCRATCH/" 2>/dev/null || true
-ls -la "$OUT_SCRATCH/"
 echo "=== RUN COMPLETE ==="
+ls -la "$OUT_SCRATCH/"

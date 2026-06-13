@@ -111,8 +111,12 @@ def main():
     train_ds = make_ds("train").map(tok_fn, batched=True, remove_columns=["q", "c", "label"])
     dev_ds = make_ds("dev").map(tok_fn, batched=True, remove_columns=["q", "c", "label"])
 
+    # .float(): some reranker checkpoints (e.g. mxbai-rerank-base-v1) ship fp16
+    # params, which break the Trainer's fp16 AMP grad unscaling ("Attempting to
+    # unscale FP16 gradients"). Force fp32 master weights; fp16=True still gives
+    # mixed-precision compute.
     model = AutoModelForSequenceClassification.from_pretrained(
-        args.model, num_labels=1, ignore_mismatched_sizes=True).to(device)
+        args.model, num_labels=1, ignore_mismatched_sizes=True).float().to(device)
 
     targs = TrainingArguments(
         output_dir=str(out_dir / f"{args.key}-ckpt"),
