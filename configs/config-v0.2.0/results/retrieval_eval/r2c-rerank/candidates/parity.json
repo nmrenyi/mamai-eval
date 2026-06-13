@@ -1,0 +1,59 @@
+{
+  "created_at_utc": "2026-06-13T19:58:16Z",
+  "tflite": "/Users/renyi/Downloads/mamai/device_push/models/reranker_minilm_l6_int8.tflite",
+  "seq_len": 256,
+  "tokenizer_parity": {
+    "pairs": 9820,
+    "exact_match_pairs": 9817,
+    "exact_match_rate": 0.9997,
+    "token_positions": 1604086,
+    "token_disagreements": 49,
+    "token_disagree_rate": 3.1e-05
+  },
+  "score_parity_kt_vs_hf": {
+    "max_abs_diff": 0.1606,
+    "mean_abs_diff": 1.8e-05,
+    "pearson_r": 1.0,
+    "top3_set_agreement": 1.0
+  },
+  "quality": {
+    "by_cut": {
+      "lenient_ge3": {
+        "tflite_hf": {
+          "p_at_3": 0.6259,
+          "hr_at_3": 0.9185
+        },
+        "tflite_kt_deployed": {
+          "p_at_3": 0.6259,
+          "hr_at_3": 0.9185
+        }
+      },
+      "strict_ge5": {
+        "tflite_hf": {
+          "p_at_3": 0.2743,
+          "hr_at_3": 0.5662
+        },
+        "tflite_kt_deployed": {
+          "p_at_3": 0.2743,
+          "hr_at_3": 0.5662
+        }
+      }
+    },
+    "stage1_gate_tflite_kt": {
+      "chunk_auc_grade3": 0.7331,
+      "chunk_auc_grade5": 0.6485,
+      "within_bundle_concordance": 0.7517,
+      "bundle_any_relevant_auc_top1": 0.7615
+    }
+  },
+  "offline_torch_fp32_same_seqlen": {
+    "lenient_ge3": {
+      "p_at_3": 0.6266,
+      "hr_at_3": 0.9185
+    },
+    "strict_ge5": {
+      "p_at_3": 0.2756,
+      "hr_at_3": 0.5662
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "key": "jina-turbo",
+  "id": "jinaai/jina-reranker-v1-turbo-en",
+  "error": "ModuleNotFoundError: No module named 'transformers.onnx'"
+}

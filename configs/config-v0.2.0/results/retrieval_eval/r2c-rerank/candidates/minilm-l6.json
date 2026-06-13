@@ -1,0 +1,28 @@
+{
+  "created_at_utc": "2026-06-13T19:48:16Z",
+  "key": "minilm-l6",
+  "id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "type": "ce",
+  "size_m": 23,
+  "note": "deployed baseline",
+  "max_len": 256,
+  "n_labels": 1,
+  "score_seconds": 9.9,
+  "device": "cuda",
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.6266,
+      "hr_at_3": 0.9185
+    },
+    "strict_ge5": {
+      "p_at_3": 0.2756,
+      "hr_at_3": 0.5662
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.7311,
+    "chunk_auc_grade5": 0.6484,
+    "within_bundle_concordance": 0.7534,
+    "bundle_any_relevant_auc_top1": 0.7576
+  }
+}
