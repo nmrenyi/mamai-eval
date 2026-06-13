@@ -46,6 +46,7 @@ cd "$WORKTREE"
 
 run_arm() {
   local arm="$1"; local datasets="$2"; local extra="$3"
+  [ -z "$datasets" ] && { echo "=== skip arm=$arm (no datasets) ==="; return 0; }
   echo "=== GENERATE arm=$arm datasets=$datasets ==="
   python3 end_to_end_eval/run_eval.py --config "$CONFIG" --model "$MODEL" \
     --model-dir "$MODEL_DIR" --datasets "$datasets" \
