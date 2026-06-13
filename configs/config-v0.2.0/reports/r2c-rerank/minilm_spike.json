@@ -1,0 +1,58 @@
+{
+  "created_at_utc": "2026-06-13T18:21:54Z",
+  "model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "quality": {
+    "n_test_queries": 491,
+    "by_cut": {
+      "lenient_ge3": {
+        "floor_rrf": {
+          "p_at_3": 0.5058,
+          "hr_at_3": 0.8574
+        },
+        "minilm_ce": {
+          "p_at_3": 0.628,
+          "hr_at_3": 0.9226
+        },
+        "oracle": {
+          "p_at_3": 0.924,
+          "hr_at_3": 0.9878
+        }
+      },
+      "strict_ge5": {
+        "floor_rrf": {
+          "p_at_3": 0.2023,
+          "hr_at_3": 0.4399
+        },
+        "minilm_ce": {
+          "p_at_3": 0.2709,
+          "hr_at_3": 0.558
+        },
+        "oracle": {
+          "p_at_3": 0.5356,
+          "hr_at_3": 0.78
+        }
+      }
+    },
+    "stage1_gate_on_ce_score": {
+      "chunk_auc_grade3": 0.731,
+      "within_bundle_concordance": 0.7583,
+      "bundle_any_relevant_auc_top1": 0.7408
+    }
+  },
+  "convertibility": {
+    "onnx_export": {
+      "ok": true,
+      "size_mb": 91.0
+    },
+    "int8_quantize": {
+      "ok": true,
+      "arm64_config": true,
+      "size_mb": 23.0
+    }
+  },
+  "cpu_latency": {
+    "torch_fp32_20chunks_ms": 250.5,
+    "onnx_int8_20chunks_ms": 252.3,
+    "note": "Mac arm64 CPU; proxy for phone ARM, not the on-device figure"
+  }
+}

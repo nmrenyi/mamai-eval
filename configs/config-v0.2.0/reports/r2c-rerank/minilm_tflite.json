@@ -1,0 +1,19 @@
+{
+  "model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "seq_len": 256,
+  "fp32": {
+    "ok": true,
+    "path": "/tmp/minilm-tflite/minilm_l6_s256.tflite",
+    "size_mb": 90.8
+  },
+  "int8": {
+    "ok": true,
+    "path": "/tmp/minilm-tflite/minilm_l6_s256_int8.tflite",
+    "size_mb": 23.9
+  },
+  "mac_arm64_litert_latency": {
+    "per_pair_ms": 72.5,
+    "est_20chunks_ms": 1450.6,
+    "note": "Mac arm64 LiteRT interpreter; proxy for phone, not the device figure"
+  }
+}

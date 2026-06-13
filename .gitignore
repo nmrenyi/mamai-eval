@@ -228,3 +228,4 @@ configs/**/results/generator/**/calibration_rubric.txt
 .DS_Store
 */.DS_Store
 .venv-r1/
+.venv-rerank/
