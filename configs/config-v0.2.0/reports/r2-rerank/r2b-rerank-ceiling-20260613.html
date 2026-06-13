@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2b — Oracle rerank ceiling: offline simulation (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--goodbg); color: var(--good); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { color: var(--good); font-weight: 600; }
+  .cap { color: var(--warn); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2b — Oracle rerank ceiling: offline simulation</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+step R2b of <a href="../../../../docs/r2-retriever-upgrade-plan.md">the R2 plan</a></p>
+
+<div class="verdict">
+Reranking is the strongest offline-identified lever so far — a clear go to scope
+a real reranker. Perfectly reordering the hybrid's top-20 pool would lift bundle
+precision P@3 from 0.512 → 0.926 (lenient) and 0.206 → 0.545 (strict): the useful
+chunk — even the complete/actionable one — is usually already retrieved but
+buried below rank 3. Most headroom is captured by rerank depth ~10. Caveats: this
+is the <em>oracle</em> upper bound (a real reranker captures a fraction), and a
+residual structural miss remains that reranking can never fix — ~2% of queries
+(lenient) and ~22% (strict) have nothing relevant in the top-20 at all, leaving
+that slice to R2c/C1.
+</div>
+
+<h2>Method</h2>
+<p>
+A reranker can only reorder a retriever's top-k pool, never add chunks. So the
+maximum any reranker can reach is the <strong>oracle</strong>: reorder the top-d
+pool by the true judge grade, keep the top-3. We compute that ceiling for the
+three deployable pools (Gecko, the R2a hybrid α=0.5/k=60, BM25) against the
+actual top-3 floor, as a function of rerank depth d. Pure offline arithmetic on
+the mamaretrieval audit (n=3,185) — no model, no GPU, no new judging.
+</p>
+<p class="note">
+The oracle uses the same 0–6 grades that define P@3/HR@3, so it is optimal by
+construction — that <em>is</em> the definition of the ceiling, not leakage. It
+bounds what a reranker could do; it does not prove a real one will. Sanity check:
+oracle at depth 3 equals the floor exactly (reranking the top-3 changes nothing).
+</p>
+
+<h2>Results</h2>
+<figure>
+  <img src="fig_rerank_ceiling.png" alt="Oracle rerank ceiling vs depth, four metric panels">
+  <figcaption>Oracle P@3/HR@3 vs rerank depth, one solid line per pool; dotted
+  lines are each pool's floor (actual top-3). Lenient (top row) and strict
+  (bottom). Depth 3 = floor by construction.</figcaption>
+</figure>
+<table>
+  <tr><th>Pool</th><th>cut</th><th class="num">floor (top-3)</th>
+      <th class="num">oracle@5</th><th class="num">oracle@10</th>
+      <th class="num">oracle@20</th></tr>
+  <tr><td>Gecko</td><td>P@3 ≥3</td><td class="num">0.477</td><td class="num">0.648</td>
+      <td class="num">0.813</td><td class="num win">0.904</td></tr>
+  <tr><td><strong>Hybrid</strong></td><td>P@3 ≥3</td><td class="num">0.512</td>
+      <td class="num">0.675</td><td class="num">0.842</td><td class="num win">0.926</td></tr>
+  <tr><td>Gecko</td><td>P@3 ≥5</td><td class="num">0.193</td><td class="num">0.276</td>
+      <td class="num">0.402</td><td class="num">0.529</td></tr>
+  <tr><td><strong>Hybrid</strong></td><td>P@3 ≥5</td><td class="num">0.206</td>
+      <td class="num">0.285</td><td class="num">0.412</td><td class="num win">0.545</td></tr>
+  <tr><td>Hybrid</td><td>HR@3 ≥3</td><td class="num">0.860</td><td class="num">0.929</td>
+      <td class="num">0.975</td><td class="num cap">0.992</td></tr>
+  <tr><td>Hybrid</td><td>HR@3 ≥5</td><td class="num">0.459</td><td class="num">0.557</td>
+      <td class="num">0.681</td><td class="num cap">0.778</td></tr>
+</table>
+
+<h2>Readings</h2>
+<ul>
+  <li><strong>Large headroom on lenient relevance.</strong> The hybrid's floor
+      P@3 0.512 rises to an oracle 0.926 — nearly double. HR@3 reaches 0.992: for
+      all but ~1% of queries a relevant chunk is already in the top-20, just not
+      the top-3. Reranking is exactly the lever for that.</li>
+  <li><strong>Reranking also helps the strict cut — revising the R2a read.</strong>
+      R2a found <em>fusion</em> barely moved strict P@3 (0.193→0.208). Reranking is
+      a different lever: the oracle lifts strict P@3 to 0.545 and strict HR@3 from
+      0.459 → 0.778. The complete/actionable chunks are often <em>in</em> the pool
+      but ranked below 3 — fusion can't surface them, reordering can. (Consistent
+      with R2a: the two levers fix different failures.)</li>
+  <li><strong class="cap">A residual structural miss remains.</strong> Oracle@20
+      HR@3 caps at 0.992 lenient but 0.778 strict — so ~22% of queries have
+      <em>no</em> complete/actionable chunk anywhere in the top-20, which no
+      reranker can fix. That slice is the true content gap for R2c (better
+      embedder) / C1 (corpus).</li>
+  <li><strong>Depth ~10 captures most of it.</strong> Hybrid lenient P@3 is 0.675
+      @5, 0.842 @10, 0.926 @20; strict 0.285 / 0.412 / 0.545. Most headroom lands
+      by depth 10, with a still-meaningful tail to 20. A shallow reranker (top-10)
+      is a reasonable latency-bounded default; going to 20 buys the strict tail.</li>
+  <li><strong>Rerank the hybrid pool.</strong> Its ceiling dominates Gecko's and
+      BM25's on every metric and depth — the R2a fusion gain compounds with
+      reranking rather than competing with it.</li>
+</ul>
+
+<h2>Decision</h2>
+<ul>
+  <li><strong>Go: scope a real on-device reranker.</strong> This is the largest
+      offline-identified retrieval lever to date — the bottleneck today is ranking,
+      not (mostly) retrieval coverage. Build/evaluate a quantized, LiteRT-feasible
+      cross-encoder or lightweight reranker over the hybrid top-10–20 pool.</li>
+  <li><strong>Temper by the oracle gap.</strong> These are upper bounds; a real
+      reranker captures a fraction. The next step is <em>not</em> free — it needs an
+      actual reranker model scored against the same labels (with a clean train/test
+      split). R2b establishes that scoping it is worthwhile.</li>
+  <li><strong>The strict structural tail still routes to R2c/C1.</strong> Reranking
+      lifts strict substantially but plateaus at ~0.78 HR; closing the rest needs a
+      better embedder or richer corpus, validated end-to-end per the R2 guardrails.</li>
+</ul>
+
+<h2>Reproducibility</h2>
+<pre>python -m retrieval_eval.simulate_rerank_ceiling \
+    --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-rerank \
+    --report-dir  configs/config-v0.2.0/reports/r2-rerank</pre>
+<p class="meta">Full floors + oracle-by-depth grid: <code>rerank_ceiling.json</code>.</p>
+
+</body>
+</html>
