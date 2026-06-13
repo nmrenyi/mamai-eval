@@ -26,7 +26,41 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from retrieval_eval.compare_retriever_gates import gate_stats
-from retrieval_eval.simulate_hybrid import load_rank_maps
+
+
+def load_rankings_and_grades(hf_repo: str, revision: str):
+    """Return (rankings DataFrame, grades dict)."""
+    import pandas as pd
+    from datasets import load_dataset
+    from huggingface_hub import hf_hub_download
+
+    rk = pd.read_parquet(hf_hub_download(
+        hf_repo, "data/rankings.parquet", repo_type="dataset", revision=revision))
+    judgments = load_dataset(hf_repo, "judgments", revision=revision, split="test")
+    grades = {(r["query_id"], r["chunk_id"]): int(r["score"]) for r in judgments}
+    return rk, grades
+
+
+def single_retriever_rows(rk, retriever: str, grades: dict) -> list[dict]:
+    """Rows {query_id, rank, score, grade} from a retriever's own ranking +
+    its native score (cosine for gecko, BM25 score for bm25)."""
+    sub = rk[rk["retriever"] == retriever]
+    rows = []
+    for r in sub.itertuples():
+        g = grades.get((r.query_id, r.chunk_id))
+        if g is not None:
+            rows.append({"query_id": r.query_id, "rank": int(r.rank),
+                         "score": float(r.score), "grade": g})
+    return rows
+
+
+def rank_map(rk, retriever: str) -> dict:
+    """{query_id: {chunk_id: rank}} for RRF fusion."""
+    sub = rk[rk["retriever"] == retriever]
+    m: dict[str, dict[str, int]] = {}
+    for r in sub.itertuples():
+        m.setdefault(r.query_id, {})[r.chunk_id] = int(r.rank)
+    return m
 
 
 def build_hybrid_rows(gecko: dict, bm25: dict, grades: dict,
@@ -54,18 +88,6 @@ def build_hybrid_rows(gecko: dict, bm25: dict, grades: dict,
     return rows
 
 
-def gecko_rows(gecko: dict, grades: dict) -> list[dict]:
-    rows = []
-    for qid, ranks in gecko.items():
-        for cid, rk in ranks.items():
-            g = grades.get((qid, cid))
-            if g is not None:
-                # cosine score is irrelevant to rank-based stats; use -rank so
-                # within-bundle / pooled ordering matches gecko's own ranking.
-                rows.append({"query_id": qid, "rank": rk, "score": -rk, "grade": g})
-    return rows
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--hf-repo", default="nmrenyi/mamaretrieval")
@@ -79,32 +101,30 @@ def main():
     results_dir = Path(args.results_dir); results_dir.mkdir(parents=True, exist_ok=True)
     report_dir = Path(args.report_dir); report_dir.mkdir(parents=True, exist_ok=True)
 
-    rank_maps, grades = load_rank_maps(args.hf_repo, args.revision)
-    gecko, bm25 = rank_maps["gecko"], rank_maps["bm25"]
+    rk, grades = load_rankings_and_grades(args.hf_repo, args.revision)
 
-    hybrid = gate_stats(build_hybrid_rows(gecko, bm25, grades, args.alpha, args.k))
+    # All three gates computed from data on their native score:
+    #   gecko -> cosine, bm25 -> BM25 score, hybrid -> RRF fused score.
+    gecko = gate_stats(single_retriever_rows(rk, "gecko", grades))
+    bm25 = gate_stats(single_retriever_rows(rk, "bm25", grades))
+    hybrid = gate_stats(build_hybrid_rows(
+        rank_map(rk, "gecko"), rank_map(rk, "bm25"), grades, args.alpha, args.k))
     hybrid["config"] = {"alpha": args.alpha, "k": args.k}
-
-    # Gecko reference: rank-based stats reproduce R1's cosine numbers because
-    # within gecko's own top-3 the cosine order IS the rank order; the chunk-AUC
-    # here uses -rank, so it is NOT the cosine AUC (that was 0.572 in R1). We
-    # cite R1's cosine AUC explicitly instead of recomputing it from ranks.
-    gecko_g = gate_stats(gecko_rows(gecko, grades))
 
     out = {
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": {"hf_repo": args.hf_repo, "revision": args.revision},
-        "note": "hybrid score = RRF fused score; gecko_rank_based uses -rank so "
-                "its chunk_auc is a rank proxy, NOT gecko's cosine AUC (0.572, "
-                "see R1 §3). Compare the hybrid's RRF-score AUC against 0.572.",
-        "gecko_cosine_auc_grade3_from_r1": 0.572,
+        "note": "each gate computed on the retriever's native score: gecko cosine, "
+                "bm25 BM25 score, hybrid RRF fused score. gecko chunk AUC should "
+                "reproduce R1 §3 (0.572) as a cross-check.",
+        "gecko_cosine": gecko,
+        "bm25": bm25,
         "hybrid_rrf": hybrid,
-        "gecko_rank_based_reference": gecko_g,
     }
     with open(results_dir / "hybrid_gate.json", "w") as f:
         json.dump(out, f, indent=2)
 
-    # Comparison figure: gecko cosine (from R1) vs hybrid RRF on the 3 stats.
+    # Comparison figure: gecko cosine vs bm25 vs hybrid RRF on the 3 stats.
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -112,37 +132,43 @@ def main():
     labels = ["chunk AUC\n(grade>=3)\nabsolute cutoffs",
               "within-bundle\nconcordance\nrelative rules",
               "bundle any-relevant\nAUC\ngated abstention"]
-    gecko_vals = [0.572, 0.623, 0.574]   # R1 §3 cosine numbers
-    hybrid_vals = [hybrid["chunk_auc_grade3"], hybrid["within_bundle_concordance"],
-                   hybrid["bundle_any_relevant_auc_top1"]]
+    series = [
+        ("Gecko cosine", "#b3372f", [gecko["chunk_auc_grade3"],
+         gecko["within_bundle_concordance"], gecko["bundle_any_relevant_auc_top1"]]),
+        ("BM25 score", "#92510a", [bm25["chunk_auc_grade3"],
+         bm25["within_bundle_concordance"], bm25["bundle_any_relevant_auc_top1"]]),
+        (f"Hybrid RRF (α={args.alpha}, k={args.k})", "#4a6fa5",
+         [hybrid["chunk_auc_grade3"], hybrid["within_bundle_concordance"],
+          hybrid["bundle_any_relevant_auc_top1"]]),
+    ]
     x = range(len(labels))
-    fig, ax = plt.subplots(figsize=(9, 4.6))
-    ax.bar([i - 0.2 for i in x], gecko_vals, 0.4, label="Gecko cosine (R1)",
-           color="#b3372f", alpha=0.85)
-    ax.bar([i + 0.2 for i in x], hybrid_vals, 0.4,
-           label=f"Hybrid RRF (α={args.alpha}, k={args.k})", color="#4a6fa5",
-           alpha=0.85)
+    width = 0.26
+    fig, ax = plt.subplots(figsize=(10, 4.8))
+    for j, (name, color, vals) in enumerate(series):
+        offs = (j - 1) * width
+        ax.bar([i + offs for i in x], vals, width, label=name, color=color, alpha=0.85)
+        for i, v in enumerate(vals):
+            ax.text(i + offs, v + 0.008, f"{v:.3f}", ha="center", fontsize=7.5)
     ax.axhline(0.5, ls=":", color="gray", lw=1)
     ax.axhline(0.8, ls="--", color="#14532d", lw=1, label="viability bar")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=8)
     ax.set_ylim(0.4, 1.0); ax.set_ylabel("statistic")
-    for i, (g, h) in enumerate(zip(gecko_vals, hybrid_vals)):
-        ax.text(i - 0.2, g + 0.008, f"{g:.3f}", ha="center", fontsize=8)
-        ax.text(i + 0.2, h + 0.008, f"{h:.3f}", ha="center", fontsize=8)
-    ax.set_title("Stage-1 score-quality gate: Gecko cosine vs hybrid RRF "
+    ax.set_title("Stage-1 score-quality gate: Gecko cosine vs BM25 vs hybrid RRF "
                  "(dotted=chance, dashed=viability bar)", fontsize=10)
     ax.legend(fontsize=8)
     fig.tight_layout()
     fig.savefig(report_dir / "fig_hybrid_gate.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
 
-    print(f"Hybrid (alpha={args.alpha}, k={args.k}) Stage-1 gate on RRF score:")
-    print(f"  chunk AUC (grade>=3)        : {hybrid['chunk_auc_grade3']}  "
-          f"(gecko cosine was 0.572)")
-    print(f"  within-bundle concordance   : {hybrid['within_bundle_concordance']}  "
-          f"(gecko cosine was 0.623)")
-    print(f"  bundle any-relevant AUC     : {hybrid['bundle_any_relevant_auc_top1']}  "
-          f"(gecko cosine was 0.574)")
+    def line(name, g):
+        print(f"  {name:14s} chunkAUC={g['chunk_auc_grade3']}  "
+              f"conc={g['within_bundle_concordance']}  "
+              f"bundleAUC={g['bundle_any_relevant_auc_top1']}")
+    print("Stage-1 gate on native scores:")
+    line("gecko cosine", gecko)
+    line("bm25 score", bm25)
+    line(f"hybrid RRF", hybrid)
+    print(f"(gecko chunk AUC should reproduce R1's 0.572)")
     print(f"Written: {results_dir}/hybrid_gate.json")
 
 

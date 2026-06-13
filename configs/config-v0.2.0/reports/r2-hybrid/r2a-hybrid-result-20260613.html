@@ -123,47 +123,54 @@ is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
 
 <h2>Does the hybrid revive thresholding?</h2>
 <p>
-R1 killed thresholding on Gecko's <em>cosine</em> scores. The hybrid produces a
-different score — the RRF fused score — which is rank-based and bounded, so it
-could be more comparable across queries. Running the R1 §6 Stage-1 gate on the
-fused score (deployable config α=0.5, k=60) against Gecko's cosine numbers:
+R1 killed thresholding on Gecko's <em>cosine</em> scores. Both alternatives carry
+a different score — BM25's lexical score, and the hybrid's RRF fused score, each
+rank-/frequency-based and bounded, so potentially more comparable across queries.
+Running the R1 §6 Stage-1 gate on all three native scores (hybrid at the
+deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
+(0.572 / 0.623 / 0.574), a cross-check that the computation is sound.
 </p>
 <figure>
-  <img src="fig_hybrid_gate.png" alt="Stage-1 gate: Gecko cosine vs hybrid RRF">
-  <figcaption>The three Stage-1 statistics, Gecko cosine (R1) vs hybrid RRF.
-  Dotted = chance (0.5); dashed = the 0.80 viability bar.</figcaption>
+  <img src="fig_hybrid_gate.png" alt="Stage-1 gate: Gecko cosine vs BM25 vs hybrid RRF">
+  <figcaption>The three Stage-1 statistics, Gecko cosine vs BM25 score vs hybrid
+  RRF. Dotted = chance (0.5); dashed = the 0.80 viability bar.</figcaption>
 </figure>
 <table>
-  <tr><th>Statistic (rule family it gates)</th><th class="num">Gecko cosine (R1)</th>
-      <th class="num">Hybrid RRF</th></tr>
+  <tr><th>Statistic (rule family it gates)</th><th class="num">Gecko cosine</th>
+      <th class="num">BM25 score</th><th class="num">Hybrid RRF</th></tr>
   <tr><td>chunk AUC ≥3 (absolute cutoffs)</td><td class="num">0.572</td>
-      <td class="num win">0.666</td></tr>
+      <td class="num">0.646</td><td class="num win">0.668</td></tr>
   <tr><td>within-bundle concordance (relative rules)</td><td class="num">0.623</td>
-      <td class="num flat">0.594</td></tr>
+      <td class="num win">0.659</td><td class="num flat">0.596</td></tr>
   <tr><td>bundle any-relevant AUC (gated abstention)</td><td class="num">0.574</td>
-      <td class="num win">0.670</td></tr>
+      <td class="num win">0.684</td><td class="num">0.675</td></tr>
 </table>
 <ul>
-  <li><strong>The fused score is a meaningfully better global signal.</strong>
-      Chunk AUC and bundle-level AUC both jump ~0.10 — because RRF scores are
-      rank-based and comparable across queries (the cross-query comparability
-      cosine lacked), and "found by both retrievers at good rank" genuinely
-      tracks relevance.</li>
-  <li><strong>But still below the 0.80 viability bar.</strong> The best threshold
-      rule the hybrid enables — <em>gated abstention</em> ("if the fused top-1 is
-      low, skip RAG for this query") at AUC 0.670 — is the most promising
-      threshold-like signal we've measured, yet remains marginal, not viable.</li>
-  <li><strong>Relative rules stay dead.</strong> Within-bundle concordance is if
-      anything slightly worse (0.594): among the three already-top fused chunks,
-      the fine ordering carries no more relevance signal than cosine did. R1's
-      core finding — the score can't grade usefulness <em>within</em> the
-      retrieved set — survives the hybrid.</li>
+  <li><strong>BM25's raw score is the most thresholdable of the three</strong> —
+      best on two of three statistics, including the gated-abstention signal
+      (bundle AUC 0.684). Lexical match frequency is a more honest relevance-
+      confidence cue than embedding cosine: a chunk that shares the query's exact
+      terms is more reliably on-point than one that is merely near it in vector
+      space.</li>
+  <li><strong>Fusion trades within-bundle signal for cross-query separation.</strong>
+      The hybrid wins chunk AUC (0.668 — RRF scores are comparable across queries,
+      which cosine wasn't) but its within-bundle concordance (0.596) drops below
+      <em>both</em> parents: blending two rank systems blurs the fine ordering
+      inside a bundle. The best query-level gate signal is BM25's, not the
+      hybrid's.</li>
+  <li><strong>None reaches the 0.80 viability bar.</strong> The strongest
+      threshold-like signal anywhere — BM25's bundle-level gated abstention
+      ("skip RAG when the top BM25 score is low") at 0.684 — is the most promising
+      we've measured, yet still marginal, not viable. R1's core finding survives:
+      no score grades usefulness <em>within</em> the retrieved set well enough for
+      a relative rule (best concordance 0.659).</li>
 </ul>
 <p class="note">
-Takeaway: the hybrid does not revive thresholding to viability, but it shifts the
-most promising rule from "none" to a marginal <em>query-level RAG on/off gate</em>.
-If R2c/R2d later push the bundle-level AUC past ~0.80, that gate becomes worth an
-end-to-end test; today it is not.
+Takeaway: neither alternative revives thresholding to viability, but both beat
+Gecko's cosine, and BM25's lexical score is the single best relevance-confidence
+signal measured. The most promising rule is a marginal <em>query-level RAG on/off
+gate</em> driven by BM25's top score. If R2c/R2d later push a bundle-level AUC past
+~0.80, that gate becomes worth an end-to-end test; today it is not.
 </p>
 
 <h2>Reproducibility</h2>
