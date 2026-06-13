@@ -83,6 +83,7 @@ def main():
 
     judg = pd.read_parquet(hf_hub_download(args.hf_repo, "data/judgments.parquet",
                                            repo_type="dataset", revision=args.revision))
+    judg = judg.rename(columns={"score": "grade"})  # judgments.parquet calls the 0-6 grade "score"
     q_text = {r.query_id: r.query_text for r in pd.read_parquet(hf_hub_download(
         args.hf_repo, "data/queries.parquet", repo_type="dataset", revision=args.revision)).itertuples()}
     c_text = {r.chunk_id: r.text for r in pd.read_parquet(hf_hub_download(
