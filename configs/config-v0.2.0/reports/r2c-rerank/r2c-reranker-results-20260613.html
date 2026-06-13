@@ -102,26 +102,34 @@ DEV-selected, held-out TEST evaluated — no test query ever seen), then re-scor
 the same test pool. Training took 149 s on one H200.</p>
 
 <table>
-  <tr><th>metric</th><th class="num">zero-shot</th><th class="num">fine-tuned</th><th class="num">Δ</th><th class="num">Qwen3-8B ref</th></tr>
-  <tr><td>P@3 lenient (grade≥3)</td><td class="num">0.627</td><td class="num">0.756</td><td class="num">+0.129</td><td class="num">0.792</td></tr>
-  <tr><td>P@3 strict (grade≥5)</td><td class="num">0.276</td><td class="num">0.380</td><td class="num">+0.104</td><td class="num">0.369</td></tr>
-  <tr><td>HR@3 (any relevant in top-3)</td><td class="num">0.918</td><td class="num">0.959</td><td class="num">+0.041</td><td class="num">0.984</td></tr>
-  <tr><td>chunk AUC grade≥3 (thresholdability)</td><td class="num">0.731</td><td class="num">0.783</td><td class="num">+0.052</td><td class="num">0.820</td></tr>
-  <tr><td>chunk AUC grade≥5</td><td class="num">0.647</td><td class="num">0.757</td><td class="num">+0.110</td><td class="num">—</td></tr>
+  <tr><th>model</th><th class="num">params</th><th class="num">P@3 len</th><th class="num">P@3 strict</th>
+      <th class="num">HR@3</th><th class="num">AUC ≥3</th><th class="num">AUC ≥5</th></tr>
+  <tr><td>MiniLM-L6 zero-shot</td><td class="num">23M</td><td class="num">0.627</td><td class="num">0.276</td><td class="num">0.918</td><td class="num">0.731</td><td class="num">0.647</td></tr>
+  <tr class="win"><td>MiniLM-L6 <strong>fine-tuned</strong> (deployable)</td><td class="num">23M</td><td class="num">0.756</td><td class="num">0.380</td><td class="num">0.959</td><td class="num">0.783</td><td class="num">0.757</td></tr>
+  <tr><td>mxbai-base zero-shot</td><td class="num">184M</td><td class="num">0.714</td><td class="num">0.312</td><td class="num">0.963</td><td class="num">0.748</td><td class="num">0.667</td></tr>
+  <tr><td>mxbai-base <strong>fine-tuned</strong> (size upgrade)</td><td class="num">184M</td><td class="num">0.821</td><td class="num">0.420</td><td class="num">0.978</td><td class="num ok">0.859</td><td class="num ok">0.857</td></tr>
+  <tr><td>Qwen3-8B (offline ref)</td><td class="num">8B</td><td class="num">0.792</td><td class="num">0.369</td><td class="num">0.984</td><td class="num">0.820</td><td class="num">—</td></tr>
 </table>
 
-<p>The fine-tuned 23 M model <strong>beats zero-shot mxbai-base (0.714) at one-eighth
-the size</strong>, and on the strict cut actually <em>exceeds</em> the Qwen3-8B
-reference (0.380 vs 0.369). Its score AUC moves decisively toward the 0.80 bar R1
-set for a usable absolute threshold — the strongest case yet that a thresholdable
-on-device relevance signal is within reach (a dedicated threshold re-test on the
-fine-tuned score is the natural R1 follow-up).</p>
+<p>Two findings:</p>
+<ul>
+  <li><strong>Fine-tuning is the lever, not size.</strong> The fine-tuned 23 M
+  MiniLM-L6 beats zero-shot mxbai-base (0.714) at one-eighth the size and, on the
+  strict cut, exceeds the Qwen3-8B reference (0.380 vs 0.369).</li>
+  <li><strong>R1's threshold is revived.</strong> Fine-tuned mxbai-base
+  <em>crosses the 0.80 chunk-AUC bar</em> (0.859 ≥3, 0.857 ≥5) — and tops even the
+  Qwen3-8B reference (0.792). For the first time a reranker's score is
+  thresholdable by R1's own criterion, so the abstention/threshold idea R1 shelved
+  for cosine is worth re-testing on a fine-tuned reranker score.</li>
+</ul>
 
-<div class="note"><strong>Why not deploy mxbai-base?</strong> It is the best
-<em>zero-shot</em> model, but it is 8× the parameters/latency of MiniLM-L6 and the
-fine-tuned MiniLM-L6 already surpasses it. (We also fine-tuned mxbai-base for
-completeness; it is not on the deployment path.) The deployable choice optimizes
-quality-per-byte, and the fine-tuned tiny model wins outright.</div>
+<div class="note"><strong>Deployment choice = fine-tuned MiniLM-L6.</strong> It is
+the best quality-per-byte (24 MB int8, 13 ms/pair, proven on the device) and
+already beats every zero-shot model. Fine-tuned mxbai-base is the
+<em>quality-ceiling upgrade</em> (≈8× the size/latency, ~2 s for a 20-chunk
+bundle) for if/when the threshold-revival or the extra ~0.065 P@3 justifies the
+footprint — it is not the default. The end-to-end value gate below uses the
+deployable fine-tuned MiniLM-L6.</div>
 
 <h2>P0 — does the deployed reranker reproduce the validated quality?</h2>
 <p>The in-app reranker is the int8 <code>.tflite</code> driven by a hand-ported
