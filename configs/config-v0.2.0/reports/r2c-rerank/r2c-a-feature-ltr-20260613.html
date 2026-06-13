@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2c-A — Feature-LTR reranker baseline (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--goodbg); color: var(--good); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { color: var(--good); font-weight: 600; }
+  .cap { color: var(--warn); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c-A — Feature-LTR reranker baseline</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+Option A of the R2c reranker work (<a href="../../../../docs/r2c-reranker-literature-review-20260613.md">lit review</a>)</p>
+
+<div class="verdict">
+The cheapest, guaranteed-deployable reranker — a LightGBM LambdaMART over signals
+we already compute, no neural net, no conversion gate — is a <strong>real but
+partial</strong> win. On held-out test it beats the hybrid (RRF) floor on every
+metric: P@3 0.506 → 0.584 (lenient) and 0.202 → 0.261 (strict), HR@3 0.857 → 0.917
+and 0.440 → 0.574 — capturing ~18% of the oracle headroom. Its learned score is
+also the most thresholdable signal measured so far (chunk-AUC 0.701 vs the
+hybrid's 0.668), though still below the 0.80 viability bar. It is not just a
+learned RRF: lexical features carry ~30% of the gain. This sets the bar a neural
+cross-encoder must beat to justify its (unproven) on-device conversion.
+</div>
+
+<h2>Setup</h2>
+<p>
+Model: LightGBM LambdaMART (lambdarank, nDCG@3 early-stop) over 13 cheap
+features of each (query, chunk) in the hybrid (Gecko+BM25 RRF, α=0.5/k=60)
+top-20 — retrieval scores/ranks (gecko, bm25, RRF), and lexical overlap (chunk &
+query length, shared-term count, Jaccard, query coverage, numeric/dose overlap).
+Trained on the frozen <strong>train</strong> split, early-stopped on
+<strong>dev</strong>, reported on the held-out <strong>test</strong> split only
+(491 queries; 70/15/15 by-query, stratified on hybrid-top-20 strict presence).
+Deterministic (fixed seed, no subsampling). Floor = RRF order (the deployed
+hybrid); oracle = reorder by judge grade (the R2b ceiling), both recomputed on
+the same test queries for apples-to-apples.
+</p>
+
+<h2>Results</h2>
+<figure>
+  <img src="fig_ltr.png" alt="Feature-LTR vs floor vs oracle, and feature importances">
+  <figcaption>Left: feature-LTR vs hybrid floor vs oracle on the held-out test
+  queries. Right: gain-importance of each feature.</figcaption>
+</figure>
+<table>
+  <tr><th>Metric</th><th class="num">floor (RRF)</th><th class="num">feature-LTR</th>
+      <th class="num">oracle</th><th class="num">headroom captured</th></tr>
+  <tr><td>P@3 ≥3</td><td class="num">0.506</td><td class="num win">0.584</td>
+      <td class="num">0.924</td><td class="num">~19%</td></tr>
+  <tr><td>HR@3 ≥3</td><td class="num">0.857</td><td class="num win">0.917</td>
+      <td class="num">0.988</td><td class="num">~46%</td></tr>
+  <tr><td>P@3 ≥5</td><td class="num">0.202</td><td class="num win">0.261</td>
+      <td class="num">0.536</td><td class="num">~18%</td></tr>
+  <tr><td>HR@3 ≥5</td><td class="num">0.440</td><td class="num win">0.574</td>
+      <td class="num">0.780</td><td class="num">~39%</td></tr>
+</table>
+
+<h2>Readings</h2>
+<ul>
+  <li><strong>A real, consistent lift over the hybrid — biggest on hit rate.</strong>
+      Every metric improves; the largest gains are HR@3 (strict +13.4 pp, lenient
+      +6.0 pp) — feature-LTR pulls a relevant chunk into the top-3 for many more
+      queries. P@3 gains are smaller (+7.8 / +5.9 pp).</li>
+  <li><strong>But far from the oracle.</strong> It captures only ~18–19% of the
+      P@3 headroom (more of the HR headroom). A reranker that <em>reads the text</em>
+      should do better — which is exactly what the neural candidates and the
+      Qwen3-8B reference will test.</li>
+  <li><strong>Not just a learned RRF — the lexical bet partly paid off.</strong>
+      Gain importance: rrf_score 0.25, <strong>c_len 0.20</strong>, rrf_rank 0.14,
+      gecko_score 0.12, <strong>q_coverage 0.11</strong>, then bm25/overlap/jaccard.
+      The fusion signals (~39%) matter most, but chunk length and query-coverage
+      together carry ~30% — lexical features the RRF formula can't use are a real
+      part of the gain, which is why it beats the fixed fusion.</li>
+  <li><strong class="cap">Most thresholdable score yet — still sub-viable.</strong>
+      The R1 Stage-1 gate on the LTR score: chunk-AUC <strong>0.701</strong>
+      (vs gecko cosine 0.572, BM25 0.646, hybrid RRF 0.668), within-bundle
+      concordance <strong>0.692</strong> (best measured), bundle-AUC 0.649. A
+      <em>learned</em> score is more relevance-aligned than any raw retrieval
+      score — but all three remain below the 0.80 bar, so R1's "no usable
+      threshold" verdict still holds, now by a smaller margin.</li>
+</ul>
+
+<h2>Decision</h2>
+<ul>
+  <li><strong>Feature-LTR is a viable backup that actually helps.</strong> It is
+      deployable on-device with zero conversion risk and beats the hybrid on every
+      metric — so even if no cross-encoder converts (Phase 0), we have a real
+      improvement to ship (pending the end-to-end gate).</li>
+  <li><strong>It sets the bar.</strong> A neural cross-encoder must beat
+      P@3 0.584 / HR@3-strict 0.574 by enough to justify the on-device conversion
+      effort. The Qwen3-8B reference and oracle bracket how much more is reachable
+      (oracle P@3 0.924) — the gap is large, so there is real room for a
+      text-reading reranker to win.</li>
+  <li><strong>Carry the lexical signal forward.</strong> c_len and q_coverage
+      mattering confirms cheap lexical features add value beyond fusion — useful
+      whether or not a neural model is adopted.</li>
+</ul>
+<p class="note">
+Scope: offline only, on the held-out test split. "Deployable backup" still has to
+clear the end-to-end gate (M1 MCQ ±RAG rerun, SAQ A/B) before shipping, and the
+on-device feature pipeline must reproduce these features faithfully (BM25 via
+FTS5; watch the x86-vs-ARM float drift seen in R1). The strong-reference
+comparison (Qwen3-8B, bge-v2-m3) is Option B (cluster) — this run anchors floor →
+feature-LTR → oracle and builds the split + feature + scoring harness B reuses.
+</p>
+
+<h2>Reproducibility</h2>
+<pre>python -m retrieval_eval.build_split        --output-dir configs/config-v0.2.0/results/retrieval_eval/r2c-rerank
+python -m retrieval_eval.build_ltr_features --split-dir configs/config-v0.2.0/results/retrieval_eval/r2c-rerank \
+                                            --output-dir configs/config-v0.2.0/results/retrieval_eval/r2c-rerank
+python -m retrieval_eval.train_eval_ltr     --features-dir configs/config-v0.2.0/results/retrieval_eval/r2c-rerank \
+                                            --report-dir   configs/config-v0.2.0/reports/r2c-rerank</pre>
+<p class="meta">Split: <code>split.json</code> / manifest · features: <code>ltr_features.parquet</code>
+· results: <code>ltr_results.json</code>.</p>
+
+</body>
+</html>
