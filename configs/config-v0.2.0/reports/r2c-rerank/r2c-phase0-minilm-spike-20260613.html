@@ -94,9 +94,10 @@ anywhere in that range, which the on-phone benchmark (layer 4) will pin down.
 <figure>
   <img src="fig_minilm_spike.png" alt="MiniLM-L6 quality and Stage-1 gate">
   <figcaption>Left: rerank quality on the held-out test split (n=491) — MiniLM-L6
-  zero-shot vs floor / feature-LTR / oracle. Right: the Stage-1 score-quality
-  gate across every score measured in R1–R2, ending at MiniLM-L6; dashed = 0.80
-  viability bar, purple dotted = voyage ceiling.</figcaption>
+  zero-shot vs floor / feature-LTR / oracle, with the voyage retrieval ceiling
+  (purple dotted, its own top-3 on the same test queries). Right: the Stage-1
+  score-quality gate across every score measured in R1–R2, ending at MiniLM-L6;
+  dashed = 0.80 viability bar, purple dotted = voyage ceiling.</figcaption>
 </figure>
 <table>
   <tr><th>Metric</th><th class="num">floor (RRF)</th><th class="num">feature-LTR</th>
@@ -127,6 +128,12 @@ anywhere in that range, which the on-phone benchmark (layer 4) will pin down.
   <li><strong>And this is before fine-tuning.</strong> Zero-shot on MS-MARCO
       (web) domain, not yet trained on our 230k OBGYN pairs — the fine-tune step
       should push quality (and thresholdability) further.</li>
+  <li><strong>The oracle matches or exceeds the voyage retrieval ceiling.</strong>
+      Perfect reranking of our hybrid top-20 (oracle) reaches P@3 0.924 / 0.536
+      (lenient/strict) vs voyage's own top-3 at 0.870 / 0.445 — so a good-enough
+      reranker on the pool we already retrieve can rival an API-only top-tier
+      retriever we can't deploy. MiniLM-L6 zero-shot (0.628 / 0.271) sits well
+      below both, leaving clear room for fine-tuning and the bigger candidates.</li>
 </ul>
 
 <h2>Decision</h2>

@@ -22,12 +22,42 @@ def main():
     ap.add_argument("--report-dir", default="configs/config-v0.2.0/reports/r2c-rerank")
     ap.add_argument("--hybrid-gate",
                     default="configs/config-v0.2.0/results/retrieval_eval/r2-hybrid/hybrid_gate.json")
+    ap.add_argument("--split-dir",
+                    default="configs/config-v0.2.0/results/retrieval_eval/r2c-rerank")
+    ap.add_argument("--hf-repo", default="nmrenyi/mamaretrieval")
+    ap.add_argument("--revision", default="v0.2.0")
     args = ap.parse_args()
 
     rd = Path(args.report_dir)
     spike = json.load(open(rd / "minilm_spike.json"))
     ltr = json.load(open(rd / "ltr_results.json"))
     hg = json.load(open(args.hybrid_gate))
+
+    # voyage (API-only retriever) top-3 P@3/HR@3 on the SAME test queries — a
+    # retrieval ceiling reference for the quality panel. Not a reranker; shown
+    # because oracle (perfect rerank of our pool) and voyage are different
+    # ceilings worth seeing together.
+    voyage_quality = None
+    try:
+        import pandas as pd
+        from huggingface_hub import hf_hub_download
+        split_of = json.load(open(Path(args.split_dir) / "split.json"))
+        test_qs = {q for q, s in split_of.items() if s == "test"}
+        rk = pd.read_parquet(hf_hub_download(args.hf_repo, "data/rankings.parquet",
+                                             repo_type="dataset", revision=args.revision))
+        vo = rk[(rk["retriever"] == "voyage") & (rk["rank"] <= 3) & (rk["query_id"].isin(test_qs))]
+        jd = pd.read_parquet(hf_hub_download(args.hf_repo, "data/judgments.parquet",
+                                             repo_type="dataset", revision=args.revision))
+        grades = {(r.query_id, r.chunk_id): int(r.score) for r in jd.itertuples()}
+        voyage_quality = {}
+        for ck, cut in (("lenient_ge3", 3), ("strict_ge5", 5)):
+            p = hr = n = 0
+            for qid, grp in vo.groupby("query_id"):
+                rel = sum(1 for c in grp["chunk_id"] if grades.get((qid, c), 0) >= cut)
+                p += min(rel, 3) / 3.0; hr += int(rel > 0); n += 1
+            voyage_quality[ck] = {"p_at_3": p / n, "hr_at_3": hr / n}
+    except Exception as e:
+        print(f"voyage quality skipped: {e}")
 
     import matplotlib
     matplotlib.use("Agg")
@@ -54,6 +84,11 @@ def main():
         axq.bar([i + offs for i in qx], vals, w, label=name, color=color, alpha=0.85)
         for i, v in enumerate(vals):
             axq.text(i + offs, v + 0.008, f"{v:.2f}", ha="center", fontsize=6.5)
+    if voyage_quality:
+        for i, (ck, st, _) in enumerate(panels):
+            v = voyage_quality[ck][st]
+            axq.hlines(v, i - 0.42, i + 0.42, color="#6b21a8", ls=":", lw=2,
+                       label="voyage retrieval (ceiling)" if i == 0 else None)
     axq.set_xticks(list(qx)); axq.set_xticklabels([t for _, _, t in panels])
     axq.set_ylim(0, 1.0); axq.set_ylabel("score")
     axq.set_title("Rerank quality (held-out test): MiniLM-L6 zero-shot vs "
