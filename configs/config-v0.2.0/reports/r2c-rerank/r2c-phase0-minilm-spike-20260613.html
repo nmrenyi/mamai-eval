@@ -91,6 +91,17 @@ anywhere in that range, which the on-phone benchmark (layer 4) will pin down.
 </p>
 
 <h2>Quality + thresholdability</h2>
+<p class="note">
+<strong>Which model produced these numbers:</strong> the quality and gate scores
+below come from the original <strong>fp32 PyTorch</strong> model (run on the Mac),
+<em>not</em> from the ONNX/LiteRT or int8 exports — those were built separately to
+test convertibility and latency, and their outputs were never fed back into
+scoring. So the reported quality is the model's fp32 quality, an upper bound for
+the int8 model that would actually deploy (dynamic int8 on a 22M cross-encoder
+typically loses well under a point, but it is not yet measured). Re-scoring
+through the int8 model is a follow-up, alongside the on-phone latency and the
+fine-tune.
+</p>
 <figure>
   <img src="fig_minilm_spike.png" alt="MiniLM-L6 quality and Stage-1 gate">
   <figcaption>Left: rerank quality on the held-out test split (n=491) — MiniLM-L6
