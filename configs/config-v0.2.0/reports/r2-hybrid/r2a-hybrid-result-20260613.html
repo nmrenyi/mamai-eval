@@ -121,11 +121,62 @@ is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
       scope R2c (embedder bake-off).</li>
 </ul>
 
+<h2>Does the hybrid revive thresholding?</h2>
+<p>
+R1 killed thresholding on Gecko's <em>cosine</em> scores. The hybrid produces a
+different score — the RRF fused score — which is rank-based and bounded, so it
+could be more comparable across queries. Running the R1 §6 Stage-1 gate on the
+fused score (deployable config α=0.5, k=60) against Gecko's cosine numbers:
+</p>
+<figure>
+  <img src="fig_hybrid_gate.png" alt="Stage-1 gate: Gecko cosine vs hybrid RRF">
+  <figcaption>The three Stage-1 statistics, Gecko cosine (R1) vs hybrid RRF.
+  Dotted = chance (0.5); dashed = the 0.80 viability bar.</figcaption>
+</figure>
+<table>
+  <tr><th>Statistic (rule family it gates)</th><th class="num">Gecko cosine (R1)</th>
+      <th class="num">Hybrid RRF</th></tr>
+  <tr><td>chunk AUC ≥3 (absolute cutoffs)</td><td class="num">0.572</td>
+      <td class="num win">0.666</td></tr>
+  <tr><td>within-bundle concordance (relative rules)</td><td class="num">0.623</td>
+      <td class="num flat">0.594</td></tr>
+  <tr><td>bundle any-relevant AUC (gated abstention)</td><td class="num">0.574</td>
+      <td class="num win">0.670</td></tr>
+</table>
+<ul>
+  <li><strong>The fused score is a meaningfully better global signal.</strong>
+      Chunk AUC and bundle-level AUC both jump ~0.10 — because RRF scores are
+      rank-based and comparable across queries (the cross-query comparability
+      cosine lacked), and "found by both retrievers at good rank" genuinely
+      tracks relevance.</li>
+  <li><strong>But still below the 0.80 viability bar.</strong> The best threshold
+      rule the hybrid enables — <em>gated abstention</em> ("if the fused top-1 is
+      low, skip RAG for this query") at AUC 0.670 — is the most promising
+      threshold-like signal we've measured, yet remains marginal, not viable.</li>
+  <li><strong>Relative rules stay dead.</strong> Within-bundle concordance is if
+      anything slightly worse (0.594): among the three already-top fused chunks,
+      the fine ordering carries no more relevance signal than cosine did. R1's
+      core finding — the score can't grade usefulness <em>within</em> the
+      retrieved set — survives the hybrid.</li>
+</ul>
+<p class="note">
+Takeaway: the hybrid does not revive thresholding to viability, but it shifts the
+most promising rule from "none" to a marginal <em>query-level RAG on/off gate</em>.
+If R2c/R2d later push the bundle-level AUC past ~0.80, that gate becomes worth an
+end-to-end test; today it is not.
+</p>
+
 <h2>Reproducibility</h2>
 <pre>python -m retrieval_eval.simulate_hybrid \
     --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-hybrid \
+    --report-dir  configs/config-v0.2.0/reports/r2-hybrid
+
+# Stage-1 score-quality gate on the fused RRF score
+python -m retrieval_eval.gate_hybrid \
+    --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-hybrid \
     --report-dir  configs/config-v0.2.0/reports/r2-hybrid</pre>
-<p class="meta">Full sweep grid + baselines: <code>hybrid_sweep.json</code>.</p>
+<p class="meta">Full sweep grid + baselines: <code>hybrid_sweep.json</code>;
+gate stats: <code>hybrid_gate.json</code>.</p>
 
 </body>
 </html>

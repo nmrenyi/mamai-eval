@@ -1,0 +1,35 @@
+{
+  "created_at_utc": "2026-06-13T12:31:55Z",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.2.0"
+  },
+  "note": "hybrid score = RRF fused score; gecko_rank_based uses -rank so its chunk_auc is a rank proxy, NOT gecko's cosine AUC (0.572, see R1 \u00a73). Compare the hybrid's RRF-score AUC against 0.572.",
+  "gecko_cosine_auc_grade3_from_r1": 0.572,
+  "hybrid_rrf": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.5129,
+    "hr_at_3": 0.8619,
+    "chunk_auc_grade3": 0.6664,
+    "chunk_auc_grade5": 0.6411,
+    "within_bundle_concordance": 0.5936,
+    "concordance_n_pairs": 4370,
+    "bundle_any_relevant_auc_top1": 0.6696,
+    "config": {
+      "alpha": 0.5,
+      "k": 60
+    }
+  },
+  "gecko_rank_based_reference": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.4771,
+    "hr_at_3": 0.8135,
+    "chunk_auc_grade3": 0.572,
+    "chunk_auc_grade5": 0.5699,
+    "within_bundle_concordance": 0.6231,
+    "concordance_n_pairs": 4182,
+    "bundle_any_relevant_auc_top1": 0.5
+  }
+}
