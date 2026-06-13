@@ -69,21 +69,22 @@ def main():
     # --- quality panel ---
     panels = [("lenient_ge3", "p_at_3", "P@3 ≥3"), ("lenient_ge3", "hr_at_3", "HR@3 ≥3"),
               ("strict_ge5", "p_at_3", "P@3 ≥5"), ("strict_ge5", "hr_at_3", "HR@3 ≥5")]
-    qx = range(len(panels)); w = 0.2
+    qx = range(len(panels)); w = 0.16
     sq = spike["quality"]["by_cut"]
     lq = ltr["results"]["by_cut"]
     series = [
         ("floor (RRF)", "#92510a", lambda ck, st: sq[ck]["floor_rrf"][st]),
         ("feature-LTR", "#888888", lambda ck, st: lq[ck]["feature_ltr"][st]),
-        ("MiniLM-L6 CE", "#4a6fa5", lambda ck, st: sq[ck]["minilm_ce"][st]),
+        ("MiniLM-L6 fp32", "#4a6fa5", lambda ck, st: sq[ck]["minilm_ce"][st]),
+        ("MiniLM-L6 int8", "#9ecae1", lambda ck, st: sq[ck]["minilm_ce_int8"][st]),
         ("oracle", "#14532d", lambda ck, st: sq[ck]["oracle"][st]),
     ]
     for j, (name, color, fn) in enumerate(series):
         vals = [fn(ck, st) for ck, st, _ in panels]
-        offs = (j - 1.5) * w
+        offs = (j - 2) * w
         axq.bar([i + offs for i in qx], vals, w, label=name, color=color, alpha=0.85)
         for i, v in enumerate(vals):
-            axq.text(i + offs, v + 0.008, f"{v:.2f}", ha="center", fontsize=6.5)
+            axq.text(i + offs, v + 0.008, f"{v:.2f}", ha="center", fontsize=5.5)
     if voyage_quality:
         for i, (ck, st, _) in enumerate(panels):
             v = voyage_quality[ck][st]
@@ -104,15 +105,16 @@ def main():
         ("BM25", "#92510a", hg["bm25"]),
         ("Hybrid RRF", "#888888", hg["hybrid_rrf"]),
         ("feature-LTR", "#c08a3e", ltr["results"]["stage1_gate_on_ltr_score"]),
-        ("MiniLM-L6 CE", "#4a6fa5", spike["quality"]["stage1_gate_on_ce_score"]),
+        ("MiniLM-L6 fp32", "#4a6fa5", spike["quality"]["stage1_gate_on_ce_score"]),
+        ("MiniLM-L6 int8", "#9ecae1", spike["quality"]["stage1_gate_on_ce_int8_score"]),
     ]
-    gx = range(len(gstats)); bw = 0.16
+    gx = range(len(gstats)); bw = 0.13
     for j, (name, color, vals) in enumerate(gseries):
-        offs = (j - 2) * bw
+        offs = (j - 2.5) * bw
         ys = [vals[k] for k, _ in gstats]
         axg.bar([i + offs for i in gx], ys, bw, label=name, color=color, alpha=0.85)
         for i, v in enumerate(ys):
-            axg.text(i + offs, v + 0.006, f"{v:.2f}", ha="center", fontsize=6)
+            axg.text(i + offs, v + 0.006, f"{v:.2f}", ha="center", fontsize=5)
     voy = hg.get("voyage_cosine_ceiling")
     if voy:
         for i, (k, _) in enumerate(gstats):

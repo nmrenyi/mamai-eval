@@ -137,6 +137,34 @@ def main():
         print(f"convertibility FAILED: {conv['error']}", flush=True)
     out["convertibility"] = conv
 
+    # --- int8 quality: score the deployed-form model (ONNX arm64 int8) over the
+    # same pairs at the SAME max_len, so the only difference vs fp32 is the
+    # quantization (clean fp32-vs-int8 comparison). ---
+    if conv.get("int8_quantize", {}) and conv["int8_quantize"].get("ok"):
+        import onnxruntime as ort
+        sess = ort.InferenceSession(str(q), providers=["CPUExecutionProvider"])
+        in_names = {i.name for i in sess.get_inputs()}
+        scores8 = np.zeros(len(pairs), dtype=np.float32)
+        t0 = time.time()
+        for i in range(0, len(pairs), B):
+            batch = pairs[i:i + B]
+            enc = tok([p[0] for p in batch], [p[1] for p in batch], padding=True,
+                      truncation=True, max_length=args.max_len, return_tensors="np")
+            feed = {k: v for k, v in enc.items() if k in in_names}
+            scores8[i:i + B] = sess.run(None, feed)[0].squeeze(-1)
+            if (i // B) % 100 == 0:
+                print(f"  int8 scored {i}/{len(pairs)}", flush=True)
+        te["ce_int8"] = scores8
+        print(f"int8 scoring done in {time.time() - t0:.0f}s", flush=True)
+        for ck, cv in cuts.items():
+            cp, chr_ = rerank_metrics(te, "ce_int8", cv)
+            out["quality"]["by_cut"][ck]["minilm_ce_int8"] = {"p_at_3": cp, "hr_at_3": chr_}
+        g8 = gate_on(te, "ce_int8")
+        out["quality"]["stage1_gate_on_ce_int8_score"] = {
+            k: g8[k] for k in ("chunk_auc_grade3", "within_bundle_concordance",
+                               "bundle_any_relevant_auc_top1")}
+        print("int8 Stage-1 gate:", out["quality"]["stage1_gate_on_ce_int8_score"])
+
     # --- CPU latency (this Mac is arm64): a 20-chunk query ---
     def bench(fn, n=5):
         fn()  # warmup

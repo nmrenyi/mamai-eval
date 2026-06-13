@@ -92,15 +92,15 @@ anywhere in that range, which the on-phone benchmark (layer 4) will pin down.
 
 <h2>Quality + thresholdability</h2>
 <p class="note">
-<strong>Which model produced these numbers:</strong> the quality and gate scores
-below come from the original <strong>fp32 PyTorch</strong> model (run on the Mac),
-<em>not</em> from the ONNX/LiteRT or int8 exports — those were built separately to
-test convertibility and latency, and their outputs were never fed back into
-scoring. So the reported quality is the model's fp32 quality, an upper bound for
-the int8 model that would actually deploy (dynamic int8 on a 22M cross-encoder
-typically loses well under a point, but it is not yet measured). Re-scoring
-through the int8 model is a follow-up, alongside the on-phone latency and the
-fine-tune.
+<strong>Which model produced these numbers:</strong> the table's headline column
+is the <strong>fp32 PyTorch</strong> model, and we also scored the deployed-form
+<strong>int8 (ONNX arm64)</strong> model over the same pairs at the same
+max-len — so the only difference is quantization. <strong>int8 quality is
+effectively identical to fp32</strong> (P@3 0.628→0.626 lenient, 0.271→0.271
+strict; HR even marginally higher; gate 0.731/0.758/0.741 → 0.731/0.750/0.732) —
+confirming the deployable int8 model loses essentially nothing. Both are shown in
+the figure (and the int8 row below). The on-phone int8 latency remains the open
+item.
 </p>
 <figure>
   <img src="fig_minilm_spike.png" alt="MiniLM-L6 quality and Stage-1 gate">
@@ -112,17 +112,18 @@ fine-tune.
 </figure>
 <table>
   <tr><th>Metric</th><th class="num">floor (RRF)</th><th class="num">feature-LTR</th>
-      <th class="num">MiniLM-L6 (zero-shot)</th><th class="num">oracle</th></tr>
+      <th class="num">MiniLM-L6 fp32</th><th class="num">MiniLM-L6 int8</th><th class="num">oracle</th></tr>
   <tr><td>P@3 ≥3</td><td class="num">0.506</td><td class="num">0.584</td>
-      <td class="num ok">0.628</td><td class="num">0.924</td></tr>
+      <td class="num ok">0.628</td><td class="num ok">0.626</td><td class="num">0.924</td></tr>
   <tr><td>HR@3 ≥3</td><td class="num">0.857</td><td class="num">0.917</td>
-      <td class="num ok">0.923</td><td class="num">0.988</td></tr>
+      <td class="num ok">0.923</td><td class="num ok">0.927</td><td class="num">0.988</td></tr>
   <tr><td>P@3 ≥5</td><td class="num">0.202</td><td class="num">0.261</td>
-      <td class="num ok">0.271</td><td class="num">0.536</td></tr>
+      <td class="num ok">0.271</td><td class="num ok">0.271</td><td class="num">0.536</td></tr>
   <tr><td>HR@3 ≥5</td><td class="num">0.440</td><td class="num">0.574</td>
-      <td class="num">0.558</td><td class="num">0.780</td></tr>
-  <tr><td colspan="5"><em>Stage-1 gate on the score:</em> chunk-AUC <strong>0.731</strong>,
-      concordance <strong>0.758</strong>, bundle-AUC <strong>0.741</strong>
+      <td class="num">0.558</td><td class="num">0.562</td><td class="num">0.780</td></tr>
+  <tr><td colspan="6"><em>Stage-1 gate on the score (fp32 / int8):</em>
+      chunk-AUC <strong>0.731 / 0.731</strong>, concordance <strong>0.758 / 0.750</strong>,
+      bundle-AUC <strong>0.741 / 0.732</strong>
       (feature-LTR 0.701/0.692/0.649; voyage ceiling 0.734/0.755/0.750)</td></tr>
 </table>
 <ul>
