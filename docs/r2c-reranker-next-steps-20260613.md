@@ -37,14 +37,23 @@ port. Until we confirm it produces the same scores as the offline model we
 validated, the deployed reranker may be reordering on subtly wrong scores — and
 every downstream test would inherit that. Cheap; blocks everything below.
 
+> **Seq-len caveat (read first).** The offline quality numbers (P@3 0.628, the
+> Stage-1 gate) were scored at **max_len 512**, but the deployed TFLite is fixed
+> **seq 256**. So 0.628 is *not* the deployed model's quality, and a naive parity
+> check against it would show a spurious mismatch (truncation, not tokenizer).
+> Pin the seq-len decision now (it gates the reference and the deployed quality —
+> see P3.2), and do parity at the deployed seq-len.
+
 | # | Task | Where | Effort |
 |---|---|---|---|
 | 0.1 | Tokenizer parity: diff Kotlin `WordPieceTokenizer` token-ids vs HuggingFace on representative (query, chunk) strings (punctuation, accents, long-chunk truncation) | Mac + device log | small |
-| 0.2 | In-app score parity: log the in-app per-chunk scores for a probe query, compare to the offline fp32/int8 model on the same 20 pairs — order + scores within int8 noise | device + Mac | small |
-| 0.3 | If parity fails, fix the tokenizer (or pair-truncation) and re-verify | app repo | small–med |
+| 0.2 | Re-score the offline model **at the deployed seq-len (256)** on the test split — the true deployed-config reference (current 0.628 is the 512 number) | Mac | small |
+| 0.3 | In-app score parity: log the in-app reranker's chunk-ids + scores for a probe query; reproduce the same (query, chunk) pairs offline **at seq 256** and diff — order + scores within int8 noise | device + Mac | small |
+| 0.4 | If parity fails, fix the tokenizer / pair-truncation and re-verify | app repo | small–med |
 
-**Exit:** in-app top-3 and scores match the offline validated model → tokenizer
-caveat closed, deployed reranker trustworthy.
+**Exit:** in-app top-3 and scores match the offline model *at the same seq-len* →
+tokenizer caveat closed, deployed reranker trustworthy, and we have the deployed
+model's true (seq-256) quality.
 
 ---
 
@@ -55,21 +64,34 @@ standing rule is **validate end-to-end, not on retrieval metrics alone.** This i
 the acceptance gate that decides whether the reranker ships at all. Run it first
 with the already-deployed MiniLM-L6 (cheap) before investing in a better model.
 
+**Arms — three, to attribute the gain** (the comparison must isolate reranking
+from the R2a hybrid change, else a delta is unattributable):
+- **A. Gecko top-3** — the *currently deployed* config (the full-delta reference).
+- **B. hybrid top-3 (RRF order)** — the R2a config; **the baseline that isolates
+  reranking** (A→B is fusion's effect, B→C is reranking's effect).
+- **C. hybrid top-20 → MiniLM rerank → top-3** — the reranker arm.
+
 | # | Task | Where | Effort |
 |---|---|---|---|
-| 1.1 | Build the ±rerank eval: hybrid top-20 retrieval → MiniLM rerank → top-3, vs the no-rerank top-3 baseline, on a stratified **kenya SAQ** sample (held-out, deployment-realistic) | cluster or device harness | med |
-| 1.2 | Judge with the pinned gpt-oss-120b ensemble; report **key-fact recall**, refusal/deflection rate, the 4 axis scores | cluster (H200) | med |
-| 1.3 | MCQ ±rerank on the held-out MCQ half — does the −1.8 pp RAG gap close? | cluster | med |
+| 1.1 | Generate the three arms (A/B/C) on a stratified **kenya SAQ** sample — stratify toward the zero-recall / refusal-prone rows reranking should most help | cluster or device harness | med |
+| 1.2 | Judge with the pinned gpt-oss-120b ensemble; report **key-fact recall**, refusal/deflection rate, the 4 axis scores, per arm | cluster (H200) | med |
+| 1.3 | MCQ three-arm on the held-out MCQ half — does the −1.8 pp RAG gap close (and how much is fusion vs rerank)? | cluster | med |
 | 1.4 | Safety-distribution check — no new safety-1s introduced by reranked context | cluster | small |
 
 **Acceptance criteria (pre-registered):** key-fact recall does not regress (ideally
-rises); refusal rate does not rise; MCQ −1.8 pp gap moves toward 0; safety
-distribution unchanged. **If reranking fails this gate even with a strong reranker,
-the whole direction is reconsidered** — so 1.x is the make-or-break.
+rises B→C); refusal rate does not rise; MCQ −1.8 pp gap moves toward 0; safety
+distribution unchanged. **If reranking (B→C) fails this gate even with a strong
+reranker, the whole direction is reconsidered** — so 1.x is the make-or-break.
 
-Note: run 1.x with MiniLM-L6 first (deployed, free-ish). Optionally bound the
-ceiling by also scoring an oracle-reranked arm (we have the grades) — if even the
-oracle doesn't help answers, no reranker will.
+Notes:
+- Run 1.x with MiniLM-L6 first (deployed, cheap). Bound the ceiling by also
+  scoring an **oracle-reranked arm** (we have the grades) — if even the oracle
+  doesn't move answers, no reranker will.
+- **G1 confound:** R1 established SAQ over-refusal is partly *prompt*-induced, not
+  retrieval-induced. The refusal metric here inherits that — interpret the refusal
+  delta as rerank-only by holding the prompt fixed across arms, and ideally run
+  jointly with / stratified against the G1 prompt change so reranking isn't
+  blamed/credited for a prompt artifact.
 
 ---
 
@@ -108,7 +130,7 @@ We test the few that answer a distinct question, not the whole menu:
 | # | Task | Where | Effort | Note |
 |---|---|---|---|---|
 | 3.1 | **Batch the 20 forward passes** (re-export with batch dim) — the big latency lever, bigger than thread count (842 ms → expected ~few×100 ms) | app + eval | med | |
-| 3.2 | seq-len decision: 256 (current, truncates long chunks) vs 512 (more faithful, slower) — measure quality/latency tradeoff | eval + device | small | |
+| 3.2 | seq-len decision: 256 (current, truncates long chunks) vs 512 (more faithful, slower) — measure quality/latency tradeoff. **Pin this early** — it gates the P0 reference and the deployed quality (see P0 caveat), not just production polish | eval + device | small | |
 | 3.3 | Robustness: reranker-fail fallback (init already try/caught), thread-count tuning, warmup at init to remove first-call cost | app | small | |
 | 3.4 | Config: tune `rerank_depth` (20 default); confirm the rerank/no-rerank toggle and defaults | app | small | |
 
