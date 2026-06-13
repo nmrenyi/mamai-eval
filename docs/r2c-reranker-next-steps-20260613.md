@@ -78,12 +78,28 @@ oracle doesn't help answers, no reranker will.
 Pick the best deployable reranker. Don't spend this effort unless P1 says reranking
 moves answers.
 
+**The deployable candidate menu** (all standard-BERT cross-encoders → same proven
+LiteRT-int8 convertibility path; choice is purely quality vs size/latency):
+
+- *Tiny (~4–38M):* TinyBERT-L2, MiniLM-L2/L4, jina-reranker-v1-tiny/turbo-en —
+  latency/size floor; only relevant if we need smaller than MiniLM-L6.
+- *Small (~22–33M):* **MiniLM-L6 (done, baseline)**, **MiniLM-L12**.
+- *Mid (~110–280M):* **MedCPT** (medical domain), bge-reranker-base, mxbai-rerank-base,
+  ms-marco-electra-base — stronger but heavier.
+- *Non-CE:* feature-LTR (done, R2c-A); late-interaction (ColBERT/MICE) — different
+  family, deprioritized at 10–20 chunks.
+
+We test the few that answer a distinct question, not the whole menu:
+
 | # | Task | Where | Effort |
 |---|---|---|---|
-| 2.1 | Option B quality scaling: score **MedCPT** (domain, ~109M) on the test split — does domain-match beat MiniLM-L6? | Mac (in reach) | med |
-| 2.2 | Strong references **Qwen3-8B / bge-v2-m3** on the test split — how much does going small cost vs a strong reranker? | cluster (GPU) | med |
-| 2.3 | **Fine-tune** MiniLM-L6 (or the winner) on the 230k graded pairs (clean by-query train/dev/test split already frozen); re-measure quality **and the Stage-1 gate** — best shot at pushing the score past 0.80 and reviving the R1 threshold | cluster | med–large |
-| 2.4 | Decide the final deployable model; re-run P0 parity + P1 gate with it | — | — |
+| 2.1 | **MedCPT** (domain, ~109M) on the test split — does medical-domain pretraining beat tiny-general MiniLM-L6? (the #1-vs-#2 question) | Mac (in reach) | med |
+| 2.2 | **MiniLM-L12** (~33M) — does a bit more depth help, same family, near-free to test? | Mac | small |
+| 2.3 | One **mid English generalist** (bge-reranker-base or mxbai-rerank-base) — is a stronger non-domain model worth the size? | Mac/cluster | med |
+| 2.4 | Strong **offline references** Qwen3-8B / bge-v2-m3 (NOT deployable — too big) — bound how much going small costs vs a top reranker | cluster (GPU) | med |
+| 2.5 | **Fine-tune** the best candidate on the 230k graded pairs (split already frozen); re-measure quality **and the Stage-1 gate** — best shot at pushing the score past 0.80 and reviving the R1 threshold | cluster | med–large |
+| 2.6 | (deprioritized) TinyBERT/L2/L4 — only if we need smaller/faster than MiniLM-L6; 13 ms already fits budget | Mac | small |
+| 2.7 | Decide the final deployable model; re-run P0 parity + P1 gate with it | — | — |
 
 ---
 
