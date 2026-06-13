@@ -169,11 +169,9 @@ item.
       app's runtime as a tiny int8 model, fits the latency budget (ARM proxy), and
       already beats the deployable backup zero-shot. The convertibility gate that
       blocked the lit review's confidence is cleared at the architecture level.</li>
-  <li><strong>Device track — standalone latency done (layer 4 closed); next is
-      in-app integration.</strong> The int8 model runs on the phone at 13.2 ms/pair.
-      The remaining device work is integrating the reranker into the app
-      (com.example.app) so it runs in the real pipeline under contention with
-      Gemma — a separate effort in the app repo.</li>
+  <li><strong>Device track — done end-to-end.</strong> Standalone latency
+      (layer 4) closed at 13.2 ms/pair, <em>and</em> the reranker is now integrated
+      into the app and verified running in the real pipeline (see below).</li>
   <li><strong>Data track (next): scale Option B + fine-tune.</strong> Score MedCPT
       and the Qwen3-8B / bge-v2-m3 references on the same test split (cluster), then
       fine-tune MiniLM-L6 (or the winner) on the 230k pairs and re-measure quality
@@ -187,6 +185,36 @@ exported at fixed seq-len 256 — chunks longer than that are truncated, a knob 
 revisit on-device. The on-device feature/tokenizer path must match training, and
 mind the x86-vs-ARM float drift noted in R1.
 </p>
+
+<h2>In-app integration (verified on device)</h2>
+<p>
+Beyond the standalone benchmark, the reranker was integrated into the deployed
+app (<code>com.example.app</code>, branch <code>feat/litert-reranker-20260613</code>
+in the mamai repo) and run in the real RAG pipeline on the phone (OPD2413). It
+fetches a deeper retrieval pool (<code>retrieval.rerank_depth</code>=20) and
+reorders it to top-3 before prompt injection, behind a
+<code>retrieval.rerank_enabled</code> flag.
+</p>
+<pre>[QUERY] "What are the danger signs in pregnancy that require urgent referral?" retrieval: true
+[TIMING] retrieval (embed + vector search): 2594 ms, 20 docs (fetchK=20)
+[RERANK] scored 20 chunks in 842 ms; top score 5.765
+[RERANK] reranked to top-3 → generation</pre>
+<ul>
+  <li><strong>It runs.</strong> The TFLite cross-encoder (org.tensorflow:tensorflow-lite
+      2.17.0) coexists with the litertlm LLM stack in one APK, loads at init, and
+      scores in the live pipeline — proving the architecture is deployable in the
+      real app, not just in isolation.</li>
+  <li><strong>In-app latency:</strong> 842 ms to score 20 chunks, vs the ~265 ms
+      standalone benchmark (20 × 13.2 ms). The gap is real-world overhead —
+      WordPiece tokenization in Kotlin, first-call warmup, single-threaded
+      scoring loop — exactly the decomposition the standalone benchmark was set
+      up to isolate. Still small against the 1-minute pipeline budget; reducing
+      it (batch the 20 passes, cache warmup, tune threads) is a clear follow-up.</li>
+  <li><strong>Caveats:</strong> the WordPiece tokenizer is a faithful-but-unverified
+      port (exact HF parity is a follow-up before trusting absolute scores), and
+      the model runs at seq-len 256 (long chunks truncate). Quality in-app should
+      match the offline int8 numbers once tokenizer parity is confirmed.</li>
+</ul>
 
 <h2>Reproducibility</h2>
 <pre># quality + ONNX export/int8 + CPU latency (py3.12 venv: torch, transformers, optimum, onnxruntime)
