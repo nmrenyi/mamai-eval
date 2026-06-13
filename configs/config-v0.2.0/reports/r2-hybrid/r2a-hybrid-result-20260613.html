@@ -58,6 +58,15 @@ of each one's top-20 is judged, so no embedding, GPU, or new judging. Baselines
 reproduce the known audit numbers exactly (Gecko P@3 0.477, BM25 0.417, voyage
 0.867), confirming the join.
 </p>
+<p class="note">
+<strong>Note on <em>k</em>:</strong> the RRF constant <em>k</em> is <em>not</em>
+the number of retrieved documents. It is a damping term added to the rank in the
+denominator that controls how steeply a chunk's weight falls off with worse rank
+(small <em>k</em> → the top hit dominates; large <em>k</em> → ranks count nearly
+equally). The retrieval depths are separate and fixed: each retriever's top-20 in,
+fused top-3 out. <em>k</em>=60 is the field's conventional default, and the result
+is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
+</p>
 
 <h2>Results</h2>
 <figure>
