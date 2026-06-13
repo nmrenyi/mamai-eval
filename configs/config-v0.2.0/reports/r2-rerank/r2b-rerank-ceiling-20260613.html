@@ -44,9 +44,9 @@ precision P@3 from 0.512 → 0.926 (lenient) and 0.206 → 0.545 (strict): the u
 chunk — even the complete/actionable one — is usually already retrieved but
 buried below rank 3. Most headroom is captured by rerank depth ~10. Caveats: this
 is the <em>oracle</em> upper bound (a real reranker captures a fraction), and a
-residual structural miss remains that reranking can never fix — ~2% of queries
-(lenient) and ~22% (strict) have nothing relevant in the top-20 at all, leaving
-that slice to R2c/C1.
+residual structural miss remains that reranking can never fix — ~1% of queries
+(lenient) and ~22% (strict) have nothing relevant in the hybrid top-20 at all,
+leaving that slice to R2c/C1.
 </div>
 
 <h2>Method</h2>
@@ -89,6 +89,9 @@ oracle at depth 3 equals the floor exactly (reranking the top-3 changes nothing)
   <tr><td>Hybrid</td><td>HR@3 ≥5</td><td class="num">0.459</td><td class="num">0.557</td>
       <td class="num">0.681</td><td class="num cap">0.778</td></tr>
 </table>
+<p class="meta">BM25's pool is in the figure and <code>rerank_ceiling.json</code>;
+omitted here as its ceiling is dominated by both Gecko and the hybrid on every
+metric and depth (oracle@20 lenient P@3 0.831, strict 0.427).</p>
 
 <h2>Readings</h2>
 <ul>
@@ -97,8 +100,9 @@ oracle at depth 3 equals the floor exactly (reranking the top-3 changes nothing)
       all but ~1% of queries a relevant chunk is already in the top-20, just not
       the top-3. Reranking is exactly the lever for that.</li>
   <li><strong>Reranking also helps the strict cut — revising the R2a read.</strong>
-      R2a found <em>fusion</em> barely moved strict P@3 (0.193→0.208). Reranking is
-      a different lever: the oracle lifts strict P@3 to 0.545 and strict HR@3 from
+      R2a found <em>fusion</em> barely moved strict P@3 (0.193→0.206 at α=0.5).
+      Reranking is a different lever: on that same hybrid pool the oracle lifts
+      strict P@3 to 0.545 and strict HR@3 from
       0.459 → 0.778. The complete/actionable chunks are often <em>in</em> the pool
       but ranked below 3 — fusion can't surface them, reordering can. (Consistent
       with R2a: the two levers fix different failures.)</li>

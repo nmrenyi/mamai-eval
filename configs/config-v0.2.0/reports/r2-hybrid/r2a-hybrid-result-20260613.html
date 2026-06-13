@@ -105,10 +105,13 @@ is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
   <li><strong>The absolute gap stays large.</strong> Best P@3 0.516 closes ~10% of
       the 0.477→0.867 Gecko→voyage gap. Fusion reshuffles what these two retrievers
       already surface; it cannot add content neither found.</li>
-  <li><strong class="flat">The strict-content miss is unfixed.</strong> P@3≥5 moves
-      only 0.193→0.208. BM25 doesn't surface the complete/actionable chunks Gecko
-      misses either — consistent with the audit's flat strict pool-recall. Only a
-      better embedder (R2c) or richer corpus (C1) addresses this.</li>
+  <li><strong class="flat">Fusion doesn't fix the strict-content miss.</strong>
+      P@3≥5 moves only 0.193→0.208. BM25 doesn't surface the complete/actionable
+      chunks Gecko ranks poorly either, so fusing the two rankings can't help here.
+      (Note: <a href="../r2-rerank/r2b-rerank-ceiling-20260613.html">R2b</a> later
+      shows these chunks are often <em>in</em> the top-20 but mis-ranked — so
+      <em>reranking</em> does lift strict, even though fusion doesn't; the residual
+      ~22% with nothing strict in the pool is what routes to R2c/C1.)</li>
   <li><strong>α is the knob, k is not.</strong> Optimal α is Gecko-leaning but
       strictly interior (0.5–0.75), so BM25 genuinely contributes; k=10–100 changes
       P@3 by ~0.01. A deployable default: α=0.5, k=60.</li>
