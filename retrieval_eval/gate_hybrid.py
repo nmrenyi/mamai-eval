@@ -107,6 +107,7 @@ def main():
     #   gecko -> cosine, bm25 -> BM25 score, hybrid -> RRF fused score.
     gecko = gate_stats(single_retriever_rows(rk, "gecko", grades))
     bm25 = gate_stats(single_retriever_rows(rk, "bm25", grades))
+    voyage = gate_stats(single_retriever_rows(rk, "voyage", grades))
     hybrid = gate_stats(build_hybrid_rows(
         rank_map(rk, "gecko"), rank_map(rk, "bm25"), grades, args.alpha, args.k))
     hybrid["config"] = {"alpha": args.alpha, "k": args.k}
@@ -115,10 +116,11 @@ def main():
         "created_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": {"hf_repo": args.hf_repo, "revision": args.revision},
         "note": "each gate computed on the retriever's native score: gecko cosine, "
-                "bm25 BM25 score, hybrid RRF fused score. gecko chunk AUC should "
-                "reproduce R1 §3 (0.572) as a cross-check.",
+                "bm25 BM25 score, voyage cosine (API-only ceiling), hybrid RRF "
+                "fused score. gecko chunk AUC should reproduce R1 §3 (0.572).",
         "gecko_cosine": gecko,
         "bm25": bm25,
+        "voyage_cosine_ceiling": voyage,
         "hybrid_rrf": hybrid,
     }
     with open(results_dir / "hybrid_gate.json", "w") as f:
@@ -141,6 +143,8 @@ def main():
          [hybrid["chunk_auc_grade3"], hybrid["within_bundle_concordance"],
           hybrid["bundle_any_relevant_auc_top1"]]),
     ]
+    voyage_vals = [voyage["chunk_auc_grade3"], voyage["within_bundle_concordance"],
+                   voyage["bundle_any_relevant_auc_top1"]]
     x = range(len(labels))
     width = 0.26
     fig, ax = plt.subplots(figsize=(10, 4.8))
@@ -149,6 +153,12 @@ def main():
         ax.bar([i + offs for i in x], vals, width, label=name, color=color, alpha=0.85)
         for i, v in enumerate(vals):
             ax.text(i + offs, v + 0.008, f"{v:.3f}", ha="center", fontsize=7.5)
+    # voyage (API-only ceiling) as a per-stat dotted reference marker.
+    for i, v in enumerate(voyage_vals):
+        ax.hlines(v, i - 0.45, i + 0.45, color="#6b21a8", ls=":", lw=2.2,
+                  label="voyage (API-only ceiling)" if i == 0 else None)
+        ax.text(i + 0.45, v + 0.006, f"{v:.3f}", ha="left", va="bottom",
+                fontsize=7.5, color="#6b21a8")
     ax.axhline(0.5, ls=":", color="gray", lw=1)
     ax.axhline(0.8, ls="--", color="#14532d", lw=1, label="viability bar")
     ax.set_xticks(list(x)); ax.set_xticklabels(labels, fontsize=8)
@@ -167,7 +177,8 @@ def main():
     print("Stage-1 gate on native scores:")
     line("gecko cosine", gecko)
     line("bm25 score", bm25)
-    line(f"hybrid RRF", hybrid)
+    line("hybrid RRF", hybrid)
+    line("voyage ceiling", voyage)
     print(f"(gecko chunk AUC should reproduce R1's 0.572)")
     print(f"Written: {results_dir}/hybrid_gate.json")
 

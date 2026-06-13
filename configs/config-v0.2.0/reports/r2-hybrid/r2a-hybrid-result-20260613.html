@@ -133,7 +133,8 @@ deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
 <figure>
   <img src="fig_hybrid_gate.png" alt="Stage-1 gate: Gecko cosine vs BM25 vs hybrid RRF">
   <figcaption>The three Stage-1 statistics, Gecko cosine vs BM25 score vs hybrid
-  RRF. Dotted = chance (0.5); dashed = the 0.80 viability bar.</figcaption>
+  RRF. Dotted gray = chance (0.5); dashed green = the 0.80 viability bar; purple
+  dotted = voyage-4-large, the API-only ceiling (0.734 / 0.755 / 0.750).</figcaption>
 </figure>
 <table>
   <tr><th>Statistic (rule family it gates)</th><th class="num">Gecko cosine</th>
@@ -158,12 +159,14 @@ deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
       <em>both</em> parents: blending two rank systems blurs the fine ordering
       inside a bundle. The best query-level gate signal is BM25's, not the
       hybrid's.</li>
-  <li><strong>None reaches the 0.80 viability bar.</strong> The strongest
-      threshold-like signal anywhere — BM25's bundle-level gated abstention
-      ("skip RAG when the top BM25 score is low") at 0.684 — is the most promising
-      we've measured, yet still marginal, not viable. R1's core finding survives:
-      no score grades usefulness <em>within</em> the retrieved set well enough for
-      a relative rule (best concordance 0.659).</li>
+  <li><strong>None reaches the 0.80 viability bar — and neither does the ceiling.</strong>
+      The strongest threshold-like signal anywhere — BM25's bundle-level gated
+      abstention ("skip RAG when the top BM25 score is low") at 0.684 — is the most
+      promising we've measured, yet still marginal, not viable. Even voyage-4-large,
+      the API-only quality ceiling, sits below the bar on all three (0.734 / 0.755 /
+      0.750), so a deployable retriever clearing it is unlikely on current evidence.
+      R1's core finding survives: no score grades usefulness <em>within</em> the
+      retrieved set well enough for a relative rule (best concordance 0.659).</li>
 </ul>
 <p class="note">
 Takeaway: neither alternative revives thresholding to viability, but both beat
