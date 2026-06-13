@@ -44,9 +44,10 @@ the app's own runtime — at 23.9 MB</strong>, and <strong>beats the feature-LTR
 bar zero-shot</strong>: P@3 0.506 → 0.628 (lenient) and 0.202 → 0.271 (strict) vs
 feature-LTR's 0.584 / 0.261. Its score is also the most thresholdable yet —
 concordance 0.758, matching the voyage ceiling — though still under 0.80.
-Convertibility layers 1–3 pass on this Mac (arm64); the one open item is the
-actual on-phone latency (layer 4), which needs the app harness / a device
-benchmark binary.
+<strong>All four convertibility layers now pass, including on the real device</strong>:
+the int8 model runs on the target phone at 13.2 ms/(query,chunk) (4 threads),
+~0.13–0.27 s for a 10–20 chunk bundle — and 3.2× faster than fp32 with identical
+quality.
 </div>
 
 <h2>Convertibility — passes (the gate with zero prior evidence)</h2>
@@ -58,8 +59,8 @@ benchmark binary.
       <td class="num">90.8 MB fp32 · <strong>23.9 MB int8</strong></td></tr>
   <tr><td>3. ARM-CPU execution + latency (Mac arm64 proxy)</td><td class="ok">PASS</td>
       <td class="num">see latency</td></tr>
-  <tr><td>4. On-phone execution + latency</td><td class="pending">PENDING</td>
-      <td class="num">needs app/benchmark binary</td></tr>
+  <tr><td>4. On-phone execution + latency (real device)</td><td class="ok">PASS</td>
+      <td class="num">13.2 ms/pair int8</td></tr>
 </table>
 <p>
 The standard-BERT architecture exports and quantizes without issue, and — the
@@ -76,19 +77,33 @@ unlocks the whole BERT-family tier (TinyBERT, MedCPT, bge-base) — they share t
 same ops. Only a T5/seq2seq reranker would need its own spike.
 </p>
 
-<h2>Latency (Mac arm64 — proxy for the phone, not the device figure)</h2>
-<table>
-  <tr><th>Runtime</th><th class="num">per (query,chunk)</th><th class="num">20-chunk query</th></tr>
-  <tr><td>ONNX int8 (ONNX Runtime)</td><td class="num">~12.6 ms</td><td class="num">~252 ms</td></tr>
-  <tr><td>LiteRT fp32 (ai-edge-litert interpreter)</td><td class="num">~72 ms</td><td class="num">~1,450 ms</td></tr>
-</table>
+<h2>Latency — measured on the real device</h2>
 <p>
-Reranking 20 chunks lands somewhere in ~0.25–1.5 s on ARM CPU depending on
-runtime/quantization/delegate — comfortably inside the 1-minute whole-pipeline
-budget (on-device generation dominates). The ONNX-vs-LiteRT spread is
-runtime-specific; the phone's LiteRT with XNNPACK/NPU delegates + int8 could land
-anywhere in that range, which the on-phone benchmark (layer 4) will pin down.
+Official TFLite <code>benchmark_model</code> (arm64) via adb, on the target phone
+(OPD2413, Android 15, arm64-v8a), CPU/XNNPACK, LiteRT seq-len 256, one
+(query,chunk) pair per inference:
 </p>
+<table>
+  <tr><th>Model / config</th><th class="num">per (query,chunk)</th>
+      <th class="num">10-chunk bundle</th><th class="num">20-chunk bundle</th></tr>
+  <tr><td><strong>int8, 4 threads</strong></td><td class="num ok">13.2 ms</td>
+      <td class="num">~132 ms</td><td class="num">~265 ms</td></tr>
+  <tr><td>int8, 1 thread</td><td class="num">32.2 ms</td><td class="num">~322 ms</td>
+      <td class="num">~644 ms</td></tr>
+  <tr><td>fp32, 4 threads</td><td class="num">42.1 ms</td><td class="num">~421 ms</td>
+      <td class="num">~842 ms</td></tr>
+</table>
+<ul>
+  <li><strong>Comfortably within budget.</strong> Reranking 10–20 chunks costs
+      ~0.13–0.27 s on the phone CPU (int8, 4 threads) — negligible against the
+      1-minute whole-pipeline budget, which on-device generation dominates.</li>
+  <li><strong>int8 is 3.2× faster than fp32 on-device</strong> (13.2 vs 42.1 ms)
+      with ~identical quality — a clean confirmation of the int8 deploy choice on
+      latency grounds, not just size.</li>
+  <li>CPU-only; an NPU/GPU delegate could be faster still. The Mac arm64 ONNX-int8
+      proxy (12.6 ms/pair) closely matched the device (13.2 ms), validating the
+      earlier estimate.</li>
+</ul>
 
 <h2>Quality + thresholdability</h2>
 <p class="note">
@@ -154,9 +169,11 @@ item.
       app's runtime as a tiny int8 model, fits the latency budget (ARM proxy), and
       already beats the deployable backup zero-shot. The convertibility gate that
       blocked the lit review's confidence is cleared at the architecture level.</li>
-  <li><strong>Device track (yours): the on-phone latency benchmark.</strong> The
-      int8 .tflite is on the device; measure real latency via the app harness or a
-      LiteRT benchmark binary to close layer 4.</li>
+  <li><strong>Device track — standalone latency done (layer 4 closed); next is
+      in-app integration.</strong> The int8 model runs on the phone at 13.2 ms/pair.
+      The remaining device work is integrating the reranker into the app
+      (com.example.app) so it runs in the real pipeline under contention with
+      Gemma — a separate effort in the app repo.</li>
   <li><strong>Data track (next): scale Option B + fine-tune.</strong> Score MedCPT
       and the Qwen3-8B / bge-v2-m3 references on the same test split (cluster), then
       fine-tune MiniLM-L6 (or the winner) on the 230k pairs and re-measure quality

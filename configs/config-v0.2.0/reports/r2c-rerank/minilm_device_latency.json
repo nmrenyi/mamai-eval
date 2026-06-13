@@ -1,0 +1,14 @@
+{
+  "device": {"model": "OPD2413", "android": "15", "abi": "arm64-v8a"},
+  "tool": "official TFLite benchmark_model (arm64), via adb",
+  "model": "ms-marco-MiniLM-L6-v2 LiteRT, seq_len 256, batch 1 (one query,chunk pair/inference)",
+  "runtime": "CPU (XNNPACK), random bounded inputs, 8 warmup + 50 runs",
+  "per_pair_ms": {
+    "int8_4threads": 13.2,
+    "int8_1thread": 32.2,
+    "fp32_4threads": 42.1
+  },
+  "int8_vs_fp32_speedup_4threads": 3.2,
+  "bundle_estimate_int8_4threads_ms": {"10_chunks": 132, "20_chunks": 265},
+  "note": "CPU only; an NPU/GPU delegate could be faster. Well within the 1-min whole-pipeline budget (generation dominates). int8 ~3.2x faster than fp32 with ~identical quality -> deploy int8."
+}
