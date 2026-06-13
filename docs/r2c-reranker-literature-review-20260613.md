@@ -37,7 +37,65 @@ on-device benchmark (Phase 2) make the call.*
 
 ---
 
-## 1. Candidate shortlist
+## 0. Revised constraints (2026-06-13) — research-only, English-only
+
+After the initial review, two hard constraints were lifted:
+
+- **License: irrelevant.** The app is research-only, not commercial — so
+  non-commercial licenses (e.g. jina's CC-BY-NC-4.0) no longer disqualify any
+  model. Decisions are now purely technical.
+- **Multilingual: not required for now.** English-only is acceptable for the
+  reranker at this stage (Swahili/German return later). This is the bigger
+  change: it puts the **English MS-MARCO cross-encoder family and MedCPT** —
+  small, standard-architecture, best Android-conversion odds — back at the
+  center, and demotes the large multilingual model from a deployment candidate
+  to an offline reference.
+
+The §1 table below was built under the *old* constraints; the operative
+shortlist is the one in this section. Two unchanged constraints still bind and
+dominate: **on-device Android convertibility** (LiteRT/TFLite or
+ONNX-Runtime-Mobile, int8/int4, fits memory — still zero positive evidence for
+any reranker) and the **few-second latency** for 10–20 chunks alongside Gemma.
+
+### Architecture heuristic
+
+Convertibility is unproven for every model, so we can't select on verified
+Android support — the best *a priori* proxy is architecture. **Standard
+BERT-family encoders (MiniLM, TinyBERT, BERT-base) have the most well-trodden
+TFLite / ONNX-Runtime-Mobile path.** Prefer them over T5-based rerankers
+(monoT5/RankT5 — encoder-decoder, harder to convert, larger) and over
+late-interaction (ColBERT/MICE — storage cost not worth it at 10–20 chunks).
+
+### Operative shortlist — two tiers
+
+**Deployable candidates** (go on the phone; Phase 0 convertibility → Phase 2 device):
+
+| # | Model | Params | Why Android-viable | Role |
+|---|---|---|---|---|
+| 1 | **cross-encoder/ms-marco-MiniLM-L6-v2** | ~22M | Smallest standard-BERT cross-encoder with strong MS-MARCO reranking; best convertibility + latency odds | **Primary small candidate** |
+| 2 | **MedCPT Cross-Encoder** (NCBI) | ~109M (BERT-base) | Biomedical **zero-shot SOTA**, English, standard BERT → convertible; best domain match | **Primary domain candidate** |
+| 3 | cross-encoder/ms-marco-MiniLM-L12-v2 | ~33M | Same architecture as #1, higher quality for ~1.5× size | Quality-leaning small option |
+| 4 | cross-encoder/ms-marco-TinyBERT-L-2-v2 | ~tiny (single-digit M) | Fastest possible; the latency floor if L6 is too slow on-device | Latency fallback |
+| 5 | **Feature-LTR** (GBDT over BM25 score, Gecko cosine, both rank positions, term overlap) | trivial | No transformer to convert — zero deployment risk | Safe fallback |
+
+**Offline quality-reference** (never on the phone; Phase 1 scoring only):
+
+| Model | Params | Role |
+|---|---|---|
+| **bge-reranker-v2-m3** | 568M | Strong-cross-encoder ceiling on our corpus — the reranker analogue of voyage in R1/R2. Tells us how much the small deployable models leave on the table. Re-enters the deployment conversation later when Swahili/German arrive (latency permitting). |
+
+### The decision that matters: #1 vs #2
+
+Tiny general (MiniLM-L6, web-domain, deployment-safest) versus mid-size
+domain-matched (MedCPT, PubMed-trained, 5× larger, the only candidate with real
+medical evidence). Phase 1 offline scoring on the hybrid top-20 pool answers
+"does domain-matching beat tiny-and-fast for our OBGYN corpus?" directly. bge-base
+(278M, English+Chinese) is now also technically eligible but an order of
+magnitude larger than #1 — reach for it only if the small models underperform.
+
+---
+
+## 1. Candidate shortlist (original — pre-revision, kept for the full survey)
 
 Verification: all rows below rest on `confidence: high`, 3-0 verifier votes,
 against primary sources (HF model cards + arXiv) unless noted.
@@ -138,27 +196,30 @@ The empty convertibility column flips the phase order I'd assumed. Because the
 gate with **zero evidence** is also the one most likely to kill a candidate, it
 should be de-risked **first**, not last:
 
-1. **Phase 0 — convertibility spike (new, do first).** Take one small
-   multilingual cross-encoder (mmarco-mMiniLMv2-L12-H384) and *prove* it converts
-   to TFLite/ONNX-Runtime-Mobile and runs int8 on the target ARM device, with a
-   measured per-(query,chunk) latency for a 10–20 chunk batch. If this fails,
-   neural reranking on-device is in doubt and feature-LTR becomes the lead — a
-   conclusion worth reaching cheaply and early.
-2. **Phase 1 — offline quality (as planned).** Score the shortlist on the hybrid
-   top-20 pool against our labels: P@3/HR@3 (lenient + strict) vs the R2b floor
-   and oracle ceiling, plus the R1 Stage-1 gate on the reranker score (the
-   threshold-revival test; a trained cross-encoder is the best candidate yet to
-   clear the 0.80 bar). Reserve the by-query train/dev/test split first.
-3. **Phase 2 — Swahili + fine-tune.** Measure isolated Swahili reranking; then
-   fine-tune on the 230k pairs and measure the reranker-specific delta vs
-   zero-shot.
+1. **Phase 0 — convertibility spike (new, do first).** Take the smallest
+   standard-BERT cross-encoder (ms-marco-MiniLM-L6-v2, ~22M) and *prove* it
+   converts to TFLite/ONNX-Runtime-Mobile and runs int8 on the target ARM device,
+   with a measured per-(query,chunk) latency for a 10–20 chunk batch. If even the
+   smallest standard cross-encoder won't convert, neural reranking on-device is in
+   doubt and feature-LTR becomes the lead — a conclusion worth reaching cheaply
+   and early.
+2. **Phase 1 — offline quality (as planned).** Score the deployable shortlist
+   (#1–#5) plus the bge-reranker-v2-m3 reference on the hybrid top-20 pool against
+   our labels: P@3/HR@3 (lenient + strict) vs the R2b floor and oracle ceiling,
+   plus the R1 Stage-1 gate on the reranker score (the threshold-revival test; a
+   trained cross-encoder is the best candidate yet to clear the 0.80 bar). The
+   key contrast is #1 (tiny general) vs #2 (MedCPT, domain-matched). Reserve the
+   by-query train/dev/test split first.
+3. **Phase 2 — fine-tune.** Fine-tune the winning candidate on the 230k pairs and
+   measure the reranker-specific delta vs its zero-shot baseline. (Swahili eval
+   returns when multilingual does — out of scope for now per §0.)
 4. **Gate end-to-end** per the R2 guardrails (M1 MCQ ±RAG rerun, SAQ A/B) before
    any adoption.
 
 The open questions the review could not answer — on-device convertibility,
-isolated Swahili performance, whether a small cross-encoder's N-pass cost fits
-the ARM budget at 10–20 chunks, and the reranker-specific fine-tune ROI — *are*
-the Phase 0–2 test plan.
+whether a small cross-encoder's N-pass cost fits the ARM budget at 10–20 chunks,
+the #1-vs-#2 domain-match question, and the reranker-specific fine-tune ROI —
+*are* the Phase 0–2 test plan.
 
 ---
 
