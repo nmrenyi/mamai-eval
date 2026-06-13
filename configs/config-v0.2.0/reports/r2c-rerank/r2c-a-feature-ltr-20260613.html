@@ -42,11 +42,13 @@ The cheapest, guaranteed-deployable reranker — a LightGBM LambdaMART over sign
 we already compute, no neural net, no conversion gate — is a <strong>real but
 partial</strong> win. On held-out test it beats the hybrid (RRF) floor on every
 metric: P@3 0.506 → 0.584 (lenient) and 0.202 → 0.261 (strict), HR@3 0.857 → 0.917
-and 0.440 → 0.574 — capturing ~18% of the oracle headroom. Its learned score is
-also the most thresholdable signal measured so far (chunk-AUC 0.701 vs the
-hybrid's 0.668), though still below the 0.80 viability bar. It is not just a
-learned RRF: lexical features carry ~30% of the gain. This sets the bar a neural
-cross-encoder must beat to justify its (unproven) on-device conversion.
+and 0.440 → 0.574 — capturing ~18% of the oracle P@3 headroom (and ~40% of the
+hit-rate headroom). Its learned score is also the most thresholdable signal
+measured so far (chunk-AUC 0.701 vs the hybrid's 0.668), though still below the
+0.80 viability bar. It is not just a learned RRF: the text-derived features the
+RRF formula can't use (chunk length, query coverage, term overlap) carry ~38% of
+the gain. This sets the bar a neural cross-encoder must beat to justify its
+(unproven) on-device conversion.
 </div>
 
 <h2>Setup</h2>
@@ -58,9 +60,10 @@ query length, shared-term count, Jaccard, query coverage, numeric/dose overlap).
 Trained on the frozen <strong>train</strong> split, early-stopped on
 <strong>dev</strong>, reported on the held-out <strong>test</strong> split only
 (491 queries; 70/15/15 by-query, stratified on hybrid-top-20 strict presence).
-Deterministic (fixed seed, no subsampling). Floor = RRF order (the deployed
-hybrid); oracle = reorder by judge grade (the R2b ceiling), both recomputed on
-the same test queries for apples-to-apples.
+Deterministic (fixed seed, no subsampling). Floor = RRF order (the R2a hybrid —
+recommended but not yet deployed; the live system is Gecko-only); oracle =
+reorder by judge grade (the R2b ceiling), both recomputed on the same test
+queries for apples-to-apples.
 </p>
 
 <h2>Results</h2>
