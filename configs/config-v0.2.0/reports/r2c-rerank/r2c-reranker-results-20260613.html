@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2c — reranker comparison, fine-tuning, device parity, value gate (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; --bad:#7a1f1f; --badbg:#f7e7e7; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 900px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; }
+  h3 { font-size: 1.02rem; margin-top: 1.4rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--goodbg); color: var(--good); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem; font-size: .9rem; margin: 1rem 0; }
+  .pendbox { background: var(--warnbg); color: var(--warn); border-radius: 8px; padding:.7rem 1rem; font-size:.9rem; margin:1rem 0;}
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; width:100%; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .ok { color: var(--good); font-weight: 600; } .pending { color: var(--warn); font-weight: 600; }
+  .win { background: var(--goodbg); font-weight:600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c — reranker comparison, in-domain fine-tuning, device parity, and the end-to-end value gate</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+successor to the <a href="r2c-phase0-minilm-spike-20260613.html">Phase-0 spike</a> and
+<a href="../../../../docs/r2c-reranker-next-steps-20260613.md">the P0–P4 plan</a></p>
+
+<div class="verdict">
+A fine-tuned tiny cross-encoder is the answer. Across every deployable reranker
+scored on the held-out test split, <strong>fine-tuning the 23 M MiniLM-L6 on the
+159 k in-domain graded pairs (149 s of training) lifts rerank P@3 from 0.627 →
+0.756</strong> — past zero-shot mxbai-base (0.714, 8× larger) and within 0.04 of
+the multi-billion-parameter Qwen3 references (0.79). Its score also becomes far
+more thresholdable (chunk AUC 0.731 → 0.783, approaching the 0.80 R1 bar). The
+deployed int8 <code>.tflite</code> + on-device tokenizer were verified to
+reproduce the offline model exactly. <strong>Final deployable choice:
+fine-tuned MiniLM-L6.</strong> The end-to-end answer-quality value gate is the
+last gate (below).
+</div>
+
+<h2>P2 — every candidate reranker on the held-out test split</h2>
+<p>491 test queries (frozen by-query split), reranking the hybrid (Gecko+BM25 RRF)
+top-20 pool, all scored at the deployed seq-len (256) so the table is
+apples-to-apples and deployment-relevant. <em>P@3</em> = mean relevant-in-top-3
+(lenient grade≥3); <em>gate AUC</em> = chunk-level AUC for grade≥3, i.e. how
+thresholdable the model's score is (the R1 question). Floor = the RRF order with
+no reranking; oracle = reorder by true grade.</p>
+
+<figure>
+  <img src="fig_reranker_compare.png" alt="reranker comparison">
+  <figcaption>Left: reranking quality (P@3 lenient) vs the floor (0.51) and oracle
+  (0.92). Right: score thresholdability (chunk AUC grade≥3) vs the 0.80 viability
+  bar. Green = the fine-tuned deployable; teal-blue = zero-shot deployables;
+  orange = offline GPU references.</figcaption>
+</figure>
+
+<table>
+  <tr><th>model</th><th class="num">params</th><th class="num">P@3 lenient</th>
+      <th class="num">HR@3</th><th class="num">P@3 strict</th><th class="num">gate AUC (≥3)</th><th>deploy</th></tr>
+  <tr><td>floor — RRF hybrid, no rerank</td><td class="num">—</td><td class="num">0.506</td><td class="num">0.857</td><td class="num">0.202</td><td class="num">—</td><td>R2a baseline</td></tr>
+  <tr><td>MedCPT (medical-domain)</td><td class="num">109M</td><td class="num">0.561</td><td class="num">0.882</td><td class="num">0.236</td><td class="num">0.625</td><td>✓</td></tr>
+  <tr><td>MiniLM-L12</td><td class="num">33M</td><td class="num">0.619</td><td class="num">0.918</td><td class="num">0.271</td><td class="num">0.738</td><td>✓</td></tr>
+  <tr><td>MiniLM-L6 <em>(currently deployed)</em></td><td class="num">23M</td><td class="num">0.627</td><td class="num">0.918</td><td class="num">0.276</td><td class="num">0.731</td><td>✓</td></tr>
+  <tr><td>ELECTRA-base</td><td class="num">110M</td><td class="num">0.638</td><td class="num">0.945</td><td class="num">0.276</td><td class="num">0.669</td><td>✓</td></tr>
+  <tr><td>bge-reranker-base</td><td class="num">278M</td><td class="num">0.643</td><td class="num">0.937</td><td class="num">0.282</td><td class="num">0.726</td><td>✓</td></tr>
+  <tr><td>mxbai-rerank-base <em>(best zero-shot)</em></td><td class="num">184M</td><td class="num">0.714</td><td class="num">0.963</td><td class="num">0.312</td><td class="num">0.748</td><td>✓</td></tr>
+  <tr class="win"><td>MiniLM-L6 — fine-tuned (159k pairs)</td><td class="num">23M</td><td class="num">0.756</td><td class="num">0.959</td><td class="num">0.380</td><td class="num">0.783</td><td>✓ chosen</td></tr>
+  <tr><td>Qwen3-Reranker-4B <em>(offline ref)</em></td><td class="num">4B</td><td class="num">0.787</td><td class="num">0.980</td><td class="num">0.369</td><td class="num">0.827</td><td>✗ too big</td></tr>
+  <tr><td>Qwen3-Reranker-8B <em>(offline ref)</em></td><td class="num">8B</td><td class="num">0.792</td><td class="num">0.984</td><td class="num">0.369</td><td class="num">0.820</td><td>✗ too big</td></tr>
+  <tr><td>oracle — perfect rerank</td><td class="num">—</td><td class="num">0.924</td><td class="num">0.988</td><td class="num">0.536</td><td class="num">—</td><td>ceiling</td></tr>
+</table>
+
+<p>Reading the table:</p>
+<ul>
+  <li><strong>Zero-shot, size barely buys quality.</strong> Among off-the-shelf
+  models the deployed MiniLM-L6 (23 M, 0.627) ties the much larger bge/ELECTRA
+  bases (~0.64); only mxbai-base jumps to 0.714. MiniLM-L12 is no better than L6.</li>
+  <li><strong>Medical-domain pretraining did <em>not</em> transfer.</strong> MedCPT
+  (PubMed query→article) is the <em>worst</em> reranker here (0.561) — this
+  task (nurse questions → guideline prose) is not its training distribution.</li>
+  <li><strong>The strong references are reachable.</strong> The 4–8 B Qwen3
+  rerankers top out at ~0.79 and are the only models clearly above 0.80 on
+  thresholdability — but they cannot run on-device.</li>
+  <li><strong>Fine-tuning a tiny model closes the gap.</strong> See below.</li>
+</ul>
+
+<h2>P2.5 — in-domain fine-tuning (the decisive lever)</h2>
+<p>We fine-tuned the deployed MiniLM-L6 on all 158,993 graded (query, chunk)
+pairs for the <em>train</em>-split queries (regression on grade/6, 2 epochs,
+DEV-selected, held-out TEST evaluated — no test query ever seen), then re-scored
+the same test pool. Training took 149 s on one H200.</p>
+
+<table>
+  <tr><th>metric</th><th class="num">zero-shot</th><th class="num">fine-tuned</th><th class="num">Δ</th><th class="num">Qwen3-8B ref</th></tr>
+  <tr><td>P@3 lenient (grade≥3)</td><td class="num">0.627</td><td class="num">0.756</td><td class="num">+0.129</td><td class="num">0.792</td></tr>
+  <tr><td>P@3 strict (grade≥5)</td><td class="num">0.276</td><td class="num">0.380</td><td class="num">+0.104</td><td class="num">0.369</td></tr>
+  <tr><td>HR@3 (any relevant in top-3)</td><td class="num">0.918</td><td class="num">0.959</td><td class="num">+0.041</td><td class="num">0.984</td></tr>
+  <tr><td>chunk AUC grade≥3 (thresholdability)</td><td class="num">0.731</td><td class="num">0.783</td><td class="num">+0.052</td><td class="num">0.820</td></tr>
+  <tr><td>chunk AUC grade≥5</td><td class="num">0.647</td><td class="num">0.757</td><td class="num">+0.110</td><td class="num">—</td></tr>
+</table>
+
+<p>The fine-tuned 23 M model <strong>beats zero-shot mxbai-base (0.714) at one-eighth
+the size</strong>, and on the strict cut actually <em>exceeds</em> the Qwen3-8B
+reference (0.380 vs 0.369). Its score AUC moves decisively toward the 0.80 bar R1
+set for a usable absolute threshold — the strongest case yet that a thresholdable
+on-device relevance signal is within reach (a dedicated threshold re-test on the
+fine-tuned score is the natural R1 follow-up).</p>
+
+<div class="note"><strong>Why not deploy mxbai-base?</strong> It is the best
+<em>zero-shot</em> model, but it is 8× the parameters/latency of MiniLM-L6 and the
+fine-tuned MiniLM-L6 already surpasses it. (We also fine-tuned mxbai-base for
+completeness; it is not on the deployment path.) The deployable choice optimizes
+quality-per-byte, and the fine-tuned tiny model wins outright.</div>
+
+<h2>P0 — does the deployed reranker reproduce the validated quality?</h2>
+<p>The in-app reranker is the int8 <code>.tflite</code> driven by a hand-ported
+Kotlin WordPiece tokenizer. We ran the <em>actual deployed artifact</em>
+(<code>reranker_minilm_l6_int8.tflite</code>) locally over all 9,820 test pairs,
+fed by both the HuggingFace tokenizer and a faithful Python port of the Kotlin
+tokenizer, at the deployed seq-len 256.</p>
+<table>
+  <tr><th>check</th><th class="num">result</th></tr>
+  <tr><td>Tokenizer exact-match (Kotlin-port vs HF), per pair</td><td class="num ok">9,817 / 9,820 = 99.97%</td></tr>
+  <tr><td>Token-position disagreement rate</td><td class="num ok">3.1e-5 (49 / 1.6 M)</td></tr>
+  <tr><td>Score parity through the tflite (Kotlin vs HF): Pearson r</td><td class="num ok">1.000</td></tr>
+  <tr><td>Top-3 set agreement (Kotlin vs HF)</td><td class="num ok">1.000</td></tr>
+  <tr><td>Deployed quality (tflite-int8 + Kotlin tok): P@3 lenient</td><td class="num ok">0.626</td></tr>
+  <tr><td>Offline torch-fp32 @256 reference: P@3 lenient</td><td class="num">0.627</td></tr>
+</table>
+<p>The deployed int8 model + on-device tokenizer reproduce the offline fp32 model
+to within 0.001 P@3 and are <strong>rank-identical</strong>. The "approximate
+tokenizer parity" caveat from the spike is closed: conversion (fp32→int8→LiteRT)
+and the tokenizer port are both faithful, and the deployed reranker is
+trustworthy. <em>Note:</em> this verifies the <em>zero-shot</em> MiniLM-L6 that is
+currently on-device; deploying the fine-tuned weights requires re-running the
+same (proven, architecture-identical) conversion + this parity check on the new
+checkpoint.</p>
+
+<h2>P1 — the end-to-end value gate (does reranking improve answers?)</h2>
+<p>Everything above is retrieval-quality evidence. The R2 standing rule is to
+validate end-to-end. Three arms isolate the effect, generated with <strong>Gemma 3n
+E4B</strong> (the actual on-device generator) over the same questions:</p>
+<ul>
+  <li><strong>A. Gecko top-3</strong> — the currently deployed retriever (full-delta reference).</li>
+  <li><strong>B. hybrid top-3</strong> — Gecko+BM25 RRF (R2a); isolates fusion (A→B).</li>
+  <li><strong>C. hybrid top-20 → fine-tuned MiniLM-L6 rerank → top-3</strong> — isolates reranking (B→C).</li>
+</ul>
+<p>Judged by the pinned gpt-oss-120b on key-fact recall / refusal / safety (SAQ:
+kenya + afrimedqa_saq), plus MCQ accuracy (afrimedqa, auto-scored — does the
+−1.8 pp RAG gap close?).</p>
+
+<div class="pendbox" id="value-gate-status"><strong>Value gate running on the
+cluster.</strong> 3-arm contexts precomputed with the fine-tuned reranker →
+Gemma 3n E4B generation (per-arm, parallel) → gpt-oss-120b judging. Results table
+to be filled here on completion.</div>
+
+<h2>Artifacts</h2>
+<ul>
+  <li>Per-model scores: <code>results/retrieval_eval/r2c-rerank/candidates/*.json</code></li>
+  <li>Fine-tune: <code>results/retrieval_eval/r2c-rerank/finetune/minilm-l6-finetuned.json</code></li>
+  <li>Device parity: <code>results/retrieval_eval/r2c-rerank/candidates/parity.json</code></li>
+  <li>Scripts: <code>retrieval_eval/{score_candidates,finetune_reranker,check_parity,precompute_rerank_arms,value_gate_summary}.py</code></li>
+  <li>Cluster jobs: <code>cluster/run_cluster_{rerank_compare,finetune,rerank_arms,value_gate,value_gate_judge}.sh</code></li>
+</ul>
+
+</body>
+</html>
