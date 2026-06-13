@@ -52,6 +52,18 @@ nearly fixes lenient hit rate) but strict pool recall plateaus at 0.345 (no
 reranker can fix the strict-content miss — that needs better retrieval/corpus).
 Output: go/no-go on whether a small on-device reranker is worth building.
 
+**Threshold-adaptability note.** Do <em>not</em> run the R1 Stage-1 score-quality
+gate on the oracle: its ordering score *is* the judge grade, so every gate
+statistic is trivially ~1.0 by construction — circular and uninformative, and the
+oracle isn't deployable anyway. The non-circular version belongs to the
+**real-reranker follow-up** (below): a trained cross-encoder produces a relevance
+score at inference time that is directly optimized to predict relevance — unlike
+the geometric (cosine), lexical (BM25), or rank-fusion (RRF) scores already gated
+and found sub-viable. That reranker score is the best candidate yet to clear the
+0.80 viability bar, so the follow-up should run the Stage-1 gate on it: it both
+measures captured ceiling and is the first plausible route to reviving the R1
+threshold (the oracle is exempt by construction).
+
 ### R2c — Embedder bake-off (the actual swap)
 
 Replace Gecko with a different on-device embedder. Candidates must pass hard
@@ -89,12 +101,28 @@ model and only if it still falls short.
   lateon ranking well (P@3 0.738) with zero cross-query score signal (AUC 0.501);
   measure both per candidate, not just P@k.
 
+## Status / results so far
+
+- **R2a (done):** hybrid Gecko+BM25 RRF is a modest, free-to-deploy win (P@3
+  0.477→0.516, HR@3 0.814→0.860 at α≈0.5) but doesn't close the gap or fix the
+  strict miss; thresholding stays sub-viable on the fused score.
+  [`reports/r2-hybrid/r2a-hybrid-result-20260613.html`](../configs/config-v0.2.0/reports/r2-hybrid/r2a-hybrid-result-20260613.html)
+- **R2b (done):** oracle rerank ceiling is large — reordering the hybrid top-20
+  lifts P@3 0.512→0.926 (lenient) and 0.206→0.545 (strict); **strong go** to scope
+  a real reranker, depth ~10. Revised R2a's read: reranking *does* help strict
+  (chunks present but mis-ranked), though a ~22% strict structural tail remains for
+  R2c/C1. [`reports/r2-rerank/r2b-rerank-ceiling-20260613.html`](../configs/config-v0.2.0/reports/r2-rerank/r2b-rerank-ceiling-20260613.html)
+
 ## Suggested sequence
 
-1. **Now (offline, no GPU):** R2a hybrid simulation + R2b oracle-rerank ceiling.
-   Output: chosen fusion config, go/no-go on hybrid and on building a reranker.
-2. **Next, if a gap remains:** scope R2c — pick 2–3 constraint-passing candidate
-   embedders, run the bake-off, screen with the Stage-1 gate before device work.
-3. **Later, only if needed:** R2d fine-tune/distill on the chosen base.
+1. **Done (offline, no GPU):** R2a hybrid simulation + R2b oracle-rerank ceiling.
+2. **Next — real-reranker follow-up (not free):** evaluate a quantized,
+   LiteRT-feasible cross-encoder over the hybrid top-10–20 pool against the same
+   labels (clean train/test split). Reports both captured ceiling and the Stage-1
+   gate on the reranker's score (the threshold-revival test above).
+3. **In parallel / if a structural gap remains:** scope R2c — pick 2–3
+   constraint-passing candidate embedders, run the bake-off, screen with the
+   Stage-1 gate before device work.
+4. **Later, only if needed:** R2d fine-tune/distill on the chosen base.
 
 Each retrieval change loops back through the Guardrails before adoption.
