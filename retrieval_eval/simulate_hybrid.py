@@ -85,7 +85,9 @@ def eval_hybrid(gecko: dict, bm25: dict, grades: dict, alpha: float, k: int,
                + (1 - alpha) * (1.0 / (k + b[c]) if c in b else 0.0)
             for c in cands
         }
-        top3 = [c for c, _ in sorted(scores.items(), key=lambda x: -x[1])[:3]]
+        # Tie-break by chunk_id for reproducibility — RRF ties are common
+        # (a gecko-only and a bm25-only chunk at the same rank tie exactly).
+        top3 = [c for c, _ in sorted(scores.items(), key=lambda x: (-x[1], x[0]))[:3]]
         pq, hq = score_topk(top3, qid, grades, cut)
         p += pq; hr += hq; n += 1
     return round(p / n, 4), round(hr / n, 4)

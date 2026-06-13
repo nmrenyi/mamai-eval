@@ -78,7 +78,10 @@ def build_hybrid_rows(gecko: dict, bm25: dict, grades: dict,
                + (1 - alpha) * (1.0 / (k + b[c]) if c in b else 0.0)
             for c in cands
         }
-        ranked = sorted(scored.items(), key=lambda x: -x[1])
+        # Tie-break by chunk_id: RRF ties are common (a gecko-only and a
+        # bm25-only chunk at the same rank score identically), so a stable
+        # secondary key is needed for reproducibility.
+        ranked = sorted(scored.items(), key=lambda x: (-x[1], x[0]))
         for rank, (cid, sc) in enumerate(ranked, 1):
             grade = grades.get((qid, cid))
             if grade is None:

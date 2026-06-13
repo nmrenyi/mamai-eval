@@ -86,8 +86,8 @@ is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
       <td class="num">0.163</td><td class="num">0.371</td></tr>
   <tr><td>Gecko only (α=1)</td><td class="num">0.477</td><td class="num">0.814</td>
       <td class="num">0.193</td><td class="num">0.439</td></tr>
-  <tr><td>Hybrid α=0.5</td><td class="num win">0.513</td><td class="num win">0.860</td>
-      <td class="num">0.207</td><td class="num">0.460</td></tr>
+  <tr><td>Hybrid α=0.5</td><td class="num win">0.512</td><td class="num win">0.860</td>
+      <td class="num">0.206</td><td class="num">0.459</td></tr>
   <tr><td>Hybrid α=0.75</td><td class="num win">0.515</td><td class="num">0.852</td>
       <td class="num">0.208</td><td class="num">0.463</td></tr>
   <tr><td><em>voyage ceiling</em></td><td class="num"><em>0.867</em></td>
@@ -146,9 +146,9 @@ deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
   <tr><td>chunk AUC ≥3 (absolute cutoffs)</td><td class="num">0.572</td>
       <td class="num">0.646</td><td class="num win">0.668</td></tr>
   <tr><td>within-bundle concordance (relative rules)</td><td class="num">0.623</td>
-      <td class="num win">0.659</td><td class="num flat">0.596</td></tr>
+      <td class="num win">0.658</td><td class="num flat">0.596</td></tr>
   <tr><td>bundle any-relevant AUC (gated abstention)</td><td class="num">0.574</td>
-      <td class="num win">0.684</td><td class="num">0.675</td></tr>
+      <td class="num win">0.684</td><td class="num">0.673</td></tr>
 </table>
 <ul>
   <li><strong>BM25's raw score is the most thresholdable of the three</strong> —
@@ -170,7 +170,7 @@ deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
       the API-only quality ceiling, sits below the bar on all three (0.734 / 0.755 /
       0.750), so a deployable retriever clearing it is unlikely on current evidence.
       R1's core finding survives: no score grades usefulness <em>within</em> the
-      retrieved set well enough for a relative rule (best concordance 0.659).</li>
+      retrieved set well enough for a relative rule (best concordance 0.658).</li>
 </ul>
 <p class="note">
 Takeaway: neither alternative revives thresholding to viability, but both beat
