@@ -22,6 +22,8 @@ MODEL_ID = "cross-encoder/ms-marco-MiniLM-L6-v2"
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--model", default=MODEL_ID,
+                    help="HF id or local path (e.g. the fine-tuned model dir)")
     ap.add_argument("--seq-len", type=int, default=256)
     ap.add_argument("--out-dir", default="/tmp/minilm-tflite")
     ap.add_argument("--report-dir",
@@ -35,7 +37,7 @@ def main():
     out_dir = Path(args.out_dir); out_dir.mkdir(parents=True, exist_ok=True)
     report_dir = Path(args.report_dir); report_dir.mkdir(parents=True, exist_ok=True)
 
-    base = AutoModelForSequenceClassification.from_pretrained(MODEL_ID).eval()
+    base = AutoModelForSequenceClassification.from_pretrained(args.model).eval()
 
     class LogitsOnly(torch.nn.Module):
         """ai-edge-torch needs tensor outputs, not the HF output dataclass."""
@@ -53,7 +55,7 @@ def main():
               torch.ones(1, S, dtype=torch.long),
               torch.zeros(1, S, dtype=torch.long))
 
-    out = {"model": MODEL_ID, "seq_len": S, "fp32": {}, "int8": {}}
+    out = {"model": args.model, "seq_len": S, "fp32": {}, "int8": {}}
 
     # fp32 LiteRT
     edge = ai_edge_torch.convert(wrapped, sample)
