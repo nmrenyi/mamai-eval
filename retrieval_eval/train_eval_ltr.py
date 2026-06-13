@@ -57,6 +57,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--features-dir", required=True)
     ap.add_argument("--report-dir", required=True)
+    ap.add_argument("--hybrid-gate-json",
+                    default="configs/config-v0.2.0/results/retrieval_eval/"
+                            "r2-hybrid/hybrid_gate.json",
+                    help="R2a gate results to compare the LTR score against")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -161,6 +165,54 @@ def main():
     fig.tight_layout()
     fig.savefig(report_dir / "fig_ltr.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
+
+    # Threshold-adaptability comparison: the R1 Stage-1 gate across all scores
+    # we've measured, ending with the learned LTR score. Prior candidates'
+    # numbers are sourced from the committed R2a gate (full-set); feature-LTR is
+    # on the held-out test pool — populations differ slightly, comparison is
+    # indicative, the chunk-AUC ordering is robust.
+    try:
+        with open(args.hybrid_gate_json) as f:
+            hg = json.load(f)
+        g = results["stage1_gate_on_ltr_score"]
+        bars = [
+            ("Gecko cosine", "#b3372f", hg["gecko_cosine"]),
+            ("BM25 score", "#92510a", hg["bm25"]),
+            ("Hybrid RRF", "#888888", hg["hybrid_rrf"]),
+            ("feature-LTR", "#4a6fa5",
+             {"chunk_auc_grade3": g["chunk_auc_grade3"],
+              "within_bundle_concordance": g["within_bundle_concordance"],
+              "bundle_any_relevant_auc_top1": g["bundle_any_relevant_auc_top1"]}),
+        ]
+        voyage = hg.get("voyage_cosine_ceiling")
+        stat_keys = [("chunk_auc_grade3", "chunk AUC\n(grade>=3)\nabsolute cutoffs"),
+                     ("within_bundle_concordance", "within-bundle\nconcordance\nrelative rules"),
+                     ("bundle_any_relevant_auc_top1", "bundle any-relevant\nAUC\ngated abstention")]
+        gx = range(len(stat_keys)); bw = 0.2
+        gfig, gax = plt.subplots(figsize=(11, 4.8))
+        for j, (name, color, vals) in enumerate(bars):
+            offs = (j - 1.5) * bw
+            ys = [vals[k] for k, _ in stat_keys]
+            gax.bar([i + offs for i in gx], ys, bw, label=name, color=color, alpha=0.85)
+            for i, v in enumerate(ys):
+                gax.text(i + offs, v + 0.006, f"{v:.3f}", ha="center", fontsize=7)
+        if voyage:
+            for i, (k, _) in enumerate(stat_keys):
+                gax.hlines(voyage[k], i - 0.45, i + 0.45, color="#6b21a8", ls=":",
+                           lw=2, label="voyage (ceiling)" if i == 0 else None)
+        gax.axhline(0.5, ls=":", color="gray", lw=1)
+        gax.axhline(0.8, ls="--", color="#14532d", lw=1, label="viability bar")
+        gax.set_xticks(list(gx)); gax.set_xticklabels([t for _, t in stat_keys], fontsize=8)
+        gax.set_ylim(0.4, 1.0); gax.set_ylabel("statistic")
+        gax.set_title("Stage-1 score-quality gate: raw retrieval scores vs the "
+                      "learned feature-LTR score", fontsize=10)
+        gax.legend(fontsize=7, ncol=2)
+        gfig.tight_layout()
+        gfig.savefig(report_dir / "fig_ltr_gate.png", dpi=150, bbox_inches="tight")
+        plt.close(gfig)
+        print(f"Wrote gate comparison fig (vs {args.hybrid_gate_json})")
+    except (FileNotFoundError, KeyError) as e:
+        print(f"Skipped gate comparison fig: {e}")
 
     print(f"test queries: {results['n_test_queries']}, best_iter {model.best_iteration}")
     for ck in cuts:

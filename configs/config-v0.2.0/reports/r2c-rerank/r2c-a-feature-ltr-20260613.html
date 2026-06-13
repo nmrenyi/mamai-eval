@@ -98,13 +98,49 @@ the same test queries for apples-to-apples.
       The fusion signals (~39%) matter most, but chunk length and query-coverage
       together carry ~30% — lexical features the RRF formula can't use are a real
       part of the gain, which is why it beats the fixed fusion.</li>
-  <li><strong class="cap">Most thresholdable score yet — still sub-viable.</strong>
-      The R1 Stage-1 gate on the LTR score: chunk-AUC <strong>0.701</strong>
-      (vs gecko cosine 0.572, BM25 0.646, hybrid RRF 0.668), within-bundle
-      concordance <strong>0.692</strong> (best measured), bundle-AUC 0.649. A
-      <em>learned</em> score is more relevance-aligned than any raw retrieval
-      score — but all three remain below the 0.80 bar, so R1's "no usable
-      threshold" verdict still holds, now by a smaller margin.</li>
+  <li><strong class="cap">Its learned score is the most thresholdable yet —
+      still sub-viable.</strong> chunk-AUC 0.701 and concordance 0.692 top every
+      raw retrieval score; all three stay under 0.80. Detail in the next
+      section.</li>
+</ul>
+
+<h2>Does feature-LTR revive thresholding?</h2>
+<p>
+The R1 Stage-1 gate, run on the learned LTR score and compared against the raw
+retrieval scores from R2a (prior bars sourced from the committed R2a gate;
+feature-LTR on the held-out test pool — populations differ slightly, the
+ordering is robust):
+</p>
+<figure>
+  <img src="fig_ltr_gate.png" alt="Stage-1 gate: raw scores vs learned feature-LTR score">
+  <figcaption>The three Stage-1 statistics across Gecko cosine, BM25, hybrid RRF
+  and the learned feature-LTR score. Dotted gray = chance (0.5); dashed green =
+  0.80 viability bar; purple dotted = voyage ceiling (full-set).</figcaption>
+</figure>
+<table>
+  <tr><th>Statistic (rule it gates)</th><th class="num">Gecko</th><th class="num">BM25</th>
+      <th class="num">Hybrid RRF</th><th class="num">feature-LTR</th></tr>
+  <tr><td>chunk AUC ≥3 (absolute cutoffs)</td><td class="num">0.572</td>
+      <td class="num">0.646</td><td class="num">0.668</td><td class="num win">0.701</td></tr>
+  <tr><td>within-bundle concordance (relative rules)</td><td class="num">0.623</td>
+      <td class="num">0.658</td><td class="num">0.596</td><td class="num win">0.692</td></tr>
+  <tr><td>bundle any-relevant AUC (gated abstention)</td><td class="num">0.574</td>
+      <td class="num">0.684</td><td class="num">0.673</td><td class="num cap">0.649</td></tr>
+</table>
+<ul>
+  <li><strong>The learned score is the most thresholdable on two of three —
+      because it's trained for relevance.</strong> chunk-AUC 0.701 and concordance
+      0.692 both top every raw retrieval score: a score optimized to predict the
+      grade aligns with relevance better than cosine, BM25, or RRF. This is the
+      closest anything has come to the 0.80 bar.</li>
+  <li><strong>But it loses on bundle-AUC (0.649 vs BM25's 0.684).</strong> The
+      gated-abstention signal ("is the whole bundle junk?") is still best served by
+      BM25's raw lexical score — the LTR optimizes within-query ordering, not the
+      absolute "does this query have anything" question.</li>
+  <li><strong class="cap">Still no revival — all three under 0.80.</strong> R1's
+      verdict holds, now by the smallest margin yet. The genuinely thresholdable
+      score would be a trained cross-encoder's (Option B) — feature-LTR shows the
+      <em>direction</em> (learning helps) without clearing the bar.</li>
 </ul>
 
 <h2>Decision</h2>

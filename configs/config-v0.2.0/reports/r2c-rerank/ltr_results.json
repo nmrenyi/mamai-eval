@@ -1,5 +1,5 @@
 {
-  "created_at_utc": "2026-06-13T17:52:09Z",
+  "created_at_utc": "2026-06-13T17:59:44Z",
   "model": "LightGBM LambdaMART (lambdarank, ndcg@3 early-stop)",
   "params": {
     "objective": "lambdarank",
