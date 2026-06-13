@@ -44,7 +44,11 @@ bundle precision P@3 from 0.477 → 0.516 and hit rate HR@3 from 0.814 → 0.860
 but closes only ~10% of the Gecko→voyage gap and does <strong>not</strong> move
 the strict-content miss (P@3≥5: 0.193 → 0.208). Worth adopting as a cheap
 improvement; not sufficient on its own — R2c (better embedder) / C1 (corpus)
-remain necessary for the structural gap.
+remain necessary for the structural gap. <strong>On thresholdability</strong>
+(the R1 question, re-run here): the hybrid does <strong>not</strong> revive it —
+all three Stage-1 gate statistics stay below the 0.80 viability bar, as does the
+voyage ceiling. BM25's raw score is the best threshold-like signal measured
+(bundle-AUC 0.684), but only marginally; R1's "no usable threshold" verdict holds.
 </div>
 
 <h2>Method</h2>
