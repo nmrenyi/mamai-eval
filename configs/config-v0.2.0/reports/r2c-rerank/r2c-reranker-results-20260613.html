@@ -45,13 +45,18 @@ the multi-billion-parameter Qwen3 references (0.79). Its score also becomes far
 more thresholdable (chunk AUC 0.731 → 0.783, approaching the 0.80 R1 bar). The
 deployed int8 <code>.tflite</code> + on-device tokenizer were verified to
 reproduce the offline model exactly. <strong>Final deployable choice:
-fine-tuned MiniLM-L6.</strong> But the end-to-end value gate is a caution:
-re-run with the <em>actual</em> on-device generator (Gemma 4 E4B) and judged by
-gpt-oss-120b, reranking does <strong>not</strong> improve key-fact recall on the
-reliable kenya SAQ sample (gecko, the deployed retriever, is the best arm); the
-strong offline retrieval gain does not translate end-to-end on this model. (An
-earlier run reporting a +12% recall lift used the wrong generator,
-<code>gemma3n-e4b</code>, and is retracted.)
+fine-tuned MiniLM-L6.</strong> But end-to-end, the offline win does not carry: with
+the <em>actual</em> on-device generator (Gemma 4 E4B), reranking does <strong>not</strong>
+improve kenya SAQ answers, and a relevance diagnostic (judging each arm's kenya top-3
+with the original Qwen3-32B grader) shows <strong>why — reranking doesn't improve
+kenya <em>retrieval</em> either</strong> (gecko is the best arm; P@3 0.277 vs
+0.19–0.26). So this is a <strong>distribution-transfer failure, not a model ceiling</strong>:
+the reranker's mamaretrieval gain (P@3 0.51→0.76) doesn't generalize to kenya, and the
+low absolute relevance across all arms points to a <strong>corpus-coverage</strong>
+bottleneck. Recommendation: <strong>do not ship the reranker</strong> for kenya; any
+retriever/embedder change must be validated on the deployment queries, not just
+mamaretrieval. (An earlier +12% claim used the wrong generator, <code>gemma3n-e4b</code>,
+and is retracted.)
 </div>
 
 <h2>P2 — every candidate reranker on the held-out test split</h2>
@@ -216,16 +221,55 @@ top-3 — is the recommended next step.</div>
 <div class="verdict">Verdict: the
 reranker is a large, real win on <em>offline retrieval metrics</em>, but its
 end-to-end answer-quality benefit is <strong>not demonstrated</strong> on the
-reliable kenya SAQ sample with the actual device generator (Gemma 4 E4B). This does
-not condemn reranking — it says the current evidence does not justify shipping it
-for answer quality alone; the kenya-vs-mamaretrieval distribution gap and the
-model-ceiling question should be resolved first. (An earlier draft reported a +12%
-recall lift; it used the wrong generator, gemma3n-e4b, and is retracted.)</div>
+reliable kenya SAQ sample with the actual device generator (Gemma 4 E4B) — and the
+relevance diagnostic below shows the cause is that reranking doesn't improve kenya
+<em>retrieval</em> either (a distribution-transfer failure). The current evidence does
+not justify shipping the reranker for kenya. (An earlier draft reported a +12% recall
+lift; it used the wrong generator, gemma3n-e4b, and is retracted.)</div>
 
 <p class="meta">Arms generated with gemma4-e4b (the deployed device generator) over
 the same questions; SAQ judged by the pinned gpt-oss-120b on key-fact recall /
 refusal / safety; MCQ auto-scored. Raw per-arm results under
 <code>results/end_to_end_eval/value_gate_g4/</code>.</p>
+
+<h2>Diagnostic — why didn't reranking help kenya? (no-transfer, not a model ceiling)</h2>
+<p>The value gate left one question: is the reranked kenya context <em>actually more
+relevant</em> (so the bottleneck is Gemma 4 not using it — a model ceiling), or just
+<em>different and not better</em> (the reranker doesn't transfer to kenya)? kenya
+retrievals had no relevance labels, so we judged each arm's top-3 directly with the
+<strong>same rubric and judge (Qwen3-32B)</strong> that produced the 230k grades —
+2,691 (query, chunk) pairs.</p>
+<table>
+  <tr><th>arm (top-3 relevance)</th><th class="num">kenya P@3 (≥3)</th><th class="num">kenya mean grade /6</th><th class="num">afrimedqa_saq P@3 (≥3)</th></tr>
+  <tr class="win"><td>A · gecko (deployed)</td><td class="num">0.277</td><td class="num">1.49</td><td class="num">0.477</td></tr>
+  <tr><td>B · hybrid (RRF)</td><td class="num">0.204</td><td class="num">1.09</td><td class="num">0.423</td></tr>
+  <tr><td>C · rerank MiniLM-L6-ft</td><td class="num">0.192</td><td class="num">1.03</td><td class="num">0.531</td></tr>
+  <tr><td>C · rerank mxbai-base-ft</td><td class="num">0.264</td><td class="num">1.45</td><td class="num">0.649</td></tr>
+  <tr><td><em>(offline mamaretrieval, for contrast)</em></td><td class="num">0.51→0.76</td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+<p>The answer is unambiguous: <strong>on kenya, reranking does NOT improve retrieval
+relevance — gecko (the deployed retriever) is the best arm.</strong> So this is
+<strong>no-transfer, not a model ceiling</strong>: the reranked context genuinely
+isn't more relevant, which is exactly why the answers didn't improve. The reranker's
+strong mamaretrieval gain (P@3 0.51→0.76) simply does not generalize to the kenya
+query distribution. Three things fall out:</p>
+<ul>
+  <li><strong>It's a distribution-transfer failure, not Gemma 4 ignoring good
+  context.</strong> Retrieval is still a legitimate lever in principle — but anything
+  tuned on mamaretrieval must be re-validated on the real deployment queries (kenya /
+  afrimedqa SAQ), not just mamaretrieval. This generalizes the R1/R2 guardrail.</li>
+  <li><strong>Hybrid fusion (BM25) actively hurts kenya retrieval</strong> (0.277 →
+  0.204) — the R2a fusion adds lexical noise for these queries. The rerankers only
+  reorder that degraded pool, so even the better one (mxbai-ft, 0.264) can't beat
+  plain gecko. On kenya, the deployed gecko top-3 is the best of every option here.</li>
+  <li><strong>The deeper signal is corpus coverage.</strong> Absolute kenya relevance
+  is low across <em>all</em> arms (best mean grade 1.49 / 6) vs afrimedqa_saq (2.3–3.2).
+  When even oracle-of-these-retrievers tops out this low, the bottleneck is likely the
+  <em>corpus</em> not containing the answer for many kenya vignettes — a content gap a
+  better retriever/reranker cannot fix. afrimedqa_saq, where reranking <em>does</em>
+  help (mxbai 0.649 &gt; gecko 0.477), confirms the method works when the corpus covers
+  the query.</li>
+</ul>
 
 <h2>Side-finding — Gemma 3n E4B vs Gemma 4 E4B (the generator that flipped the gate)</h2>
 <p>The generator bug left a silver lining: a clean A/B of the two generators. The
@@ -259,6 +303,7 @@ choice, since "more recall" is not unambiguously better for a medical assistant.
   <li>Fine-tune: <code>results/retrieval_eval/r2c-rerank/finetune/minilm-l6-finetuned.json</code></li>
   <li>Device parity: <code>results/retrieval_eval/r2c-rerank/candidates/parity.json</code></li>
   <li>Value gate (Gemma 4 E4B): <code>results/end_to_end_eval/value_gate_g4/{gecko,hybrid,hybrid_rerank,hybrid_rerank_mxbai}/run/*.json</code></li>
+  <li>Kenya relevance diagnostic: <code>reports/r2c-rerank/kenya_relevance.json</code> · scripts <code>retrieval_eval/judge_kenya_relevance.py</code>, <code>_kenya_rubric.py</code></li>
   <li>Scripts: <code>retrieval_eval/{score_candidates,finetune_reranker,check_parity,precompute_rerank_arms,value_gate_summary}.py</code></li>
   <li>Cluster jobs: <code>cluster/run_cluster_{rerank_compare,finetune,rerank_arms,value_gate,value_gate_judge}.sh</code></li>
 </ul>

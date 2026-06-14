@@ -1,0 +1,65 @@
+{
+  "model": "Qwen/Qwen3-32B",
+  "datasets": {
+    "kenya": {
+      "n_queries": 312,
+      "n_pairs_judged": 2691,
+      "by_arm": {
+        "gecko": {
+          "p_at_3_lenient": 0.2767,
+          "p_at_3_strict": 0.1795,
+          "mean_grade": 1.4925,
+          "n": 312
+        },
+        "hybrid": {
+          "p_at_3_lenient": 0.2041,
+          "p_at_3_strict": 0.1325,
+          "mean_grade": 1.0946,
+          "n": 312
+        },
+        "minilm_ft": {
+          "p_at_3_lenient": 0.1923,
+          "p_at_3_strict": 0.1303,
+          "mean_grade": 1.0299,
+          "n": 312
+        },
+        "mxbai_ft": {
+          "p_at_3_lenient": 0.2639,
+          "p_at_3_strict": 0.1987,
+          "mean_grade": 1.4514,
+          "n": 312
+        }
+      }
+    },
+    "afrimedqa_saq": {
+      "n_queries": 37,
+      "n_pairs_judged": 276,
+      "by_arm": {
+        "gecko": {
+          "p_at_3_lenient": 0.4775,
+          "p_at_3_strict": 0.2523,
+          "mean_grade": 2.3243,
+          "n": 37
+        },
+        "hybrid": {
+          "p_at_3_lenient": 0.4234,
+          "p_at_3_strict": 0.1892,
+          "mean_grade": 2.018,
+          "n": 37
+        },
+        "minilm_ft": {
+          "p_at_3_lenient": 0.5315,
+          "p_at_3_strict": 0.2793,
+          "mean_grade": 2.5225,
+          "n": 37
+        },
+        "mxbai_ft": {
+          "p_at_3_lenient": 0.6486,
+          "p_at_3_strict": 0.3333,
+          "mean_grade": 3.1532,
+          "n": 37
+        }
+      }
+    }
+  }
+}

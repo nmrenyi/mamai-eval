@@ -38,6 +38,16 @@ Full results in
   a different distribution, so this is "benefit not demonstrated" rather than
   "reranking is useless." **NOTE:** an earlier run reported +12% kenya recall but
   used the wrong generator (gemma3n-e4b) — retracted.
+- **P1 diagnostic — resolved: no-transfer, not a model ceiling.** Judged each arm's
+  kenya top-3 relevance with the original Qwen3-32B grader + V2 rubric (2,691 pairs).
+  Reranking does NOT improve kenya retrieval either: gecko P@3 0.277 (best) vs hybrid
+  0.204 / minilm-ft 0.192 / mxbai-ft 0.264. The reranker's mamaretrieval gain
+  (0.51→0.76) doesn't generalize to kenya; hybrid/BM25 fusion actively hurts kenya;
+  and low absolute relevance across all arms (best mean grade 1.49/6) points to a
+  **corpus-coverage** bottleneck. **Do not ship the reranker for kenya.** Any
+  retriever/embedder change must be validated on the deployment queries (kenya /
+  afrimedqa SAQ), not just mamaretrieval. afrimedqa_saq (n=37) — where the corpus
+  covers the query — does show reranking help (mxbai 0.649 > gecko 0.477).
 
 **Remaining (deployment):** convert the fine-tuned MiniLM-L6 to int8 `.tflite`
 (same proven path) + re-run P0 parity on it; then P3 latency/batching + P4 PRs.
