@@ -25,7 +25,7 @@ REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
 REPO_REF="${REPO_REF:-feat/r2-retriever-upgrade-20260613}"
 WORKTREE="${WORKTREE:-/tmp/eval_code}"
 CONFIG="${CONFIG:-config-v0.2.0}"
-MODEL="${MODEL:-gemma3n-e4b}"
+MODEL="${MODEL:-gemma4-e4b}"   # the on-device generator (app_config llm_model = gemma-4-E4B-it)
 MODEL_DIR="${MODEL_DIR:-/lightscratch/users/yiren/models}"
 ARMS_DIR="${ARMS_DIR:-/lightscratch/users/yiren/eval_output/rag_arms}"
 OUT_DIR="${OUT_DIR:-/lightscratch/users/yiren/eval_output/value_gate}"
