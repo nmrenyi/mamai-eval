@@ -45,11 +45,13 @@ the multi-billion-parameter Qwen3 references (0.79). Its score also becomes far
 more thresholdable (chunk AUC 0.731 → 0.783, approaching the 0.80 R1 bar). The
 deployed int8 <code>.tflite</code> + on-device tokenizer were verified to
 reproduce the offline model exactly. <strong>Final deployable choice:
-fine-tuned MiniLM-L6.</strong> And the end-to-end value gate passes:
-generated with the real on-device Gemma 4 E4B and judged by gpt-oss-120b,
-reranking lifts kenya SAQ key-fact recall <strong>+12% relative</strong> and MCQ
-accuracy <strong>+2.4 pp</strong> over the deployed Gecko retriever, with no rise
-in refusal and no safety regression.
+fine-tuned MiniLM-L6.</strong> But the end-to-end value gate is a caution:
+re-run with the <em>actual</em> on-device generator (Gemma 4 E4B) and judged by
+gpt-oss-120b, reranking does <strong>not</strong> improve key-fact recall on the
+reliable kenya SAQ sample (gecko, the deployed retriever, is the best arm); the
+strong offline retrieval gain does not translate end-to-end on this model. (An
+earlier run reporting a +12% recall lift used the wrong generator,
+<code>gemma3n-e4b</code>, and is retracted.)
 </div>
 
 <h2>P2 — every candidate reranker on the held-out test split</h2>
@@ -172,50 +174,52 @@ E4B</strong> (the actual on-device generator — <code>app_config.json</code>
 kenya + afrimedqa_saq), plus MCQ accuracy (afrimedqa, auto-scored — does the
 −1.8 pp RAG gap close?).</p>
 
-<div class="pendbox"><strong>⚠ Numbers below are provisional — being recomputed.</strong>
-The table below was generated with <code>gemma3n-e4b</code> by mistake; the device
-runs <strong>Gemma 4 E4B</strong>. All four arms (incl. the fine-tuned mxbai-base
-arm) are re-running with <code>gemma4-e4b</code> and will be re-judged. The
-relative A/B/C ranking is expected to hold (same generator across arms), but these
-absolute values will be replaced.</div>
-
-<p><strong>Result (gemma3n-e4b, provisional) — reranking passes the value gate.</strong>
-With the deployable fine-tuned MiniLM-L6 as arm C, answer quality improves on every
-reliable sample, and the gain is attributable to reranking (B→C), not just fusion (A→B):</p>
+<p><strong>Result (Gemma 4 E4B — the actual on-device generator) — the offline
+retrieval win does not translate end-to-end.</strong> Two fine-tuned rerankers are
+tested as arm C against the same gecko/hybrid baselines (key-fact recall for SAQ,
+accuracy for MCQ; n in header):</p>
 
 <table>
-  <tr><th>arm</th><th class="num">kenya recall</th><th class="num">afrimedqa_saq recall</th>
-      <th class="num">MCQ acc</th><th class="num">refusal (kenya)</th><th class="num">harm (kenya)</th></tr>
-  <tr><td>A · Gecko top-3 (deployed)</td><td class="num">0.256</td><td class="num">0.277</td><td class="num">0.532</td><td class="num">0.029</td><td class="num">0.324</td></tr>
-  <tr><td>B · hybrid top-3 (RRF, isolates fusion)</td><td class="num">0.271</td><td class="num">0.235</td><td class="num">0.517</td><td class="num">0.045</td><td class="num">0.292</td></tr>
-  <tr class="win"><td>C · hybrid+rerank top-3 (isolates rerank)</td><td class="num">0.287</td><td class="num">0.300</td><td class="num">0.556</td><td class="num">0.029</td><td class="num">0.295</td></tr>
-  <tr><td><strong>Δ rerank (B→C)</strong></td><td class="num">+0.017</td><td class="num">+0.065</td><td class="num">+0.039</td><td class="num">−0.016</td><td class="num">+0.003</td></tr>
-  <tr><td><strong>Δ full (A→C vs deployed)</strong></td><td class="num">+0.031</td><td class="num">+0.022</td><td class="num">+0.024</td><td class="num">0.000</td><td class="num">−0.029</td></tr>
+  <tr><th>arm</th><th class="num">kenya rec (312)</th><th class="num">afrimedqa_saq rec (37)</th>
+      <th class="num">MCQ acc (534)</th><th class="num">refusal (kenya)</th><th class="num">harm (kenya)</th></tr>
+  <tr class="win"><td>A · Gecko top-3 (deployed)</td><td class="num">0.125</td><td class="num">0.157</td><td class="num">0.481</td><td class="num">0.000</td><td class="num">0.186</td></tr>
+  <tr><td>B · hybrid top-3 (RRF, isolates fusion)</td><td class="num">0.112</td><td class="num">0.123</td><td class="num">0.524</td><td class="num">0.000</td><td class="num">0.199</td></tr>
+  <tr><td>C · hybrid+rerank, <strong>MiniLM-L6-ft</strong></td><td class="num">0.111</td><td class="num">0.171</td><td class="num">0.521</td><td class="num">0.006</td><td class="num">0.151</td></tr>
+  <tr><td>C · hybrid+rerank, <strong>mxbai-base-ft</strong></td><td class="num">0.113</td><td class="num">0.208</td><td class="num"><em>re-running</em></td><td class="num">0.003</td><td class="num">0.199</td></tr>
 </table>
 
-<p>Reading against the pre-registered acceptance criteria:</p>
+<p>Reading the corrected result honestly:</p>
 <ul>
-  <li><strong>Key-fact recall rises</strong> on both SAQ sets — kenya 0.256 → 0.287
-  (<strong>+12% relative</strong> over the deployed retriever), afrimedqa_saq 0.277
-  → 0.300. The B→C step (reranking proper) is positive on both, so the gain is
-  reranking, not the R2a fusion.</li>
-  <li><strong>MCQ gap closes and reverses.</strong> Reranked RAG (0.556) is the best
-  arm, +2.4 pp over deployed Gecko (0.532) and +3.9 pp over the hybrid baseline —
-  undoing the small negative RAG-MCQ effect R1 observed.</li>
-  <li><strong>Refusal does not rise</strong> — the rerank arm matches the deployed
-  arm (0.029) and is below the hybrid arm; reranking did not push the model toward
-  deflection.</li>
-  <li><strong>Safety holds</strong> on the reliable sample — kenya harm rate is
-  slightly <em>lower</em> than deployed (0.295 vs 0.324). The afrimedqa_saq harm
-  move is on n=37 and too small to read.</li>
+  <li><strong>On the reliable sample (kenya SAQ, n=312), reranking does NOT improve
+  key-fact recall.</strong> Gecko — the deployed retriever — is the best arm (0.125);
+  hybrid and both rerankers are slightly lower (~0.111–0.113). The differences are
+  within noise, so the honest read is "no benefit," not "regression."</li>
+  <li><strong>afrimedqa_saq (n=37) hints at benefit</strong> (mxbai-ft 0.208 &gt;
+  minilm-ft 0.171 &gt; gecko 0.157) but the sample is far too small to weight.</li>
+  <li><strong>MCQ: the gain is fusion, not reranking.</strong> hybrid (0.524) and
+  rerank (0.521) both beat gecko (0.481, +4.3 pp), but reranking adds nothing over
+  the hybrid baseline.</li>
+  <li><strong>One real positive:</strong> the MiniLM-L6-ft rerank arm has the lowest
+  harm rate (0.151 vs ~0.19); refusal stays near zero throughout.</li>
 </ul>
 
-<div class="verdict">Verdict: ship the reranker. The fine-tuned MiniLM-L6
-reranker improves answer key-fact recall (+12% rel. on kenya) and MCQ accuracy
-(+2.4 pp) over the deployed Gecko retriever, with no rise in refusal and no
-safety regression on the reliable sample — generated end-to-end with the actual
-on-device Gemma 4 E4B. Combined with the verified device parity and the 13 ms/pair
-on-device latency, the R2c reranker direction is validated end-to-end.</div>
+<div class="note"><strong>Why the offline win didn't carry over.</strong> The strong
+offline reranking gain (P@3 0.51→0.76) was measured on the <em>mamaretrieval</em>
+query set; this value gate runs on <em>kenya/afrimedqa</em> — a different
+distribution. So either reranking improves retrieval less on kenya queries
+specifically, or Gemma 4 E4B already extracts what it needs from gecko's top-3 (a
+model-ceiling effect). The distinguishing diagnostic — measuring the reranker's
+P@3 on kenya directly, and how often the relevant chunk is already in gecko's
+top-3 — is the recommended next step.</div>
+
+<div class="verdict">Verdict (provisional, pending the mxbai MCQ cell): the
+reranker is a large, real win on <em>offline retrieval metrics</em>, but its
+end-to-end answer-quality benefit is <strong>not demonstrated</strong> on the
+reliable kenya SAQ sample with the actual device generator (Gemma 4 E4B). This does
+not condemn reranking — it says the current evidence does not justify shipping it
+for answer quality alone; the kenya-vs-mamaretrieval distribution gap and the
+model-ceiling question should be resolved first. (An earlier draft reported a +12%
+recall lift; it used the wrong generator, gemma3n-e4b, and is retracted.)</div>
 
 <p class="meta">Arms generated with gemma4-e4b (the deployed device generator) over
 the same questions; SAQ judged by the pinned gpt-oss-120b on key-fact recall /

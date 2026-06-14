@@ -25,11 +25,19 @@ Full results in
   reranker to *cross R1's 0.80 thresholdability bar* (threshold revival is now
   worth re-testing on a fine-tuned score). **Final deployable choice: fine-tuned
   MiniLM-L6**; fine-tuned mxbai-base is the size-upgrade ceiling.
-- **P1 (value gate) — PASSED.** 3 arms (Gecko / hybrid / hybrid+rerank) generated
-  with on-device Gemma 4 E4B, SAQ judged by gpt-oss-120b. Reranking lifts kenya
-  SAQ key-fact recall 0.256→0.287 (+12% rel), afrimedqa_saq 0.277→0.300, MCQ
-  accuracy 0.532→0.556 (+2.4 pp), refusal flat, kenya harm slightly down. Gain is
-  attributable to reranking (B→C positive), not just fusion.
+- **P1 (value gate) — MIXED / does not pass on the reliable sample.** 3 arms
+  (Gecko / hybrid / hybrid+rerank) generated with the actual on-device generator
+  **Gemma 4 E4B** (`app_config` llm_model = gemma-4-E4B-it), SAQ judged by
+  gpt-oss-120b. On **kenya SAQ (n=312, the reliable sample) reranking does NOT
+  improve key-fact recall** — gecko 0.125 > hybrid 0.112 ≈ rerank 0.111. The
+  strong *offline* retrieval gain (P@3 0.51→0.76) does not translate end-to-end
+  on this model. afrimedqa_saq (n=37) suggests benefit (rerank 0.171–0.208 vs
+  gecko 0.157) but is too small to weight; MCQ: fusion helps (+4.3 pp) but rerank
+  adds ~nothing over fusion; minilm-ft has the lowest harm rate (0.151). Caveat:
+  offline P@3 was measured on mamaretrieval, the value gate on kenya/afrimedqa —
+  a different distribution, so this is "benefit not demonstrated" rather than
+  "reranking is useless." **NOTE:** an earlier run reported +12% kenya recall but
+  used the wrong generator (gemma3n-e4b) — retracted.
 
 **Remaining (deployment):** convert the fine-tuned MiniLM-L6 to int8 `.tflite`
 (same proven path) + re-run P0 parity on it; then P3 latency/batching + P4 PRs.
