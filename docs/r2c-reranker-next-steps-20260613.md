@@ -26,7 +26,7 @@ Full results in
   worth re-testing on a fine-tuned score). **Final deployable choice: fine-tuned
   MiniLM-L6**; fine-tuned mxbai-base is the size-upgrade ceiling.
 - **P1 (value gate) — PASSED.** 3 arms (Gecko / hybrid / hybrid+rerank) generated
-  with on-device Gemma 3n E4B, SAQ judged by gpt-oss-120b. Reranking lifts kenya
+  with on-device Gemma 4 E4B, SAQ judged by gpt-oss-120b. Reranking lifts kenya
   SAQ key-fact recall 0.256→0.287 (+12% rel), afrimedqa_saq 0.277→0.300, MCQ
   accuracy 0.532→0.556 (+2.4 pp), refusal flat, kenya harm slightly down. Gain is
   attributable to reranking (B→C positive), not just fusion.
