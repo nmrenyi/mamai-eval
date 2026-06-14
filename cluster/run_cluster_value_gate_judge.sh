@@ -20,6 +20,9 @@ WORKTREE="${WORKTREE:-/tmp/eval_code}"
 CONFIG="${CONFIG:-config-v0.2.0}"
 OUT_DIR="${OUT_DIR:-/lightscratch/users/yiren/eval_output/value_gate}"
 SAQ_DS="${SAQ_DS:-kenya afrimedqa_saq}"
+# Explicit list of run dirs to judge (each holds <dataset>.json). Defaults to the
+# three arms under OUT_DIR; override to judge arms across multiple OUT_DIRs.
+RUN_DIRS="${RUN_DIRS:-$OUT_DIR/gecko/run $OUT_DIR/hybrid/run $OUT_DIR/hybrid_rerank/run}"
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 
 echo "=== INSTALLING DEPENDENCIES ==="
@@ -57,15 +60,14 @@ curl -sf "http://localhost:$PORT/health" >/dev/null 2>&1 || { echo "not healthy"
 export OPENAI_BASE_URL="http://localhost:$PORT/v1"
 export OPENAI_API_KEY="EMPTY"
 
-for ARM in gecko hybrid hybrid_rerank; do
-  RUN="$OUT_DIR/$ARM/run"
+for RUN in $RUN_DIRS; do
   for DS in $SAQ_DS; do
     f="$RUN/$DS.json"
     [ -f "$f" ] || { echo "SKIP missing $f"; continue; }
-    echo "=== JUDGE arm=$ARM ds=$DS ==="
+    echo "=== JUDGE $RUN ds=$DS ==="
     python3 -m end_to_end_eval.rescore_open_v2 --config "$CONFIG" "$f"
   done
 done
 
 echo "=== JUDGE COMPLETE ==="
-find "$OUT_DIR" -name "*.json" | sort
+for RUN in $RUN_DIRS; do ls -la "$RUN"/*.json 2>/dev/null; done
