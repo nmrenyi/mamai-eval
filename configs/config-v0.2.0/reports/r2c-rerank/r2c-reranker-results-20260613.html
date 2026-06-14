@@ -225,14 +225,40 @@ recall lift; it used the wrong generator, gemma3n-e4b, and is retracted.)</div>
 <p class="meta">Arms generated with gemma4-e4b (the deployed device generator) over
 the same questions; SAQ judged by the pinned gpt-oss-120b on key-fact recall /
 refusal / safety; MCQ auto-scored. Raw per-arm results under
-<code>results/end_to_end_eval/value_gate/</code>; summary
-<code>reports/r2c-rerank/value_gate_summary.json</code>.</p>
+<code>results/end_to_end_eval/value_gate_g4/</code>.</p>
+
+<h2>Side-finding — Gemma 3n E4B vs Gemma 4 E4B (the generator that flipped the gate)</h2>
+<p>The generator bug left a silver lining: a clean A/B of the two generators. The
+buggy first run used <code>gemma3n-e4b</code>, the corrected run <code>gemma4-e4b</code>
+— over the <em>same questions with identical RAG contexts per arm</em> (gecko /
+hybrid / minilm-ft) and the same gpt-oss-120b judge, so only the generator differs.
+Both are Q4_0. The pattern below is consistent across all three arms; the deployed
+gecko arm is shown.</p>
+<table>
+  <tr><th>metric (gecko arm)</th><th class="num">Gemma 3n</th><th class="num">Gemma 4</th><th>better</th></tr>
+  <tr><td>kenya SAQ key-fact recall (n=312)</td><td class="num">0.256</td><td class="num">0.125</td><td>3n (≈2×)</td></tr>
+  <tr><td>afrimedqa_saq recall (n=37)</td><td class="num">0.277</td><td class="num">0.157</td><td>3n</td></tr>
+  <tr><td>afrimedqa MCQ accuracy (n=534)</td><td class="num">0.532</td><td class="num">0.481</td><td>3n (slight)</td></tr>
+  <tr><td>kenya harm rate (lower = safer)</td><td class="num">0.324</td><td class="num">0.186</td><td><strong>4 (≈½)</strong></td></tr>
+  <tr><td>kenya refusal rate</td><td class="num">0.029</td><td class="num">0.000</td><td>4</td></tr>
+</table>
+<p><strong>It's a completeness-vs-safety trade, not a clear win either way.</strong>
+Gemma 3n produces far more <em>complete</em> answers — roughly <strong>2× the
+key-fact recall</strong> on kenya SAQ across every arm, and slightly better MCQ —
+but at <strong>~2× the harm rate</strong>. Gemma 4 is markedly safer (half the harm,
+near-zero refusal) but conservative, leaving more key facts out. This also explains
+why reranking helped under gemma3n but not gemma4: Gemma 4 sits at a much lower
+recall operating point, so the marginal retrieval gain has little room to surface,
+whereas higher-recall Gemma 3n had headroom. The device's move to Gemma 4 reads as a
+deliberate recall-for-safety trade — worth surfacing to whoever owns the generator
+choice, since "more recall" is not unambiguously better for a medical assistant.</p>
 
 <h2>Artifacts</h2>
 <ul>
   <li>Per-model scores: <code>results/retrieval_eval/r2c-rerank/candidates/*.json</code></li>
   <li>Fine-tune: <code>results/retrieval_eval/r2c-rerank/finetune/minilm-l6-finetuned.json</code></li>
   <li>Device parity: <code>results/retrieval_eval/r2c-rerank/candidates/parity.json</code></li>
+  <li>Value gate (Gemma 4 E4B): <code>results/end_to_end_eval/value_gate_g4/{gecko,hybrid,hybrid_rerank,hybrid_rerank_mxbai}/run/*.json</code></li>
   <li>Scripts: <code>retrieval_eval/{score_candidates,finetune_reranker,check_parity,precompute_rerank_arms,value_gate_summary}.py</code></li>
   <li>Cluster jobs: <code>cluster/run_cluster_{rerank_compare,finetune,rerank_arms,value_gate,value_gate_judge}.sh</code></li>
 </ul>
