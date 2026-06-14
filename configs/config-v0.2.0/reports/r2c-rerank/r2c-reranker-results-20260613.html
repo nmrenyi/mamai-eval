@@ -185,7 +185,7 @@ accuracy for MCQ; n in header):</p>
   <tr class="win"><td>A · Gecko top-3 (deployed)</td><td class="num">0.125</td><td class="num">0.157</td><td class="num">0.481</td><td class="num">0.000</td><td class="num">0.186</td></tr>
   <tr><td>B · hybrid top-3 (RRF, isolates fusion)</td><td class="num">0.112</td><td class="num">0.123</td><td class="num">0.524</td><td class="num">0.000</td><td class="num">0.199</td></tr>
   <tr><td>C · hybrid+rerank, <strong>MiniLM-L6-ft</strong></td><td class="num">0.111</td><td class="num">0.171</td><td class="num">0.521</td><td class="num">0.006</td><td class="num">0.151</td></tr>
-  <tr><td>C · hybrid+rerank, <strong>mxbai-base-ft</strong></td><td class="num">0.113</td><td class="num">0.208</td><td class="num"><em>re-running</em></td><td class="num">0.003</td><td class="num">0.199</td></tr>
+  <tr><td>C · hybrid+rerank, <strong>mxbai-base-ft</strong></td><td class="num">0.113</td><td class="num">0.208</td><td class="num">0.536</td><td class="num">0.003</td><td class="num">0.199</td></tr>
 </table>
 
 <p>Reading the corrected result honestly:</p>
@@ -196,9 +196,10 @@ accuracy for MCQ; n in header):</p>
   within noise, so the honest read is "no benefit," not "regression."</li>
   <li><strong>afrimedqa_saq (n=37) hints at benefit</strong> (mxbai-ft 0.208 &gt;
   minilm-ft 0.171 &gt; gecko 0.157) but the sample is far too small to weight.</li>
-  <li><strong>MCQ: the gain is fusion, not reranking.</strong> hybrid (0.524) and
-  rerank (0.521) both beat gecko (0.481, +4.3 pp), but reranking adds nothing over
-  the hybrid baseline.</li>
+  <li><strong>MCQ: the gain is mostly fusion.</strong> hybrid (0.524) beats gecko
+  (0.481, <strong>+4.3 pp</strong> from fusion); reranking adds little on top —
+  MiniLM-L6-ft 0.521 (≈hybrid), mxbai-base-ft 0.536 (the best MCQ arm, but only
+  +1.2 pp over hybrid).</li>
   <li><strong>One real positive:</strong> the MiniLM-L6-ft rerank arm has the lowest
   harm rate (0.151 vs ~0.19); refusal stays near zero throughout.</li>
 </ul>
@@ -212,7 +213,7 @@ model-ceiling effect). The distinguishing diagnostic — measuring the reranker'
 P@3 on kenya directly, and how often the relevant chunk is already in gecko's
 top-3 — is the recommended next step.</div>
 
-<div class="verdict">Verdict (provisional, pending the mxbai MCQ cell): the
+<div class="verdict">Verdict: the
 reranker is a large, real win on <em>offline retrieval metrics</em>, but its
 end-to-end answer-quality benefit is <strong>not demonstrated</strong> on the
 reliable kenya SAQ sample with the actual device generator (Gemma 4 E4B). This does
