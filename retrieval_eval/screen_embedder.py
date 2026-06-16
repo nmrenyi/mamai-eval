@@ -198,9 +198,80 @@ def arm_format(args):
     print("wrote arm to", outdir, flush=True)
 
 
+def coverage(args):
+    """Top-k union coverage across multiple retrievals files (corpus-absent vs buried split)."""
+    from openai import OpenAI
+    client = OpenAI(base_url=args.base_url, api_key="EMPTY")
+    files = [f.strip() for f in args.retrievals.split(",")]
+    arms, qtext = {}, {}
+    for f in files:
+        d = json.loads(Path(f).read_text()); name = d.get("candidate", f)
+        for ds, recs in d["datasets"].items():
+            for rec in recs:
+                qtext[rec["id"]] = rec["question"]
+                arms.setdefault(name, {}).setdefault(rec["id"], []).extend(
+                    (c["idx"], c["text"]) for c in rec["chunks"][:args.top_k])
+    uniq = {}
+    for name, qmap in arms.items():
+        for qid, chunks in qmap.items():
+            for idx, text in chunks:
+                uniq.setdefault((qid, idx), (qtext[qid], text))
+    print(f"{len(qtext)} queries, {len(arms)} arms, {len(uniq)} unique (q,chunk) pairs to judge", flush=True)
+
+    def judge(qt, text):
+        r = client.chat.completions.create(
+            model=args.model, temperature=0.0, max_tokens=2048,
+            messages=[{"role": "system", "content": V2_SYSTEM_PROMPT},
+                      {"role": "user", "content": _build_user_content(qt, {"text": text})}])
+        return parse_judge(r.choices[0].message.content)
+
+    grades = {}
+    items = list(uniq.items())
+    with ThreadPoolExecutor(max_workers=args.workers) as ex:
+        futs = {ex.submit(judge, qt, tx): k for k, (qt, tx) in items}
+        done = 0
+        for fut in as_completed(futs):
+            try: grades[futs[fut]] = fut.result()
+            except Exception: grades[futs[fut]] = None
+            done += 1
+            if done % 200 == 0: print(f"  judged {done}/{len(items)}", flush=True)
+
+    qids = sorted(qtext)
+    arm_names = list(arms)
+    def covered(qid, names, thr):
+        for nm in names:
+            for idx, _ in arms[nm].get(qid, []):
+                g = grades.get((qid, idx))
+                if g is not None and g >= thr: return True
+        return False
+    rep = {"model": args.model, "top_k": args.top_k, "arms": arm_names, "n_queries": len(qids), "by_cut": {}}
+    for cut, thr in [("lenient", 3), ("strict", 5)]:
+        union = sum(covered(q, arm_names, thr) for q in qids)
+        per_arm = {nm: sum(covered(q, [nm], thr) for q in qids) for nm in arm_names}
+        # split vs deployed gecko if present
+        base = "gecko" if "gecko" in arm_names else arm_names[0]
+        buried = sum(1 for q in qids if covered(q, arm_names, thr) and not covered(q, [base], thr))
+        absent = sum(1 for q in qids if not covered(q, arm_names, thr))
+        rep["by_cut"][cut] = {
+            "union_covered": round(union / len(qids), 4),
+            "per_arm_covered": {nm: round(v / len(qids), 4) for nm, v in per_arm.items()},
+            f"ranking_fixable_vs_{base}": round(buried / len(qids), 4),
+            "corpus_absent": round(absent / len(qids), 4)}
+    Path(args.out).write_text(json.dumps(rep, indent=2) + "\n")
+    print(json.dumps(rep, indent=2), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="mode", required=True)
+    cov = sub.add_parser("coverage")
+    cov.add_argument("--retrievals", required=True, help="comma-separated retrievals files")
+    cov.add_argument("--base-url", required=True)
+    cov.add_argument("--model", default="Qwen/Qwen3-32B")
+    cov.add_argument("--top-k", type=int, default=20)
+    cov.add_argument("--workers", type=int, default=16)
+    cov.add_argument("--out", required=True)
+    cov.set_defaults(func=coverage)
     a = sub.add_parser("arm_format")
     a.add_argument("--retrievals", required=True)
     a.add_argument("--out-dir", required=True)
