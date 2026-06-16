@@ -76,9 +76,9 @@ completeness (+ criteria met) and penalty (− criteria triggered, ↓ better).<
   <tr><td>Gecko · none <em>(deployed)</em></td><td class="num">0.485</td><td class="num">0.580</td><td class="num">0.269</td><td class="num">0.125</td><td class="num">−0.004</td><td class="num">0.173</td><td class="num">0.371</td></tr>
   <tr><td>Gecko · +MiniLM-ft</td><td class="num">0.720</td><td class="num">0.783</td><td class="num">0.244</td><td class="num">0.118</td><td class="num">−0.004</td><td class="num">0.179</td><td class="num">0.378</td></tr>
   <tr><td>Gecko · +mxbai-ft</td><td class="num">0.794</td><td class="num">0.862</td><td class="num">0.279</td><td class="num">0.125</td><td class="num">+0.002</td><td class="num">0.182</td><td class="num">0.374</td></tr>
-  <tr><td>BM25 · none</td><td class="num">0.405</td><td class="num">0.604</td><td class="num">0.063</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
-  <tr><td>BM25 · +MiniLM-ft</td><td class="num">0.658</td><td class="num">0.833</td><td class="num">0.064</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
-  <tr><td>BM25 · +mxbai-ft</td><td class="num">0.722</td><td class="num">0.904</td><td class="num">0.079</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+  <tr><td>BM25 · none</td><td class="num">0.405</td><td class="num">0.604</td><td class="num">0.063</td><td class="num">0.109</td><td class="num">+0.000</td><td class="num">0.177</td><td class="num">0.368</td></tr>
+  <tr><td>BM25 · +MiniLM-ft</td><td class="num">0.658</td><td class="num">0.833</td><td class="num">0.064</td><td class="num">0.102</td><td class="num">−0.005</td><td class="num">0.173</td><td class="num">0.370</td></tr>
+  <tr><td>BM25 · +mxbai-ft</td><td class="num">0.722</td><td class="num">0.904</td><td class="num">0.079</td><td class="num">0.117</td><td class="num">+0.001</td><td class="num">0.179</td><td class="num">0.372</td></tr>
   <tr><td>Hybrid · none <em>(R2a)</em></td><td class="num">0.506</td><td class="num">0.679</td><td class="num">0.201</td><td class="num">0.112</td><td class="num">−0.007</td><td class="num">0.174</td><td class="num">0.376</td></tr>
   <tr><td>Hybrid · +MiniLM-ft</td><td class="num">0.756</td><td class="num">0.783</td><td class="num">0.194</td><td class="num">0.111</td><td class="num">−0.008</td><td class="num">0.172</td><td class="num">0.378</td></tr>
   <tr class="win"><td>Hybrid · +mxbai-ft</td><td class="num">0.821</td><td class="num">0.859</td><td class="num">0.255</td><td class="num">0.113</td><td class="num">+0.003</td><td class="num">0.184</td><td class="num">0.372</td></tr>
@@ -96,9 +96,11 @@ audit set) and evaporate where they're used. Specifics:</p>
   consistent but tiny completeness bump on the corpus-covered healthbench (Gecko
   0.173 → 0.182, Hybrid 0.174 → 0.184; +~1 pp) with flat-to-lower penalty. The
   deployable MiniLM-ft shows none. Even mxbai-ft's gain is within noise.</li>
-  <li><strong>BM25 is a kenya liability</strong> — its standalone kenya relevance is
-  0.06–0.08 (vs Gecko 0.27), which is exactly why Hybrid (which folds in BM25) sits
-  below Gecko on the deployment queries despite winning offline.</li>
+  <li><strong>BM25 is a kenya liability, end-to-end too.</strong> Its standalone kenya
+  relevance is 0.06–0.08 (vs Gecko 0.27); end-to-end its kenya recall is 0.10–0.12 (≤
+  Gecko's 0.125) and healthbench overall ≈ 0 — confirming the lexical pool hurts, which
+  is why Hybrid (which folds in BM25) sits below Gecko on the deployment queries despite
+  winning offline.</li>
   <li><strong>healthbench overall ≈ 0</strong> because Gemma 4 E4B triggers a penalty
   (harmful/incorrect) criterion ~37% of the time while meeting only ~17–18% of
   positive criteria — a <em>generator</em>-quality ceiling the +/− split exposes,
@@ -107,8 +109,8 @@ audit set) and evaporate where they're used. Specifics:</p>
 <p class="meta">Cells: offline <code>matrix_offline.json</code>; kenya relevance
 <code>kenya_relevance_matrix.json</code>; kenya recall + healthbench
 <code>results/end_to_end_eval/value_gate_matrix/</code> (Gecko/Hybrid no-rerank +
-Hybrid-rerank kenya recall reuse the identical-pool value_gate_g4 run). BM25 run
-offline + relevance only (not a deployment candidate).</p>
+Hybrid-rerank kenya recall reuse the identical-pool value_gate_g4 run). All 9 arms
+(incl. BM25) now have full deployment cells.</p>
 
 <h2>P2 — every candidate reranker on the held-out test split</h2>
 <p>491 test queries (frozen by-query split), reranking the hybrid (Gecko+BM25 RRF)
