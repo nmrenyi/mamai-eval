@@ -136,6 +136,67 @@ def main():
         graded = {k: v for k, v in grades.items() if v is not None}
         print(f"[{ds}] judged ok: {len(graded)}/{len(items)}", flush=True)
 
+        # ---- P-1 coverage diagnostic: per-query UNION across arms vs gecko alone.
+        # For each query, max grade over the union of ALL arms' top-3 chunks, and
+        # the max grade for the deployed gecko arm alone. Decides whether the
+        # right answers EXIST in the corpus (ranking-fixable -> R2c) or not
+        # (corpus-limited -> R-corpus). None grades treated as 0.
+        gecko_key = "gecko__none" if "gecko__none" in arm_keys else (
+            "gecko" if "gecko" in arm_keys else None)
+
+        def _maxgrade(qid, keys):
+            best = None
+            for key in keys:
+                entry = arms[key].get(qid)
+                if not entry:
+                    continue
+                for cidx, _ in entry["chunks"]:
+                    g = grades.get((qid, cidx))
+                    if g is None:
+                        continue
+                    if best is None or g > best:
+                        best = g
+            return best  # None == no judged chunk for this query
+
+        per_query = []
+        for qid in qids:
+            umax = _maxgrade(qid, arm_keys)
+            gmax = _maxgrade(qid, [gecko_key]) if gecko_key else None
+            per_query.append({"query_id": qid,
+                              "union_max_grade": umax,
+                              "gecko_max_grade": gmax})
+
+        def _cov(g, cut):
+            return (g is not None) and (g >= cut)
+
+        cov = {"gecko_arm": gecko_key, "n_queries": len(qids), "cuts": {}}
+        for label, cut in (("lenient", 3), ("strict", 5)):
+            union_cov = [r for r in per_query if _cov(r["union_max_grade"], cut)]
+            gecko_cov = [r for r in per_query if _cov(r["gecko_max_grade"], cut)]
+            # (a) ranking-fixable: union found it but gecko did not
+            bucket_a = [r for r in per_query
+                        if _cov(r["union_max_grade"], cut)
+                        and not _cov(r["gecko_max_grade"], cut)]
+            # (b) corpus-limited: NO arm found anything (union not covered)
+            bucket_b = [r for r in per_query if not _cov(r["union_max_grade"], cut)]
+            n = len(qids)
+            cov["cuts"][label] = {
+                "cut": cut,
+                "union_covered_n": len(union_cov),
+                "union_covered_pct": round(100.0 * len(union_cov) / n, 2),
+                "gecko_covered_n": len(gecko_cov),
+                "gecko_covered_pct": round(100.0 * len(gecko_cov) / n, 2),
+                "bucket_a_ranking_fixable_n": len(bucket_a),
+                "bucket_a_ranking_fixable_pct": round(100.0 * len(bucket_a) / n, 2),
+                "bucket_b_corpus_limited_n": len(bucket_b),
+                "bucket_b_corpus_limited_pct": round(100.0 * len(bucket_b) / n, 2),
+            }
+            print(f"  [{ds}] COVERAGE {label}(>={cut}): "
+                  f"union={len(union_cov)}/{n} ({cov['cuts'][label]['union_covered_pct']}%) "
+                  f"gecko={len(gecko_cov)}/{n} "
+                  f"(a)ranking-fixable={len(bucket_a)} "
+                  f"(b)corpus-limited={len(bucket_b)}", flush=True)
+
         # per-arm P@3 (lenient >=3, strict >=5) + mean grade, over the top-3
         ds_rec = {"n_queries": len(qids), "n_pairs_judged": len(graded), "by_arm": {}}
         for key in arm_keys:
@@ -155,6 +216,8 @@ def main():
             ds_rec["by_arm"][key] = {
                 "p_at_3_lenient": round(pl / nq, 4), "p_at_3_strict": round(ps / nq, 4),
                 "mean_grade": round(mg / nq, 4), "n": nq}
+        ds_rec["coverage"] = cov
+        ds_rec["coverage_per_query"] = per_query
         report["datasets"][ds] = ds_rec
         for key in arm_keys:
             b = ds_rec["by_arm"][key]
