@@ -42,12 +42,14 @@ deep evaluation.*
    with stock `benchmark_model`, and irrelevant for low-mid (all SoC builds are flagship anyway).
 4. **int8 is mandatory.** fp32 bge-small is 190 ms (4t) → 537 ms (1t) on a *flagship* CPU; int8
    should cut ~2–4× and shrink disk ~4×.
-5. **⚠ Gecko baseline confound (decision-critical).** Deployed `Gecko_1024_quant.tflite` measures
-   **562 ms @4t / 664 MB peak** via `benchmark_model` (seq1024) — *not* the ~20 ms the app's RAG
-   benchmark reported. Either the app uses a shorter-seq Gecko build, computes query embeddings at
-   a shorter length, or the ~20 ms was retrieval-only/misleading. **This decides whether
-   EmbeddingGemma is a latency improvement or a regression vs the deployed embedder.** Must confirm
-   the app's actual Gecko build + query seq length before concluding.
+5. **Gecko baseline confound — RESOLVED, and it favors EmbeddingGemma.** A fresh on-device RAG
+   benchmark (`benchmark_20260616T122950`) measures real Gecko retrieval at **~4 s** (median
+   4645 ms; embed seq1024 + SQLite cosine scan over 63k chunks) — the earlier "~20 ms" was bogus
+   (No-RAG/noise). Two consequences: (a) **the embedder is not the latency bottleneck — the SQLite
+   brute-force search dominates and is embedder-independent**; (b) EmbeddingGemma's embed (125 ms@4t)
+   is *faster* than Gecko's (562 ms), so swapping is **latency-neutral-to-better, NOT a regression**.
+   The latency objection to EmbeddingGemma is removed. (Separately: ~4 s retrieval is ~23% of the
+   ~17 s total query — search optimization is its own lever, independent of R2c.)
 6. **Static seq length** — the graph computes the full sequence regardless of query length, so pick
    the shortest seq build that fits real medical queries (seq256 is ample).
 
@@ -69,10 +71,10 @@ Official `litert-community/embeddinggemma-300m` ships per-seq × per-SoC builds.
 Note: **all** SoC-precompiled builds are flagship (Qualcomm 8-series / flagship MediaTek /
 Tensor) — a real low-mid phone would run the **generic build on CPU**.
 
-## Status
+## Status — Phase 0 PASS for EmbeddingGemma
 - ✅ Device characterized; benchmark pipeline proven; baseline anchored
-- ✅ **EmbeddingGemma (generic seq256) measured — DEPLOYABLE** (125 ms@4t / 249 ms@1t, 187 MB, 171 MB disk; CPU-only)
-- ✅ bge-small (fp32) measured; GPU-unusable + int8-mandatory + Gecko-confound findings
-- ⏳ bge-small int8 (action B, cluster); MedCPT conversion (action C, cluster)
-- ⏳ **Resolve Gecko baseline seq/build confound** (decides improvement-vs-regression vs deployed)
-- → Phase 0 verdict pending int8 bge + the Gecko-baseline clarification; EmbeddingGemma already clears the gate
+- ✅ **EmbeddingGemma (generic seq256) — DEPLOYABLE** (125 ms@4t / 249 ms@1t, 187 MB, 171 MB disk; CPU-only)
+- ✅ GPU-dead + int8-mandatory findings (all embedders)
+- ✅ **Gecko confound RESOLVED** — real retrieval ~4 s (search-dominated, embedder-independent); EmbeddingGemma is latency-neutral-to-better → **latency objection removed**
+- ✅ **Phase 0 verdict: EmbeddingGemma clears the deployability gate** (deployable, fits budget, not a latency regression)
+- ⏳ bge-small int8 + MedCPT conversion (secondary; cluster) — only needed if they reach the final on-device cut
