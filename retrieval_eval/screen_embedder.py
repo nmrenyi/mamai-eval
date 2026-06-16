@@ -174,9 +174,38 @@ def judge_score(args):
     print(json.dumps(report, indent=2), flush=True)
 
 
+def arm_format(args):
+    """Convert retrievals.json -> value-gate arm dir (top-k formatted chunk strings)."""
+    from retrieval_eval.retrieval import format_app_context_chunks
+    data = json.loads(Path(args.retrievals).read_text())
+    outdir = Path(args.out_dir); outdir.mkdir(parents=True, exist_ok=True)
+    arm = data.get("candidate", "candidate")
+    for ds, recs in data["datasets"].items():
+        retr = []
+        for rec in recs:
+            top = rec["chunks"][:args.top_k]
+            cc, docs = format_app_context_chunks([c["text"] for c in top])
+            retr.append({"id": rec["id"], "question": rec["question"], "chunks": cc,
+                         "retrieved_docs": docs, "chunk_indices": [c["idx"] for c in top]})
+        (outdir / f"{ds}.json").write_text(json.dumps(
+            {"metadata": {"dataset": ds, "arm": arm},
+             "config": {"top_k": args.top_k, "n_questions": len(retr), "arm": arm},
+             "retrievals": retr}, ensure_ascii=False))
+    (outdir / "manifest.json").write_text(json.dumps(
+        {"schema_version": 2, "arm": arm,
+         "datasets": {ds: {"output_file": f"{ds}.json", "n_questions": len(recs)}
+                      for ds, recs in data["datasets"].items()}}) + "\n")
+    print("wrote arm to", outdir, flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="mode", required=True)
+    a = sub.add_parser("arm_format")
+    a.add_argument("--retrievals", required=True)
+    a.add_argument("--out-dir", required=True)
+    a.add_argument("--top-k", type=int, default=3)
+    a.set_defaults(func=arm_format)
     e = sub.add_parser("embed_retrieve")
     e.add_argument("--candidate", required=True, help="HF model id, or 'gecko' for the deployed baseline")
     e.add_argument("--db-path", required=True)
