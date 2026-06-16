@@ -7,15 +7,16 @@ kenya_relevance). Raw: `configs/config-v0.2.0/results/retrieval_eval/r2c-embedde
 
 | metric (kenya, n=312) | Gecko | **EmbeddingGemma-768** | Δ |
 |---|---|---|---|
-| P@3 lenient (≥3) | 0.277 | **0.396** | **+11.9 pp** |
-| P@3 strict (≥5) | 0.180 | **0.284** | **+10.4 pp** |
-| mean grade (top-3) | 1.49 | **2.13** | **+0.63** |
-| HR@20 lenient (any ≥3 in top-20) | _gecko job running_ | **0.849** | — |
-| HR@20 strict (any ≥5 in top-20) | _gecko job running_ | **0.734** | — |
+| P@3 lenient (≥3) | 0.270 | **0.396** | **+12.6 pp** |
+| P@3 strict (≥5) | 0.172 | **0.284** | **+11.2 pp** |
+| mean grade (top-3) | 1.44 | **2.13** | **+0.69** |
+| HR@20 lenient (any ≥3 in top-20) | 0.715 | **0.849** | **+13.4 pp** |
+| HR@20 strict (any ≥5 in top-20) | 0.609 | **0.734** | **+12.5 pp** |
 
-Gecko P@3 / mean from the existing kenya_relevance (top-3, same judge). Gecko HR@20 is being
-produced by the matched `mamai-screen-gecko` arm (stored doc vectors + Gecko TFLite queries,
-judged identically).
+Both arms run through the *same* pipeline + judge. **Judge-consistency check passed:** the matched
+Gecko arm reproduced its recorded kenya_relevance P@3 (0.270/0.172 vs 0.277/0.180), so the
+comparison is sound. EmbeddingGemma wins on **every** metric by ~12–13 pp, all far above the
+5 pp noise floor.
 
 ## Verdict — Phase 2 PASS (decisive)
 - Both P@3 deltas (**+11.9 / +10.4 pp**) are far above the 5 pp noise floor at n=312 → a real,
