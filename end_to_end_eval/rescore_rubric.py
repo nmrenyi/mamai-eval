@@ -301,6 +301,10 @@ def _row_score(criterion_verdicts: list[dict]) -> dict:
     den = 0.0
     per_axis_num = defaultdict(float)
     per_axis_den = defaultdict(float)
+    # +/- split by points sign: positive = completeness (got the right guidance in),
+    # negative = penalty/harm (triggered a harmful/incorrect criterion).
+    pos_num = pos_den = 0.0
+    neg_met = neg_tot = 0
     for v in criterion_verdicts:
         pts = v.get("points")
         if pts is None or v.get("met") is None:
@@ -312,13 +316,22 @@ def _row_score(criterion_verdicts: list[dict]) -> dict:
         axis = v.get("axis") or "unspecified"
         per_axis_num[axis] += pts * met_val
         per_axis_den[axis] += max_pts
+        if pts > 0:
+            pos_num += pts * met_val
+            pos_den += pts
+        elif pts < 0:
+            neg_tot += 1
+            neg_met += int(v["met"])
 
     weighted_met = round(num / den, 4) if den > 0 else None
     axes = {
         ax: round(per_axis_num[ax] / per_axis_den[ax], 4)
         for ax in per_axis_den if per_axis_den[ax] > 0
     }
-    return {"weighted_met": weighted_met, "per_axis": axes}
+    return {"weighted_met": weighted_met, "per_axis": axes,
+            "positive_score": round(pos_num / pos_den, 4) if pos_den > 0 else None,
+            "penalty_rate": round(neg_met / neg_tot, 4) if neg_tot > 0 else None,
+            "n_neg_criteria": neg_tot}
 
 
 def _agg_dataset(results: list[dict]) -> dict:
@@ -339,9 +352,16 @@ def _agg_dataset(results: list[dict]) -> dict:
         ax: round(sum(vs) / len(vs), 4) for ax, vs in per_axis_vals.items()
     }
 
+    def _mean(field):
+        vs = [r["rubric_score"][field] for r in scored
+              if r["rubric_score"].get(field) is not None]
+        return round(sum(vs) / len(vs), 4) if vs else None
+
     return {
         "n_scored": n,
         "mean_weighted_met": mean_wm,
+        "mean_positive_score": _mean("positive_score"),  # completeness (+)
+        "mean_penalty_rate": _mean("penalty_rate"),       # harm/penalty (-) ↓
         "per_axis_mean": per_axis_mean,
     }
 
