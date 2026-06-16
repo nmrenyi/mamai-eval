@@ -225,8 +225,25 @@ def coverage(args):
                       {"role": "user", "content": _build_user_content(qt, {"text": text})}])
         return parse_judge(r.choices[0].message.content)
 
+    # resumable checkpoint (survives pod preemption/restart): "qid\tidx" -> grade
+    ckpt = Path(args.out + ".ckpt.json")
     grades = {}
-    items = list(uniq.items())
+    if ckpt.exists():
+        try:
+            for k, v in json.loads(ckpt.read_text()).items():
+                qid, idx = k.split("\t", 1)
+                grades[(qid, int(idx) if idx.lstrip("-").isdigit() else idx)] = v
+            print(f"resumed {len(grades)} grades from checkpoint", flush=True)
+        except Exception as e:
+            print("ckpt load failed, starting fresh:", e, flush=True)
+
+    def save_ckpt():
+        tmp = Path(args.out + ".ckpt.tmp")
+        tmp.write_text(json.dumps({f"{q}\t{i}": g for (q, i), g in grades.items()}))
+        tmp.replace(ckpt)
+
+    items = [(k, v) for k, v in uniq.items() if k not in grades]
+    print(f"  {len(items)} to judge ({len(grades)} already cached)", flush=True)
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
         futs = {ex.submit(judge, qt, tx): k for k, (qt, tx) in items}
         done = 0
@@ -234,7 +251,9 @@ def coverage(args):
             try: grades[futs[fut]] = fut.result()
             except Exception: grades[futs[fut]] = None
             done += 1
-            if done % 200 == 0: print(f"  judged {done}/{len(items)}", flush=True)
+            if done % 500 == 0:
+                save_ckpt(); print(f"  judged {done}/{len(items)}", flush=True)
+    save_ckpt()
 
     qids = sorted(qtext)
     arm_names = list(arms)
