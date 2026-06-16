@@ -119,7 +119,13 @@ PR. Gate on P2 passing.
 
 ## Open questions to resolve early
 - Does EmbeddingGemma convert to LiteRT int8 within budget? (P0.2 — the make-or-break feasibility gate.)
-- Is the kenya ceiling corpus coverage or retrieval? (P2.3 — decides embedder-vs-corpus priority.)
+- ~~Is the kenya ceiling corpus coverage or retrieval?~~ **ANSWERED (2026-06-15, P-1
+  coverage diagnostic — `kenya-coverage-summary-20260615.md`):** mixed. Union top-3
+  coverage 70% lenient / 58% strict; ranking-fixable (some arm found, gecko missed)
+  ~18–22%; corpus/depth-limited (no arm) 30–42%. Kill-rule (≥60% not-strict-covered)
+  NOT triggered → **R2c proceeds, but scope it to the ~1/5 ranking-fixable slice**;
+  corpus expansion stays a parallel lever. Caveat: top-3-only → re-run coverage at
+  **top-20** first to split true corpus-gap from rank-depth and size R2c's real ceiling.
 - Multilingual eval: do we have non-English (Swahili) eval queries, or only English so far?
 
 ## Immediate next action
