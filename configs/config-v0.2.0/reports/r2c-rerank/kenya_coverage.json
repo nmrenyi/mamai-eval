@@ -1,0 +1,1655 @@
+{
+  "model": "Qwen/Qwen3-32B",
+  "datasets": {
+    "kenya": {
+      "n_queries": 312,
+      "n_pairs_judged": 4950,
+      "by_arm": {
+        "bm25__minilm_ft": {
+          "p_at_3_lenient": 0.0684,
+          "p_at_3_strict": 0.0395,
+          "mean_grade": 0.3429,
+          "n": 312
+        },
+        "bm25__mxbai_ft": {
+          "p_at_3_lenient": 0.0791,
+          "p_at_3_strict": 0.0545,
+          "mean_grade": 0.4177,
+          "n": 312
+        },
+        "bm25__none": {
+          "p_at_3_lenient": 0.063,
+          "p_at_3_strict": 0.0427,
+          "mean_grade": 0.3397,
+          "n": 312
+        },
+        "gecko__minilm_ft": {
+          "p_at_3_lenient": 0.2575,
+          "p_at_3_strict": 0.1731,
+          "mean_grade": 1.3654,
+          "n": 312
+        },
+        "gecko__mxbai_ft": {
+          "p_at_3_lenient": 0.2863,
+          "p_at_3_strict": 0.2179,
+          "mean_grade": 1.586,
+          "n": 312
+        },
+        "gecko__none": {
+          "p_at_3_lenient": 0.2714,
+          "p_at_3_strict": 0.1752,
+          "mean_grade": 1.4615,
+          "n": 312
+        },
+        "hybrid__minilm_ft": {
+          "p_at_3_lenient": 0.2009,
+          "p_at_3_strict": 0.125,
+          "mean_grade": 1.0449,
+          "n": 312
+        },
+        "hybrid__mxbai_ft": {
+          "p_at_3_lenient": 0.2585,
+          "p_at_3_strict": 0.1912,
+          "mean_grade": 1.3926,
+          "n": 312
+        },
+        "hybrid__none": {
+          "p_at_3_lenient": 0.1976,
+          "p_at_3_strict": 0.1218,
+          "mean_grade": 1.047,
+          "n": 312
+        }
+      },
+      "coverage": {
+        "gecko_arm": "gecko__none",
+        "n_queries": 312,
+        "cuts": {
+          "lenient": {
+            "cut": 3,
+            "union_covered_n": 217,
+            "union_covered_pct": 69.55,
+            "gecko_covered_n": 161,
+            "gecko_covered_pct": 51.6,
+            "bucket_a_ranking_fixable_n": 56,
+            "bucket_a_ranking_fixable_pct": 17.95,
+            "bucket_b_corpus_limited_n": 95,
+            "bucket_b_corpus_limited_pct": 30.45
+          },
+          "strict": {
+            "cut": 5,
+            "union_covered_n": 181,
+            "union_covered_pct": 58.01,
+            "gecko_covered_n": 112,
+            "gecko_covered_pct": 35.9,
+            "bucket_a_ranking_fixable_n": 69,
+            "bucket_a_ranking_fixable_pct": 22.12,
+            "bucket_b_corpus_limited_n": 131,
+            "bucket_b_corpus_limited_pct": 41.99
+          }
+        }
+      },
+      "coverage_per_query": [
+        {
+          "query_id": "mamabench_v0.2_kenya_10",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_100",
+          "union_max_grade": 5,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1019",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_102",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1022",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1028",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1057",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_107",
+          "union_max_grade": 6,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_108",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_11",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1118",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_112",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1124",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_113",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1145",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_115",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1184",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1188",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_12",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_120",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_122",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_123",
+          "union_max_grade": 6,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1259",
+          "union_max_grade": 2,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1265",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1284",
+          "union_max_grade": 5,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_133",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1346",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1367",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_139",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1445",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_146",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_147",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1478",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_151",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_154",
+          "union_max_grade": 5,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_156",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_16",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_160",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_161",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1615",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_166",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1680",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_171",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_172",
+          "union_max_grade": 1,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_176",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1801",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_184",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1869",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1908",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1914",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1922",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1958",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1961",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1971",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_1981",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_201",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2026",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_204",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2075",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2077",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2098",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_211",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2117",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_212",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_213",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_215",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_217",
+          "union_max_grade": 4,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2202",
+          "union_max_grade": 5,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_223",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_229",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_230",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2314",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2319",
+          "union_max_grade": 1,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_232",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2344",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2347",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2350",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2354",
+          "union_max_grade": 6,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2361",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_237",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2378",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_240",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_241",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_250",
+          "union_max_grade": 3,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_256",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_259",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_26",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2641",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2647",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2649",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2655",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2658",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_27",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_270",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2724",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2726",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2739",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_275",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_276",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_28",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_280",
+          "union_max_grade": 3,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_284",
+          "union_max_grade": 4,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_286",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_290",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2932",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2933",
+          "union_max_grade": 5,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2948",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_295",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_2955",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_301",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3024",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3031",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3033",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3038",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3045",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_306",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_309",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3099",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_311",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_317",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_318",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3184",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_32",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3222",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3259",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_328",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_329",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_336",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_338",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_34",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_342",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_343",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_344",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_347",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_348",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_355",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_357",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_358",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_36",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_362",
+          "union_max_grade": 1,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_363",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3630",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3644",
+          "union_max_grade": 3,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3645",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_367",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3672",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_368",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_369",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3692",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_37",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_370",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_3731",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_376",
+          "union_max_grade": 5,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_377",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_384",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_388",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_396",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_397",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_399",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_40",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4000",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_402",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_403",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_404",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_407",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_408",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_409",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_41",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4117",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_412",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_415",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_416",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_417",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_42",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_421",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4218",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4223",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4226",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_427",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4276",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_428",
+          "union_max_grade": 6,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4293",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4349",
+          "union_max_grade": 6,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_435",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4360",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_439",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_440",
+          "union_max_grade": 3,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4406",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_444",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_445",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4453",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_451",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_456",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_46",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_461",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_462",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_463",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4662",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4698",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_472",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_48",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_4856",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_486",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_498",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_5",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_50",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_500",
+          "union_max_grade": 4,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_504",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_506",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_511",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_512",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_514",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_519",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_52",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_5214",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_522",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_5227",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_523",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_526",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_527",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_530",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_535",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_55",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_554",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_558",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_5617",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_5619",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_566",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_567",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_583",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_584",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_589",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_596",
+          "union_max_grade": 4,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_60",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_600",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_601",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_605",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_606",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_61",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6119",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_612",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_615",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_617",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_62",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6249",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_625",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_627",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_628",
+          "union_max_grade": 1,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_63",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6300",
+          "union_max_grade": 3,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_635",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_64",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6417",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_643",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6479",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_65",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6514",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_654",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_658",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6585",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_66",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_660",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_6796",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_70",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_707",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7101",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_711",
+          "union_max_grade": 5,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_712",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_713",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_715",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_716",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_72",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_726",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_737",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7422",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_743",
+          "union_max_grade": 1,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_746",
+          "union_max_grade": 6,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_747",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7497",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_75",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_752",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_76",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_760",
+          "union_max_grade": 4,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7684",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_77",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7749",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_777",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_79",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7930",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_794",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_7950",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_80",
+          "union_max_grade": 2,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_8024",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_84",
+          "union_max_grade": 6,
+          "gecko_max_grade": 4
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_848",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_849",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_859",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_872",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_88",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_9",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_92",
+          "union_max_grade": 1,
+          "gecko_max_grade": 1
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_921",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_927",
+          "union_max_grade": 6,
+          "gecko_max_grade": 5
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_94",
+          "union_max_grade": 6,
+          "gecko_max_grade": 3
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_940",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_944",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_947",
+          "union_max_grade": 0,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_965",
+          "union_max_grade": 6,
+          "gecko_max_grade": 6
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_98",
+          "union_max_grade": 6,
+          "gecko_max_grade": 0
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_99",
+          "union_max_grade": 2,
+          "gecko_max_grade": 2
+        },
+        {
+          "query_id": "mamabench_v0.2_kenya_994",
+          "union_max_grade": 4,
+          "gecko_max_grade": 0
+        }
+      ]
+    }
+  }
+}
