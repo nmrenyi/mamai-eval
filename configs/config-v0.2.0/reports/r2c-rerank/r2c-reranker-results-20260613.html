@@ -37,30 +37,31 @@ successor to the <a href="r2c-phase0-minilm-spike-20260613.html">Phase-0 spike</
 <a href="../../../../docs/r2c-reranker-next-steps-20260613.md">the P0–P4 plan</a></p>
 
 <div class="verdict">
-A fine-tuned tiny cross-encoder is the answer. Across every deployable reranker
-scored on the held-out test split, <strong>fine-tuning the 23 M MiniLM-L6 on the
-159 k in-domain graded pairs (149 s of training) lifts rerank P@3 from 0.627 →
-0.756</strong> — past zero-shot mxbai-base (0.714, 8× larger) and within 0.04 of
-the multi-billion-parameter Qwen3 references (0.79). Its score also becomes far
-more thresholdable (chunk AUC 0.731 → 0.783, approaching the 0.80 R1 bar). The
-deployed int8 <code>.tflite</code> + on-device tokenizer were verified to
-reproduce the offline model exactly. <strong>Final deployable choice:
-fine-tuned MiniLM-L6.</strong> But end-to-end, the offline win does not carry: with
-the <em>actual</em> on-device generator (Gemma 4 E4B), reranking does <strong>not</strong>
-improve kenya SAQ answers, and a relevance diagnostic (judging each arm's kenya top-3
-with the original Qwen3-32B grader) shows <strong>why — reranking doesn't improve
-kenya <em>retrieval</em> either</strong> (gecko is the best arm; P@3 0.277 vs
-0.19–0.26). So this is a <strong>distribution-transfer failure, not a model ceiling</strong>:
-the reranker's mamaretrieval gain (P@3 0.51→0.76) doesn't generalize to kenya, and the
-low absolute relevance across all arms points to a <strong>corpus-coverage</strong>
-bottleneck. Recommendation: <strong>do not ship the reranker</strong> for kenya; any
-retriever/embedder change must be validated on the deployment queries, not just
-mamaretrieval. (An earlier +12% claim used the wrong generator, <code>gemma3n-e4b</code>,
-and is retracted.) <strong>The dominant lever is the generator, not retrieval:</strong>
-a controlled 9-arm A/B shows Gemma 3n more than doubles kenya recall over Gemma 4
-(0.115 → 0.270) and is far more complete on healthbench (+8 pp), uniformly across
-every retrieval arm — a much larger effect than any reranker/retriever change measured
-here (see Generator comparison below).
+<p><strong>1. Offline, a fine-tuned tiny cross-encoder wins.</strong> Across every
+deployable reranker on the held-out test split, fine-tuning the 23 M MiniLM-L6 on the
+159 k in-domain pairs (149 s of training) lifts rerank P@3 from 0.627 → 0.756 — past
+zero-shot mxbai-base (0.714, 8× larger) and within 0.04 of the multi-billion-parameter
+Qwen3 references (0.79). Its score also becomes far more thresholdable (chunk AUC 0.731
+→ 0.783, near the 0.80 R1 bar). The deployed int8 <code>.tflite</code> + on-device
+tokenizer reproduce the offline model exactly. <strong>Final deployable choice:
+fine-tuned MiniLM-L6.</strong></p>
+
+<p><strong>2. End-to-end, that win does not carry.</strong> With the actual on-device
+generator (Gemma 4 E4B), reranking does <strong>not</strong> improve kenya SAQ answers,
+and a relevance diagnostic shows why — reranking doesn't improve kenya <em>retrieval</em>
+either (gecko is the best arm; P@3 0.277 vs 0.19–0.26). It's a
+<strong>distribution-transfer failure, not a model ceiling</strong>: the mamaretrieval
+gain (0.51→0.76) doesn't generalize to kenya, and low absolute relevance everywhere
+points to a <strong>corpus-coverage</strong> bottleneck. <strong>Do not ship the
+reranker</strong> for kenya; validate any retriever/embedder change on the deployment
+queries, not mamaretrieval. (An earlier +12% claim used the wrong generator,
+<code>gemma3n-e4b</code>, and is retracted.)</p>
+
+<p><strong>3. The dominant lever is the generator, not retrieval.</strong> A controlled
+9-arm A/B shows Gemma 3n more than doubles kenya recall over Gemma 4 (0.115 → 0.270) and
+is far more complete on healthbench (+8 pp), uniformly across every retrieval arm — a
+much larger effect than any reranker/retriever change measured here (see Generator
+comparison below).</p>
 </div>
 
 <h2>The 2D scoreboard — retriever × reranker, offline → deployment</h2>
