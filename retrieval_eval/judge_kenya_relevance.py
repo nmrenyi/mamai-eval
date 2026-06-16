@@ -73,9 +73,11 @@ def parse_judge(text):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--arms-root", required=True)
-    ap.add_argument("--mxbai-arms", required=True)
+    ap.add_argument("--arms-root", default="")
+    ap.add_argument("--mxbai-arms", default="")
     ap.add_argument("--datasets", default="kenya,afrimedqa_saq")
+    ap.add_argument("--matrix-root", default="",
+                    help="flat dir of arm subdirs (each with <dataset>.json); overrides ARMS")
     ap.add_argument("--base-url", required=True)
     ap.add_argument("--model", default="Qwen/Qwen3-32B")
     ap.add_argument("--workers", type=int, default=16)
@@ -95,13 +97,20 @@ def main():
     report = {"model": args.model, "datasets": {}}
     for ds in [d.strip() for d in args.datasets.split(",")]:
         arms = {}
-        for key, sel, sub in ARMS:
-            arms[key] = load_arm(args.mxbai_arms if sel == "mxbai" else args.arms_root, sub, ds)
-        qids = sorted(arms["gecko"].keys())
+        if args.matrix_root:
+            arm_keys = sorted(p.name for p in Path(args.matrix_root).iterdir()
+                              if (p / f"{ds}.json").exists())
+            for key in arm_keys:
+                arms[key] = load_arm(args.matrix_root, key, ds)
+        else:
+            arm_keys = [k for k, _, _ in ARMS]
+            for key, sel, sub in ARMS:
+                arms[key] = load_arm(args.mxbai_arms if sel == "mxbai" else args.arms_root, sub, ds)
+        qids = sorted(arms[arm_keys[0]].keys())
 
         # dedup (qid, chunk_index) -> (query, chunk_dict)
         uniq = {}
-        for key, _, _ in ARMS:
+        for key in arm_keys:
             for qid in qids:
                 entry = arms[key].get(qid)
                 if not entry:
@@ -129,7 +138,7 @@ def main():
 
         # per-arm P@3 (lenient >=3, strict >=5) + mean grade, over the top-3
         ds_rec = {"n_queries": len(qids), "n_pairs_judged": len(graded), "by_arm": {}}
-        for key, _, _ in ARMS:
+        for key in arm_keys:
             pl = ps = mg = nq = 0
             for qid in qids:
                 entry = arms[key].get(qid)
@@ -147,7 +156,7 @@ def main():
                 "p_at_3_lenient": round(pl / nq, 4), "p_at_3_strict": round(ps / nq, 4),
                 "mean_grade": round(mg / nq, 4), "n": nq}
         report["datasets"][ds] = ds_rec
-        for key, _, _ in ARMS:
+        for key in arm_keys:
             b = ds_rec["by_arm"][key]
             print(f"  [{ds}] {key:10} P@3(>=3)={b['p_at_3_lenient']} "
                   f"P@3(>=5)={b['p_at_3_strict']} mean={b['mean_grade']}", flush=True)
