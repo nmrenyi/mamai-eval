@@ -6,6 +6,10 @@ set -euo pipefail
 #   ... ./submit_job.sh mamai-mr-octen  run_cluster_mr_pool.sh RETRIEVERS=octen
 #   ... ./submit_job.sh mamai-mr-medcpt run_cluster_mr_pool.sh RETRIEVERS=medcpt,bm25
 
+# base CUDA image has no python — install it before the mamaretrieval job script runs
+apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git curl > /dev/null 2>&1
+ln -sf /usr/bin/python3.10 /usr/bin/python3
+
 REPO_DIR="${REPO_DIR:-/lightscratch/users/yiren/mamaretrieval}"
 RETRIEVERS="${RETRIEVERS:-octen}"
 TAG="$(echo "$RETRIEVERS" | tr ',' '_')"

@@ -4,6 +4,10 @@ set -euo pipefail
 # mamai-eval's local-runai path. Repo dir is read-only to the pod → redirect all writes.
 #   ... ./submit_job.sh mamai-mr-lateon run_cluster_mr_lateon.sh
 
+# base CUDA image has no python — install it first
+apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git curl > /dev/null 2>&1
+ln -sf /usr/bin/python3.10 /usr/bin/python3
+
 REPO_DIR="${REPO_DIR:-/lightscratch/users/yiren/mamaretrieval}"
 WORK="/lightscratch/users/yiren/eval_output/mr_kenya"
 mkdir -p "$WORK/out"
