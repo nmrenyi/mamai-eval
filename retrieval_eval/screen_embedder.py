@@ -50,7 +50,37 @@ def _mrl(emb, dim):
     return emb / (np.linalg.norm(emb, axis=1, keepdims=True) + 1e-9)
 
 
+def _retrieve_loop(args, texts, doc_emb, enc_queries, out, mrl):
+    for dataset in [d.strip() for d in args.datasets.split(",")]:
+        queries = load_queries(args.hf_repo, args.revision, dataset)
+        print(f"[{dataset}] {len(queries)} queries", flush=True)
+        q_emb = enc_queries([q for _, q in queries])
+        q_emb = _mrl(q_emb, args.dim) if mrl else np.asarray(q_emb, dtype=np.float32)
+        sims = q_emb @ doc_emb.T
+        topk = np.argsort(-sims, axis=1)[:, :args.top_k]
+        out["datasets"][dataset] = [
+            {"id": qid, "question": qt,
+             "chunks": [{"idx": int(j), "text": texts[j], "sim": float(sims[i, j])} for j in topk[i]]}
+            for i, (qid, qt) in enumerate(queries)]
+
+
 def embed_retrieve(args):
+    # Gecko baseline arm: reuse the app's STORED doc vectors (true deployed behavior) +
+    # the Gecko TFLite for query encoding. Directly comparable to ST candidates below.
+    if args.candidate == "gecko":
+        from retrieval_eval.retrieval import load_vector_store, GeckoEmbedder
+        store = load_vector_store(args.db_path)
+        texts = [t for t, _ in store]
+        doc_emb = np.asarray([e for _, e in store], dtype=np.float32)
+        doc_emb /= (np.linalg.norm(doc_emb, axis=1, keepdims=True) + 1e-9)
+        emb = GeckoEmbedder(args.gecko_model, args.tokenizer)
+        def enc_queries(xs):
+            q = np.asarray([emb.embed(x) for x in xs], dtype=np.float32)
+            return q / (np.linalg.norm(q, axis=1, keepdims=True) + 1e-9)
+        out = {"candidate": "gecko", "dim": int(doc_emb.shape[1]), "datasets": {}}
+        _retrieve_loop(args, texts, doc_emb, enc_queries, out, mrl=False)
+        Path(args.out).write_text(json.dumps(out)); print("wrote", args.out, flush=True); return
+
     from sentence_transformers import SentenceTransformer
     texts = load_corpus_texts(args.db_path)
     print(f"corpus: {len(texts)} chunks", flush=True)
@@ -69,16 +99,7 @@ def embed_retrieve(args):
 
     doc_emb = _mrl(enc_docs(texts), args.dim)
     out = {"candidate": args.candidate, "dim": args.dim or int(doc_emb.shape[1]), "datasets": {}}
-    for dataset in [d.strip() for d in args.datasets.split(",")]:
-        queries = load_queries(args.hf_repo, args.revision, dataset)
-        print(f"[{dataset}] {len(queries)} queries", flush=True)
-        q_emb = _mrl(enc_queries([q for _, q in queries]), args.dim)
-        sims = q_emb @ doc_emb.T
-        topk = np.argsort(-sims, axis=1)[:, :args.top_k]
-        recs = [{"id": qid, "question": qt,
-                 "chunks": [{"idx": int(j), "text": texts[j], "sim": float(sims[i, j])} for j in topk[i]]}
-                for i, (qid, qt) in enumerate(queries)]
-        out["datasets"][dataset] = recs
+    _retrieve_loop(args, texts, doc_emb, enc_queries, out, mrl=True)
     Path(args.out).write_text(json.dumps(out))
     print("wrote", args.out, flush=True)
 
@@ -157,8 +178,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="mode", required=True)
     e = sub.add_parser("embed_retrieve")
-    e.add_argument("--candidate", required=True)
+    e.add_argument("--candidate", required=True, help="HF model id, or 'gecko' for the deployed baseline")
     e.add_argument("--db-path", required=True)
+    e.add_argument("--gecko-model", default="", help="Gecko .tflite (only for --candidate gecko)")
+    e.add_argument("--tokenizer", default="", help="sentencepiece model (only for --candidate gecko)")
     e.add_argument("--datasets", default="kenya")
     e.add_argument("--hf-repo", default="nmrenyi/mamabench")
     e.add_argument("--revision", default="v0.2")

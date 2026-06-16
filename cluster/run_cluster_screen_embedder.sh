@@ -28,8 +28,12 @@ HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 echo "=== DEPS (embed env) ==="
 apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git curl > /dev/null
 ln -sf /usr/bin/python3.10 /usr/bin/python3
-pip3 install --no-cache-dir -q --retries 10 --extra-index-url https://download.pytorch.org/whl/cu124 \
-  torch 'sentence-transformers>=5.0' 'transformers>=4.56' datasets numpy huggingface_hub > /dev/null
+if [ "$CANDIDATE" = "gecko" ]; then
+  pip3 install --no-cache-dir -q --retries 10 numpy ai-edge-litert sentencepiece datasets huggingface_hub > /dev/null
+else
+  pip3 install --no-cache-dir -q --retries 10 --extra-index-url https://download.pytorch.org/whl/cu124 \
+    torch 'sentence-transformers>=5.0' 'transformers>=4.56' datasets numpy huggingface_hub > /dev/null
+fi
 echo "=== DEPS DONE ==="
 
 mkdir -p "$HF_CACHE_DIR" "$OUT_SCRATCH"; export HF_HOME="$HF_CACHE_DIR"
@@ -40,9 +44,13 @@ RETR="$OUT_SCRATCH/retrievals_${TAG}.json"
 OUT="$OUT_SCRATCH/screen_${TAG}.json"
 
 echo "=== PHASE A: embed + retrieve ($CANDIDATE, dim=$DIM, top_k=$TOP_K) ==="
-python3 -m retrieval_eval.screen_embedder embed_retrieve \
-  --candidate "$CANDIDATE" --db-path "$ASSETS/embeddings.sqlite" \
-  --datasets "$DATASETS" --top-k "$TOP_K" --dim "$DIM" --out "$RETR"
+if [ "$CANDIDATE" = "gecko" ]; then
+  EMBED_ARGS=(--candidate gecko --gecko-model "$ASSETS/Gecko_1024_quant.tflite" --tokenizer "$ASSETS/sentencepiece.model")
+else
+  EMBED_ARGS=(--candidate "$CANDIDATE" --dim "$DIM")
+fi
+python3 -m retrieval_eval.screen_embedder embed_retrieve "${EMBED_ARGS[@]}" \
+  --db-path "$ASSETS/embeddings.sqlite" --datasets "$DATASETS" --top-k "$TOP_K" --out "$RETR"
 
 echo "=== DEPS (vllm) ==="
 pip3 install --no-cache-dir -q --retries 10 vllm openai > /dev/null
