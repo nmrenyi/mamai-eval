@@ -54,5 +54,5 @@ curl -sf "http://localhost:$PORT/health" >/dev/null 2>&1 || { echo "not healthy"
 echo "=== COVERAGE (top-$TOPK union) ==="
 python3 -m retrieval_eval.screen_embedder coverage \
   --retrievals "$RETRIEVALS" --base-url "http://localhost:$PORT/v1" \
-  --model "$JUDGE_MODEL" --top-k "$TOPK" --out "$OUT"
+  --model "$JUDGE_MODEL" --top-k "$TOPK" --workers "${WORKERS:-32}" --out "$OUT"
 echo "=== DONE ==="; cat "$OUT"
