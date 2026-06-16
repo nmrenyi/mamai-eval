@@ -1,0 +1,65 @@
+{
+  "model": "Qwen/Qwen3-32B",
+  "datasets": {
+    "kenya": {
+      "n_queries": 312,
+      "n_pairs_judged": 4948,
+      "by_arm": {
+        "bm25__minilm_ft": {
+          "p_at_3_lenient": 0.0641,
+          "p_at_3_strict": 0.0449,
+          "mean_grade": 0.344,
+          "n": 312
+        },
+        "bm25__mxbai_ft": {
+          "p_at_3_lenient": 0.0791,
+          "p_at_3_strict": 0.0566,
+          "mean_grade": 0.4327,
+          "n": 312
+        },
+        "bm25__none": {
+          "p_at_3_lenient": 0.063,
+          "p_at_3_strict": 0.0449,
+          "mean_grade": 0.3483,
+          "n": 312
+        },
+        "gecko__minilm_ft": {
+          "p_at_3_lenient": 0.2436,
+          "p_at_3_strict": 0.1731,
+          "mean_grade": 1.3173,
+          "n": 312
+        },
+        "gecko__mxbai_ft": {
+          "p_at_3_lenient": 0.2788,
+          "p_at_3_strict": 0.2201,
+          "mean_grade": 1.5481,
+          "n": 312
+        },
+        "gecko__none": {
+          "p_at_3_lenient": 0.2692,
+          "p_at_3_strict": 0.1656,
+          "mean_grade": 1.438,
+          "n": 312
+        },
+        "hybrid__minilm_ft": {
+          "p_at_3_lenient": 0.1944,
+          "p_at_3_strict": 0.1303,
+          "mean_grade": 1.0385,
+          "n": 312
+        },
+        "hybrid__mxbai_ft": {
+          "p_at_3_lenient": 0.2553,
+          "p_at_3_strict": 0.1934,
+          "mean_grade": 1.3921,
+          "n": 312
+        },
+        "hybrid__none": {
+          "p_at_3_lenient": 0.2009,
+          "p_at_3_strict": 0.1282,
+          "mean_grade": 1.071,
+          "n": 312
+        }
+      }
+    }
+  }
+}
