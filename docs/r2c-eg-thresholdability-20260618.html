@@ -65,6 +65,35 @@ when only ~20% of retrieved chunks are relevant — at that base rate no cutoff 
 i.e. most "high-confidence" chunks still aren't strictly relevant. There is no operating point with both
 decent precision and decent recall.</p>
 
+<h2>R1-style Stage-1 gate — the three threshold-rule diagnostics</h2>
+<p>To compare directly with the <a href="../configs/config-v0.2.0/reports/r1-threshold/r1-threshold-negative-result-20260612.html">R1
+negative-result report</a>, the same <strong>three Stage-1 scores</strong> — each the signal a different
+threshold-rule family would rely on — computed on EmbeddingGemma's <strong>top-3</strong> (the bundle the app
+actually injects), kenya:</p>
+<table>
+<tr><th>threshold rule it enables</th><th>statistic</th><th class="num">EmbeddingGemma<br>(kenya, top-3)</th><th class="num">Gecko<br>(R1, mamaretrieval)</th><th class="num">viability bar</th></tr>
+<tr><td><strong>absolute cutoff</strong> (one global τ)</td><td>chunk-level AUC, grade ≥ 3</td><td class="num">0.692</td><td class="num">0.572</td><td class="num">≥ 0.80 (stop ≤ 0.60)</td></tr>
+<tr><td><strong>relative margin</strong> (vs the bundle's own top-1)</td><td>within-query concordance</td><td class="num">0.566</td><td class="num">0.623</td><td class="num">0.5 = chance</td></tr>
+<tr><td><strong>gated abstention</strong> (fall back if bundle weak)</td><td>bundle top-1 AUC (any rel. chunk)</td><td class="num">0.716</td><td class="num">0.574</td><td class="num">≥ 0.80</td></tr>
+<tr><td><span class="src">reference</span></td><td><span class="src">P@3 (grade ≥ 3)</span></td><td class="num">0.392</td><td class="num">0.477</td><td class="num">—</td></tr>
+</table>
+<p><strong>All three sit below the 0.80 viability bar — EmbeddingGemma fails R1's Stage-1 gate on every
+rule family, the same verdict R1 reached for Gecko.</strong> Two specifics:</p>
+<ul>
+<li><strong>The cross-query magnitude signals improve over Gecko but not enough.</strong> Chunk-level AUC
+0.69 (vs Gecko 0.57) and bundle AUC 0.72 (vs 0.57) are clearly better — the better embedder does make scores
+somewhat more comparable corpus-wide — but both land in the 0.60–0.80 "no absolute cutoff" zone, short of the bar.</li>
+<li><strong>The within-bundle signal is actually <em>worse</em> (0.57 vs Gecko's 0.62), near chance.</strong>
+Inside a single top-3 bundle, EmbeddingGemma's cosine orders the genuinely-relevant chunk above the
+merely-on-topic one only 57% of the time — so relative-margin rules, which compare a bundle against itself,
+have essentially nothing to work with.</li>
+</ul>
+<p class="src">Caveats: R1's numbers are on the mamaretrieval audit queries (n=3,185); these are kenya (n=312),
+so the comparison is indicative, not strictly head-to-head — but the 0.80 bar is methodology-defined, not
+query-set-defined. The concordance is over only 281 co-bundle relevant/junk pairs (kenya has few mixed
+bundles), so it has a wide interval. (The 0.72 chunk AUC in Test A above pools the full top-20; this 0.69 is
+the top-3 bundle — same story, narrower population.)</p>
+
 <h2>Test B — does the retrieval score predict answer quality?</h2>
 <p>The product-relevant question: could we abstain / fall back when retrieval is poor because the answer
 will be bad? Join per-query retrieval score (top-1, mean top-3 cosine) with per-query key-fact recall from

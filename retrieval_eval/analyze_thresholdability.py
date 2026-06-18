@@ -71,6 +71,26 @@ def main():
             rec = sum(l for _, l in kept) / max(1, sum(lab))
             print(f"     sim>={cut}: keep {100*len(kept)/len(d):.0f}%  precision={prec:.3f}  recall={rec:.3f}")
 
+    print("\n== (A2) R1-style Stage-1 gate (EmbeddingGemma top-3, the injected bundle) ==")
+    t3 = [x for x in d if x["rank"] < 3]
+    s3 = [x["sim"] for x in t3]; g3 = [x["grade"] for x in t3]
+    nq3 = len({x["qid"] for x in t3})
+    for thr in (3, 5):
+        lab = [g >= thr for g in g3]
+        print(f"  [absolute] chunk-level AUC grade>={thr}: {auc(s3, lab):.3f}  (P@3={sum(lab)/nq3/3:.3f})  [bar 0.80, stop 0.60]")
+    bq = defaultdict(list)
+    for x in t3: bq[x["qid"]].append((x["sim"], x["grade"]))
+    num = den = 0.0
+    for rows in bq.values():
+        rel = [s for s, g in rows if g >= 3]; junk = [s for s, g in rows if g < 3]
+        for r in rel:
+            for j in junk:
+                den += 1; num += 1.0 if r > j else (0.5 if r == j else 0.0)
+    print(f"  [relative]  within-query concordance grade>=3: {num/den:.3f}  (over {int(den)} co-bundle rel/junk pairs)  [0.5=chance]")
+    bs = [max(s for s, _ in rows) for rows in bq.values()]
+    bl = [any(g >= 3 for _, g in rows) for rows in bq.values()]
+    print(f"  [gated]     bundle top-1 AUC (any grade>=3): {auc(bs, bl):.3f}  (HR@3={sum(bl)/len(bl):.3f})  [bar 0.80]")
+
     print("\n== (B) ANSWER-level: cosine vs key-fact recall ==")
     a = json.loads((RES / "eg3n_kenya_answerlevel_thresh.json").read_text())
     rec = [r["recall"] for r in a]; med = st.median(rec)
