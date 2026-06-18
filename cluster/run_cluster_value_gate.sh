@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # R2c P1 (step 2/3) — generate the 3-arm answers for the end-to-end value gate.
-# For each arm (gecko / hybrid / hybrid_rerank) runs gemma3n-e4b (the DEPLOYED
-# device generator) over the SAQ + MCQ datasets with that arm's RAG context.
+# For each arm (gecko / hybrid / hybrid_rerank) runs gemma4-e4b (the DEPLOYED
+# on-device generator; app_config llm_model = gemma-4-E4B-it) over the SAQ + MCQ
+# datasets with that arm's RAG context.
 # MCQ is auto-scored inline; SAQ answers are judged in step 3 (gpt-oss-120b).
 #
 # Reads arm contexts from $ARMS_DIR/{gecko,hybrid,hybrid_rerank}/<dataset>.json

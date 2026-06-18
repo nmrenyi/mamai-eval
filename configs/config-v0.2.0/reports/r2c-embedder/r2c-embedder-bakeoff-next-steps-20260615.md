@@ -3,7 +3,7 @@
 *Filed 2026-06-15. The on-device **embedder** swap (replace Gecko) — the retrieval
 lever still on the table after the reranker direction under-delivered. Successor to
 the R2c **embedder** sections of
-[`r2-retriever-upgrade-plan.md`](r2-retriever-upgrade-plan.md) (§R2c/§R2d). Note the
+[`r2-retriever-upgrade-plan.md`](../../../../docs/r2-retriever-upgrade-plan.md) (§R2c/§R2d). Note the
 naming overlap: the `r2c-reranker-*` docs are the *reranker* line; this is the
 *embedder* line.*
 
@@ -11,7 +11,7 @@ naming overlap: the `r2c-reranker-*` docs are the *reranker* line; this is the
 
 ## Why this, and what we learned from the reranker first
 
-The reranker work (see [`r2c-reranker-results-20260613.html`](../configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html))
+The reranker work (see [`r2c-reranker-results-20260613.html`](../r2c-rerank/r2c-reranker-results-20260613.html))
 landed on a clear, sobering result: reranking lifts **offline** retrieval (P@3
 0.51→0.82 on mamaretrieval) but **does not convert end-to-end** — on kenya it
 doesn't even improve *retrieval relevance* (gecko stays best), and the low absolute

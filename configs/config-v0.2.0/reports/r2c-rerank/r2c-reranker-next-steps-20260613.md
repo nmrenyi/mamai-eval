@@ -10,7 +10,7 @@ and the Phase-0 spike report.*
 ## Status update (2026-06-13, evening) — P0/P1/P2/P2.5 executed
 
 Full results in
-[`configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html`](../configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html).
+[`configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html`](r2c-reranker-results-20260613.html).
 
 - **P0 (correctness) — PASSED.** Deployed int8 `.tflite` + Kotlin-port tokenizer
   reproduce the offline torch-fp32 model at seq-256: P@3 0.626 vs 0.627, tokenizer

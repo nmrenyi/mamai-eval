@@ -18,7 +18,7 @@ deep evaluation.*
 ## Baseline to beat (deployed Gecko, this device)
 | | value |
 |---|---|
-| Embed + SQLite retrieval latency | **~20 ms** median (prior RAG benchmark) |
+| Embed + SQLite retrieval latency | ~~**~20 ms**~~ **RETRACTED — bogus (No-RAG/noise); real on-device Gecko retrieval ≈ 4 s (median 4645 ms). See Finding 5.** |
 | Model on disk (int8) | **139 MB** |
 | Vector store | ~195 MB (63,650 × 768 × fp32) |
 

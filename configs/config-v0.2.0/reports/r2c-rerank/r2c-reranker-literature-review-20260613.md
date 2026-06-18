@@ -1,7 +1,7 @@
 # R2c — On-device reranker: literature review
 
 *Filed 2026-06-13. Feeds the R2c (embedder/reranker) step of
-[`r2-retriever-upgrade-plan.md`](r2-retriever-upgrade-plan.md). Produced by a
+[`r2-retriever-upgrade-plan.md`](../../../../docs/r2-retriever-upgrade-plan.md). Produced by a
 deep-research pass (6 search angles, 25 sources fetched, 116 claims extracted,
 25 adversarially verified — 0 refuted). Every model below is a
 **candidate-to-test**, not a decision: our own offline scoring (Phase 1) and
