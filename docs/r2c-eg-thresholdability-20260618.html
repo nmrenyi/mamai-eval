@@ -94,6 +94,42 @@ query-set-defined. The concordance is over only 281 co-bundle relevant/junk pair
 bundles), so it has a wide interval. (The 0.72 chunk AUC in Test A above pools the full top-20; this 0.69 is
 the top-3 bundle — same story, narrower population.)</p>
 
+<h2>Gated abstention — the direct test (the most promising rule family)</h2>
+<p>Bundle top-1 AUC (0.716 above) is the best of the three, so gated abstention deserves a direct test. But
+that statistic measures the <em>wrong</em> target — whether the bundle contains a <em>relevant chunk</em>. What
+gated abstention actually needs is: <strong>can the score tell us when RAG <em>improves the answer</em></strong>,
+so we keep RAG on those queries and fall back to no-RAG on the rest? We have per-query recall both with RAG
+(EmbeddingGemma × 3n) and without (no-RAG × 3n), so we can test it head-on.</p>
+<p><strong>The opportunity is real</strong> — RAG helps some queries and hurts others, so a perfect gate would pay off:</p>
+<table>
+<tr><th>policy</th><th class="num">mean kenya recall</th><th>note</th></tr>
+<tr><td>always-no-RAG</td><td class="num">0.284</td><td>RAG off</td></tr>
+<tr><td>always-RAG (current)</td><td class="num">0.297</td><td>RAG helped 40% of queries, hurt 37%, tie 23%</td></tr>
+<tr><td><strong>oracle gate</strong> (per-query pick the better)</td><td class="num"><strong>0.354</strong></td><td><strong>+0.057 headroom</strong> (~+19%) — the ceiling any gate could reach</td></tr>
+</table>
+<p><strong>But the cosine score captures none of it.</strong></p>
+<table>
+<tr><th>does the score know when RAG helps?</th><th class="num">top-1</th><th class="num">mean top-3</th></tr>
+<tr><td>AUC( score → "RAG helps this query" )</td><td class="num">0.502</td><td class="num">0.497</td></tr>
+<tr><td>Pearson( score, RAG−noRAG delta )</td><td class="num">−0.036</td><td class="num">−0.036</td></tr>
+</table>
+<p>Both at chance. And no gated policy beats always-RAG — every threshold just slides between the two fixed
+policies without capturing the headroom:</p>
+<table>
+<tr><th class="num">τ (use RAG if top-1 ≥ τ)</th><th class="num">% kept on RAG</th><th class="num">gated mean recall</th></tr>
+<tr><td>0.45</td><td class="num">100%</td><td class="num">0.297 (=always-RAG)</td></tr>
+<tr><td>0.50</td><td class="num">93%</td><td class="num">0.296</td></tr>
+<tr><td>0.54</td><td class="num">72%</td><td class="num">0.293</td></tr>
+<tr><td>0.58</td><td class="num">41%</td><td class="num">0.286</td></tr>
+<tr><td>0.60</td><td class="num">28%</td><td class="num">0.286 (→always-noRAG)</td></tr>
+</table>
+<div class="callout bad"><strong>Gated abstention is not viable on this score.</strong> There is a real +0.057
+prize (oracle 0.354 vs always-RAG 0.297), but the cosine score is a <strong>chance-level (AUC 0.50)</strong>
+predictor of when RAG helps, so a score-gated policy captures <strong>none</strong> of it — its best operating
+point is just "keep RAG everywhere" (0.297). The reverse direction (keep RAG when score is low) is no better
+(0.285–0.293). A working gate would need a different signal — generator-side answer confidence or an explicit
+"does this context help" classifier — not retrieval similarity.</div>
+
 <h2>Test B — does the retrieval score predict answer quality?</h2>
 <p>The product-relevant question: could we abstain / fall back when retrieval is poor because the answer
 will be bad? Join per-query retrieval score (top-1, mean top-3 cosine) with per-query key-fact recall from

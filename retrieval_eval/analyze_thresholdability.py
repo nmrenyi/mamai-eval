@@ -99,6 +99,23 @@ def main():
         for desc, lab in [("recall>0", [r > 0 for r in rec]), ("recall>=median", [r >= med for r in rec])]:
             print(f"  score={sk} label={desc}: AUC={auc(s, lab):.3f}")
 
+    print("\n== (C) GATED ABSTENTION: can the score pick when RAG beats no-RAG? ==")
+    g = json.loads((RES / "eg3n_kenya_gate.json").read_text())
+    rag = [x["rag"] for x in g]; nor = [x["norag"] for x in g]; n = len(g)
+    delta = [a_ - b_ for a_, b_ in zip(rag, nor)]
+    helped = sum(d > 0 for d in delta); hurt = sum(d < 0 for d in delta)
+    print(f"  always-RAG={st.mean(rag):.4f}  always-noRAG={st.mean(nor):.4f}  "
+          f"oracle(max)={st.mean([max(a_, b_) for a_, b_ in zip(rag, nor)]):.4f}  "
+          f"(RAG helped {helped} / hurt {hurt} / tie {n-helped-hurt})")
+    for sk in ("top1", "mean3"):
+        s = [x[sk] for x in g]
+        print(f"  {sk}: AUC(score->RAG-helps)={auc(s, [d > 0 for d in delta]):.3f}")
+    s = [x["top1"] for x in g]
+    print("  gated policy 'RAG if top1>=tau else no-RAG':")
+    for tau in (0.50, 0.54, 0.58, 0.60):
+        pol = [rag[i] if s[i] >= tau else nor[i] for i in range(n)]
+        print(f"     tau={tau}: keep {sum(x >= tau for x in s)/n:.0%} on RAG  ->  mean recall={st.mean(pol):.4f}")
+
 
 if __name__ == "__main__":
     main()
