@@ -91,6 +91,16 @@ def main():
     bl = [any(g >= 3 for _, g in rows) for rows in bq.values()]
     print(f"  [gated]     bundle top-1 AUC (any grade>=3): {auc(bs, bl):.3f}  (HR@3={sum(bl)/len(bl):.3f})  [bar 0.80]")
 
+    p = RES / "eg_kenya_score_grade.json"
+    if p.exists():
+        print("\n== (A3) Does a RERANKER score separate better than cosine? (same candidates) ==")
+        r = json.loads(p.read_text())
+        for key, name in [("sim", "EmbeddingGemma cosine"), ("minilm_ce", "MiniLM-L6-ft"), ("mxbai_ce", "mxbai-base-ft")]:
+            rr = [x for x in r if x.get(key) is not None]
+            for thr in (3,):
+                a = auc([x[key] for x in rr], [x["grade"] >= thr for x in rr])
+                print(f"  pooled chunk AUC (g>={thr}), {name}: {a:.3f}")
+
     print("\n== (B) ANSWER-level: cosine vs key-fact recall ==")
     a = json.loads((RES / "eg3n_kenya_answerlevel_thresh.json").read_text())
     rec = [r["recall"] for r in a]; med = st.median(rec)

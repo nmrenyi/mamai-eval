@@ -147,6 +147,29 @@ an artefact of class imbalance. The retrieval score carries no information about
 is good — consistent with the matrix finding that RAG is net-negative-to-null on this generator: retrieval
 quality and answer quality are decoupled.</p>
 
+<h2>Does a reranker score thresholdable better than cosine?</h2>
+<p>R1's reason to revisit thresholding was that a fine-tuned cross-encoder scored chunk AUC ≈ 0.86 on
+<em>mamaretrieval</em> — above the 0.80 bar. So the natural question: re-score EmbeddingGemma's kenya
+candidates with the fine-tuned rerankers (MiniLM-L6-ft, mxbai-base-ft) and check whether their score
+separates relevant from irrelevant better than cosine. Same candidates, same grades.</p>
+<table>
+<tr><th>score</th><th class="num">pooled chunk AUC (g≥3)<br>over all 20 candidates</th><th class="num">top-3 chunk AUC</th><th class="num">within-query concord.</th><th class="num">bundle top-1 AUC</th></tr>
+<tr><td>EmbeddingGemma cosine</td><td class="num">0.720</td><td class="num">0.692</td><td class="num">0.566</td><td class="num">0.716</td></tr>
+<tr><td>EG + MiniLM-L6-ft</td><td class="num">0.570</td><td class="num">0.568</td><td class="num">0.516</td><td class="num">0.589</td></tr>
+<tr><td>EG + mxbai-base-ft</td><td class="num">0.589</td><td class="num">0.566</td><td class="num">0.583</td><td class="num">0.569</td></tr>
+</table>
+<div class="callout bad"><strong>No — the reranker makes thresholdability <em>worse</em>, not better.</strong> Both
+fine-tuned cross-encoders separate relevant from irrelevant kenya chunks <em>less</em> well than the raw
+cosine (pooled AUC 0.57–0.59 vs 0.72; below cosine on every statistic, all far under 0.80). The reranker's
+offline mamaretrieval separability (≈0.86) does <strong>not transfer to kenya</strong> — the same
+distribution-transfer failure that made reranking add nothing to kenya answers (0.297 → 0.297/0.289). So no
+threshold rule becomes viable by adding a reranker; if anything the cosine is the better (still-insufficient)
+signal.</div>
+<p class="src">Per-pair CE scores via <code>cluster/run_cluster_eg_rerank_scores.sh</code> →
+<code>rerank_retrievals</code>; joined to grades in
+<code>results/retrieval_eval/r2c-embedder/eg_kenya_score_grade.json</code> (regen with
+<code>analyze_thresholdability</code>, block A3). Top-3 stats use each score's own reranked top-3 bundle.</p>
+
 <h2>Why &amp; what it means</h2>
 <ul>
 <li><strong>Confirms and extends R1.</strong> R1 shelved cosine thresholding for the deployed Gecko; this shows
