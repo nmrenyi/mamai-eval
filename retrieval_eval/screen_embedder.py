@@ -137,6 +137,7 @@ def judge_score(args):
         return parse_judge(r.choices[0].message.content)
 
     report = {"candidate": data["candidate"], "dim": data["dim"], "model": args.model, "datasets": {}}
+    pair_dump = []  # for --grades-out: per-(query,chunk) [dataset, qid, idx, rank, sim, grade]
     for dataset, recs in data["datasets"].items():
         tasks = [(rec["id"], c["idx"], rec["question"], c["text"]) for rec in recs for c in rec["chunks"]]
         grades = {}
@@ -164,6 +165,12 @@ def judge_score(args):
             mg += sum(top3) / len(top3)
             hr3 += 1 if any(g >= 3 for g in gs) else 0
             hr5 += 1 if any(g >= 5 for g in gs) else 0
+        if getattr(args, "grades_out", None):
+            for rec in recs:
+                for rank, c in enumerate(rec["chunks"]):
+                    pair_dump.append({"dataset": dataset, "qid": rec["id"], "idx": c["idx"],
+                                      "rank": rank, "sim": c.get("sim"),
+                                      "grade": grades.get((rec["id"], c["idx"]))})
         k = len(recs[0]["chunks"]) if recs else 0
         if nq == 0:  # no row had any parsed grade (e.g. judge endpoint failure) — don't crash
             report["datasets"][dataset] = {"n": 0, "top_k": k, "error": "no parsed grades"}
@@ -175,6 +182,9 @@ def judge_score(args):
             f"hr_at_{k}_lenient": round(hr3 / nq, 4), f"hr_at_{k}_strict": round(hr5 / nq, 4)}
     Path(args.out).write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2), flush=True)
+    if getattr(args, "grades_out", None):
+        Path(args.grades_out).write_text(json.dumps(pair_dump))
+        print(f"wrote {len(pair_dump)} per-pair grades to {args.grades_out}", flush=True)
 
 
 def arm_format(args):
@@ -325,6 +335,7 @@ def main():
     j.add_argument("--model", default="Qwen/Qwen3-32B")
     j.add_argument("--workers", type=int, default=16)
     j.add_argument("--out", required=True)
+    j.add_argument("--grades-out", default=None, help="dump per-(query,chunk) [qid,idx,rank,sim,grade] for thresholdability")
     j.set_defaults(func=judge_score)
     args = ap.parse_args()
     args.func(args)
