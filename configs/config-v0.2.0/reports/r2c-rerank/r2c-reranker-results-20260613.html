@@ -417,6 +417,24 @@ single-celled, and generator-dependent: it does <em>not</em> rescue Gemma 4, and
 move healthbench. The matrix makes the priority unambiguous — <strong>G-RAG grounding on the
 generator (and/or the 3n → 4 completeness regression) dominates any retriever change.</strong></div>
 
+<h3>Does a reranker help on top of EmbeddingGemma (the best base) × Gemma 3n?</h3>
+<p>The one combination never tested elsewhere: re-score EmbeddingGemma's depth-20 candidates with a
+fine-tuned cross-encoder, then take top-3 — on the strongest generator (3n). If reranking helps anywhere,
+this is the most favourable cell. <span class="meta">(Generated 2026-06-18: EmbeddingGemma depth-20 retrieval →
+<code>rerank_retrievals</code> → top-3 arm → gemma3n; judged same as the matrix.)</span></p>
+<table>
+  <tr><th>EmbeddingGemma × Gemma 3n, reranker =</th><th class="num">kenya recall</th><th class="num">hb overall</th><th class="num">hb compl.(+)</th><th class="num">hb penalty(−)↓</th></tr>
+  <tr class="win"><td><strong>none</strong> (EmbeddingGemma top-3)</td><td class="num"><strong>0.297</strong></td><td class="num">0.084</td><td class="num">0.264</td><td class="num">0.372</td></tr>
+  <tr><td>+ MiniLM-L6-ft (deployable)</td><td class="num">0.297</td><td class="num">0.085</td><td class="num">0.256</td><td class="num">0.363</td></tr>
+  <tr><td>+ mxbai-base-ft</td><td class="num">0.289</td><td class="num">0.094</td><td class="num">0.270</td><td class="num">0.364</td></tr>
+</table>
+<p><strong>Reranking adds nothing, even here.</strong> On kenya, MiniLM-ft is identical to no-rerank (0.297)
+and mxbai-ft is slightly worse (0.289). On healthbench, mxbai-ft nudges overall +0.010 (0.094 vs 0.084) but
+both are ~0 and the move is within the ±5 pp (1/√n) noise floor. So the reranker's offline win (P@3
+0.51→0.76 on mamaretrieval) fails to convert even on the best deployable base and the best generator — the
+same distribution-transfer failure seen on Gecko/BM25/Hybrid. <strong>Confirms: do not ship the reranker;
+EmbeddingGemma top-3 (no rerank) is the retriever spec.</strong></p>
+
 <h2>Artifacts</h2>
 <ul>
   <li>Per-model scores: <code>results/retrieval_eval/r2c-rerank/candidates/*.json</code></li>
