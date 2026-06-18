@@ -43,7 +43,12 @@ def parse_corpus(path):
 
 
 def load_questions(qfile):
-    return {json.loads(l)["query_id"]: json.loads(l)["query_text"] for l in open(qfile)}
+    out = {}
+    with open(qfile) as f:
+        for line in f:
+            r = json.loads(line)
+            out[r["query_id"]] = r["query_text"]
+    return out
 
 
 def add(out, qid, q, key, text, dataset="kenya"):
@@ -105,8 +110,12 @@ def main():
             d = json.loads(line)
             qid = d["query_id"]; q = qtext.get(qid, "")
             res = d["results"]
-            if isinstance(res, str):
-                res = json.loads(res.replace("'", '"'))
+            if isinstance(res, str):  # may be JSON or a Python-literal (single-quoted) string
+                try:
+                    res = json.loads(res)
+                except Exception:
+                    import ast
+                    res = ast.literal_eval(res)
             for c in res:
                 if c["rank"] <= args.top_k:
                     body = cid2body.get(c["chunk_id"])

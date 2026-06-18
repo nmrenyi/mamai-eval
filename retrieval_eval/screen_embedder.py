@@ -165,6 +165,9 @@ def judge_score(args):
             hr3 += 1 if any(g >= 3 for g in gs) else 0
             hr5 += 1 if any(g >= 5 for g in gs) else 0
         k = len(recs[0]["chunks"]) if recs else 0
+        if nq == 0:  # no row had any parsed grade (e.g. judge endpoint failure) — don't crash
+            report["datasets"][dataset] = {"n": 0, "top_k": k, "error": "no parsed grades"}
+            continue
         report["datasets"][dataset] = {
             "n": nq, "top_k": k,
             "p_at_3_lenient": round(pl / nq, 4), "p_at_3_strict": round(ps / nq, 4),
@@ -257,6 +260,12 @@ def coverage(args):
 
     qids = sorted(qtext)
     arm_names = list(arms)
+    if not qids:  # empty/all-filtered input — emit a usable report instead of ZeroDivisionError
+        Path(args.out).write_text(json.dumps(
+            {"model": args.model, "top_k": args.top_k, "arms": arm_names, "n_queries": 0,
+             "error": "no queries in input retrievals"}, indent=2) + "\n")
+        print("no queries — empty coverage", flush=True)
+        return
     def covered(qid, names, thr):
         for nm in names:
             for idx, _ in arms[nm].get(qid, []):
