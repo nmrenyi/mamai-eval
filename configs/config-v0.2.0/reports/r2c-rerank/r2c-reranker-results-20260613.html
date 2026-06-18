@@ -373,6 +373,50 @@ and that the device's switch from 3n → 4 traded away a large amount of answer
 completeness. This is the highest-leverage finding for whoever owns the generator
 choice — far larger than any retriever/reranker effect measured here.</div>
 
+<h2>Generator × retriever — the unified end-to-end matrix</h2>
+<p>The pivot the previous section invites: hold the reranker at <code>none</code> and put
+the <strong>retriever</strong> on the rows (incl. a no-RAG baseline and the
+<strong>EmbeddingGemma</strong> embedder from the R2c embedder bake-off) against the
+<strong>generator</strong> on the columns. Same datasets — kenya SAQ (n=312, key-fact
+recall) and healthbench-oss (n=1209, rubric overall / completeness(+) / penalty(−)) —
+same gpt-oss-120b judges. <strong>Read across a row</strong> = the generator effect;
+<strong>read down a column</strong> = the retriever effect.</p>
+<table>
+  <tr><th rowspan="2">retriever (rerank=none)</th><th colspan="2" class="num">kenya recall</th><th colspan="2" class="num">hb overall</th><th colspan="2" class="num">hb compl.(+)</th><th colspan="2" class="num">hb penalty(−)↓</th></tr>
+  <tr><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th></tr>
+  <tr class="win"><td><strong>no-RAG</strong></td><td class="num"><strong>0.178</strong></td><td class="num">0.284</td><td class="num"><strong>0.011</strong></td><td class="num"><strong>0.111</strong></td><td class="num">0.188</td><td class="num">0.282</td><td class="num">0.372</td><td class="num">0.363</td></tr>
+  <tr><td>Gecko (current)</td><td class="num">0.125</td><td class="num">0.263</td><td class="num">−0.004</td><td class="num">0.089</td><td class="num">0.173</td><td class="num">0.260</td><td class="num">0.371</td><td class="num">0.356</td></tr>
+  <tr><td>EmbeddingGemma</td><td class="num">0.126</td><td class="num"><strong>0.297</strong></td><td class="num">0.012</td><td class="num">0.084</td><td class="num">0.189</td><td class="num">0.264</td><td class="num">0.368</td><td class="num">0.372</td></tr>
+  <tr><td>Hybrid (gecko+BM25)</td><td class="num">0.112</td><td class="num">0.265</td><td class="num">−0.007</td><td class="num">0.091</td><td class="num">0.174</td><td class="num">0.264</td><td class="num">0.376</td><td class="num">0.363</td></tr>
+  <tr><td>BM25</td><td class="num">0.109</td><td class="num">0.271</td><td class="num">0.000</td><td class="num">0.074</td><td class="num">0.177</td><td class="num">0.248</td><td class="num">0.368</td><td class="num">0.361</td></tr>
+</table>
+<p class="meta">G4/3n = Gemma 4 E4B / Gemma 3n E4B (Q4_0). no-RAG &amp; EmbeddingGemma×3n + no-RAG×G4-hb
+generated 2026-06-18 (<code>value_gate_eg_3n</code>, <code>norag_gemma3n</code>,
+<code>norag_gemma4</code>); Gecko/Hybrid/BM25 from the <code>arms_matrix</code> run above;
+EmbeddingGemma×G4 from the embedder bake-off (<code>value_gate_eg</code>/<code>_hb</code>). Bold = best in column.</p>
+<p><strong>Same verdict, now in one frame: the generator is the binding constraint, and
+RAG is net-neutral-to-negative — with a single narrow exception.</strong></p>
+<ul>
+  <li><strong>Across every row, G4 → 3n is the big move</strong> (kenya ≈ +0.15 abs, ~2×;
+  hb overall ≈ +0.10). The spread <em>down</em> either column — across all five retrievers
+  — is a fraction of that. Whoever owns the generator choice owns the result.</li>
+  <li><strong>kenya: RAG is net-negative for both generators, except EmbeddingGemma×3n.</strong>
+  For G4, no-RAG (0.178) beats <em>every</em> retriever (0.11–0.13) — retrieval actively
+  dilutes the answer. For 3n, no-RAG (0.284) still beats Gecko/Hybrid/BM25 (0.26–0.27);
+  <strong>EmbeddingGemma (0.297) is the only retriever that clears the no-RAG bar</strong>,
+  and only on the stronger generator.</li>
+  <li><strong>healthbench: no-RAG is best-or-tied for both generators</strong> (G4 0.011 ≥ all
+  RAG; 3n 0.111 ≥ all RAG). No retriever converts here; EmbeddingGemma is merely the least-bad
+  on G4 (0.012, ≈ no-RAG) and middle-of-pack on 3n.</li>
+</ul>
+<div class="note"><strong>So what's the retriever takeaway?</strong> Among retrievers,
+<strong>EmbeddingGemma is the best of the set</strong> — the only one that ever beats the
+no-RAG baseline end-to-end (kenya×3n) — which is consistent with adopting it on retrieval
+grounds (the embedder bake-off shows +12–13 pp P@3). But the end-to-end upside is small,
+single-celled, and generator-dependent: it does <em>not</em> rescue Gemma 4, and it does not
+move healthbench. The matrix makes the priority unambiguous — <strong>G-RAG grounding on the
+generator (and/or the 3n → 4 completeness regression) dominates any retriever change.</strong></div>
+
 <h2>Artifacts</h2>
 <ul>
   <li>Per-model scores: <code>results/retrieval_eval/r2c-rerank/candidates/*.json</code></li>
