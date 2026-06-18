@@ -22,6 +22,7 @@ ARMS_DIR="${ARMS_DIR:-/lightscratch/users/yiren/eval_output/rag_arms_eg_rr_3n}"
 OUT_DIR="${OUT_DIR:-/lightscratch/users/yiren/eval_output/value_gate_eg_rr_3n}"
 EG_MODEL="${EG_MODEL:-google/embeddinggemma-300m}"
 EG_DIM="${EG_DIM:-768}"
+RERANKERS="${RERANKERS:-minilm_ft mxbai_ft}"
 REPO_REF="${REPO_REF:-feat/r2-retriever-upgrade-20260613}"
 REPO_URL="${REPO_URL:-https://github.com/nmrenyi/mamai-eval.git}"
 WORKTREE="${WORKTREE:-/tmp/eval_code}"
@@ -49,7 +50,7 @@ python3 -m retrieval_eval.screen_embedder embed_retrieve \
 ls -la "$HB_D20" "$KENYA_D20"
 
 # 2. rerank depth-20 candidates with each CE, then format top-3 arms
-for RR in minilm_ft mxbai_ft; do
+for RR in $RERANKERS; do
   case "$RR" in
     minilm_ft) RRPATH="$FT/minilm-l6-finetuned-model" ;;
     mxbai_ft)  RRPATH="$FT/mxbai-base-finetuned-model" ;;
@@ -65,7 +66,7 @@ for RR in minilm_ft mxbai_ft; do
 done
 
 # 3. generate gemma3n per reranker arm over kenya + healthbench
-for RR in minilm_ft mxbai_ft; do
+for RR in $RERANKERS; do
   echo "=== GENERATE $MODEL  arm=$RR  datasets=$DATASETS ==="
   python3 end_to_end_eval/run_eval.py --config "$CONFIG" --model "$MODEL" \
     --model-dir "$MODEL_DIR" --datasets "$DATASETS" \
