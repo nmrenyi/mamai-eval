@@ -28,27 +28,33 @@
 <body>
 
 <h1>Is the EmbeddingGemma retrieval score thresholdable? (EG × Gemma 3n, kenya)</h1>
-<p class="meta">2026-06-18 · config-v0.2.0 · no reranker · n=312 kenya queries. Tests whether a
-cosine-similarity threshold can drive a confidence / abstention gate — the idea R1 shelved for
-Gecko cosine, re-asked for EmbeddingGemma. R1's bar: chunk-level AUC ≥ 0.80.</p>
+<p class="meta">2026-06-18 · config-v0.2.0 · no reranker · kenya (312 queries; 300 with end-to-end recall).
+Tests whether a cosine-similarity threshold can drive a confidence / abstention gate — the idea R1
+shelved for Gecko cosine, re-asked for EmbeddingGemma. R1's bar: chunk-level AUC ≥ 0.80.</p>
 
 <div class="callout bad">
-<strong>Verdict: not thresholdable.</strong> EmbeddingGemma's cosine score is only weakly related to
-chunk <em>relevance</em> (chunk AUC <strong>0.72 &lt; 0.80</strong> bar) and has <strong>no</strong>
-relationship to <em>answer</em> quality (answer AUC <strong>0.50</strong> = random). No cosine cutoff
-gives a usable precision/recall trade-off. A cosine confidence gate would mostly mis-fire.
+<strong>Verdict: not thresholdable for a usable gate.</strong> EmbeddingGemma's cosine score carries a
+<em>real but modest</em> relevance signal (chunk AUC <strong>0.72</strong>, 95% CI [0.69, 0.75] —
+<strong>below the 0.80</strong> bar) yet, against a ~20% relevant base rate, no cutoff yields usable
+precision (≤0.41 even at the most selective). And it has <strong>no</strong> relationship to <em>answer</em>
+quality (answer AUC <strong>0.50</strong> = random). A cosine confidence gate would mostly mis-fire.
 </div>
 
 <h2>Test A — does cosine separate relevant from irrelevant chunks?</h2>
 <p>Re-judged all 6,228 EmbeddingGemma kenya top-20 (query, chunk) pairs with Qwen3-32B (V2 relevance
 rubric, grade 0–6). Label relevant = grade ≥ 5 (strict) / ≥ 3 (lenient); score = cosine sim; metric = ROC-AUC.</p>
 <table>
-<tr><th>relevance cut</th><th class="num">chunk AUC</th><th class="num">R1 bar</th><th>verdict</th></tr>
-<tr><td>strict (grade ≥ 5)</td><td class="num">0.720</td><td class="num">0.80</td><td>below bar</td></tr>
-<tr><td>lenient (grade ≥ 3)</td><td class="num">0.720</td><td class="num">0.80</td><td>below bar</td></tr>
+<tr><th>relevance cut</th><th class="num">pooled AUC</th><th class="num">95% CI</th><th class="num">per-query AUC</th><th class="num">R1 bar</th><th>verdict</th></tr>
+<tr><td>strict (grade ≥ 5)</td><td class="num">0.720</td><td class="num">[0.69, 0.75]</td><td class="num">0.61</td><td class="num">0.80</td><td>below bar</td></tr>
+<tr><td>lenient (grade ≥ 3)</td><td class="num">0.720</td><td class="num">[0.69, 0.76]</td><td class="num">0.63</td><td class="num">0.80</td><td>below bar</td></tr>
 </table>
-<p>The relevant/irrelevant cosine distributions barely separate — mean sim 0.565 (relevant) vs 0.524
-(irrelevant), a <strong>+0.04 gap</strong> on a 0.40–0.72 range. So no threshold cleanly splits them:</p>
+<p class="src">Pooled AUC = one global threshold over all (query,chunk) pairs (the relevant quantity for a
+single deployed gate); CI = cluster bootstrap resampling queries (300×). Per-query AUC = cosine's
+within-query ranking of relevant above irrelevant — weaker still (0.61), so the pooled number is the
+<em>favourable</em> framing. Both, and the whole CI, sit below 0.80.</p>
+<p>There <em>is</em> a real signal: relevant chunks score higher than irrelevant ones (mean sim 0.565 vs
+0.524; <strong>Cohen d ≈ 0.76</strong>, a medium–large effect). But a moderate AUC is not enough for a gate
+when only ~20% of retrieved chunks are relevant — at that base rate no cutoff cleanly splits them:</p>
 <table>
 <tr><th>cosine cutoff</th><th class="num">chunks kept</th><th class="num">precision (strict)</th><th class="num">recall (strict)</th><th class="num">precision (lenient)</th></tr>
 <tr><td>≥ 0.50</td><td class="num">70%</td><td class="num">0.260</td><td class="num">0.900</td><td class="num">0.365</td></tr>
@@ -70,9 +76,11 @@ the EmbeddingGemma × Gemma 3n end-to-end run (n=300 judged).</p>
 <tr><td>mean top-3</td><td>recall &gt; 0</td><td class="num">0.493</td></tr>
 <tr><td>mean top-3</td><td>recall ≥ median</td><td class="num">0.504</td></tr>
 </table>
-<p><strong>AUC ≈ 0.50 everywhere — pure noise</strong> (Pearson(score, recall) = −0.05). The retrieval score
-carries no information about whether the generated answer is good. This is consistent with the matrix finding
-that RAG is net-negative-to-null on this generator: retrieval quality and answer quality are decoupled.</p>
+<p><strong>AUC ≈ 0.50 everywhere — pure noise</strong> (Pearson(score, recall) = −0.05). It holds on both the
+imbalanced cut (recall&gt;0: 265 pos / 35 neg) and the balanced one (recall ≥ median: 153 / 147), so it is not
+an artefact of class imbalance. The retrieval score carries no information about whether the generated answer
+is good — consistent with the matrix finding that RAG is net-negative-to-null on this generator: retrieval
+quality and answer quality are decoupled.</p>
 
 <h2>Why &amp; what it means</h2>
 <ul>

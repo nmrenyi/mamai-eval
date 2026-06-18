@@ -14,11 +14,13 @@ abstention/confidence gate (R1's idea, bar = chunk AUC 0.80):
 
 Usage: python -m retrieval_eval.analyze_thresholdability [results_dir]
 """
-import json, sys, statistics as st
+import json, sys, random, statistics as st
+from collections import defaultdict
 from pathlib import Path
 
 RES = Path(sys.argv[1] if len(sys.argv) > 1 else
            "configs/config-v0.2.0/results/retrieval_eval/r2c-embedder")
+random.seed(0)
 
 
 def auc(scores, labels):
@@ -40,10 +42,29 @@ def main():
     print("== (A) CHUNK-level: cosine vs relevance grade ==")
     d = [x for x in json.loads((RES / "eg_kenya_pairgrades.json").read_text())
          if x["grade"] is not None and x["sim"] is not None]
-    sims = [x["sim"] for x in d]; grades = [x["grade"] for x in d]
+    sims = [x["sim"] for x in d]; grades = [x["grade"] for x in d]; qids = [x["qid"] for x in d]
+    byq = defaultdict(list)
+    for s, l, q in zip(sims, grades, qids): byq[q].append((s, l))
     for desc, thr in [("strict grade>=5", 5), ("lenient grade>=3", 3)]:
         lab = [g >= thr for g in grades]
-        print(f"  {desc}: AUC={auc(sims, lab):.3f}  pos={sum(lab)}/{len(d)}  [R1 bar 0.80]")
+        base = sum(lab) / len(d)
+        pooled = auc(sims, lab)
+        # cluster bootstrap CI (resample queries)
+        qs = list(byq.keys()); boots = []
+        for _ in range(300):
+            samp = [random.choice(qs) for _ in qs]; ss = []; ll = []
+            for q in samp:
+                for s, g in byq[q]: ss.append(s); ll.append(g >= thr)
+            a = auc(ss, ll)
+            if a is not None: boots.append(a)
+        boots.sort(); lo, hi = boots[int(.025 * len(boots))], boots[int(.975 * len(boots))]
+        # per-query within-query AUC
+        pq = [a for q in byq for a in [auc([s for s, _ in byq[q]], [g >= thr for _, g in byq[q]])] if a is not None]
+        # effect size
+        sr = [s for s, l in zip(sims, lab) if l]; si = [s for s, l in zip(sims, lab) if not l]
+        cohen = (st.mean(sr) - st.mean(si)) / st.pstdev(sims)
+        print(f"  {desc}: pooled AUC={pooled:.3f} (95% CI [{lo:.3f},{hi:.3f}])  per-query AUC={st.mean(pq):.3f}  "
+              f"Cohen d={cohen:.2f}  base-rate={base:.3f}  pos={sum(lab)}/{len(d)}  [R1 bar 0.80]")
         for cut in (0.50, 0.55, 0.60):
             kept = [(s, l) for s, l in zip(sims, lab) if s >= cut]
             prec = sum(l for _, l in kept) / len(kept) if kept else 0
