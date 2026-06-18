@@ -1,0 +1,16 @@
+{
+  "candidate": "google/embeddinggemma-300m",
+  "dim": 768,
+  "model": "Qwen/Qwen3-32B",
+  "datasets": {
+    "kenya": {
+      "n": 312,
+      "top_k": 20,
+      "p_at_3_lenient": 0.3964,
+      "p_at_3_strict": 0.2842,
+      "mean_grade_top3": 2.1261,
+      "hr_at_20_lenient": 0.8494,
+      "hr_at_20_strict": 0.734
+    }
+  }
+}
