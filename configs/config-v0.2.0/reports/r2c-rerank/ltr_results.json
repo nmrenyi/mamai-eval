@@ -1,0 +1,128 @@
+{
+  "created_at_utc": "2026-06-13T17:59:44Z",
+  "model": "LightGBM LambdaMART (lambdarank, ndcg@3 early-stop)",
+  "params": {
+    "objective": "lambdarank",
+    "metric": "ndcg",
+    "ndcg_eval_at": [
+      3
+    ],
+    "num_leaves": 31,
+    "learning_rate": 0.05,
+    "min_data_in_leaf": 50,
+    "feature_fraction": 1.0,
+    "bagging_fraction": 1.0,
+    "seed": 42,
+    "deterministic": true,
+    "force_row_wise": true,
+    "verbose": -1
+  },
+  "features": [
+    "gecko_score",
+    "gecko_rank",
+    "bm25_score",
+    "bm25_rank",
+    "rrf_score",
+    "rrf_rank",
+    "in_both",
+    "q_len",
+    "c_len",
+    "overlap_count",
+    "jaccard",
+    "q_coverage",
+    "num_overlap"
+  ],
+  "results": {
+    "n_test_queries": 491,
+    "best_iteration": 86,
+    "by_cut": {
+      "lenient_ge3": {
+        "floor_rrf": {
+          "p_at_3": 0.5058,
+          "hr_at_3": 0.8574
+        },
+        "feature_ltr": {
+          "p_at_3": 0.5838,
+          "hr_at_3": 0.9165
+        },
+        "oracle": {
+          "p_at_3": 0.924,
+          "hr_at_3": 0.9878
+        }
+      },
+      "strict_ge5": {
+        "floor_rrf": {
+          "p_at_3": 0.2023,
+          "hr_at_3": 0.4399
+        },
+        "feature_ltr": {
+          "p_at_3": 0.2614,
+          "hr_at_3": 0.5743
+        },
+        "oracle": {
+          "p_at_3": 0.5356,
+          "hr_at_3": 0.78
+        }
+      }
+    },
+    "stage1_gate_on_ltr_score": {
+      "chunk_auc_grade3": 0.7008,
+      "within_bundle_concordance": 0.6918,
+      "bundle_any_relevant_auc_top1": 0.6493
+    },
+    "feature_importance_gain": [
+      {
+        "feature": "rrf_score",
+        "gain_frac": 0.2488
+      },
+      {
+        "feature": "c_len",
+        "gain_frac": 0.1969
+      },
+      {
+        "feature": "rrf_rank",
+        "gain_frac": 0.1397
+      },
+      {
+        "feature": "gecko_score",
+        "gain_frac": 0.1218
+      },
+      {
+        "feature": "q_coverage",
+        "gain_frac": 0.1082
+      },
+      {
+        "feature": "bm25_score",
+        "gain_frac": 0.0488
+      },
+      {
+        "feature": "overlap_count",
+        "gain_frac": 0.0441
+      },
+      {
+        "feature": "gecko_rank",
+        "gain_frac": 0.0428
+      },
+      {
+        "feature": "jaccard",
+        "gain_frac": 0.028
+      },
+      {
+        "feature": "bm25_rank",
+        "gain_frac": 0.0148
+      },
+      {
+        "feature": "q_len",
+        "gain_frac": 0.004
+      },
+      {
+        "feature": "num_overlap",
+        "gain_frac": 0.0018
+      },
+      {
+        "feature": "in_both",
+        "gain_frac": 0.0
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "created_at_utc": "2026-06-13T19:54:43Z",
+  "key": "qwen3-rr-8b",
+  "id": "Qwen/Qwen3-Reranker-8B",
+  "type": "qwen3",
+  "size_m": 8000,
+  "note": "offline reference (GPU)",
+  "max_len": 256,
+  "n_labels": 1,
+  "score_seconds": 167.4,
+  "device": "cuda",
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.7923,
+      "hr_at_3": 0.9837
+    },
+    "strict_ge5": {
+      "p_at_3": 0.3693,
+      "hr_at_3": 0.6823
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.8204,
+    "chunk_auc_grade5": 0.6997,
+    "within_bundle_concordance": 0.8028,
+    "bundle_any_relevant_auc_top1": 0.7547
+  }
+}

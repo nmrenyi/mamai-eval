@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2c Phase-0 — MiniLM-L6 convertibility + quality spike (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--goodbg); color: var(--good); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .ok { color: var(--good); font-weight: 600; }
+  .pending { color: var(--warn); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c Phase-0 — MiniLM-L6 cross-encoder: convertibility + quality spike</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+the joint probe from <a href="r2c-reranker-literature-review-20260613.md">the R2c plan</a></p>
+
+<div class="verdict">
+Green light for the BERT cross-encoder direction. The smallest standard-BERT
+reranker (ms-marco-MiniLM-L6-v2, 22M) <strong>converts cleanly to LiteRT/int8 —
+the app's own runtime — at 23.9 MB</strong>, and <strong>beats the feature-LTR
+bar zero-shot</strong>: P@3 0.506 → 0.628 (lenient) and 0.202 → 0.271 (strict) vs
+feature-LTR's 0.584 / 0.261. Its score is also the most thresholdable yet —
+concordance 0.758, matching the voyage ceiling — though still under 0.80.
+<strong>All four convertibility layers now pass, including on the real device</strong>:
+the int8 model runs on the target phone at 13.2 ms/(query,chunk) (4 threads),
+~0.13–0.27 s for a 10–20 chunk bundle — and 3.2× faster than fp32 with identical
+quality.
+</div>
+
+<h2>Convertibility — passes (the gate with zero prior evidence)</h2>
+<table>
+  <tr><th>Layer</th><th>Result</th><th class="num">Artifact</th></tr>
+  <tr><td>1. ONNX export</td><td class="ok">PASS</td><td class="num">91.0 MB fp32</td></tr>
+  <tr><td>2. int8 quantize (ARM-targeted)</td><td class="ok">PASS</td><td class="num">23.0 MB (ONNX arm64)</td></tr>
+  <tr><td><strong>2b. LiteRT/.tflite (the app's runtime)</strong></td><td class="ok">PASS</td>
+      <td class="num">90.8 MB fp32 · <strong>23.9 MB int8</strong></td></tr>
+  <tr><td>3. ARM-CPU execution + latency (Mac arm64 proxy)</td><td class="ok">PASS</td>
+      <td class="num">see latency</td></tr>
+  <tr><td>4. On-phone execution + latency (real device)</td><td class="ok">PASS</td>
+      <td class="num">13.2 ms/pair int8</td></tr>
+</table>
+<p>
+The standard-BERT architecture exports and quantizes without issue, and — the
+result that matters most for this app — converts to <strong>LiteRT</strong> (not
+just ONNX), the runtime the device actually runs, as a <strong>23.9 MB int8</strong>
+model (seq-len 256). Because this Mac is itself arm64, layers 1–3 are genuine ARM
+evidence, not x86. The int8 model is pushed to the device
+(<code>/data/local/tmp/</code>); the real on-device latency number is reported in
+the &ldquo;Latency — measured on the real device&rdquo; section below (13.2 ms/pair int8).
+</p>
+<p class="note">
+Architecture-level result: proving MiniLM-L6 (standard BERT) converts plausibly
+unlocks the whole BERT-family tier (TinyBERT, MedCPT, bge-base) — they share the
+same ops. Only a T5/seq2seq reranker would need its own spike.
+</p>
+
+<h2>Latency — measured on the real device</h2>
+<p>
+Official TFLite <code>benchmark_model</code> (arm64) via adb, on the target phone
+(OPD2413, Android 15, arm64-v8a), CPU/XNNPACK, LiteRT seq-len 256, one
+(query,chunk) pair per inference:
+</p>
+<table>
+  <tr><th>Model / config</th><th class="num">per (query,chunk)</th>
+      <th class="num">10-chunk bundle</th><th class="num">20-chunk bundle</th></tr>
+  <tr><td><strong>int8, 4 threads</strong></td><td class="num ok">13.2 ms</td>
+      <td class="num">~132 ms</td><td class="num">~265 ms</td></tr>
+  <tr><td>int8, 1 thread</td><td class="num">32.2 ms</td><td class="num">~322 ms</td>
+      <td class="num">~644 ms</td></tr>
+  <tr><td>fp32, 4 threads</td><td class="num">42.1 ms</td><td class="num">~421 ms</td>
+      <td class="num">~842 ms</td></tr>
+</table>
+<ul>
+  <li><strong>Comfortably within budget.</strong> Reranking 10–20 chunks costs
+      ~0.13–0.27 s on the phone CPU (int8, 4 threads) — negligible against the
+      1-minute whole-pipeline budget, which on-device generation dominates.</li>
+  <li><strong>int8 is 3.2× faster than fp32 on-device</strong> (13.2 vs 42.1 ms)
+      with ~identical quality — a clean confirmation of the int8 deploy choice on
+      latency grounds, not just size.</li>
+  <li>CPU-only; an NPU/GPU delegate could be faster still. The Mac arm64 ONNX-int8
+      proxy (12.6 ms/pair) closely matched the device (13.2 ms), validating the
+      earlier estimate.</li>
+</ul>
+
+<h2>Quality + thresholdability</h2>
+<p class="note">
+<strong>Which model produced these numbers:</strong> the table's headline column
+is the <strong>fp32 PyTorch</strong> model, and we also scored the deployed-form
+<strong>int8 (ONNX arm64)</strong> model over the same pairs at the same
+max-len — so the only difference is quantization. <strong>int8 quality is
+effectively identical to fp32</strong> (P@3 0.628→0.626 lenient, 0.271→0.271
+strict; HR even marginally higher; gate 0.731/0.758/0.741 → 0.731/0.750/0.732) —
+confirming the deployable int8 model loses essentially nothing. Both are shown in
+the figure (and the int8 row below). The on-phone int8 latency remains the open
+item.
+</p>
+<figure>
+  <img src="fig_minilm_spike.png" alt="MiniLM-L6 quality and Stage-1 gate">
+  <figcaption>Left: rerank quality on the held-out test split (n=491) — MiniLM-L6
+  zero-shot vs floor / feature-LTR / oracle, with the voyage retrieval ceiling
+  (purple dotted, its own top-3 on the same test queries). Right: the Stage-1
+  score-quality gate across every score measured in R1–R2, ending at MiniLM-L6;
+  dashed = 0.80 viability bar, purple dotted = voyage ceiling.</figcaption>
+</figure>
+<table>
+  <tr><th>Metric</th><th class="num">floor (RRF)</th><th class="num">feature-LTR</th>
+      <th class="num">MiniLM-L6 fp32</th><th class="num">MiniLM-L6 int8</th><th class="num">oracle</th></tr>
+  <tr><td>P@3 ≥3</td><td class="num">0.506</td><td class="num">0.584</td>
+      <td class="num ok">0.628</td><td class="num ok">0.626</td><td class="num">0.924</td></tr>
+  <tr><td>HR@3 ≥3</td><td class="num">0.857</td><td class="num">0.917</td>
+      <td class="num ok">0.923</td><td class="num ok">0.927</td><td class="num">0.988</td></tr>
+  <tr><td>P@3 ≥5</td><td class="num">0.202</td><td class="num">0.261</td>
+      <td class="num ok">0.271</td><td class="num ok">0.271</td><td class="num">0.536</td></tr>
+  <tr><td>HR@3 ≥5</td><td class="num">0.440</td><td class="num">0.574</td>
+      <td class="num">0.558</td><td class="num">0.562</td><td class="num">0.780</td></tr>
+  <tr><td colspan="6"><em>Stage-1 gate on the score (fp32 / int8):</em>
+      chunk-AUC <strong>0.731 / 0.731</strong>, concordance <strong>0.758 / 0.750</strong>,
+      bundle-AUC <strong>0.741 / 0.732</strong>
+      (feature-LTR 0.701/0.692/0.649; voyage ceiling 0.734/0.755/0.750)</td></tr>
+</table>
+<ul>
+  <li><strong>Beats feature-LTR zero-shot on precision.</strong> MiniLM-L6 tops
+      feature-LTR on P@3 (0.628 vs 0.584 lenient; 0.271 vs 0.261 strict) and lenient
+      HR — capturing ~29% of the oracle P@3 headroom vs feature-LTR's ~19%. The one
+      exception: feature-LTR edges it on strict HR (0.574 vs 0.558).</li>
+  <li><strong>Most thresholdable score measured — at the voyage ceiling.</strong>
+      Its concordance 0.758 <em>matches</em> voyage's 0.755 and its chunk/bundle AUC
+      sit just under voyage. A zero-shot 22M cross-encoder is essentially at the
+      API-ceiling's score quality — still under 0.80, so R1's verdict holds, but
+      this is the closest approach yet and a learned/fine-tuned score could clear
+      it.</li>
+  <li><strong>And this is before fine-tuning.</strong> Zero-shot on MS-MARCO
+      (web) domain, not yet trained on our 230k OBGYN pairs — the fine-tune step
+      should push quality (and thresholdability) further.</li>
+  <li><strong>The oracle matches or exceeds the voyage retrieval ceiling.</strong>
+      Perfect reranking of our hybrid top-20 (oracle) reaches P@3 0.924 / 0.536
+      (lenient/strict) vs voyage's own top-3 at 0.870 / 0.445 — so a good-enough
+      reranker on the pool we already retrieve can rival an API-only top-tier
+      retriever we can't deploy. MiniLM-L6 zero-shot (0.628 / 0.271) sits well
+      below both, leaving clear room for fine-tuning and the bigger candidates.</li>
+</ul>
+
+<h2>Decision</h2>
+<ul>
+  <li><strong>Proceed with the BERT cross-encoder.</strong> It converts to the
+      app's runtime as a tiny int8 model, fits the latency budget (ARM proxy), and
+      already beats the deployable backup zero-shot. The convertibility gate that
+      blocked the lit review's confidence is cleared at the architecture level.</li>
+  <li><strong>Device track — done end-to-end.</strong> Standalone latency
+      (layer 4) closed at 13.2 ms/pair, <em>and</em> the reranker is now integrated
+      into the app and verified running in the real pipeline (see below).</li>
+  <li><strong>Data track (next): scale Option B + fine-tune.</strong> Score MedCPT
+      and the Qwen3-8B / bge-v2-m3 references on the same test split (cluster), then
+      fine-tune MiniLM-L6 (or the winner) on the 230k pairs and re-measure quality
+      and the Stage-1 gate — the fine-tuned score is the best remaining shot at
+      reviving the R1 threshold.</li>
+</ul>
+<p class="note">
+Scope: offline + Mac-arm64; quality on the held-out test split, zero-shot.
+Convertibility layers 1–3 proven here; layer 4 (on-phone latency) pending. TFLite
+exported at fixed seq-len 256 — chunks longer than that are truncated, a knob to
+revisit on-device. The on-device feature/tokenizer path must match training, and
+mind the x86-vs-ARM float drift noted in R1.
+</p>
+
+<h2>In-app integration (verified on device)</h2>
+<p>
+Beyond the standalone benchmark, the reranker was integrated into the deployed
+app (<code>com.example.app</code>, branch <code>feat/litert-reranker-20260613</code>
+in the mamai repo) and run in the real RAG pipeline on the phone (OPD2413). It
+fetches a deeper retrieval pool (<code>retrieval.rerank_depth</code>=20) and
+reorders it to top-3 before prompt injection, behind a
+<code>retrieval.rerank_enabled</code> flag.
+</p>
+<pre>[QUERY] "What are the danger signs in pregnancy that require urgent referral?" retrieval: true
+[TIMING] retrieval (embed + vector search): 2594 ms, 20 docs (fetchK=20)
+[RERANK] scored 20 chunks in 842 ms; top score 5.765
+[RERANK] reranked to top-3 → generation</pre>
+<ul>
+  <li><strong>It runs.</strong> The TFLite cross-encoder (org.tensorflow:tensorflow-lite
+      2.17.0) coexists with the litertlm LLM stack in one APK, loads at init, and
+      scores in the live pipeline — proving the architecture is deployable in the
+      real app, not just in isolation.</li>
+  <li><strong>In-app latency:</strong> 842 ms to score 20 chunks, vs the ~265 ms
+      standalone benchmark (20 × 13.2 ms). The gap is real-world overhead —
+      WordPiece tokenization in Kotlin, first-call warmup, single-threaded
+      scoring loop — exactly the decomposition the standalone benchmark was set
+      up to isolate. Still small against the 1-minute pipeline budget; reducing
+      it (batch the 20 passes, cache warmup, tune threads) is a clear follow-up.</li>
+  <li><strong>Caveats:</strong> the WordPiece tokenizer is a faithful-but-unverified
+      port (exact HF parity is a follow-up before trusting absolute scores), and
+      the model runs at seq-len 256 (long chunks truncate). Quality in-app should
+      match the offline int8 numbers once tokenizer parity is confirmed.</li>
+</ul>
+
+<h2>Reproducibility</h2>
+<pre># quality + ONNX export/int8 + CPU latency (py3.12 venv: torch, transformers, optimum, onnxruntime)
+python -m retrieval_eval.spike_minilm        --features-dir configs/config-v0.2.0/results/retrieval_eval/r2c-rerank \
+                                             --report-dir   configs/config-v0.2.0/reports/r2c-rerank
+# LiteRT/.tflite conversion (litert-torch) + Mac-arm64 latency proxy
+python -m retrieval_eval.convert_minilm_tflite --seq-len 256 --out-dir /tmp/minilm-tflite
+# summary figure
+python -m retrieval_eval.plot_minilm_spike</pre>
+<p class="meta">Results: <code>minilm_spike.json</code>, <code>minilm_tflite.json</code>.</p>
+
+</body>
+</html>

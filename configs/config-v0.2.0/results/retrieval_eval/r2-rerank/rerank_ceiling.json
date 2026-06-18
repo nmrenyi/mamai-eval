@@ -1,0 +1,185 @@
+{
+  "created_at_utc": "2026-06-13T12:52:41Z",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.2.0"
+  },
+  "method": "oracle rerank: reorder top-d pool by judge grade, keep top-3. Upper bound for any reranker; uses the grades that define the metric (definition of the ceiling, not leakage).",
+  "hybrid_config": {
+    "alpha": 0.5,
+    "k": 60
+  },
+  "depths": [
+    3,
+    5,
+    10,
+    20
+  ],
+  "pools": {
+    "gecko": {
+      "n_queries": 3185,
+      "floor": {
+        "lenient_ge3": {
+          "p_at_3": 0.4771,
+          "hr_at_3": 0.8135
+        },
+        "strict_ge5": {
+          "p_at_3": 0.1929,
+          "hr_at_3": 0.4389
+        }
+      },
+      "oracle_by_depth": {
+        "3": {
+          "lenient_ge3": {
+            "p_at_3": 0.4771,
+            "hr_at_3": 0.8135
+          },
+          "strict_ge5": {
+            "p_at_3": 0.1929,
+            "hr_at_3": 0.4389
+          }
+        },
+        "5": {
+          "lenient_ge3": {
+            "p_at_3": 0.6479,
+            "hr_at_3": 0.8945
+          },
+          "strict_ge5": {
+            "p_at_3": 0.2764,
+            "hr_at_3": 0.5466
+          }
+        },
+        "10": {
+          "lenient_ge3": {
+            "p_at_3": 0.8134,
+            "hr_at_3": 0.9501
+          },
+          "strict_ge5": {
+            "p_at_3": 0.4023,
+            "hr_at_3": 0.6634
+          }
+        },
+        "20": {
+          "lenient_ge3": {
+            "p_at_3": 0.9042,
+            "hr_at_3": 0.9771
+          },
+          "strict_ge5": {
+            "p_at_3": 0.5286,
+            "hr_at_3": 0.7551
+          }
+        }
+      }
+    },
+    "bm25": {
+      "n_queries": 3185,
+      "floor": {
+        "lenient_ge3": {
+          "p_at_3": 0.4174,
+          "hr_at_3": 0.7542
+        },
+        "strict_ge5": {
+          "p_at_3": 0.1625,
+          "hr_at_3": 0.3711
+        }
+      },
+      "oracle_by_depth": {
+        "3": {
+          "lenient_ge3": {
+            "p_at_3": 0.4174,
+            "hr_at_3": 0.7542
+          },
+          "strict_ge5": {
+            "p_at_3": 0.1625,
+            "hr_at_3": 0.3711
+          }
+        },
+        "5": {
+          "lenient_ge3": {
+            "p_at_3": 0.5565,
+            "hr_at_3": 0.833
+          },
+          "strict_ge5": {
+            "p_at_3": 0.2225,
+            "hr_at_3": 0.4575
+          }
+        },
+        "10": {
+          "lenient_ge3": {
+            "p_at_3": 0.7198,
+            "hr_at_3": 0.9071
+          },
+          "strict_ge5": {
+            "p_at_3": 0.3214,
+            "hr_at_3": 0.5705
+          }
+        },
+        "20": {
+          "lenient_ge3": {
+            "p_at_3": 0.8313,
+            "hr_at_3": 0.9516
+          },
+          "strict_ge5": {
+            "p_at_3": 0.4273,
+            "hr_at_3": 0.6656
+          }
+        }
+      }
+    },
+    "hybrid (\u03b1=0.5, k=60)": {
+      "n_queries": 3185,
+      "floor": {
+        "lenient_ge3": {
+          "p_at_3": 0.5118,
+          "hr_at_3": 0.86
+        },
+        "strict_ge5": {
+          "p_at_3": 0.206,
+          "hr_at_3": 0.4593
+        }
+      },
+      "oracle_by_depth": {
+        "3": {
+          "lenient_ge3": {
+            "p_at_3": 0.5118,
+            "hr_at_3": 0.86
+          },
+          "strict_ge5": {
+            "p_at_3": 0.206,
+            "hr_at_3": 0.4593
+          }
+        },
+        "5": {
+          "lenient_ge3": {
+            "p_at_3": 0.6754,
+            "hr_at_3": 0.929
+          },
+          "strict_ge5": {
+            "p_at_3": 0.2849,
+            "hr_at_3": 0.5567
+          }
+        },
+        "10": {
+          "lenient_ge3": {
+            "p_at_3": 0.8415,
+            "hr_at_3": 0.9752
+          },
+          "strict_ge5": {
+            "p_at_3": 0.4123,
+            "hr_at_3": 0.681
+          }
+        },
+        "20": {
+          "lenient_ge3": {
+            "p_at_3": 0.9265,
+            "hr_at_3": 0.9922
+          },
+          "strict_ge5": {
+            "p_at_3": 0.5446,
+            "hr_at_3": 0.778
+          }
+        }
+      }
+    }
+  }
+}

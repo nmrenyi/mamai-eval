@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2c — reranker comparison, fine-tuning, device parity, value gate (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; --bad:#7a1f1f; --badbg:#f7e7e7; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 900px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; }
+  h3 { font-size: 1.02rem; margin-top: 1.4rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--goodbg); color: var(--good); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .verdict p { margin: .6rem 0; }
+  .verdict p:first-child { margin-top: 0; }
+  .verdict p:last-child { margin-bottom: 0; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem; font-size: .9rem; margin: 1rem 0; }
+  .pendbox { background: var(--warnbg); color: var(--warn); border-radius: 8px; padding:.7rem 1rem; font-size:.9rem; margin:1rem 0;}
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; width:100%; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .ok { color: var(--good); font-weight: 600; } .pending { color: var(--warn); font-weight: 600; }
+  .win { background: var(--goodbg); font-weight:600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c — reranker comparison, in-domain fine-tuning, device parity, and the end-to-end value gate</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+successor to the <a href="r2c-phase0-minilm-spike-20260613.html">Phase-0 spike</a> and
+<a href="r2c-reranker-next-steps-20260613.md">the P0–P4 plan</a></p>
+
+<div class="verdict">
+<p><strong>1. Offline, a fine-tuned tiny cross-encoder wins.</strong> Across every
+deployable reranker on the held-out test split, fine-tuning the 23 M MiniLM-L6 on the
+159 k in-domain pairs (149 s of training) lifts rerank P@3 from 0.627 → 0.756 — past
+zero-shot mxbai-base (0.714, 8× larger) and within 0.04 of the multi-billion-parameter
+Qwen3 references (0.79). Its score also becomes far more thresholdable (chunk AUC 0.731
+→ 0.783, near the 0.80 R1 bar). The deployed int8 <code>.tflite</code> + on-device
+tokenizer reproduce the offline model exactly. <strong>Final deployable choice:
+fine-tuned MiniLM-L6.</strong></p>
+
+<p><strong>2. End-to-end, that win does not carry.</strong> With the actual on-device
+generator (Gemma 4 E4B), reranking does <strong>not</strong> improve kenya SAQ answers,
+and a relevance diagnostic shows why — reranking doesn't improve kenya <em>retrieval</em>
+either (gecko is the best arm; P@3 0.277 vs 0.19–0.26). It's a
+<strong>distribution-transfer failure, not a model ceiling</strong>: the mamaretrieval
+gain (0.51→0.76) doesn't generalize to kenya, and low absolute relevance everywhere
+points to a <strong>corpus-coverage</strong> bottleneck. <strong>Do not ship the
+reranker</strong> for kenya; validate any retriever/embedder change on the deployment
+queries, not mamaretrieval. (An earlier +12% claim used the wrong generator,
+<code>gemma3n-e4b</code>, and is retracted.)</p>
+
+<p><strong>3. The dominant lever is the generator, not retrieval.</strong> A controlled
+9-arm A/B shows Gemma 3n more than doubles kenya recall over Gemma 4 (0.115 → 0.270) and
+is far more complete on healthbench (+8 pp), uniformly across every retrieval arm — a
+much larger effect than any reranker/retriever change measured here (see Generator
+comparison below).</p>
+</div>
+
+<h2>The 2D scoreboard — retriever × reranker, offline → deployment</h2>
+<p>The whole investigation in one grid: every first-stage retriever (Gecko / BM25 /
+Hybrid) crossed with every fine-tuned reranker (none / MiniLM-L6-ft / mxbai-base-ft),
+read left-to-right from the <em>offline</em> audit metric to the <em>deployment</em>
+end-to-end metrics. Offline = mamaretrieval test (491 q, Qwen3-32B grades). kenya
+retrieval = top-3 relevance P@3 on the 312 deployment queries (Qwen3-32B, V2 rubric).
+kenya answer = SAQ key-fact recall (Gemma 4 E4B → gpt-oss-120b). healthbench =
+oss_eval rubric (1209 multi-turn, Gemma 4 E4B → gpt-oss-120b), split into
+completeness (+ criteria met) and penalty (− criteria triggered, ↓ better).</p>
+<table>
+  <tr><th rowspan="2">retriever → reranker</th><th colspan="2" class="num">offline (mamaret.)</th>
+      <th class="num">kenya retr.</th><th class="num">kenya ans.</th><th colspan="3" class="num">healthbench-oss (rubric)</th></tr>
+  <tr><th class="num">P@3</th><th class="num">gateAUC</th><th class="num">P@3 rel</th><th class="num">SAQ recall</th>
+      <th class="num">overall</th><th class="num">compl.(+)</th><th class="num">pen.(−)↓</th></tr>
+  <tr><td>Gecko · none <em>(deployed)</em></td><td class="num">0.485</td><td class="num">0.580</td><td class="num">0.269</td><td class="num">0.125</td><td class="num">−0.004</td><td class="num">0.173</td><td class="num">0.371</td></tr>
+  <tr><td>Gecko · +MiniLM-ft</td><td class="num">0.720</td><td class="num">0.783</td><td class="num">0.244</td><td class="num">0.118</td><td class="num">−0.004</td><td class="num">0.179</td><td class="num">0.378</td></tr>
+  <tr><td>Gecko · +mxbai-ft</td><td class="num">0.794</td><td class="num">0.862</td><td class="num">0.279</td><td class="num">0.125</td><td class="num">+0.002</td><td class="num">0.182</td><td class="num">0.374</td></tr>
+  <tr><td>BM25 · none</td><td class="num">0.405</td><td class="num">0.604</td><td class="num">0.063</td><td class="num">0.109</td><td class="num">+0.000</td><td class="num">0.177</td><td class="num">0.368</td></tr>
+  <tr><td>BM25 · +MiniLM-ft</td><td class="num">0.658</td><td class="num">0.833</td><td class="num">0.064</td><td class="num">0.102</td><td class="num">−0.005</td><td class="num">0.173</td><td class="num">0.370</td></tr>
+  <tr><td>BM25 · +mxbai-ft</td><td class="num">0.722</td><td class="num">0.904</td><td class="num">0.079</td><td class="num">0.117</td><td class="num">+0.001</td><td class="num">0.179</td><td class="num">0.372</td></tr>
+  <tr><td>Hybrid · none <em>(R2a)</em></td><td class="num">0.506</td><td class="num">0.679</td><td class="num">0.201</td><td class="num">0.112</td><td class="num">−0.007</td><td class="num">0.174</td><td class="num">0.376</td></tr>
+  <tr><td>Hybrid · +MiniLM-ft</td><td class="num">0.756</td><td class="num">0.783</td><td class="num">0.194</td><td class="num">0.111</td><td class="num">−0.008</td><td class="num">0.172</td><td class="num">0.378</td></tr>
+  <tr class="win"><td>Hybrid · +mxbai-ft</td><td class="num">0.821</td><td class="num">0.859</td><td class="num">0.255</td><td class="num">0.113</td><td class="num">+0.003</td><td class="num">0.184</td><td class="num">0.372</td></tr>
+</table>
+<p>Read across any row and the thesis is unmistakable: <strong>offline P@3 ranges
+0.41 → 0.82 (a 2× spread driven by reranking), but every deployment column is
+essentially flat</strong> — kenya answer recall ~0.11–0.13 regardless of config,
+healthbench overall ~0. The gains are real and large where they're measured (the
+audit set) and evaporate where they're used. Specifics:</p>
+<ul>
+  <li><strong>The best offline config is the worst place to look for end-to-end
+  proof.</strong> Hybrid+mxbai-ft tops offline (0.821) yet its kenya recall (0.113)
+  is below plain Gecko (0.125).</li>
+  <li><strong>mxbai-ft is the only reranker with any end-to-end pulse</strong> — a
+  consistent but tiny completeness bump on the corpus-covered healthbench (Gecko
+  0.173 → 0.182, Hybrid 0.174 → 0.184; +~1 pp) with flat-to-lower penalty. The
+  deployable MiniLM-ft shows none. Even mxbai-ft's gain is within noise.</li>
+  <li><strong>BM25 is a kenya liability, end-to-end too.</strong> Its standalone kenya
+  relevance is 0.06–0.08 (vs Gecko 0.27); end-to-end its kenya recall is 0.10–0.12 (≤
+  Gecko's 0.125) and healthbench overall ≈ 0 — confirming the lexical pool hurts, which
+  is why Hybrid (which folds in BM25) sits below Gecko on the deployment queries despite
+  winning offline.</li>
+  <li><strong>healthbench overall ≈ 0</strong> because Gemma 4 E4B triggers a penalty
+  (harmful/incorrect) criterion ~37% of the time while meeting only ~17–18% of
+  positive criteria — a <em>generator</em>-quality ceiling the +/− split exposes,
+  orthogonal to retrieval.</li>
+</ul>
+<p class="meta">Cells: offline <code>matrix_offline.json</code>; kenya relevance
+<code>kenya_relevance_matrix.json</code>; kenya recall + healthbench
+<code>results/end_to_end_eval/value_gate_matrix/</code> (Gecko/Hybrid no-rerank +
+Hybrid-rerank kenya recall reuse the identical-pool value_gate_g4 run). All 9 arms
+(incl. BM25) now have full deployment cells.</p>
+
+<h2>P2 — every candidate reranker on the held-out test split</h2>
+<p>491 test queries (frozen by-query split), reranking the hybrid (Gecko+BM25 RRF)
+top-20 pool, all scored at the deployed seq-len (256) so the table is
+apples-to-apples and deployment-relevant. <em>P@3</em> = mean relevant-in-top-3
+(lenient grade≥3); <em>gate AUC</em> = chunk-level AUC for grade≥3, i.e. how
+thresholdable the model's score is (the R1 question). Floor = the RRF order with
+no reranking; oracle = reorder by true grade.</p>
+
+<figure>
+  <img src="fig_reranker_compare.png" alt="reranker comparison">
+  <figcaption>Left: reranking quality (P@3 lenient) vs the floor (0.51) and oracle
+  (0.92). Right: score thresholdability (chunk AUC grade≥3) vs the 0.80 viability
+  bar. Green = the fine-tuned deployable; teal-blue = zero-shot deployables;
+  orange = offline GPU references.</figcaption>
+</figure>
+
+<table>
+  <tr><th>model</th><th class="num">params</th><th class="num">P@3 lenient</th>
+      <th class="num">HR@3</th><th class="num">P@3 strict</th><th class="num">gate AUC (≥3)</th><th>deploy</th></tr>
+  <tr><td>floor — RRF hybrid, no rerank</td><td class="num">—</td><td class="num">0.506</td><td class="num">0.857</td><td class="num">0.202</td><td class="num">—</td><td>R2a baseline</td></tr>
+  <tr><td>MedCPT (medical-domain)</td><td class="num">109M</td><td class="num">0.561</td><td class="num">0.882</td><td class="num">0.236</td><td class="num">0.625</td><td>✓</td></tr>
+  <tr><td>MiniLM-L12</td><td class="num">33M</td><td class="num">0.619</td><td class="num">0.918</td><td class="num">0.271</td><td class="num">0.738</td><td>✓</td></tr>
+  <tr><td>MiniLM-L6 <em>(currently deployed)</em></td><td class="num">23M</td><td class="num">0.627</td><td class="num">0.918</td><td class="num">0.276</td><td class="num">0.731</td><td>✓</td></tr>
+  <tr><td>ELECTRA-base</td><td class="num">110M</td><td class="num">0.638</td><td class="num">0.945</td><td class="num">0.276</td><td class="num">0.669</td><td>✓</td></tr>
+  <tr><td>bge-reranker-base</td><td class="num">278M</td><td class="num">0.643</td><td class="num">0.937</td><td class="num">0.282</td><td class="num">0.726</td><td>✓</td></tr>
+  <tr><td>mxbai-rerank-base <em>(best zero-shot)</em></td><td class="num">184M</td><td class="num">0.714</td><td class="num">0.963</td><td class="num">0.312</td><td class="num">0.748</td><td>✓</td></tr>
+  <tr class="win"><td>MiniLM-L6 — fine-tuned (159k pairs)</td><td class="num">23M</td><td class="num">0.756</td><td class="num">0.959</td><td class="num">0.380</td><td class="num">0.783</td><td>✓ chosen</td></tr>
+  <tr><td>Qwen3-Reranker-4B <em>(offline ref)</em></td><td class="num">4B</td><td class="num">0.787</td><td class="num">0.980</td><td class="num">0.369</td><td class="num">0.827</td><td>✗ too big</td></tr>
+  <tr><td>Qwen3-Reranker-8B <em>(offline ref)</em></td><td class="num">8B</td><td class="num">0.792</td><td class="num">0.984</td><td class="num">0.369</td><td class="num">0.820</td><td>✗ too big</td></tr>
+  <tr><td>oracle — perfect rerank</td><td class="num">—</td><td class="num">0.924</td><td class="num">0.988</td><td class="num">0.536</td><td class="num">—</td><td>ceiling</td></tr>
+</table>
+
+<p>Reading the table:</p>
+<ul>
+  <li><strong>Zero-shot, size barely buys quality.</strong> Among off-the-shelf
+  models the deployed MiniLM-L6 (23 M, 0.627) ties the much larger bge/ELECTRA
+  bases (~0.64); only mxbai-base jumps to 0.714. MiniLM-L12 is no better than L6.</li>
+  <li><strong>Medical-domain pretraining did <em>not</em> transfer.</strong> MedCPT
+  (PubMed query→article) is the <em>worst</em> reranker here (0.561) — this
+  task (nurse questions → guideline prose) is not its training distribution.</li>
+  <li><strong>The strong references are reachable.</strong> The 4–8 B Qwen3
+  rerankers top out at ~0.79 and are the only models clearly above 0.80 on
+  thresholdability — but they cannot run on-device.</li>
+  <li><strong>Fine-tuning a tiny model closes the gap.</strong> See below.</li>
+</ul>
+
+<h2>P2.5 — in-domain fine-tuning (the decisive lever)</h2>
+<p>We fine-tuned the deployed MiniLM-L6 on all 158,993 graded (query, chunk)
+pairs for the <em>train</em>-split queries (regression on grade/6, 2 epochs,
+DEV-selected, held-out TEST evaluated — no test query ever seen), then re-scored
+the same test pool. Training took 149 s on one H200.</p>
+
+<table>
+  <tr><th>model</th><th class="num">params</th><th class="num">P@3 len</th><th class="num">P@3 strict</th>
+      <th class="num">HR@3</th><th class="num">AUC ≥3</th><th class="num">AUC ≥5</th></tr>
+  <tr><td>MiniLM-L6 zero-shot</td><td class="num">23M</td><td class="num">0.627</td><td class="num">0.276</td><td class="num">0.918</td><td class="num">0.731</td><td class="num">0.647</td></tr>
+  <tr class="win"><td>MiniLM-L6 <strong>fine-tuned</strong> (deployable)</td><td class="num">23M</td><td class="num">0.756</td><td class="num">0.380</td><td class="num">0.959</td><td class="num">0.783</td><td class="num">0.757</td></tr>
+  <tr><td>mxbai-base zero-shot</td><td class="num">184M</td><td class="num">0.714</td><td class="num">0.312</td><td class="num">0.963</td><td class="num">0.748</td><td class="num">0.667</td></tr>
+  <tr><td>mxbai-base <strong>fine-tuned</strong> (size upgrade)</td><td class="num">184M</td><td class="num">0.821</td><td class="num">0.420</td><td class="num">0.978</td><td class="num ok">0.859</td><td class="num ok">0.857</td></tr>
+  <tr><td>Qwen3-8B (offline ref)</td><td class="num">8B</td><td class="num">0.792</td><td class="num">0.369</td><td class="num">0.984</td><td class="num">0.820</td><td class="num">—</td></tr>
+</table>
+
+<p>Two findings:</p>
+<ul>
+  <li><strong>Fine-tuning is the lever, not size.</strong> The fine-tuned 23 M
+  MiniLM-L6 beats zero-shot mxbai-base (0.714) at one-eighth the size and, on the
+  strict cut, exceeds the Qwen3-8B reference (0.380 vs 0.369).</li>
+  <li><strong>R1's threshold is revived.</strong> Fine-tuned mxbai-base
+  <em>crosses the 0.80 chunk-AUC bar</em> (0.859 ≥3, 0.857 ≥5) — and tops even the
+  Qwen3-8B reference (0.792). For the first time a reranker's score is
+  thresholdable by R1's own criterion, so the abstention/threshold idea R1 shelved
+  for cosine is worth re-testing on a fine-tuned reranker score.</li>
+</ul>
+
+<div class="note"><strong>Deployment choice = fine-tuned MiniLM-L6.</strong> It is
+the best quality-per-byte (24 MB int8, 13 ms/pair, proven on the device) and
+already beats every zero-shot model. Fine-tuned mxbai-base is the
+<em>quality-ceiling upgrade</em> (≈8× the size/latency, ~2 s for a 20-chunk
+bundle) for if/when the threshold-revival or the extra ~0.065 P@3 justifies the
+footprint — it is not the default. The end-to-end value gate below uses the
+deployable fine-tuned MiniLM-L6.</div>
+
+<h2>P0 — does the deployed reranker reproduce the validated quality?</h2>
+<p>The in-app reranker is the int8 <code>.tflite</code> driven by a hand-ported
+Kotlin WordPiece tokenizer. We ran the <em>actual deployed artifact</em>
+(<code>reranker_minilm_l6_int8.tflite</code>) locally over all 9,820 test pairs,
+fed by both the HuggingFace tokenizer and a faithful Python port of the Kotlin
+tokenizer, at the deployed seq-len 256.</p>
+<table>
+  <tr><th>check</th><th class="num">result</th></tr>
+  <tr><td>Tokenizer exact-match (Kotlin-port vs HF), per pair</td><td class="num ok">9,817 / 9,820 = 99.97%</td></tr>
+  <tr><td>Token-position disagreement rate</td><td class="num ok">3.1e-5 (49 / 1.6 M)</td></tr>
+  <tr><td>Score parity through the tflite (Kotlin vs HF): Pearson r</td><td class="num ok">1.000</td></tr>
+  <tr><td>Top-3 set agreement (Kotlin vs HF)</td><td class="num ok">1.000</td></tr>
+  <tr><td>Deployed quality (tflite-int8 + Kotlin tok): P@3 lenient</td><td class="num ok">0.626</td></tr>
+  <tr><td>Offline torch-fp32 @256 reference: P@3 lenient</td><td class="num">0.627</td></tr>
+</table>
+<p>The deployed int8 model + on-device tokenizer reproduce the offline fp32 model
+to within 0.001 P@3 and are <strong>rank-identical</strong>. The "approximate
+tokenizer parity" caveat from the spike is closed: conversion (fp32→int8→LiteRT)
+and the tokenizer port are both faithful, and the deployed reranker is
+trustworthy. <em>Note:</em> this verifies the <em>zero-shot</em> MiniLM-L6 that is
+currently on-device; deploying the fine-tuned weights requires re-running the
+same (proven, architecture-identical) conversion + this parity check on the new
+checkpoint.</p>
+
+<h2>P1 — the end-to-end value gate (does reranking improve answers?)</h2>
+<p>Everything above is retrieval-quality evidence. The R2 standing rule is to
+validate end-to-end. Three arms isolate the effect, generated with <strong>Gemma 4
+E4B</strong> (the actual on-device generator — <code>app_config.json</code>
+<code>llm_model = gemma-4-E4B-it.litertlm</code>) over the same questions:</p>
+<ul>
+  <li><strong>A. Gecko top-3</strong> — the currently deployed retriever (full-delta reference).</li>
+  <li><strong>B. hybrid top-3</strong> — Gecko+BM25 RRF (R2a); isolates fusion (A→B).</li>
+  <li><strong>C. hybrid top-20 → fine-tuned MiniLM-L6 rerank → top-3</strong> — isolates reranking (B→C).</li>
+</ul>
+<p>Judged by the pinned gpt-oss-120b on key-fact recall / refusal / safety (SAQ:
+kenya + afrimedqa_saq), plus MCQ accuracy (afrimedqa, auto-scored — does the
+−1.8 pp RAG gap close?).</p>
+
+<p><strong>Result (Gemma 4 E4B — the actual on-device generator) — the offline
+retrieval win does not translate end-to-end.</strong> Two fine-tuned rerankers are
+tested as arm C against the same gecko/hybrid baselines (key-fact recall for SAQ,
+accuracy for MCQ; n in header):</p>
+
+<table>
+  <tr><th>arm</th><th class="num">kenya rec (312)</th><th class="num">afrimedqa_saq rec (37)</th>
+      <th class="num">MCQ acc (534)</th><th class="num">refusal (kenya)</th><th class="num">harm (kenya)</th></tr>
+  <tr class="win"><td>A · Gecko top-3 (deployed)</td><td class="num">0.125</td><td class="num">0.157</td><td class="num">0.481</td><td class="num">0.000</td><td class="num">0.186</td></tr>
+  <tr><td>B · hybrid top-3 (RRF, isolates fusion)</td><td class="num">0.112</td><td class="num">0.123</td><td class="num">0.524</td><td class="num">0.000</td><td class="num">0.199</td></tr>
+  <tr><td>C · hybrid+rerank, <strong>MiniLM-L6-ft</strong></td><td class="num">0.111</td><td class="num">0.171</td><td class="num">0.521</td><td class="num">0.006</td><td class="num">0.151</td></tr>
+  <tr><td>C · hybrid+rerank, <strong>mxbai-base-ft</strong></td><td class="num">0.113</td><td class="num">0.208</td><td class="num">0.536</td><td class="num">0.003</td><td class="num">0.199</td></tr>
+</table>
+
+<p>Reading the corrected result honestly:</p>
+<ul>
+  <li><strong>On the reliable sample (kenya SAQ, n=312), reranking does NOT improve
+  key-fact recall.</strong> Gecko — the deployed retriever — is the best arm (0.125);
+  hybrid and both rerankers are slightly lower (~0.111–0.113). The differences are
+  within noise, so the honest read is "no benefit," not "regression."</li>
+  <li><strong>afrimedqa_saq (n=37) hints at benefit</strong> (mxbai-ft 0.208 &gt;
+  minilm-ft 0.171 &gt; gecko 0.157) but the sample is far too small to weight.</li>
+  <li><strong>MCQ: the gain is mostly fusion.</strong> hybrid (0.524) beats gecko
+  (0.481, <strong>+4.3 pp</strong> from fusion); reranking adds little on top —
+  MiniLM-L6-ft 0.521 (≈hybrid), mxbai-base-ft 0.536 (the best MCQ arm, but only
+  +1.2 pp over hybrid).</li>
+  <li><strong>One real positive:</strong> the MiniLM-L6-ft rerank arm has the lowest
+  harm rate (0.151 vs ~0.19); refusal stays near zero throughout.</li>
+</ul>
+
+<div class="note"><strong>Why the offline win didn't carry over.</strong> The strong
+offline reranking gain (P@3 0.51→0.76) was measured on the <em>mamaretrieval</em>
+query set; this value gate runs on <em>kenya/afrimedqa</em> — a different
+distribution. So either reranking improves retrieval less on kenya queries
+specifically, or Gemma 4 E4B already extracts what it needs from gecko's top-3 (a
+model-ceiling effect). The distinguishing diagnostic — measuring the reranker's
+P@3 on kenya directly, and how often the relevant chunk is already in gecko's
+top-3 — is the recommended next step.</div>
+
+<div class="verdict">Verdict: the
+reranker is a large, real win on <em>offline retrieval metrics</em>, but its
+end-to-end answer-quality benefit is <strong>not demonstrated</strong> on the
+reliable kenya SAQ sample with the actual device generator (Gemma 4 E4B) — and the
+relevance diagnostic below shows the cause is that reranking doesn't improve kenya
+<em>retrieval</em> either (a distribution-transfer failure). The current evidence does
+not justify shipping the reranker for kenya. (An earlier draft reported a +12% recall
+lift; it used the wrong generator, gemma3n-e4b, and is retracted.)</div>
+
+<p class="meta">Arms generated with gemma4-e4b (the deployed device generator) over
+the same questions; SAQ judged by the pinned gpt-oss-120b on key-fact recall /
+refusal / safety; MCQ auto-scored. Raw per-arm results under
+<code>results/end_to_end_eval/value_gate_g4/</code>.</p>
+
+<h2>Diagnostic — why didn't reranking help kenya? (no-transfer, not a model ceiling)</h2>
+<p>The value gate left one question: is the reranked kenya context <em>actually more
+relevant</em> (so the bottleneck is Gemma 4 not using it — a model ceiling), or just
+<em>different and not better</em> (the reranker doesn't transfer to kenya)? kenya
+retrievals had no relevance labels, so we judged each arm's top-3 directly with the
+<strong>same rubric and judge (Qwen3-32B)</strong> that produced the 230k grades —
+2,691 (query, chunk) pairs.</p>
+<table>
+  <tr><th>arm (top-3 relevance)</th><th class="num">kenya P@3 (≥3)</th><th class="num">kenya mean grade /6</th><th class="num">afrimedqa_saq P@3 (≥3)</th></tr>
+  <tr class="win"><td>A · gecko (deployed)</td><td class="num">0.277</td><td class="num">1.49</td><td class="num">0.477</td></tr>
+  <tr><td>B · hybrid (RRF)</td><td class="num">0.204</td><td class="num">1.09</td><td class="num">0.423</td></tr>
+  <tr><td>C · rerank MiniLM-L6-ft</td><td class="num">0.192</td><td class="num">1.03</td><td class="num">0.531</td></tr>
+  <tr><td>C · rerank mxbai-base-ft</td><td class="num">0.264</td><td class="num">1.45</td><td class="num">0.649</td></tr>
+  <tr><td><em>(offline mamaretrieval, for contrast)</em></td><td class="num">0.51→0.76</td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+<p>The answer is unambiguous: <strong>on kenya, reranking does NOT improve retrieval
+relevance — gecko (the deployed retriever) is the best arm.</strong> So this is
+<strong>no-transfer, not a model ceiling</strong>: the reranked context genuinely
+isn't more relevant, which is exactly why the answers didn't improve. The reranker's
+strong mamaretrieval gain (P@3 0.51→0.76) simply does not generalize to the kenya
+query distribution. Three things fall out:</p>
+<ul>
+  <li><strong>It's a distribution-transfer failure, not Gemma 4 ignoring good
+  context.</strong> Retrieval is still a legitimate lever in principle — but anything
+  tuned on mamaretrieval must be re-validated on the real deployment queries (kenya /
+  afrimedqa SAQ), not just mamaretrieval. This generalizes the R1/R2 guardrail.</li>
+  <li><strong>Hybrid fusion (BM25) actively hurts kenya retrieval</strong> (0.277 →
+  0.204) — the R2a fusion adds lexical noise for these queries. The rerankers only
+  reorder that degraded pool, so even the better one (mxbai-ft, 0.264) can't beat
+  plain gecko. On kenya, the deployed gecko top-3 is the best of every option here.</li>
+  <li><strong>The deeper signal is corpus coverage.</strong> Absolute kenya relevance
+  is low across <em>all</em> arms (best mean grade 1.49 / 6) vs afrimedqa_saq (2.3–3.2).
+  When even oracle-of-these-retrievers tops out this low, the bottleneck is likely the
+  <em>corpus</em> not containing the answer for many kenya vignettes — a content gap a
+  better retriever/reranker cannot fix. afrimedqa_saq, where reranking <em>does</em>
+  help (mxbai 0.649 &gt; gecko 0.477), confirms the method works when the corpus covers
+  the query.</li>
+</ul>
+
+<h2>Generator comparison — Gemma 4 E4B vs Gemma 3n E4B (the dominant lever)</h2>
+<p>The full controlled head-to-head: <strong>both generators run over the identical
+9-arm <code>arms_matrix</code> contexts</strong> (same retrieved chunks per arm) on
+kenya SAQ (n=312) + healthbench-oss (n=1209), judged the same way (gpt-oss-120b for
+SAQ key-fact recall, gpt-oss-120b rubric for healthbench overall/+/−). Both Q4_0.
+Only the generator differs.</p>
+<table>
+  <tr><th rowspan="2">arm</th><th colspan="2" class="num">kenya recall</th><th colspan="2" class="num">hb overall</th><th colspan="2" class="num">hb compl.(+)</th><th colspan="2" class="num">hb penalty(−)↓</th></tr>
+  <tr><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th></tr>
+  <tr><td>gecko·none</td><td class="num">0.125</td><td class="num">0.263</td><td class="num">−0.004</td><td class="num">0.089</td><td class="num">0.173</td><td class="num">0.260</td><td class="num">0.371</td><td class="num">0.356</td></tr>
+  <tr><td>gecko·MiniLM-ft</td><td class="num">0.118</td><td class="num">0.284</td><td class="num">−0.004</td><td class="num">0.082</td><td class="num">0.179</td><td class="num">0.256</td><td class="num">0.378</td><td class="num">0.361</td></tr>
+  <tr><td>gecko·mxbai-ft</td><td class="num">0.125</td><td class="num">0.265</td><td class="num">0.002</td><td class="num">0.083</td><td class="num">0.182</td><td class="num">0.261</td><td class="num">0.374</td><td class="num">0.372</td></tr>
+  <tr><td>bm25·none</td><td class="num">0.109</td><td class="num">0.271</td><td class="num">0.000</td><td class="num">0.074</td><td class="num">0.177</td><td class="num">0.248</td><td class="num">0.368</td><td class="num">0.361</td></tr>
+  <tr><td>bm25·MiniLM-ft</td><td class="num">0.102</td><td class="num">0.263</td><td class="num">−0.005</td><td class="num">0.083</td><td class="num">0.173</td><td class="num">0.256</td><td class="num">0.370</td><td class="num">0.360</td></tr>
+  <tr><td>bm25·mxbai-ft</td><td class="num">0.117</td><td class="num">0.269</td><td class="num">0.001</td><td class="num">0.081</td><td class="num">0.179</td><td class="num">0.255</td><td class="num">0.372</td><td class="num">0.362</td></tr>
+  <tr><td>hybrid·none</td><td class="num">0.112</td><td class="num">0.265</td><td class="num">−0.007</td><td class="num">0.091</td><td class="num">0.174</td><td class="num">0.264</td><td class="num">0.376</td><td class="num">0.363</td></tr>
+  <tr><td>hybrid·MiniLM-ft</td><td class="num">0.111</td><td class="num">0.280</td><td class="num">−0.008</td><td class="num">0.076</td><td class="num">0.172</td><td class="num">0.253</td><td class="num">0.378</td><td class="num">0.368</td></tr>
+  <tr><td>hybrid·mxbai-ft</td><td class="num">0.113</td><td class="num">0.267</td><td class="num">0.003</td><td class="num">0.080</td><td class="num">0.184</td><td class="num">0.255</td><td class="num">0.359</td><td class="num">0.359</td></tr>
+  <tr class="win"><td><strong>mean (9 arms)</strong></td><td class="num">0.115</td><td class="num"><strong>0.270</strong></td><td class="num">−0.002</td><td class="num"><strong>0.082</strong></td><td class="num">0.177</td><td class="num"><strong>0.257</strong></td><td class="num">0.373</td><td class="num">0.363</td></tr>
+</table>
+<p><strong>Gemma 3n beats Gemma 4 on every deployment metric — and the generator,
+not the retriever, is the lever.</strong></p>
+<ul>
+  <li><strong>kenya recall: 0.115 → 0.270 (≈2.3×)</strong>, uniformly across all 9
+  arms (incl. BM25). The retriever/reranker barely moves either generator (both flat
+  across the column); swapping the generator more than doubles answer completeness.</li>
+  <li><strong>healthbench: overall −0.002 → 0.082, completeness 0.177 → 0.257
+  (+8 pp)</strong> — 3n covers far more rubric criteria.</li>
+  <li><strong>And here it's <em>not</em> a safety trade:</strong> healthbench penalty
+  is slightly <em>lower</em> for 3n (0.363 vs 0.373) — on this rubric 3n is more
+  complete <em>and</em> at least as safe.</li>
+</ul>
+<div class="note"><strong>Safety nuance (honest):</strong> the healthbench rubric
+penalty favours 3n, but the earlier kenya-SAQ <em>harm-rate</em> metric (a different
+construct) had 3n higher (≈0.32 vs 0.19). So "is 3n safer?" is metric-dependent: on
+the structured healthbench rubric, yes; on the SAQ harm flag, no. What's
+unambiguous is that <strong>3n is substantially more complete on both sets</strong>,
+and that the device's switch from 3n → 4 traded away a large amount of answer
+completeness. This is the highest-leverage finding for whoever owns the generator
+choice — far larger than any retriever/reranker effect measured here.</div>
+
+<h2>Generator × retriever — the unified end-to-end matrix</h2>
+<p>The pivot the previous section invites: hold the reranker at <code>none</code> and put
+the <strong>retriever</strong> on the rows (incl. a no-RAG baseline and the
+<strong>EmbeddingGemma</strong> embedder from the R2c embedder bake-off) against the
+<strong>generator</strong> on the columns. Same datasets — kenya SAQ (n=312, key-fact
+recall) and healthbench-oss (n=1209, rubric overall / completeness(+) / penalty(−)) —
+same gpt-oss-120b judges. <strong>Read across a row</strong> = the generator effect;
+<strong>read down a column</strong> = the retriever effect.</p>
+<table>
+  <tr><th rowspan="2">retriever (rerank=none)</th><th colspan="2" class="num">kenya recall</th><th colspan="2" class="num">hb overall</th><th colspan="2" class="num">hb compl.(+)</th><th colspan="2" class="num">hb penalty(−)↓</th></tr>
+  <tr><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th></tr>
+  <tr class="win"><td><strong>no-RAG</strong></td><td class="num"><strong>0.178</strong></td><td class="num">0.284</td><td class="num"><strong>0.011</strong></td><td class="num"><strong>0.111</strong></td><td class="num">0.188</td><td class="num">0.282</td><td class="num">0.372</td><td class="num">0.363</td></tr>
+  <tr><td>Gecko (current)</td><td class="num">0.125</td><td class="num">0.263</td><td class="num">−0.004</td><td class="num">0.089</td><td class="num">0.173</td><td class="num">0.260</td><td class="num">0.371</td><td class="num">0.356</td></tr>
+  <tr><td>EmbeddingGemma</td><td class="num">0.126</td><td class="num"><strong>0.297</strong></td><td class="num">0.012</td><td class="num">0.084</td><td class="num">0.189</td><td class="num">0.264</td><td class="num">0.368</td><td class="num">0.372</td></tr>
+  <tr><td>Hybrid (gecko+BM25)</td><td class="num">0.112</td><td class="num">0.265</td><td class="num">−0.007</td><td class="num">0.091</td><td class="num">0.174</td><td class="num">0.264</td><td class="num">0.376</td><td class="num">0.363</td></tr>
+  <tr><td>BM25</td><td class="num">0.109</td><td class="num">0.271</td><td class="num">0.000</td><td class="num">0.074</td><td class="num">0.177</td><td class="num">0.248</td><td class="num">0.368</td><td class="num">0.361</td></tr>
+</table>
+<p class="meta">G4/3n = Gemma 4 E4B / Gemma 3n E4B (Q4_0). no-RAG &amp; EmbeddingGemma×3n + no-RAG×G4-hb
+generated 2026-06-18 (<code>value_gate_eg_3n</code>, <code>norag_gemma3n</code>,
+<code>norag_gemma4</code>); Gecko/Hybrid/BM25 from the <code>arms_matrix</code> run above;
+EmbeddingGemma×G4 from the embedder bake-off (<code>value_gate_eg</code>/<code>_hb</code>). Bold = best in column.</p>
+<p><strong>Same verdict, now in one frame: the generator is the binding constraint, and
+RAG is net-neutral-to-negative — with a single narrow exception.</strong></p>
+<ul>
+  <li><strong>Across every row, G4 → 3n is the big move</strong> (kenya ≈ +0.15 abs, ~2×;
+  hb overall ≈ +0.10). The spread <em>down</em> either column — across all five retrievers
+  — is a fraction of that. Whoever owns the generator choice owns the result.</li>
+  <li><strong>kenya: RAG is net-negative for both generators, except EmbeddingGemma×3n.</strong>
+  For G4, no-RAG (0.178) beats <em>every</em> retriever (0.11–0.13) — retrieval actively
+  dilutes the answer. For 3n, no-RAG (0.284) still beats Gecko/Hybrid/BM25 (0.26–0.27);
+  <strong>EmbeddingGemma (0.297) is the only retriever that clears the no-RAG bar</strong>,
+  and only on the stronger generator.</li>
+  <li><strong>healthbench: no-RAG is best-or-tied for both generators</strong> (G4 0.011 ≥ all
+  RAG; 3n 0.111 ≥ all RAG). No retriever converts here; EmbeddingGemma is merely the least-bad
+  on G4 (0.012, ≈ no-RAG) and middle-of-pack on 3n.</li>
+</ul>
+<div class="note"><strong>So what's the retriever takeaway?</strong> Among retrievers,
+<strong>EmbeddingGemma is the best of the set</strong> — the only one that ever beats the
+no-RAG baseline end-to-end (kenya×3n) — which is consistent with adopting it on retrieval
+grounds (the embedder bake-off shows +12–13 pp P@3). But the end-to-end upside is small,
+single-celled, and generator-dependent: it does <em>not</em> rescue Gemma 4, and it does not
+move healthbench. The matrix makes the priority unambiguous — <strong>G-RAG grounding on the
+generator (and/or the 3n → 4 completeness regression) dominates any retriever change.</strong></div>
+
+<h3>Does a reranker help on top of EmbeddingGemma (the best base) × Gemma 3n?</h3>
+<p>The one combination never tested elsewhere: re-score EmbeddingGemma's depth-20 candidates with a
+fine-tuned cross-encoder, then take top-3 — on the strongest generator (3n). If reranking helps anywhere,
+this is the most favourable cell. <span class="meta">(Generated 2026-06-18: EmbeddingGemma depth-20 retrieval →
+<code>rerank_retrievals</code> → top-3 arm → gemma3n; judged same as the matrix.)</span></p>
+<table>
+  <tr><th>EmbeddingGemma × Gemma 3n, reranker =</th><th class="num">kenya recall</th><th class="num">hb overall</th><th class="num">hb compl.(+)</th><th class="num">hb penalty(−)↓</th></tr>
+  <tr class="win"><td><strong>none</strong> (EmbeddingGemma top-3)</td><td class="num"><strong>0.297</strong></td><td class="num">0.084</td><td class="num">0.264</td><td class="num">0.372</td></tr>
+  <tr><td>+ MiniLM-L6-ft (deployable)</td><td class="num">0.297</td><td class="num">0.085</td><td class="num">0.256</td><td class="num">0.363</td></tr>
+  <tr><td>+ mxbai-base-ft</td><td class="num">0.289</td><td class="num">0.094</td><td class="num">0.270</td><td class="num">0.364</td></tr>
+</table>
+<p><strong>Reranking adds nothing, even here.</strong> On kenya, MiniLM-ft is identical to no-rerank (0.297)
+and mxbai-ft is slightly worse (0.289). On healthbench, mxbai-ft nudges overall +0.010 (0.094 vs 0.084) but
+both are ~0 and the move is within the ±5 pp (1/√n) noise floor. So the reranker's offline win (P@3
+0.51→0.76 on mamaretrieval) fails to convert even on the best deployable base and the best generator — the
+same distribution-transfer failure seen on Gecko/BM25/Hybrid. <strong>Confirms: do not ship the reranker;
+EmbeddingGemma top-3 (no rerank) is the retriever spec.</strong></p>
+
+<h2>Artifacts</h2>
+<ul>
+  <li>Per-model scores: <code>results/retrieval_eval/r2c-rerank/candidates/*.json</code></li>
+  <li>Fine-tune: <code>results/retrieval_eval/r2c-rerank/finetune/minilm-l6-finetuned.json</code></li>
+  <li>Device parity: <code>results/retrieval_eval/r2c-rerank/candidates/parity.json</code></li>
+  <li>Value gate (Gemma 4 E4B): <code>results/end_to_end_eval/value_gate_g4/{gecko,hybrid,hybrid_rerank,hybrid_rerank_mxbai}/run/*.json</code></li>
+  <li>Kenya relevance diagnostic: <code>reports/r2c-rerank/kenya_relevance.json</code> · scripts <code>retrieval_eval/judge_kenya_relevance.py</code>, <code>_kenya_rubric.py</code></li>
+  <li>Scripts: <code>retrieval_eval/{score_candidates,finetune_reranker,check_parity,precompute_rerank_arms,value_gate_summary}.py</code></li>
+  <li>Cluster jobs: <code>cluster/run_cluster_{rerank_compare,finetune,rerank_arms,value_gate,value_gate_judge}.sh</code></li>
+</ul>
+
+</body>
+</html>

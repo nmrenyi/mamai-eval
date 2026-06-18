@@ -1,0 +1,28 @@
+{
+  "created_at_utc": "2026-06-13T19:49:23Z",
+  "key": "bge-base",
+  "id": "BAAI/bge-reranker-base",
+  "type": "ce",
+  "size_m": 278,
+  "note": "mid general CE (XLM-R)",
+  "max_len": 256,
+  "n_labels": 1,
+  "score_seconds": 25.6,
+  "device": "cuda",
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.6429,
+      "hr_at_3": 0.9369
+    },
+    "strict_ge5": {
+      "p_at_3": 0.2817,
+      "hr_at_3": 0.5906
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.7257,
+    "chunk_auc_grade5": 0.65,
+    "within_bundle_concordance": 0.7253,
+    "bundle_any_relevant_auc_top1": 0.6863
+  }
+}

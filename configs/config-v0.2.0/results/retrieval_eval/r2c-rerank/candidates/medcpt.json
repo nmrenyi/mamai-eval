@@ -1,0 +1,28 @@
+{
+  "created_at_utc": "2026-06-13T19:50:05Z",
+  "key": "medcpt",
+  "id": "ncbi/MedCPT-Cross-Encoder",
+  "type": "ce",
+  "size_m": 109,
+  "note": "medical-domain CE",
+  "max_len": 256,
+  "n_labels": 1,
+  "score_seconds": 20.6,
+  "device": "cuda",
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.5614,
+      "hr_at_3": 0.8819
+    },
+    "strict_ge5": {
+      "p_at_3": 0.2363,
+      "hr_at_3": 0.5234
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.6251,
+    "chunk_auc_grade5": 0.5792,
+    "within_bundle_concordance": 0.644,
+    "bundle_any_relevant_auc_top1": 0.6529
+  }
+}

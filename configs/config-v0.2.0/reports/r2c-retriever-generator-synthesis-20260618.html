@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2c Synthesis — Retriever & Generator Improvement Recommendations (2026-06-18)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.4rem; }
+  p,li { font-size:.93rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .pill { display:inline-block; font-size:.72rem; font-weight:700; padding:.05rem .45rem; border-radius:999px; }
+  .yes { background:var(--good-bg); color:var(--good-edge); border:1px solid var(--good-edge); }
+  .no { background:var(--bad-bg); color:var(--bad-edge); border:1px solid var(--bad-edge); }
+  .mid { background:var(--warn-bg); color:var(--warn-edge); border:1px solid var(--warn-edge); }
+  .win { background:var(--good-bg); font-weight:600; }
+  figure { margin:1.2rem 0; } figcaption { font-size:.8rem; color:var(--muted); margin-top:.3rem; }
+  .src { color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c Synthesis — Where to Invest in Retrieval &amp; Generation</h1>
+<p class="meta">2026-06-18 · config-v0.2.0 · MAM-AI on-device medical assistant (Kenyan nurses/midwives).
+Synthesises two studies: the <strong>reranker</strong> line
+(<code>r2c-rerank/r2c-reranker-results-20260613.html</code>) and the
+<strong>embedder bake-off</strong> (<code>r2c-embedder/r2c-embedder-report-20260616.html</code>), plus the
+unified generator×retriever matrix run 2026-06-18.</p>
+
+<div class="callout good">
+<strong>Bottom line.</strong> Two independent retrieval upgrades — a fine-tuned reranker and a
+better embedder (EmbeddingGemma) — both <strong>won decisively offline and failed to move answers
+online</strong>. A controlled generator A/B then showed the missing lever: swapping
+<strong>Gemma 4 → Gemma 3n roughly doubles answer quality</strong>, uniformly, on every retriever.
+<strong>The generator is the binding constraint; retrieval is not.</strong> Recommended order of
+investment: <strong>(1) generator (3n + RAG-grounding) ≫ (2) adopt EmbeddingGemma (cheap, low-risk,
+but ~0 online gain today) ≫ (3) corpus.</strong>
+</div>
+
+<h2>1. What was tested</h2>
+<table>
+<tr><th>Study</th><th>Lever</th><th>Offline result</th><th>End-to-end result</th></tr>
+<tr>
+  <td><strong>Reranker</strong> (2026-06-13)</td>
+  <td>Cross-encoder re-scoring of top-k; in-domain fine-tune</td>
+  <td><span class="pill yes">WIN</span> MiniLM-L6 P@3 0.627→0.756 (ft); mxbai-ft 0.821</td>
+  <td><span class="pill no">NO CARRY</span> kenya SAQ flat/worse</td>
+</tr>
+<tr>
+  <td><strong>Embedder</strong> (2026-06-16)</td>
+  <td>Replace Gecko with EmbeddingGemma-300M (deployable)</td>
+  <td><span class="pill yes">WIN</span> kenya P@3 0.270→0.396 (+12.6 pp); HR@20 0.609→0.734</td>
+  <td><span class="pill no">NO CONVERSION</span> kenya ≈ Gecko; healthbench marginal</td>
+</tr>
+<tr>
+  <td><strong>Generator</strong> (matrix, 06-15/18)</td>
+  <td>Gemma 4 E4B vs Gemma 3n E4B, identical contexts</td>
+  <td>—</td>
+  <td><span class="pill yes">LARGE</span> kenya recall 0.115→0.270 (~2.3×); hb +8 pp completeness</td>
+</tr>
+</table>
+<p>Datasets throughout: <strong>kenya</strong> SAQ (n=312, physician key-fact recall) and
+<strong>healthbench-oss</strong> (n=1209, rubric: overall / completeness(+) / penalty(−)). Judges: the
+pinned v0.2 ensemble (Qwen3-32B for retrieval relevance; gpt-oss-120b for answer recall &amp; rubric).</p>
+
+<h2>2. The core finding — offline gains don't reach the user</h2>
+<p>Both retrieval levers cleared their offline bars by a wide margin, yet neither moved end-to-end answer
+quality. The reranker line ruled out "the corpus is the problem" too: a coverage audit found the corpus
+holds a relevant chunk for <strong>~89% (strict) / ~96% (lenient)</strong> of kenya queries — only ~10.6%
+truly absent. So the chain <em>retrieval → corpus → answer</em> is intact up to the last step, and breaks
+there.</p>
+
+<figure>
+<svg viewBox="0 0 820 250" width="100%" role="img" aria-label="Offline win vs online movement">
+  <g font-size="11" fill="#1a1a2e" font-weight="700">
+    <text x="10" y="20">The disconnect: big offline wins, ~0 online movement (kenya)</text>
+  </g>
+  <!-- axis -->
+  <line x1="250" y1="40" x2="250" y2="210" stroke="#5a5a72"/>
+  <g font-size="10" fill="#5a5a72" text-anchor="middle">
+    <text x="250" y="228">0</text><text x="392" y="228">+0.05</text><text x="534" y="228">+0.10</text>
+    <text x="676" y="228">+0.15</text><text x="800" y="228">Δ</text>
+  </g>
+  <!-- bars: scale 0.05 -> 142px ; x = 250 + val/0.05*142 ; negative draws left -->
+  <g font-size="11">
+    <!-- reranker offline (P@3 +0.129) -->
+    <rect x="250" y="48" width="366" height="18" fill="#86efac" stroke="#15803d"/>
+    <text x="244" y="62" text-anchor="end">reranker P@3 (offline)</text><text x="622" y="62" font-size="10" fill="#15803d">+0.129</text>
+    <!-- embedder offline (P@3 +0.126) -->
+    <rect x="250" y="72" width="358" height="18" fill="#86efac" stroke="#15803d"/>
+    <text x="244" y="86" text-anchor="end">EmbeddingGemma P@3 (offline)</text><text x="614" y="86" font-size="10" fill="#15803d">+0.126</text>
+    <!-- divider -->
+    <line x1="60" y1="100" x2="800" y2="100" stroke="#d8d8e4" stroke-dasharray="3 3"/>
+    <!-- online: reranker ~ -0.01 -->
+    <rect x="222" y="108" width="28" height="18" fill="#fca5a5" stroke="#b91c1c"/>
+    <text x="244" y="122" text-anchor="end">reranker recall (online, G4)</text><text x="216" y="122" font-size="10" fill="#b91c1c" text-anchor="end">−0.01</text>
+    <!-- online: embedder ~ 0.000 G4 -->
+    <rect x="250" y="132" width="3" height="18" fill="#cbd5e1" stroke="#64748b"/>
+    <text x="244" y="146" text-anchor="end">EmbeddingGemma recall (online, G4)</text><text x="258" y="146" font-size="10" fill="#334155">+0.000</text>
+    <!-- online: embedder +0.034 on 3n vs gecko -->
+    <rect x="250" y="156" width="97" height="18" fill="#bbf7d0" stroke="#15803d"/>
+    <text x="244" y="170" text-anchor="end">EmbeddingGemma vs Gecko (online, 3n)</text><text x="353" y="170" font-size="10" fill="#15803d">+0.034</text>
+    <!-- generator +0.155 -->
+    <rect x="250" y="180" width="440" height="18" fill="#15803d" stroke="#15803d"/>
+    <text x="244" y="194" text-anchor="end" font-weight="700">generator G4→3n (online)</text><text x="696" y="194" font-size="10" fill="#15803d" font-weight="700">+0.155</text>
+  </g>
+</svg>
+<figcaption>Absolute Δ in kenya score. Top band = offline retrieval P@3 gains (large for both levers).
+Bottom band = end-to-end key-fact-recall movement: the reranker and the embedder produce ~0 (or
+negative) on Gemma 4; the generator swap produces the only large online effect. The one positive
+retriever cell (+0.034, EmbeddingGemma vs Gecko) exists only on the stronger 3n generator.</figcaption>
+</figure>
+
+<div class="callout warn">If better retrieval over a sufficient corpus still doesn't lift answers — and on
+kenya, injected context actively <em>hurts</em> Gemma 4 (no-RAG 0.178 &gt; every RAG arm) — the
+bottleneck is downstream. <strong>The generator can't convert retrieved context into better answers.</strong></div>
+
+<h2>3. The decisive picture — generator × retriever</h2>
+<p>One frame settles it. Rows = retriever (reranker held at <code>none</code>, since it was shown not to
+matter); columns = generator. <strong>Read across a row</strong> = generator effect (large, everywhere);
+<strong>read down a column</strong> = retriever effect (small).</p>
+<table>
+  <tr><th rowspan="2">retriever</th><th colspan="2" class="num">kenya recall</th><th colspan="2" class="num">hb overall</th><th colspan="2" class="num">hb compl.(+)</th><th colspan="2" class="num">hb penalty(−)↓</th></tr>
+  <tr><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th><th class="num">G4</th><th class="num">3n</th></tr>
+  <tr class="win"><td><strong>no-RAG</strong></td><td class="num"><strong>0.178</strong></td><td class="num">0.284</td><td class="num"><strong>0.011</strong></td><td class="num"><strong>0.111</strong></td><td class="num">0.188</td><td class="num">0.282</td><td class="num">0.372</td><td class="num">0.363</td></tr>
+  <tr><td>Gecko (current)</td><td class="num">0.125</td><td class="num">0.263</td><td class="num">−0.004</td><td class="num">0.089</td><td class="num">0.173</td><td class="num">0.260</td><td class="num">0.371</td><td class="num">0.356</td></tr>
+  <tr><td>EmbeddingGemma</td><td class="num">0.126</td><td class="num"><strong>0.297</strong></td><td class="num">0.012</td><td class="num">0.084</td><td class="num">0.189</td><td class="num">0.264</td><td class="num">0.368</td><td class="num">0.372</td></tr>
+  <tr><td>Hybrid</td><td class="num">0.112</td><td class="num">0.265</td><td class="num">−0.007</td><td class="num">0.091</td><td class="num">0.174</td><td class="num">0.264</td><td class="num">0.376</td><td class="num">0.363</td></tr>
+  <tr><td>BM25</td><td class="num">0.109</td><td class="num">0.271</td><td class="num">0.000</td><td class="num">0.074</td><td class="num">0.177</td><td class="num">0.248</td><td class="num">0.368</td><td class="num">0.361</td></tr>
+</table>
+<p class="src">G4/3n = Gemma 4 E4B / Gemma 3n E4B (Q4_0). Bold = best in column. Full provenance in the
+reranker report's "Generator × retriever" section.</p>
+<ul>
+<li><strong>Generator dominates.</strong> G4→3n is the big move on every row (~2× kenya, ~+0.10 hb); the
+spread across all five retrievers within a column is a fraction of that.</li>
+<li><strong>RAG is net-negative-to-null — with one exception.</strong> For G4, no-RAG beats every
+retriever. For 3n, no-RAG (0.284) still beats Gecko/Hybrid/BM25; <strong>EmbeddingGemma×3n (0.297) is the
+only cell where a retriever clears the no-RAG bar</strong>.</li>
+<li><strong>Healthbench: nothing converts</strong> — no-RAG is best-or-tied for both generators.</li>
+</ul>
+
+<h3>Could a confidence gate sidestep the problem? No — abstention isn't thresholdable either</h3>
+<p>The obvious mitigation for "RAG sometimes hurts" is an abstention gate: detect a weak retrieval and fall
+back to no-RAG. We tested this head-on for EmbeddingGemma × 3n (<code>r2c-threshold/r2c-eg-thresholdability-20260618.html</code>).
+The headroom is real — a <em>perfect</em> per-query RAG/no-RAG gate would lift kenya recall 0.297 → 0.354 — but
+no available score realizes it: EmbeddingGemma cosine predicts "does RAG help this query?" at
+<strong>AUC 0.50</strong> (chance, Pearson −0.04), and no gated policy beats always-RAG. A fine-tuned reranker
+score is <em>worse</em>, not better (chunk-relevance AUC 0.57–0.59 vs cosine's 0.72 — its 0.86 mamaretrieval
+separability doesn't transfer to kenya). All three R1 threshold-rule families (absolute cutoff, relative
+margin, gated abstention) stay below R1's 0.80 bar. <strong>So a confidence/abstention signal — like the
+answer-quality fix itself — has to come from the generator side, not retrieval.</strong></p>
+
+<h2>4. Recommendations — ranked by leverage</h2>
+<table>
+<tr><th>#</th><th>Action</th><th>Expected end-to-end gain</th><th>Effort / risk</th></tr>
+<tr>
+  <td><strong>1</strong></td>
+  <td><strong>Generator: move back to Gemma 3n E4B</strong> (or otherwise recover its completeness)</td>
+  <td><span class="pill yes">LARGE</span> kenya ~2×; hb +8 pp completeness</td>
+  <td>Med / <strong>gated</strong> — resolve two open questions first (below)</td>
+</tr>
+<tr>
+  <td><strong>2</strong></td>
+  <td><strong>G-RAG: ground the generator in retrieved context</strong> (prompt/format + RAG-aware fine-tune) so context helps instead of hurting</td>
+  <td><span class="pill mid">HIGH potential</span> — the only path that turns retrieval into answers</td>
+  <td>High / research workstream</td>
+</tr>
+<tr>
+  <td><strong>3</strong></td>
+  <td><strong>Retriever: adopt EmbeddingGemma-300M</strong> (replace Gecko)</td>
+  <td><span class="pill mid">~0 today</span> best deployable retriever; only retriever that ever beats no-RAG (3n/kenya)</td>
+  <td>Low / low — deployable, faster embed; do it, but don't expect answer movement until #1–2 land</td>
+</tr>
+<tr>
+  <td><strong>4</strong></td>
+  <td><strong>Do NOT ship the reranker; do NOT fine-tune the embedder (R2d)</strong></td>
+  <td><span class="pill no">none</span> reranker doesn't transfer to kenya (confirmed on EG×3n: 0.297→0.297/0.289); retrieval already strong</td>
+  <td>— / avoids wasted effort</td>
+</tr>
+<tr>
+  <td><strong>5</strong></td>
+  <td><strong>Corpus expansion</strong> (the ~10% strictly-absent kenya queries)</td>
+  <td><span class="pill mid">minor</span> bounded by ~10.6% absent</td>
+  <td>Med / below G-RAG in priority</td>
+</tr>
+</table>
+
+<div class="callout warn">
+<strong>Two gates before reversing the device's generator choice.</strong>
+(a) <strong>Safety is metric-dependent:</strong> 3n is more complete and the healthbench rubric penalty
+slightly favours it (0.363 vs 0.373), but the earlier kenya-SAQ <em>harm-flag</em> metric had 3n
+<em>worse</em> (~0.32 vs ~0.19). Resolve "is 3n safe enough?" on the harm axis first.
+(b) <strong>Deployability / why 4 was chosen:</strong> 3n was the predecessor on-device, so it should run —
+but confirm what the 3n→4 switch was bought for (size? latency? vendor default?) so the reversal is
+deliberate, not a regression trade.
+</div>
+
+<h2>5. Caveats</h2>
+<ul>
+<li>End-to-end sets are small/medium (kenya 312, hb 1209); the pre-registered noise floor is ~5 pp
+(1/√n). The marginal retriever cells sit within it; the generator effect is far above it.</li>
+<li>Cluster generators are GGUF Q4_0 proxies for the on-device <code>.litertlm</code>; the
+<em>direction</em> (3n ≫ 4) is robust, exact magnitudes will shift on-device.</li>
+<li>Deployability for EmbeddingGemma was measured on a flagship (SM8750) as a proxy; confirm latency on a
+true low-/mid Zanzibar device before release (CPU+int8 only — GPU delegate is unusable).</li>
+<li>The single positive retriever cell (EmbeddingGemma×3n kenya) is one cell; treat it as "doesn't hurt and
+may help once the generator improves," not as a standalone win.</li>
+</ul>
+
+<h2>Sources</h2>
+<p class="src">
+Reranker study: <code>r2c-rerank/r2c-reranker-results-20260613.html</code>
+(offline screen, in-domain fine-tune, device parity, value gate, 9-arm generator A/B, generator×retriever matrix).<br>
+Embedder bake-off: <code>r2c-embedder/r2c-embedder-report-20260616.html</code>
+(P0 deployability, P2 offline retrieval, P1 corpus coverage, P3 value gate).<br>
+Thresholdability: <code>r2c-threshold/r2c-eg-thresholdability-20260618.html</code>
+(can EmbeddingGemma cosine / reranker score drive an abstention gate? — no; reproducible via
+<code>retrieval_eval/analyze_thresholdability.py</code>).<br>
+Matrix raw outputs (2026-06-18): <code>eval_output/value_gate_eg_3n*</code>, <code>norag_gemma3n</code>,
+<code>norag_gemma4</code> (cluster scratch).
+</p>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R2a — Hybrid Gecko + BM25 (RRF): offline simulation (config-v0.2.0)</title>
+<style>
+  :root { --muted: #667; --rule: #ddd; --good: #14532d; --goodbg: #e7f3ea;
+          --warn: #92510a; --warnbg: #fdf2e0; --notebg: #f6f7f9; }
+  body { font: 15px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #1a1d23; max-width: 880px; margin: 2rem auto; padding: 0 1.2rem; }
+  h1 { font-size: 1.45rem; line-height: 1.3; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule);
+       padding-bottom: .3rem; }
+  .meta { color: var(--muted); font-size: .85rem; }
+  .verdict { background: var(--warnbg); color: var(--warn); border-radius: 8px;
+             padding: .9rem 1.1rem; margin: 1.2rem 0; font-weight: 600; }
+  .note { background: var(--notebg); border-radius: 8px; padding: .7rem 1rem;
+          font-size: .9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; margin: .8rem 0; font-size: .88rem; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .6rem; text-align: left; }
+  th { background: #f3f4f6; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { color: var(--good); font-weight: 600; }
+  .flat { color: var(--warn); font-weight: 600; }
+  img { max-width: 100%; border: 1px solid var(--rule); border-radius: 6px; margin: .6rem 0; }
+  code { background: var(--notebg); padding: .08rem .3rem; border-radius: 4px; font-size: .85em; }
+  pre { background: var(--notebg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; font-size: .82rem; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>R2a — Hybrid Gecko + BM25 (RRF): offline simulation</h1>
+<p class="meta">2026-06-13 · config-v0.2.0 · branch <code>feat/r2-retriever-upgrade-20260613</code> ·
+step R2a of <a href="../../../../docs/r2-retriever-upgrade-plan.md">the R2 plan</a></p>
+
+<div class="verdict">
+Fusing BM25 into Gecko via reciprocal-rank fusion is a real but modest win, and
+essentially free to deploy (SQLite FTS5). Best config (alpha≈0.5–0.75) lifts
+bundle precision P@3 from 0.477 → 0.516 and hit rate HR@3 from 0.814 → 0.860 —
+but closes only ~10% of the Gecko→voyage gap and does <strong>not</strong> move
+the strict-content miss (P@3≥5: 0.193 → 0.208). Worth adopting as a cheap
+improvement; not sufficient on its own — R2c (better embedder) / C1 (corpus)
+remain necessary for the structural gap. <strong>On thresholdability</strong>
+(the R1 question, re-run here): the hybrid does <strong>not</strong> revive it —
+all three Stage-1 gate statistics stay below the 0.80 viability bar, as does the
+voyage ceiling. BM25's raw score is the best threshold-like signal measured
+(bundle-AUC 0.684), but only marginally; R1's "no usable threshold" verdict holds.
+</div>
+
+<h2>Method</h2>
+<p>
+Weighted reciprocal-rank fusion over Gecko's and BM25's published audit top-20
+rankings: <code>score(c) = α·[c∈gecko]/(k+rank_gecko) + (1−α)·[c∈bm25]/(k+rank_bm25)</code>,
+fused top-3 scored against the mamaretrieval 0–6 judgments (n=3,185 queries).
+α=1 is Gecko-only, α=0 BM25-only. Pure offline arithmetic on
+<code>rankings.parquet</code> — both retrievers already ran in the audit and 100%
+of each one's top-20 is judged, so no embedding, GPU, or new judging. Baselines
+reproduce the known audit numbers exactly (Gecko P@3 0.477, BM25 0.417, voyage
+0.867), confirming the join.
+</p>
+<p class="note">
+<strong>Note on <em>k</em>:</strong> the RRF constant <em>k</em> is <em>not</em>
+the number of retrieved documents. It is a damping term added to the rank in the
+denominator that controls how steeply a chunk's weight falls off with worse rank
+(small <em>k</em> → the top hit dominates; large <em>k</em> → ranks count nearly
+equally). The retrieval depths are separate and fixed: each retriever's top-20 in,
+fused top-3 out. <em>k</em>=60 is the field's conventional default, and the result
+is flat in it (P@3 moves ±0.01 across <em>k</em>=10–100).
+</p>
+
+<h2>Results</h2>
+<figure>
+  <img src="fig_hybrid_sweep.png" alt="Hybrid sweep over alpha and k, four metric panels">
+  <figcaption>Four metrics vs α, one line per RRF constant k; dashed lines are the
+  single-retriever baselines. k barely matters (0.504→0.516 across k=10–100); α is
+  the real knob, optimal around 0.5–0.75.</figcaption>
+</figure>
+<table>
+  <tr><th>Config (k=60)</th><th class="num">P@3 ≥3</th><th class="num">HR@3 ≥3</th>
+      <th class="num">P@3 ≥5</th><th class="num">HR@3 ≥5</th></tr>
+  <tr><td>BM25 only (α=0)</td><td class="num">0.417</td><td class="num">0.754</td>
+      <td class="num">0.163</td><td class="num">0.371</td></tr>
+  <tr><td>Gecko only (α=1)</td><td class="num">0.477</td><td class="num">0.814</td>
+      <td class="num">0.193</td><td class="num">0.439</td></tr>
+  <tr><td>Hybrid α=0.5</td><td class="num win">0.512</td><td class="num win">0.860</td>
+      <td class="num">0.206</td><td class="num">0.459</td></tr>
+  <tr><td>Hybrid α=0.75</td><td class="num win">0.515</td><td class="num">0.852</td>
+      <td class="num">0.208</td><td class="num">0.463</td></tr>
+  <tr><td><em>voyage ceiling</em></td><td class="num"><em>0.867</em></td>
+      <td class="num"><em>0.996</em></td><td class="num"><em>0.452</em></td>
+      <td class="num"><em>0.753</em></td></tr>
+</table>
+
+<h2>Readings</h2>
+<ul>
+  <li><strong>Fusion beats both parents.</strong> At α≈0.5–0.75 the hybrid exceeds
+      Gecko-alone and BM25-alone on every metric — the classic RRF benefit, driven
+      by BM25's lexical complementarity (drug names, doses, exact terms Gecko's
+      embedding blurs). HR@3 gains most (+4.6 pp): more bundles contain at least
+      one relevant chunk.</li>
+  <li><strong>The absolute gap stays large.</strong> Best P@3 0.516 closes ~10% of
+      the 0.477→0.867 Gecko→voyage gap. Fusion reshuffles what these two retrievers
+      already surface; it cannot add content neither found.</li>
+  <li><strong class="flat">Fusion doesn't fix the strict-content miss.</strong>
+      P@3≥5 moves only 0.193→0.208. BM25 doesn't surface the complete/actionable
+      chunks Gecko ranks poorly either, so fusing the two rankings can't help here.
+      (Note: <a href="../r2-rerank/r2b-rerank-ceiling-20260613.html">R2b</a> later
+      shows these chunks are often <em>in</em> the top-20 but mis-ranked — so
+      <em>reranking</em> does lift strict, even though fusion doesn't; the residual
+      ~22% with nothing strict in the pool is what routes to R2c/C1.)</li>
+  <li><strong>α is the knob, k is not.</strong> Optimal α is Gecko-leaning but
+      strictly interior (0.5–0.75), so BM25 genuinely contributes; k=10–100 changes
+      P@3 by ~0.01. A deployable default: α=0.5, k=60.</li>
+</ul>
+
+<h2>Recommendation</h2>
+<ul>
+  <li><strong>Adopt the hybrid</strong> (α≈0.5, FTS5 BM25 + Gecko, RRF k=60) — a
+      cheap, on-device-feasible lift, strongest on hit rate. Gate on the end-to-end
+      checks per the R2 plan before shipping: the M1 MCQ ±RAG rerun and a SAQ A/B
+      (offline retrieval metrics alone don't gate adoption).</li>
+  <li><strong>Do not expect it to fix RAG-hurts on its own.</strong> The structural
+      gap and the strict-content miss remain — proceed to R2b (rerank ceiling) and
+      scope R2c (embedder bake-off).</li>
+</ul>
+
+<h2>Does the hybrid revive thresholding?</h2>
+<p>
+R1 killed thresholding on Gecko's <em>cosine</em> scores. Both alternatives carry
+a different score — BM25's lexical score, and the hybrid's RRF fused score, each
+rank-/frequency-based and bounded, so potentially more comparable across queries.
+Running the R1 §6 Stage-1 gate on all three native scores (hybrid at the
+deployable α=0.5, k=60). Gecko reproduces R1's cosine numbers exactly
+(0.572 / 0.623 / 0.574), a cross-check that the computation is sound.
+</p>
+<figure>
+  <img src="fig_hybrid_gate.png" alt="Stage-1 gate: Gecko cosine vs BM25 vs hybrid RRF">
+  <figcaption>The three Stage-1 statistics, Gecko cosine vs BM25 score vs hybrid
+  RRF. Dotted gray = chance (0.5); dashed green = the 0.80 viability bar; purple
+  dotted = voyage-4-large, the API-only ceiling (0.734 / 0.755 / 0.750).</figcaption>
+</figure>
+<table>
+  <tr><th>Statistic (rule family it gates)</th><th class="num">Gecko cosine</th>
+      <th class="num">BM25 score</th><th class="num">Hybrid RRF</th></tr>
+  <tr><td>chunk AUC ≥3 (absolute cutoffs)</td><td class="num">0.572</td>
+      <td class="num">0.646</td><td class="num win">0.668</td></tr>
+  <tr><td>within-bundle concordance (relative rules)</td><td class="num">0.623</td>
+      <td class="num win">0.658</td><td class="num flat">0.596</td></tr>
+  <tr><td>bundle any-relevant AUC (gated abstention)</td><td class="num">0.574</td>
+      <td class="num win">0.684</td><td class="num">0.673</td></tr>
+</table>
+<ul>
+  <li><strong>BM25's raw score is the most thresholdable of the three</strong> —
+      best on two of three statistics, including the gated-abstention signal
+      (bundle AUC 0.684). Lexical match frequency is a more honest relevance-
+      confidence cue than embedding cosine: a chunk that shares the query's exact
+      terms is more reliably on-point than one that is merely near it in vector
+      space.</li>
+  <li><strong>Fusion trades within-bundle signal for cross-query separation.</strong>
+      The hybrid wins chunk AUC (0.668 — RRF scores are comparable across queries,
+      which cosine wasn't) but its within-bundle concordance (0.596) drops below
+      <em>both</em> parents: blending two rank systems blurs the fine ordering
+      inside a bundle. The best query-level gate signal is BM25's, not the
+      hybrid's.</li>
+  <li><strong>None reaches the 0.80 viability bar — and neither does the ceiling.</strong>
+      The strongest threshold-like signal anywhere — BM25's bundle-level gated
+      abstention ("skip RAG when the top BM25 score is low") at 0.684 — is the most
+      promising we've measured, yet still marginal, not viable. Even voyage-4-large,
+      the API-only quality ceiling, sits below the bar on all three (0.734 / 0.755 /
+      0.750), so a deployable retriever clearing it is unlikely on current evidence.
+      R1's core finding survives: no score grades usefulness <em>within</em> the
+      retrieved set well enough for a relative rule (best concordance 0.658).</li>
+</ul>
+<p class="note">
+Takeaway: neither alternative revives thresholding to viability, but both beat
+Gecko's cosine, and BM25's lexical score is the single best relevance-confidence
+signal measured. The most promising rule is a marginal <em>query-level RAG on/off
+gate</em> driven by BM25's top score. If R2c/R2d later push a bundle-level AUC past
+~0.80, that gate becomes worth an end-to-end test; today it is not.
+</p>
+
+<h2>Reproducibility</h2>
+<pre>python -m retrieval_eval.simulate_hybrid \
+    --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-hybrid \
+    --report-dir  configs/config-v0.2.0/reports/r2-hybrid
+
+# Stage-1 score-quality gate on the fused RRF score
+python -m retrieval_eval.gate_hybrid \
+    --results-dir configs/config-v0.2.0/results/retrieval_eval/r2-hybrid \
+    --report-dir  configs/config-v0.2.0/reports/r2-hybrid</pre>
+<p class="meta">Full sweep grid + baselines: <code>hybrid_sweep.json</code>;
+gate stats: <code>hybrid_gate.json</code>.</p>
+
+</body>
+</html>

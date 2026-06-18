@@ -1,0 +1,44 @@
+{
+  "model": "Qwen/Qwen3-32B",
+  "top_k": 20,
+  "arms": [
+    "gecko",
+    "embeddinggemma",
+    "bm25",
+    "medcpt",
+    "octen",
+    "lateon",
+    "voyage"
+  ],
+  "n_queries": 312,
+  "by_cut": {
+    "lenient": {
+      "union_covered": 0.9647,
+      "per_arm_covered": {
+        "gecko": 0.7532,
+        "embeddinggemma": 0.859,
+        "bm25": 0.2788,
+        "medcpt": 0.1635,
+        "octen": 0.9135,
+        "lateon": 0.1923,
+        "voyage": 0.9423
+      },
+      "ranking_fixable_vs_gecko": 0.2115,
+      "corpus_absent": 0.0353
+    },
+    "strict": {
+      "union_covered": 0.8942,
+      "per_arm_covered": {
+        "gecko": 0.6346,
+        "embeddinggemma": 0.734,
+        "bm25": 0.2212,
+        "medcpt": 0.0577,
+        "octen": 0.8173,
+        "lateon": 0.125,
+        "voyage": 0.8686
+      },
+      "ranking_fixable_vs_gecko": 0.2596,
+      "corpus_absent": 0.1058
+    }
+  }
+}

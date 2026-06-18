@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmbeddingGemma thresholdability — EG × Gemma 3n, kenya (2026-06-18)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.6rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.25rem; color:var(--accent); margin-top:2rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  p,li { font-size:.93rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .src { color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Is the EmbeddingGemma retrieval score thresholdable? (EG × Gemma 3n, kenya)</h1>
+<p class="meta">2026-06-18 · config-v0.2.0 · no reranker · kenya (312 queries; 300 with end-to-end recall).
+Tests whether a cosine-similarity threshold can drive a confidence / abstention gate — the idea R1
+shelved for Gecko cosine, re-asked for EmbeddingGemma. R1's bar: chunk-level AUC ≥ 0.80.</p>
+
+<div class="callout bad">
+<strong>Verdict: not thresholdable for a usable gate.</strong> EmbeddingGemma's cosine score carries a
+<em>real but modest</em> relevance signal (chunk AUC <strong>0.72</strong>, 95% CI [0.69, 0.75] —
+<strong>below the 0.80</strong> bar) yet, against a ~20% relevant base rate, no cutoff yields usable
+precision (≤0.41 even at the most selective). And it has <strong>no</strong> relationship to <em>answer</em>
+quality (answer AUC <strong>0.50</strong> = random). A cosine confidence gate would mostly mis-fire.
+</div>
+
+<h2>Test A — does cosine separate relevant from irrelevant chunks?</h2>
+<p>Re-judged all 6,228 EmbeddingGemma kenya top-20 (query, chunk) pairs with Qwen3-32B (V2 relevance
+rubric, grade 0–6). Label relevant = grade ≥ 5 (strict) / ≥ 3 (lenient); score = cosine sim; metric = ROC-AUC.</p>
+<table>
+<tr><th>relevance cut</th><th class="num">pooled AUC</th><th class="num">95% CI</th><th class="num">per-query AUC</th><th class="num">R1 bar</th><th>verdict</th></tr>
+<tr><td>strict (grade ≥ 5)</td><td class="num">0.720</td><td class="num">[0.69, 0.75]</td><td class="num">0.61</td><td class="num">0.80</td><td>below bar</td></tr>
+<tr><td>lenient (grade ≥ 3)</td><td class="num">0.720</td><td class="num">[0.69, 0.76]</td><td class="num">0.63</td><td class="num">0.80</td><td>below bar</td></tr>
+</table>
+<p class="src">Pooled AUC = one global threshold over all (query,chunk) pairs (the relevant quantity for a
+single deployed gate); CI = cluster bootstrap resampling queries (300×). Per-query AUC = cosine's
+within-query ranking of relevant above irrelevant — weaker still (0.61), so the pooled number is the
+<em>favourable</em> framing. Both, and the whole CI, sit below 0.80.</p>
+<p>There <em>is</em> a real signal: relevant chunks score higher than irrelevant ones (mean sim 0.565 vs
+0.524; <strong>Cohen d ≈ 0.76</strong>, a medium–large effect). But a moderate AUC is not enough for a gate
+when only ~20% of retrieved chunks are relevant — at that base rate no cutoff cleanly splits them:</p>
+<table>
+<tr><th>cosine cutoff</th><th class="num">chunks kept</th><th class="num">precision (strict)</th><th class="num">recall (strict)</th><th class="num">precision (lenient)</th></tr>
+<tr><td>≥ 0.50</td><td class="num">70%</td><td class="num">0.260</td><td class="num">0.900</td><td class="num">0.365</td></tr>
+<tr><td>≥ 0.55</td><td class="num">36%</td><td class="num">0.345</td><td class="num">0.627</td><td class="num">0.463</td></tr>
+<tr><td>≥ 0.60</td><td class="num">11%</td><td class="num">0.413</td><td class="num">0.235</td><td class="num">0.535</td></tr>
+</table>
+<p>Even at the most selective cutoff (keep only the top 11% by score), strict precision is just 0.41 —
+i.e. most "high-confidence" chunks still aren't strictly relevant. There is no operating point with both
+decent precision and decent recall.</p>
+
+<h2>R1-style Stage-1 gate — the three threshold-rule diagnostics</h2>
+<p>To compare directly with the <a href="../r1-threshold/r1-threshold-negative-result-20260612.html">R1
+negative-result report</a>, the same <strong>three Stage-1 scores</strong> — each the signal a different
+threshold-rule family would rely on — computed on EmbeddingGemma's <strong>top-3</strong> (the bundle the app
+actually injects), kenya:</p>
+<table>
+<tr><th>threshold rule it enables</th><th>statistic</th><th class="num">EmbeddingGemma<br>(kenya, top-3)</th><th class="num">Gecko<br>(R1, mamaretrieval)</th><th class="num">viability bar</th></tr>
+<tr><td><strong>absolute cutoff</strong> (one global τ)</td><td>chunk-level AUC, grade ≥ 3</td><td class="num">0.692</td><td class="num">0.572</td><td class="num">≥ 0.80 (stop ≤ 0.60)</td></tr>
+<tr><td><strong>relative margin</strong> (vs the bundle's own top-1)</td><td>within-query concordance</td><td class="num">0.566</td><td class="num">0.623</td><td class="num">0.5 = chance</td></tr>
+<tr><td><strong>gated abstention</strong> (fall back if bundle weak)</td><td>bundle top-1 AUC (any rel. chunk)</td><td class="num">0.716</td><td class="num">0.574</td><td class="num">≥ 0.80</td></tr>
+<tr><td><span class="src">reference</span></td><td><span class="src">P@3 (grade ≥ 3)</span></td><td class="num">0.392</td><td class="num">0.477</td><td class="num">—</td></tr>
+</table>
+<p><strong>All three sit below the 0.80 viability bar — EmbeddingGemma fails R1's Stage-1 gate on every
+rule family, the same verdict R1 reached for Gecko.</strong> Two specifics:</p>
+<ul>
+<li><strong>The cross-query magnitude signals improve over Gecko but not enough.</strong> Chunk-level AUC
+0.69 (vs Gecko 0.57) and bundle AUC 0.72 (vs 0.57) are clearly better — the better embedder does make scores
+somewhat more comparable corpus-wide — but both land in the 0.60–0.80 "no absolute cutoff" zone, short of the bar.</li>
+<li><strong>The within-bundle signal is actually <em>worse</em> (0.57 vs Gecko's 0.62), near chance.</strong>
+Inside a single top-3 bundle, EmbeddingGemma's cosine orders the genuinely-relevant chunk above the
+merely-on-topic one only 57% of the time — so relative-margin rules, which compare a bundle against itself,
+have essentially nothing to work with.</li>
+</ul>
+<p class="src">Caveats: R1's numbers are on the mamaretrieval audit queries (n=3,185); these are kenya (n=312),
+so the comparison is indicative, not strictly head-to-head — but the 0.80 bar is methodology-defined, not
+query-set-defined. The concordance is over only 281 co-bundle relevant/junk pairs (kenya has few mixed
+bundles), so it has a wide interval. (The 0.72 chunk AUC in Test A above pools the full top-20; this 0.69 is
+the top-3 bundle — same story, narrower population.)</p>
+
+<h2>Gated abstention — the direct test (the most promising rule family)</h2>
+<p>Bundle top-1 AUC (0.716 above) is the best of the three, so gated abstention deserves a direct test. But
+that statistic measures the <em>wrong</em> target — whether the bundle contains a <em>relevant chunk</em>. What
+gated abstention actually needs is: <strong>can the score tell us when RAG <em>improves the answer</em></strong>,
+so we keep RAG on those queries and fall back to no-RAG on the rest? We have per-query recall both with RAG
+(EmbeddingGemma × 3n) and without (no-RAG × 3n), so we can test it head-on.</p>
+<p><strong>The opportunity is real</strong> — RAG helps some queries and hurts others, so a perfect gate would pay off:</p>
+<table>
+<tr><th>policy</th><th class="num">mean kenya recall</th><th>note</th></tr>
+<tr><td>always-no-RAG</td><td class="num">0.284</td><td>RAG off</td></tr>
+<tr><td>always-RAG (current)</td><td class="num">0.297</td><td>RAG helped 40% of queries, hurt 37%, tie 23%</td></tr>
+<tr><td><strong>oracle gate</strong> (per-query pick the better)</td><td class="num"><strong>0.354</strong></td><td><strong>+0.057 headroom</strong> (~+19%) — the ceiling any gate could reach</td></tr>
+</table>
+<p><strong>But the cosine score captures none of it.</strong></p>
+<table>
+<tr><th>does the score know when RAG helps?</th><th class="num">top-1</th><th class="num">mean top-3</th></tr>
+<tr><td>AUC( score → "RAG helps this query" )</td><td class="num">0.502</td><td class="num">0.497</td></tr>
+<tr><td>Pearson( score, RAG−noRAG delta )</td><td class="num">−0.036</td><td class="num">−0.036</td></tr>
+</table>
+<p>Both at chance. And no gated policy beats always-RAG — every threshold just slides between the two fixed
+policies without capturing the headroom:</p>
+<table>
+<tr><th class="num">τ (use RAG if top-1 ≥ τ)</th><th class="num">% kept on RAG</th><th class="num">gated mean recall</th></tr>
+<tr><td>0.45</td><td class="num">100%</td><td class="num">0.297 (=always-RAG)</td></tr>
+<tr><td>0.50</td><td class="num">93%</td><td class="num">0.296</td></tr>
+<tr><td>0.54</td><td class="num">72%</td><td class="num">0.293</td></tr>
+<tr><td>0.58</td><td class="num">41%</td><td class="num">0.286</td></tr>
+<tr><td>0.60</td><td class="num">28%</td><td class="num">0.286 (→always-noRAG)</td></tr>
+</table>
+<div class="callout bad"><strong>Gated abstention is not viable on this score.</strong> There is a real +0.057
+prize (oracle 0.354 vs always-RAG 0.297), but the cosine score is a <strong>chance-level (AUC 0.50)</strong>
+predictor of when RAG helps, so a score-gated policy captures <strong>none</strong> of it — its best operating
+point is just "keep RAG everywhere" (0.297). The reverse direction (keep RAG when score is low) is no better
+(0.285–0.293). A working gate would need a different signal — generator-side answer confidence or an explicit
+"does this context help" classifier — not retrieval similarity.</div>
+
+<h2>Test B — does the retrieval score predict answer quality?</h2>
+<p>The product-relevant question: could we abstain / fall back when retrieval is poor because the answer
+will be bad? Join per-query retrieval score (top-1, mean top-3 cosine) with per-query key-fact recall from
+the EmbeddingGemma × Gemma 3n end-to-end run (n=300 judged).</p>
+<table>
+<tr><th>score</th><th>label</th><th class="num">AUC</th></tr>
+<tr><td>top-1 sim</td><td>recall &gt; 0</td><td class="num">0.491</td></tr>
+<tr><td>top-1 sim</td><td>recall ≥ median</td><td class="num">0.502</td></tr>
+<tr><td>mean top-3</td><td>recall &gt; 0</td><td class="num">0.493</td></tr>
+<tr><td>mean top-3</td><td>recall ≥ median</td><td class="num">0.504</td></tr>
+</table>
+<p><strong>AUC ≈ 0.50 everywhere — pure noise</strong> (Pearson(score, recall) = −0.05). It holds on both the
+imbalanced cut (recall&gt;0: 265 pos / 35 neg) and the balanced one (recall ≥ median: 153 / 147), so it is not
+an artefact of class imbalance. The retrieval score carries no information about whether the generated answer
+is good — consistent with the matrix finding that RAG is net-negative-to-null on this generator: retrieval
+quality and answer quality are decoupled.</p>
+
+<h2>Does a reranker score thresholdable better than cosine?</h2>
+<p>R1's reason to revisit thresholding was that a fine-tuned cross-encoder scored chunk AUC ≈ 0.86 on
+<em>mamaretrieval</em> — above the 0.80 bar. So the natural question: re-score EmbeddingGemma's kenya
+candidates with the fine-tuned rerankers (MiniLM-L6-ft, mxbai-base-ft) and check whether their score
+separates relevant from irrelevant better than cosine. Same candidates, same grades.</p>
+<table>
+<tr><th>score</th><th class="num">pooled chunk AUC (g≥3)<br>over all 20 candidates</th><th class="num">top-3 chunk AUC</th><th class="num">within-query concord.</th><th class="num">bundle top-1 AUC</th></tr>
+<tr><td>EmbeddingGemma cosine</td><td class="num">0.720</td><td class="num">0.692</td><td class="num">0.566</td><td class="num">0.716</td></tr>
+<tr><td>EG + MiniLM-L6-ft</td><td class="num">0.570</td><td class="num">0.568</td><td class="num">0.516</td><td class="num">0.589</td></tr>
+<tr><td>EG + mxbai-base-ft</td><td class="num">0.589</td><td class="num">0.566</td><td class="num">0.583</td><td class="num">0.569</td></tr>
+</table>
+<div class="callout bad"><strong>No — the reranker makes thresholdability <em>worse</em>, not better.</strong> Both
+fine-tuned cross-encoders separate relevant from irrelevant kenya chunks <em>less</em> well than the raw
+cosine (pooled AUC 0.57–0.59 vs 0.72; below cosine on every statistic, all far under 0.80). The reranker's
+offline mamaretrieval separability (≈0.86) does <strong>not transfer to kenya</strong> — the same
+distribution-transfer failure that made reranking add nothing to kenya answers (0.297 → 0.297/0.289). So no
+threshold rule becomes viable by adding a reranker; if anything the cosine is the better (still-insufficient)
+signal.</div>
+<p class="src">Per-pair CE scores via <code>cluster/run_cluster_eg_rerank_scores.sh</code> →
+<code>rerank_retrievals</code>; joined to grades in
+<code>results/retrieval_eval/r2c-embedder/eg_kenya_score_grade.json</code> (regen with
+<code>analyze_thresholdability</code>, block A3). Top-3 stats use each score's own reranked top-3 bundle.</p>
+
+<h2>Why &amp; what it means</h2>
+<ul>
+<li><strong>Confirms and extends R1.</strong> R1 shelved cosine thresholding for the deployed Gecko; this shows
+EmbeddingGemma — a clearly better retriever — is still under the 0.80 chunk-AUC bar (0.72) and is useless for
+answer-level gating (0.50). The retriever upgrade does not buy thresholdability.</li>
+<li><strong>No cosine abstention gate.</strong> Any threshold either keeps junk (high recall, ~0.26 precision)
+or discards most relevant chunks (low recall). There is no "confidence ≥ X ⇒ trustworthy" cutoff.</li>
+<li><strong>The lever, again, is downstream.</strong> Because retrieval score ⟂ answer quality, a useful
+abstention signal would have to come from the <em>generator</em> (answer-side confidence / self-consistency),
+not the retriever — the same conclusion as the generator × retriever matrix.</li>
+</ul>
+<div class="warn"><strong>What could be thresholdable (not pursued):</strong> a fine-tuned cross-encoder score
+is more separable offline — mxbai-base-ft hit chunk AUC ≈ 0.86 on mamaretrieval (above the 0.80 bar). But (a)
+that gain didn't transfer to kenya retrieval, and (b) reranking added nothing end-to-end on EG × 3n (kenya
+0.297 → 0.297/0.289), so a reranker-score gate would be thresholding a signal that doesn't track kenya answer
+quality. Reranking is out of scope here per decision to drop it.</div>
+
+<h2>Reproduce / sources</h2>
+<p class="src">
+Analysis: <code>python -m retrieval_eval.analyze_thresholdability</code><br>
+Data: <code>results/retrieval_eval/r2c-embedder/eg_kenya_pairgrades.json</code> (6,240 pairs, Qwen3-32B V2
+grades + cosine), <code>eg3n_kenya_answerlevel_thresh.json</code> (per-query recall + cosine).<br>
+Grades judged on cluster via <code>cluster/run_cluster_eg_grades.sh</code> →
+<code>screen_embedder judge_score --grades-out</code>. Recall from
+<code>eval_output/value_gate_eg_3n</code> (EmbeddingGemma × gemma3n-e4b, gpt-oss-120b key-fact judge).
+</p>
+
+</body>
+</html>

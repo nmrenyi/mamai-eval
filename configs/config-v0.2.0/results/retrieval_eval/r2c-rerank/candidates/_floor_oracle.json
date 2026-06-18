@@ -1,0 +1,25 @@
+{
+  "n_test_queries": 491,
+  "by_cut": {
+    "lenient_ge3": {
+      "floor_rrf": {
+        "p_at_3": 0.5058,
+        "hr_at_3": 0.8574
+      },
+      "oracle": {
+        "p_at_3": 0.924,
+        "hr_at_3": 0.9878
+      }
+    },
+    "strict_ge5": {
+      "floor_rrf": {
+        "p_at_3": 0.2023,
+        "hr_at_3": 0.4399
+      },
+      "oracle": {
+        "p_at_3": 0.5356,
+        "hr_at_3": 0.78
+      }
+    }
+  }
+}

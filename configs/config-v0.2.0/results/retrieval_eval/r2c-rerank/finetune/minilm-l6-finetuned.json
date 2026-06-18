@@ -1,0 +1,25 @@
+{
+  "created_at_utc": "2026-06-13T20:11:29Z",
+  "key": "minilm-l6",
+  "base_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "seq_len": 256,
+  "epochs": 2.0,
+  "lr": 2e-05,
+  "finetuned": true,
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.7556,
+      "hr_at_3": 0.9593
+    },
+    "strict_ge5": {
+      "p_at_3": 0.3802,
+      "hr_at_3": 0.6802
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.7833,
+    "chunk_auc_grade5": 0.7566,
+    "within_bundle_concordance": 0.7534,
+    "bundle_any_relevant_auc_top1": 0.7812
+  }
+}

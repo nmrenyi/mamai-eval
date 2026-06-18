@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2c Embedder Bake-Off — Comprehensive Report (2026-06-16)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.4rem; }
+  p,li { font-size:.93rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .pill { display:inline-block; font-size:.72rem; font-weight:700; padding:.05rem .45rem; border-radius:999px; }
+  .yes { background:var(--good-bg); color:var(--good-edge); border:1px solid var(--good-edge); }
+  .no { background:var(--bad-bg); color:var(--bad-edge); border:1px solid var(--bad-edge); }
+  .mid { background:var(--warn-bg); color:var(--warn-edge); border:1px solid var(--warn-edge); }
+  figure { margin:1.2rem 0; } figcaption { font-size:.8rem; color:var(--muted); margin-top:.3rem; }
+  .src { color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c Embedder Bake-Off — Comprehensive Report</h1>
+<p class="meta">2026-06-16 · config-v0.2.0 · branch <code>feat/r2c-embedder-bakeoff-20260615</code> · EmbeddingGemma-300M vs deployed Gecko, on-device medical RAG (MAM-AI). Consolidates the per-phase docs in this folder (r2c-embedder/) + results in configs/config-v0.2.0/results/retrieval_eval/r2c-embedder/.</p>
+
+<div class="callout good">
+<strong>Bottom line.</strong> EmbeddingGemma-300M is a <strong>clear, deployable retrieval upgrade</strong>
+over Gecko (+12–13 pp retrieval; best deployable corpus coverage; ships on-device, latency-neutral).
+But it produces <strong>no-to-marginal end-to-end answer gains</strong> (kenya: none; healthbench:
+marginal) — and corpus coverage shows the corpus already contains the answer for ~89% of queries.
+<strong>The binding ceiling is the generator (gemma4-e4b), not the embedder or the corpus.</strong>
+→ Adopt EmbeddingGemma as the retriever; the real next lever is generator RAG-grounding (G-RAG).
+</div>
+
+<h2>1. Objective &amp; constraints</h2>
+<p>Close the Gecko-vs-top-tier retrieval gap with a better <em>on-device</em> embedder, and determine
+whether that converts to better answers. Hard constraints fixed during the run:</p>
+<ul>
+<li><strong>Runtime:</strong> LiteRT-only (the generator is <code>.litertlm</code>; no second runtime).</li>
+<li><strong>Hardware:</strong> low-/mid-end Android (Zanzibar) — latency/memory/storage are binding.</li>
+<li><strong>Language:</strong> English-primary; multilingual a useful bonus, not central.</li>
+<li><strong>Acceptance (pre-registered):</strong> ≥5 pp over the deployable baseline on the end-to-end metric,
+no penalty/refusal regression; 5 pp = the <code>1/√n</code> noise floor at n≈312. Recall-primary.</li>
+</ul>
+
+<h2>2. Method — gated funnel</h2>
+<p>Deployability-first, then cheap→expensive, with the decisive test last (the lesson from the reranker
+line, which won offline but didn't convert):</p>
+<p><strong>P0 deployability gate</strong> → <strong>P1 corpus-coverage gate</strong> → <strong>P2 offline
+retrieval screen</strong> → <strong>P3 end-to-end value gate</strong> (kenya SAQ + healthbench rubric).
+Judges: Qwen3-32B + V2 rubric (retrieval/coverage); gpt-oss-120b (SAQ recall + HealthBench rubric) — the
+pinned v0.2 judges.</p>
+
+<h2>3. Results by phase</h2>
+
+<h3>P0 — On-device deployability <span class="pill yes">PASS</span></h3>
+<table>
+<tr><th>metric (this device, SM8750 flagship — low-mid is a proxy)</th><th>EmbeddingGemma seq256 (int4/int8)</th><th>Gecko (deployed)</th></tr>
+<tr><td>embed latency, CPU 4-thread / 1-thread</td><td>125 ms / 249 ms</td><td>—</td></tr>
+<tr><td>peak RAM / on-disk</td><td>187 MB / 171 MB</td><td>~139 MB</td></tr>
+<tr><td>real on-device retrieval (embed + SQLite search)</td><td>search-dominated; embed <em>faster</em> than Gecko</td><td>~4 s</td></tr>
+</table>
+<p>Findings: <strong>GPU delegate is unusable for all embedders</strong> (op support) → CPU+int8 only;
+EmbeddingGemma has an official LiteRT export (lowest-risk path). <strong>Latency-neutral-to-better</strong>
+vs Gecko (the "~20 ms" baseline was a measurement artifact; real Gecko retrieval ≈4 s, search-bound).</p>
+
+<h3>P2 — Offline retrieval quality (kenya, n=312, Qwen3-32B) <span class="pill yes">DECISIVE WIN</span></h3>
+<table>
+<tr><th>metric</th><th class="num">Gecko</th><th class="num">EmbeddingGemma</th><th class="num">Δ</th></tr>
+<tr><td>P@3 lenient (≥3)</td><td class="num">0.270</td><td class="num">0.396</td><td class="num">+12.6 pp</td></tr>
+<tr><td>P@3 strict (≥5)</td><td class="num">0.172</td><td class="num">0.284</td><td class="num">+11.2 pp</td></tr>
+<tr><td>mean grade (top-3)</td><td class="num">1.44</td><td class="num">2.13</td><td class="num">+0.69</td></tr>
+<tr><td>HR@20 strict</td><td class="num">0.609</td><td class="num">0.734</td><td class="num">+12.5 pp</td></tr>
+</table>
+<p>Judge-consistency confirmed (matched Gecko arm reproduced its recorded P@3). All deltas ≫ the 5 pp noise floor.</p>
+
+<h3>P1 — Corpus coverage (7-retriever top-20 union, n=312)</h3>
+<figure>
+<svg viewBox="0 0 760 250" width="100%" role="img" aria-label="Per-retriever strict coverage">
+  <line x1="170" y1="10" x2="170" y2="222" stroke="#5a5a72"/>
+  <g font-size="10" fill="#5a5a72" text-anchor="middle">
+    <text x="170" y="240">0</text><text x="318" y="240">0.25</text><text x="466" y="240">0.50</text>
+    <text x="614" y="240">0.75</text><text x="744" y="240">1.0</text>
+    <text x="455" y="249" font-size="11" fill="#1a1a2e">strict (grade≥5) coverage — share of kenya queries with a relevant chunk in top-20</text>
+  </g>
+  <!-- bars: x = 170 + val*590 -->
+  <g font-size="11">
+    <rect x="170" y="16"  width="527" height="20" fill="#cbd5e1" stroke="#64748b"/><text x="166" y="31" text-anchor="end" font-weight="700">UNION (7)</text><text x="703" y="31" font-size="10" fill="#334155">0.894</text>
+    <rect x="170" y="42"  width="512" height="20" fill="#e2e8f0" stroke="#64748b"/><text x="166" y="57" text-anchor="end">voyage (ceiling)</text><text x="688" y="57" font-size="10" fill="#334155">0.869</text>
+    <rect x="170" y="68"  width="482" height="20" fill="#e2e8f0" stroke="#64748b"/><text x="166" y="83" text-anchor="end">octen-8B (ceiling)</text><text x="658" y="83" font-size="10" fill="#334155">0.817</text>
+    <rect x="170" y="94"  width="433" height="20" fill="#86efac" stroke="#15803d"/><text x="166" y="109" text-anchor="end" font-weight="700">EmbeddingGemma</text><text x="609" y="109" font-size="10" fill="#15803d">0.734</text>
+    <rect x="170" y="120" width="375" height="20" fill="#bfdbfe" stroke="#1e40af"/><text x="166" y="135" text-anchor="end">gecko (deployed)</text><text x="551" y="135" font-size="10" fill="#1e40af">0.635</text>
+    <rect x="170" y="146" width="130" height="20" fill="#fde68a" stroke="#b7791f"/><text x="166" y="161" text-anchor="end">bm25</text><text x="306" y="161" font-size="10" fill="#b7791f">0.221</text>
+    <rect x="170" y="172" width="74"  height="20" fill="#fde68a" stroke="#b7791f"/><text x="166" y="187" text-anchor="end">lateon (ColBERT)</text><text x="250" y="187" font-size="10" fill="#b7791f">0.125</text>
+    <rect x="170" y="198" width="34"  height="20" fill="#fca5a5" stroke="#b91c1c"/><text x="166" y="213" text-anchor="end">medcpt</text><text x="210" y="213" font-size="10" fill="#b91c1c">0.058</text>
+  </g>
+</svg>
+<figcaption>Union of all 7 = 0.894 strict / 0.965 lenient. Green = the candidate; blue = deployed baseline; grey = ceilings/union; amber/red = weak-alone (lexical / late-interaction / PubMed-domain mismatch).</figcaption>
+</figure>
+<table>
+<tr><th>split (strict / lenient)</th><th class="num">value</th></tr>
+<tr><td>UNION covered (corpus reachability)</td><td class="num">0.894 / 0.965</td></tr>
+<tr><td>corpus-absent (no relevant chunk in ANY retriever)</td><td class="num"><strong>0.106 / 0.035</strong></td></tr>
+<tr><td>ranking-fixable (in corpus, Gecko misses, another finds)</td><td class="num">0.260 / 0.212</td></tr>
+</table>
+<p><strong>The corpus is largely NOT the ceiling</strong> — it holds the answer for ~89% (strict) of queries;
+only ~10.6% is truly absent. EmbeddingGemma (0.734) is the best <em>deployable</em> retriever, +10 pp over
+Gecko and near the non-deployable octen-8B/voyage ceilings, recovering a large share of the 26 pp of
+in-corpus answers Gecko misses.</p>
+
+<h3>P3 — End-to-end value gate (generator gemma4-e4b, judge gpt-oss-120b)</h3>
+<p><strong>kenya SAQ (n=312, key-fact recall)</strong> <span class="pill no">NO CONVERSION</span></p>
+<table>
+<tr><th class="num">no-RAG</th><th class="num">Gecko-RAG</th><th class="num">EmbeddingGemma-RAG</th><th class="num">hybrid / rerank</th></tr>
+<tr><td class="num"><strong>0.178</strong></td><td class="num">0.1254</td><td class="num">0.1255</td><td class="num">0.111–0.112</td></tr>
+</table>
+<p>EmbeddingGemma ≈ Gecko (Δ≈0), and <strong>RAG is net-negative</strong> — the generator answers kenya
+<em>better without the corpus</em>. (The "0.256" RAG-helps figure seen earlier was the retracted
+<em>gemma3n</em> run — wrong generator; real gemma4-e4b is ~0.125 and RAG-negative.)</p>
+<p><strong>healthbench-oss (n=1209, rubric weighted_met)</strong> <span class="pill mid">MARGINAL</span></p>
+<table>
+<tr><th>metric</th><th class="num">Gecko</th><th class="num">EmbeddingGemma</th></tr>
+<tr><td>combined weighted_met</td><td class="num">−0.0039</td><td class="num">+0.0119</td></tr>
+<tr><td>positive (completeness side)</td><td class="num">0.175</td><td class="num">0.189</td></tr>
+<tr><td>penalty rate (negative)</td><td class="num">0.372</td><td class="num">0.368</td></tr>
+</table>
+<p>EmbeddingGemma marginally better on every axis, but <strong>both ≈ 0</strong> — positive completeness
+(~0.18) is nearly cancelled by a ~0.37 penalty rate, regardless of embedder.</p>
+
+<h2>4. Synthesis — why the generator is the ceiling</h2>
+<p>Three findings only cohere one way:</p>
+<ol>
+<li>EmbeddingGemma is a <strong>clear retrieval upgrade</strong> (+12–13 pp; best deployable coverage; deployable).</li>
+<li>The <strong>corpus is mostly fine</strong> — it contains the answer for ~89% of kenya queries.</li>
+<li>Yet <strong>answers barely move</strong>, and RAG is net-negative on kenya with the deployed generator.</li>
+</ol>
+<div class="callout warn">If better retrieval over a sufficient corpus still doesn't lift answers — and context actively hurts on kenya — the bottleneck is downstream: <strong>gemma4-e4b cannot convert retrieved context into better answers.</strong> Retrieval and corpus are not the binding constraints.</div>
+
+<h2>5. Recommendations</h2>
+<ol>
+<li><strong>Adopt EmbeddingGemma-300M as the on-device retriever.</strong> Strict, low-risk improvement on the retrieval axis (deployable, faster embed, multilingual headroom); best deployable option by a clear margin. Low downside even though it doesn't move today's answers.</li>
+<li><strong>Open a generator RAG-grounding workstream (G-RAG)</strong> — prompt/format engineering and/or RAG-aware fine-tuning of gemma4-e4b so it uses (and isn't hurt by) injected context. This is where the end-to-end ceiling lives.</li>
+<li><strong>R-corpus is a minor lever</strong> (~10% absent) — below G-RAG in priority.</li>
+<li><strong>R2d (fine-tune the embedder) is not warranted</strong> — retrieval is already strong; the bottleneck moved downstream.</li>
+</ol>
+
+<h2>6. Execution notes &amp; lessons (autonomous run)</h2>
+<ul>
+<li><strong>Generator-baseline trap (twice-bitten lesson):</strong> the only sign-flip in the whole study was a baseline error — comparing to a retracted gemma3n number. Always confirm the generator before trusting an end-to-end figure.</li>
+<li><strong>Coverage method:</strong> 7 retrievers (gecko, EmbeddingGemma, bm25, medcpt, octen-8B, lateon-ColBERT, voyage-4-large) unified by normalized chunk-body hash (100% gecko/EG↔corpus alignment), 36,471 judged pairs — reusing the mamaretrieval pipeline on kenya queries.</li>
+<li><strong>Infra recovered autonomously:</strong> wiped cluster scratch (re-staged corpus); HF-gated EmbeddingGemma (license); expired cluster-side RunAI token (submitted via local <code>RUNAI_LOCAL</code>); 4 job-setup failures (read-only repo perms, missing python3, GPU preemption → added checkpointing to the 2.5 h coverage judge); H200→A100 pool move to dodge contention.</li>
+<li><strong>Statistical discipline:</strong> pre-registered 5 pp noise floor; the marginal healthbench edge sits within it.</li>
+</ul>
+
+<h2>7. Caveats</h2>
+<ul>
+<li>End-to-end sets are small/medium (kenya 312, healthbench 1209); marginal deltas are within noise.</li>
+<li>Deployability measured on a flagship (SM8750); confirm on a true low-mid Zanzibar device before release (single-thread CPU is the proxy — deployability holds, latency will be higher).</li>
+<li>bm25/medcpt/lateon are weak <em>alone</em> on kenya; they contribute little to the union beyond the dense retrievers.</li>
+</ul>
+
+<h2>Artifacts</h2>
+<p class="src">
+Plans: <code>r2c-embedder-litreview-20260616.html</code>, <code>r2c-embedder-test-plan-20260616.md</code>, <code>r2c-embedder-autonomous-plan-20260616.md</code>.
+Results docs: <code>r2c-embedder-phase0-deviceability</code>, <code>-phase2-screen</code>, <code>-phase3-valuegate</code> (kenya), <code>-phase3-healthbench</code>, <code>-phase1-coverage</code>, <code>-FINAL-summary</code> (all 20260616).
+Raw: <code>configs/config-v0.2.0/results/retrieval_eval/r2c-embedder/</code> (screen_*, value_gate_eg_kenya, healthbench/, kenya_coverage_7retr.json).
+Code: <code>retrieval_eval/screen_embedder.py</code> (embed/retrieve/judge/coverage), <code>build_coverage_union.py</code>; <code>cluster/run_cluster_screen_embedder.sh</code>, <code>_value_gate_eg.sh</code>, <code>_e2e_healthbench.sh</code>, <code>_mr_pool.sh</code>, <code>_mr_lateon.sh</code>, <code>_coverage.sh</code>.
+</p>
+
+</body>
+</html>

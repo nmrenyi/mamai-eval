@@ -1,0 +1,28 @@
+{
+  "created_at_utc": "2026-06-13T19:49:42Z",
+  "key": "mxbai-base",
+  "id": "mixedbread-ai/mxbai-rerank-base-v1",
+  "type": "ce",
+  "size_m": 184,
+  "note": "mid general CE",
+  "max_len": 256,
+  "n_labels": 1,
+  "score_seconds": 17.2,
+  "device": "cuda",
+  "by_cut": {
+    "lenient_ge3": {
+      "p_at_3": 0.7142,
+      "hr_at_3": 0.9633
+    },
+    "strict_ge5": {
+      "p_at_3": 0.3123,
+      "hr_at_3": 0.6212
+    }
+  },
+  "stage1_gate": {
+    "chunk_auc_grade3": 0.748,
+    "chunk_auc_grade5": 0.6617,
+    "within_bundle_concordance": 0.7887,
+    "bundle_any_relevant_auc_top1": 0.7078
+  }
+}

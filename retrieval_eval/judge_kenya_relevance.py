@@ -1,0 +1,232 @@
+#!/usr/bin/env python3
+"""R2c diagnostic — judge the relevance of each arm's kenya top-3 chunks.
+
+The value gate showed reranking does not improve kenya answers, but the offline
+P@3 win was measured on mamaretrieval (a different query set). This judges the
+kenya/afrimedqa_saq retrievals directly — with the SAME V2 rubric + judge model
+(Qwen3-32B) that produced the 230k grades — to learn whether the rerankers
+actually surface more relevant chunks on kenya:
+
+  - rerankers show higher kenya P@3 but answers didn't move  -> Gemma 4 ceiling
+  - rerankers show same/lower kenya P@3                      -> reranker doesn't
+                                                               transfer to kenya
+
+Judges the deduped union of all four arms' top-3 (query, chunk) pairs once, then
+computes per-arm P@3 (lenient grade>=3, strict grade>=5) + mean grade.
+
+Usage (against a served Qwen3-32B):
+  python -m retrieval_eval.judge_kenya_relevance \\
+      --arms-root /lightscratch/.../rag_arms \\
+      --mxbai-arms /lightscratch/.../rag_arms_mxbai \\
+      --datasets kenya,afrimedqa_saq \\
+      --base-url http://localhost:8000/v1 --model Qwen/Qwen3-32B \\
+      --out kenya_relevance.json
+"""
+
+import argparse
+import json
+import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+from retrieval_eval._kenya_rubric import V2_SYSTEM_PROMPT, _build_user_content, v2_score
+
+# arm key -> (root selector, arm subdir). mxbai arm lives under a different root.
+ARMS = [
+    ("gecko",       "main",  "gecko"),
+    ("hybrid",      "main",  "hybrid"),
+    ("minilm_ft",   "main",  "hybrid_rerank"),
+    ("mxbai_ft",    "mxbai", "hybrid_rerank"),
+]
+
+
+def load_arm(root, arm_sub, ds):
+    p = Path(root) / arm_sub / f"{ds}.json"
+    rows = json.load(open(p))["retrievals"]
+    # query_id -> list of (chunk_index, chunk_dict{source,page,text}) for its top-3
+    out = {}
+    for r in rows:
+        docs = r.get("retrieved_docs", [])
+        idxs = r.get("chunk_indices", list(range(len(docs))))
+        out[r["id"]] = {"q": r["question"],
+                        "chunks": [(idxs[k], docs[k]) for k in range(len(docs))]}
+    return out
+
+
+def parse_judge(text):
+    """Extract the JSON dims from the model output (tolerant)."""
+    m = re.search(r"\{[^{}]*d1_topic[^{}]*\}", text, re.DOTALL)
+    if not m:
+        return None
+    try:
+        d = json.loads(m.group(0))
+    except Exception:
+        return None
+    def i(v):
+        if isinstance(v, bool): return int(v)
+        try: return int(v)
+        except Exception: return 0
+    return v2_score(bool(d.get("d1_topic", False)),
+                    i(d.get("d2_meaningful", 0)), i(d.get("d3_actionable", 0)),
+                    i(d.get("d4_density", 0)))
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--arms-root", default="")
+    ap.add_argument("--mxbai-arms", default="")
+    ap.add_argument("--datasets", default="kenya,afrimedqa_saq")
+    ap.add_argument("--matrix-root", default="",
+                    help="flat dir of arm subdirs (each with <dataset>.json); overrides ARMS")
+    ap.add_argument("--base-url", required=True)
+    ap.add_argument("--model", default="Qwen/Qwen3-32B")
+    ap.add_argument("--workers", type=int, default=16)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    from openai import OpenAI
+    client = OpenAI(base_url=args.base_url, api_key="EMPTY")
+
+    def judge(query, chunk):
+        r = client.chat.completions.create(
+            model=args.model, temperature=0.0, max_tokens=2048,
+            messages=[{"role": "system", "content": V2_SYSTEM_PROMPT},
+                      {"role": "user", "content": _build_user_content(query, chunk)}])
+        return parse_judge(r.choices[0].message.content)
+
+    report = {"model": args.model, "datasets": {}}
+    for ds in [d.strip() for d in args.datasets.split(",")]:
+        arms = {}
+        if args.matrix_root:
+            arm_keys = sorted(p.name for p in Path(args.matrix_root).iterdir()
+                              if (p / f"{ds}.json").exists())
+            for key in arm_keys:
+                arms[key] = load_arm(args.matrix_root, key, ds)
+        else:
+            arm_keys = [k for k, _, _ in ARMS]
+            for key, sel, sub in ARMS:
+                arms[key] = load_arm(args.mxbai_arms if sel == "mxbai" else args.arms_root, sub, ds)
+        qids = sorted(arms[arm_keys[0]].keys())
+
+        # dedup (qid, chunk_index) -> (query, chunk_dict)
+        uniq = {}
+        for key in arm_keys:
+            for qid in qids:
+                entry = arms[key].get(qid)
+                if not entry:
+                    continue
+                for cidx, cdoc in entry["chunks"]:
+                    uniq.setdefault((qid, cidx), (entry["q"], cdoc))
+        print(f"[{ds}] {len(qids)} queries, {len(uniq)} unique (query,chunk) pairs to judge", flush=True)
+
+        grades = {}
+        items = list(uniq.items())
+        with ThreadPoolExecutor(max_workers=args.workers) as ex:
+            futs = {ex.submit(judge, q, c): k for k, (q, c) in items}
+            done = 0
+            for fut in as_completed(futs):
+                k = futs[fut]
+                try:
+                    grades[k] = fut.result()
+                except Exception as e:
+                    grades[k] = None
+                done += 1
+                if done % 200 == 0:
+                    print(f"  [{ds}] judged {done}/{len(items)}", flush=True)
+        graded = {k: v for k, v in grades.items() if v is not None}
+        print(f"[{ds}] judged ok: {len(graded)}/{len(items)}", flush=True)
+
+        # ---- P-1 coverage diagnostic: per-query UNION across arms vs gecko alone.
+        # For each query, max grade over the union of ALL arms' top-3 chunks, and
+        # the max grade for the deployed gecko arm alone. Decides whether the
+        # right answers EXIST in the corpus (ranking-fixable -> R2c) or not
+        # (corpus-limited -> R-corpus). None grades treated as 0.
+        gecko_key = "gecko__none" if "gecko__none" in arm_keys else (
+            "gecko" if "gecko" in arm_keys else None)
+
+        def _maxgrade(qid, keys):
+            best = None
+            for key in keys:
+                entry = arms[key].get(qid)
+                if not entry:
+                    continue
+                for cidx, _ in entry["chunks"]:
+                    g = grades.get((qid, cidx))
+                    if g is None:
+                        continue
+                    if best is None or g > best:
+                        best = g
+            return best  # None == no judged chunk for this query
+
+        per_query = []
+        for qid in qids:
+            umax = _maxgrade(qid, arm_keys)
+            gmax = _maxgrade(qid, [gecko_key]) if gecko_key else None
+            per_query.append({"query_id": qid,
+                              "union_max_grade": umax,
+                              "gecko_max_grade": gmax})
+
+        def _cov(g, cut):
+            return (g is not None) and (g >= cut)
+
+        cov = {"gecko_arm": gecko_key, "n_queries": len(qids), "cuts": {}}
+        for label, cut in (("lenient", 3), ("strict", 5)):
+            union_cov = [r for r in per_query if _cov(r["union_max_grade"], cut)]
+            gecko_cov = [r for r in per_query if _cov(r["gecko_max_grade"], cut)]
+            # (a) ranking-fixable: union found it but gecko did not
+            bucket_a = [r for r in per_query
+                        if _cov(r["union_max_grade"], cut)
+                        and not _cov(r["gecko_max_grade"], cut)]
+            # (b) corpus-limited: NO arm found anything (union not covered)
+            bucket_b = [r for r in per_query if not _cov(r["union_max_grade"], cut)]
+            n = len(qids)
+            cov["cuts"][label] = {
+                "cut": cut,
+                "union_covered_n": len(union_cov),
+                "union_covered_pct": round(100.0 * len(union_cov) / n, 2),
+                "gecko_covered_n": len(gecko_cov),
+                "gecko_covered_pct": round(100.0 * len(gecko_cov) / n, 2),
+                "bucket_a_ranking_fixable_n": len(bucket_a),
+                "bucket_a_ranking_fixable_pct": round(100.0 * len(bucket_a) / n, 2),
+                "bucket_b_corpus_limited_n": len(bucket_b),
+                "bucket_b_corpus_limited_pct": round(100.0 * len(bucket_b) / n, 2),
+            }
+            print(f"  [{ds}] COVERAGE {label}(>={cut}): "
+                  f"union={len(union_cov)}/{n} ({cov['cuts'][label]['union_covered_pct']}%) "
+                  f"gecko={len(gecko_cov)}/{n} "
+                  f"(a)ranking-fixable={len(bucket_a)} "
+                  f"(b)corpus-limited={len(bucket_b)}", flush=True)
+
+        # per-arm P@3 (lenient >=3, strict >=5) + mean grade, over the top-3
+        ds_rec = {"n_queries": len(qids), "n_pairs_judged": len(graded), "by_arm": {}}
+        for key in arm_keys:
+            pl = ps = mg = nq = 0
+            for qid in qids:
+                entry = arms[key].get(qid)
+                if not entry:
+                    continue
+                gs = [grades.get((qid, cidx)) for cidx, _ in entry["chunks"]]
+                gs = [g for g in gs if g is not None]
+                if not gs:
+                    continue
+                nq += 1
+                pl += sum(g >= 3 for g in gs) / 3.0
+                ps += sum(g >= 5 for g in gs) / 3.0
+                mg += sum(gs) / len(gs)
+            ds_rec["by_arm"][key] = {
+                "p_at_3_lenient": round(pl / nq, 4), "p_at_3_strict": round(ps / nq, 4),
+                "mean_grade": round(mg / nq, 4), "n": nq}
+        ds_rec["coverage"] = cov
+        ds_rec["coverage_per_query"] = per_query
+        report["datasets"][ds] = ds_rec
+        for key in arm_keys:
+            b = ds_rec["by_arm"][key]
+            print(f"  [{ds}] {key:10} P@3(>=3)={b['p_at_3_lenient']} "
+                  f"P@3(>=5)={b['p_at_3_strict']} mean={b['mean_grade']}", flush=True)
+
+    Path(args.out).write_text(json.dumps(report, indent=2) + "\n")
+    print("Written:", args.out, flush=True)
+
+
+if __name__ == "__main__":
+    main()

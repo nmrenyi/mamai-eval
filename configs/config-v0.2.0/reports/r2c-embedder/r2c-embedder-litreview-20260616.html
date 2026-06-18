@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2c — On-Device Embedder Literature Review (2026-06-16)</title>
+<style>
+  :root {
+    --ink: #1a1a2e; --muted: #5a5a72; --accent: #0b5563; --accent-light: #e8f4f6;
+    --warn-bg: #fff4e5; --warn-edge: #d97706; --good-bg: #ecfdf3; --good-edge: #15803d;
+    --bad-bg: #fef2f2; --bad-edge: #b91c1c; --rule: #d8d8e4;
+    --low: #15803d; --low-bg: #ecfdf3; --med: #b7791f; --med-bg: #fef9ec;
+    --high: #b91c1c; --high-bg: #fef2f2; --none: #64748b; --none-bg: #f1f5f9;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); max-width: 1040px; margin: 0 auto; padding: 2rem 1.5rem 6rem; line-height: 1.55; }
+  h1 { font-size: 1.7rem; border-bottom: 3px solid var(--accent); padding-bottom: .4rem; }
+  h2 { font-size: 1.3rem; color: var(--accent); margin-top: 2.4rem; border-bottom: 1px solid var(--rule); padding-bottom: .25rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.6rem; }
+  p, li { font-size: .94rem; }
+  .meta { color: var(--muted); font-size: .85rem; margin-top: -0.5rem; }
+  table { border-collapse: collapse; margin: 1rem 0; font-size: .83rem; width: 100%; }
+  th, td { border: 1px solid var(--rule); padding: .35rem .55rem; text-align: left; vertical-align: top; }
+  th { background: var(--accent-light); position: sticky; top: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-light); padding: .7rem 1rem; margin: 1rem 0; font-size: .92rem; }
+  .warn { border-left: 4px solid var(--warn-edge); background: var(--warn-bg); }
+  .good { border-left: 4px solid var(--good-edge); background: var(--good-bg); }
+  .bad  { border-left: 4px solid var(--bad-edge); background: var(--bad-bg); }
+  code { background: #f1f1f6; padding: .1rem .3rem; border-radius: 3px; font-size: .85em; }
+  .src { color: var(--muted); font-size: .8rem; }
+  .pill { display: inline-block; font-size: .7rem; font-weight: 700; padding: .08rem .45rem; border-radius: 999px; white-space: nowrap; }
+  .feas-low  { background: var(--low-bg);  color: var(--low);  border: 1px solid var(--low); }
+  .feas-med  { background: var(--med-bg);  color: var(--med);  border: 1px solid var(--med); }
+  .feas-high { background: var(--high-bg); color: var(--high); border: 1px solid var(--high); }
+  .feas-no   { background: var(--none-bg); color: var(--none); border: 1px solid var(--none); }
+  tr.rec td { background: #f3fbf5; }
+  .star { color: var(--good-edge); font-weight: 700; }
+  figure { margin: 1.2rem 0; }
+  figcaption { font-size: .8rem; color: var(--muted); margin-top: .3rem; }
+  .legend span { font-size: .78rem; margin-right: 1rem; white-space: nowrap; }
+  .sw { display: inline-block; width: .8rem; height: .8rem; border-radius: 3px; vertical-align: middle; margin-right: .25rem; }
+</style>
+</head>
+<body>
+
+<h1>R2c — On-Device Embedder Literature Review</h1>
+<p class="meta">2026-06-16 · config-v0.2.0 · P0.1 of <a href="r2c-embedder-bakeoff-next-steps-20260615.md">r2c-embedder-bakeoff-next-steps</a> · Goal: shortlist 2–3 deployable embedder candidates to beat Gecko, and feed the G2 feasibility spike + the harness prefix fix. License excluded as a filter (pure research). Multilingual deprioritized to a tiebreaker.</p>
+
+<div class="callout warn">
+<strong>Three findings that revise the plan's premises — read before the tables:</strong>
+<ol style="margin:.4rem 0 0">
+<li><strong>The deployed Gecko is English-only, not multilingual.</strong> The shipped artifact is <code>litert-community/Gecko-110m-en</code> (~110M, 768-dim, int8 TFLite ~112–146&nbsp;MB). The plan's "Gecko is multilingual" premise was wrong — so <em>adding</em> multilingual is a differentiator, not a parity requirement, and the multilingual hard-filter was guarding a property the baseline never had.</li>
+<li><strong>The feasibility intuition is inverted.</strong> EmbeddingGemma is the <em>lowest</em>-risk on-device option — Google already ships an official LiteRT export with on-device NPU benchmarks. Classic BERT/XLM-R sentence-transformers are <em>higher</em> risk <em>on LiteRT specifically</em> (no official TFLite; the community runs them on ONNX Runtime). The plan's "BERT-family is the safe path" assumption holds for ONNX, not LiteRT.</li>
+<li><strong>The runtime choice (LiteRT vs ONNX Runtime Mobile) gates the whole candidate set</strong> — and it's an app-team decision, not a research one. See §7.</li>
+</ol>
+</div>
+
+<h2 id="baseline">1. What we are actually beating (baseline correction)</h2>
+<p>Anchor for every "beat Gecko" claim below:</p>
+<table>
+<tr><th>Property</th><th>Deployed Gecko (on-device)</th><th>Note</th></tr>
+<tr><td>Artifact</td><td><code>Gecko_1024_quant.tflite</code> / <code>Gecko_256_f32.tflite</code> (= <code>litert-community/Gecko-110m-en</code>)</td><td>confirmed in <code>latency_eval</code> + Google AI Edge RAG docs</td></tr>
+<tr><td>Params / dim / max-len</td><td>~110M · 768 · per-build seq (256/1024)</td><td>pooling per Gecko export</td></tr>
+<tr><td>int8 size on disk</td><td class="num">~112–146 MB</td><td>fp32 ~441–475 MB</td></tr>
+<tr><td>Languages</td><td><strong>English only</strong> ("-en")</td><td>plan said multilingual — incorrect</td></tr>
+<tr><td>Published retrieval score</td><td><em>none for the TFLite export</em></td><td>⇒ head-to-head must be measured in-house</td></tr>
+<tr><td>Known weakness (audit)</td><td>strict pool recall flat at <strong>0.345</strong> (vs voyage 0.768); misses ~65% of complete/actionable chunks at any rank in top-20</td><td>the recall gap an embedder must close</td></tr>
+<tr><td>Vector store today</td><td>63,650 chunks × 768-d fp32 ≈ <strong>190 MB</strong></td><td>MRL-256 or int8 embeddings cut this 4–8×</td></tr>
+</table>
+
+<h2 id="ladder">2. Feasibility risk ladder (the decisive axis)</h2>
+<p>On-device deployment is the gate, so candidates are sorted first by <strong>LiteRT int8 conversion risk</strong>. Quality only matters among models that can actually ship.</p>
+<figure>
+<svg viewBox="0 0 1000 232" width="100%" role="img" aria-label="Feasibility risk ladder">
+  <!-- zones -->
+  <rect x="0"   y="34" width="248" height="190" fill="#ecfdf3" stroke="#15803d"/>
+  <rect x="250" y="34" width="248" height="190" fill="#fef9ec" stroke="#b7791f"/>
+  <rect x="500" y="34" width="248" height="190" fill="#fef2f2" stroke="#b91c1c"/>
+  <rect x="750" y="34" width="250" height="190" fill="#f1f5f9" stroke="#64748b"/>
+  <!-- arrow -->
+  <text x="0" y="18" font-size="13" font-weight="700" fill="#1a1a2e">LiteRT int8 conversion risk</text>
+  <text x="998" y="18" font-size="12" fill="#5a5a72" text-anchor="end">low ➜ high ➜ not deployable</text>
+  <!-- headers -->
+  <text x="124" y="52" font-size="12.5" font-weight="700" fill="#15803d" text-anchor="middle">LOW — proven path</text>
+  <text x="374" y="52" font-size="12.5" font-weight="700" fill="#b7791f" text-anchor="middle">MEDIUM — needs spike</text>
+  <text x="624" y="52" font-size="12.5" font-weight="700" fill="#b91c1c" text-anchor="middle">HIGH — custom arch</text>
+  <text x="875" y="52" font-size="12.5" font-weight="700" fill="#64748b" text-anchor="middle">NOT DEPLOYABLE</text>
+  <!-- LOW -->
+  <text x="14" y="76" font-size="11.5" fill="#14532d">★ EmbeddingGemma-300M</text>
+  <text x="22" y="92" font-size="10" fill="#3f6212">official LiteRT, NPU 7.8ms@256</text>
+  <text x="14" y="116" font-size="11.5" fill="#14532d">★ MedCPT (query encoder)</text>
+  <text x="14" y="140" font-size="11.5" fill="#14532d">bge-small / MedEmbed-small</text>
+  <text x="22" y="156" font-size="10" fill="#3f6212">verified LiteRT int8, cosine 1.0</text>
+  <text x="14" y="180" font-size="11.5" fill="#14532d">bge-base / MedEmbed-base</text>
+  <!-- MEDIUM -->
+  <text x="264" y="80" font-size="11.5" fill="#713f12">multilingual-e5-small</text>
+  <text x="264" y="104" font-size="11.5" fill="#713f12">multilingual-e5-base</text>
+  <text x="264" y="136" font-size="10" fill="#713f12">XLM-R: no official TFLite;</text>
+  <text x="264" y="150" font-size="10" fill="#713f12">ONNX Runtime is the proven</text>
+  <text x="264" y="164" font-size="10" fill="#713f12">path. LiteRT = real spike.</text>
+  <!-- HIGH -->
+  <text x="514" y="80" font-size="11.5" fill="#7f1d1d">gte-multilingual-base</text>
+  <text x="514" y="104" font-size="11.5" fill="#7f1d1d">arctic-embed-m-v2.0</text>
+  <text x="514" y="136" font-size="10" fill="#7f1d1d">custom RoPE + unpadding +</text>
+  <text x="514" y="150" font-size="10" fill="#7f1d1d">trust_remote_code; rewrite to</text>
+  <text x="514" y="164" font-size="10" fill="#7f1d1d">padded SDPA before convert.</text>
+  <text x="514" y="190" font-size="11.5" fill="#7f1d1d">LaBSE (also weak retrieval)</text>
+  <!-- NONE -->
+  <text x="762" y="80" font-size="11.5" fill="#334155">Qwen3-Embedding-8B</text>
+  <text x="762" y="104" font-size="11.5" fill="#334155">NV-Embed-v2 (7.85B)</text>
+  <text x="762" y="128" font-size="11.5" fill="#334155">voyage-3 / OpenAI-3-large</text>
+  <text x="770" y="144" font-size="10" fill="#475569">API-only or decoder-LLM</text>
+  <text x="762" y="172" font-size="11.5" fill="#334155">bge-m3 / jina-v3 (~570M)</text>
+  <text x="770" y="188" font-size="10" fill="#475569">too heavy beside 4GB LLM</text>
+</svg>
+<figcaption>★ = recommended shortlist. "LOW" includes EmbeddingGemma (Google ships the LiteRT artifact) and vanilla-BERT encoders (bge/MedEmbed/MedCPT — verified or trivial conversion). e5 is XLM-R and convertible in principle but has no verified LiteRT export, so it is a spike, not a given.</figcaption>
+</figure>
+
+<h2 id="candidates">3. Deployable candidates</h2>
+<p>Quality columns come from <em>different</em> benchmarks (labeled) and are <strong>not directly comparable</strong> — MIRACL (multilingual IR), MTEB-R (English IR), MedTEB / BEIR-med (biomedical IR). Treat them as priors; the real head-to-head is the in-house offline screen on the frozen split.</p>
+<table>
+<tr>
+  <th>Model</th><th class="num">Params</th><th>Dim (MRL)</th><th class="num">Max len</th>
+  <th>Input prefix</th><th>Retrieval quality (benchmark)</th><th>LiteRT int8</th><th class="num">~int8 MB</th><th>Multiling.</th><th>Verdict</th>
+</tr>
+<tr class="rec">
+  <td><strong>EmbeddingGemma-300M</strong><br><span class="src">Google, 2025-09</span></td>
+  <td class="num">308M</td><td>768 (768/512/256/128)</td><td class="num">2048</td>
+  <td><code>task: search result | query:</code> / <code>title: none | text:</code></td>
+  <td>MTEB-multi mean 61.15; medical MIRIAD nDCG@10 0.834→<strong>0.886</strong> fine-tuned</td>
+  <td><span class="pill feas-low">OFFICIAL — cleared</span><br><span class="src">mixed int4/int8 QAT; NPU 7.8ms@256</span></td>
+  <td class="num">182–220</td><td>Yes (Sw 65.9, De 84.7)</td><td><span class="star">★ Primary</span></td>
+</tr>
+<tr class="rec">
+  <td><strong>MedCPT</strong> (query enc.)<br><span class="src">NCBI/NIH, 2023</span></td>
+  <td class="num">~110M/enc</td><td>768</td><td class="num">q64 / a512</td>
+  <td>asymmetric dual-encoder (no text prefix)</td>
+  <td><strong>BioASQ 0.553</strong>, TREC-COVID 0.709, NFCorpus 0.355 (BEIR-med, avg 0.510)</td>
+  <td><span class="pill feas-low">BERT — convertible</span><br><span class="src">no artifact yet; ship query enc + offline index</span></td>
+  <td class="num">~110</td><td>No (En)</td><td><span class="star">★ Domain pick</span></td>
+</tr>
+<tr class="rec">
+  <td><strong>MedEmbed-small</strong> / bge-small-en-v1.5<br><span class="src">2024 / BAAI 2023</span></td>
+  <td class="num">33M</td><td>384</td><td class="num">512</td>
+  <td>opt. <code>Represent this sentence…</code> (query only)</td>
+  <td>medical fine-tune (vendor charts); base MTEB-R 51.7</td>
+  <td><span class="pill feas-low">VERIFIED LiteRT</span><br><span class="src">cosine 1.0 vs PyTorch</span></td>
+  <td class="num">~32</td><td>No (En)</td><td><span class="star">★ Footprint pick</span></td>
+</tr>
+<tr>
+  <td>MedEmbed-base / bge-base-en-v1.5</td>
+  <td class="num">109M</td><td>768</td><td class="num">512</td><td>opt. query prefix</td>
+  <td><strong>MedTEB 0.39</strong> (best off-the-shelf ≤150M); base MTEB-R 53.3</td>
+  <td><span class="pill feas-low">BERT — convertible</span></td>
+  <td class="num">~105</td><td>No (En)</td><td>Candidate (higher medical ceiling)</td>
+</tr>
+<tr>
+  <td>multilingual-e5-small<br><span class="src">Microsoft, 2023</span></td>
+  <td class="num">118M</td><td>384 (no MRL)</td><td class="num">512</td>
+  <td><strong>mandatory</strong> <code>query:</code> / <code>passage:</code></td>
+  <td>MIRACL 60.8 (Swahili 68.4); MTEB-EN 57.9</td>
+  <td><span class="pill feas-med">XLM-R — spike</span><br><span class="src">ONNX proven; no LiteRT export</span></td>
+  <td class="num">~118</td><td>Yes (94 langs)</td><td>Multilingual play (if runtime allows)</td>
+</tr>
+<tr>
+  <td>multilingual-e5-base</td>
+  <td class="num">278M</td><td>768 (no MRL)</td><td class="num">512</td>
+  <td><strong>mandatory</strong> <code>query:</code> / <code>passage:</code></td>
+  <td>MIRACL 62.3 (Swahili 71.1); MTEB-EN 59.4</td>
+  <td><span class="pill feas-med">XLM-R — spike</span></td>
+  <td class="num">~265</td><td>Yes (100)</td><td>768-dim multilingual, heavier</td>
+</tr>
+<tr>
+  <td>gte-multilingual-base<br><span class="src">Alibaba, 2024</span></td>
+  <td class="num">305M</td><td>768 (32→768)</td><td class="num">8192</td>
+  <td>none</td>
+  <td>MIRACL 62.1; MTEB-EN 61.4; strong long-doc</td>
+  <td><span class="pill feas-high">custom arch</span><br><span class="src">RoPE+unpadding, trust_remote_code</span></td>
+  <td class="num">~305</td><td>Yes (75)</td><td>Best quality+MRL, gated by conversion spike</td>
+</tr>
+<tr>
+  <td>snowflake-arctic-embed-m-v2.0<br><span class="src">Snowflake, 2024-12</span></td>
+  <td class="num">305M</td><td>768 (→256)</td><td class="num">8192</td>
+  <td><code>query:</code> (query only)</td>
+  <td>MIRACL 59.2; MTEB-R 55.4</td>
+  <td><span class="pill feas-high">custom (gte) arch</span></td>
+  <td class="num">~296</td><td>Yes (~100)</td><td>Conditional — same risk as gte</td>
+</tr>
+<tr>
+  <td>BioLORD-2023<br><span class="src">Ghent, 2023</span></td>
+  <td class="num">110M</td><td>768</td><td class="num">~512</td><td>none (mean pool)</td>
+  <td>SOTA clinical <em>STS</em> (MedSTS 88.3) — <strong>no passage-retrieval evidence</strong></td>
+  <td><span class="pill feas-med">MPNet — convertible</span></td>
+  <td class="num">~110</td><td>En (M=7 EU)</td><td>Cautious — needs in-house IR eval first</td>
+</tr>
+<tr>
+  <td>LaBSE<br><span class="src">Google, 2020</span></td>
+  <td class="num">471M</td><td>768 (no)</td><td class="num">256</td><td>none</td>
+  <td>MTEB-EN ~45 (weak); strong bitext only</td>
+  <td><span class="pill feas-high">TF-native, no TFLite</span></td>
+  <td class="num">~470</td><td>Yes (109)</td><td><strong>Reject</strong> — weak retrieval + big vocab</td>
+</tr>
+</table>
+
+<h2 id="footprint">4. On-device footprint vs the budget</h2>
+<figure>
+<svg viewBox="0 0 1000 392" width="100%" role="img" aria-label="int8 footprint bar chart">
+  <!-- axes -->
+  <line x1="210" y1="30" x2="210" y2="356" stroke="#d8d8e4"/>
+  <line x1="210" y1="356" x2="960" y2="356" stroke="#5a5a72"/>
+  <!-- gridlines + labels every 50MB; scale: 750px / 320MB = 2.34375 -->
+  <g font-size="10" fill="#5a5a72" text-anchor="middle">
+    <line x1="327" y1="30" x2="327" y2="356" stroke="#eee"/><text x="327" y="372">50</text>
+    <line x1="444" y1="30" x2="444" y2="356" stroke="#eee"/><text x="444" y="372">100</text>
+    <line x1="562" y1="30" x2="562" y2="356" stroke="#eee"/><text x="562" y="372">150</text>
+    <line x1="679" y1="30" x2="679" y2="356" stroke="#eee"/><text x="679" y="372">200</text>
+    <line x1="796" y1="30" x2="796" y2="356" stroke="#eee"/><text x="796" y="372">250</text>
+    <line x1="913" y1="30" x2="913" y2="356" stroke="#eee"/><text x="913" y="372">300</text>
+    <text x="585" y="389" font-size="11" fill="#1a1a2e">approx. int8 model size on disk (MB)</text>
+  </g>
+  <!-- Gecko baseline reference line at 130MB: 210 + 130*2.34375 = 514.7 -->
+  <line x1="515" y1="30" x2="515" y2="356" stroke="#0b5563" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="519" y="42" font-size="10.5" fill="#0b5563" font-weight="700">Gecko ~130</text>
+  <!-- bars: y rows -->
+  <g font-size="11">
+    <!-- bge-small/MedEmbed-small 32 -> w=75 -->
+    <rect x="210" y="40"  width="75"  height="22" fill="#86efac" stroke="#15803d"/>
+    <text x="206" y="55" text-anchor="end" fill="#1a1a2e">bge-small / MedEmbed-small</text>
+    <text x="290" y="56" font-size="10" fill="#15803d">32</text>
+    <!-- MedEmbed-base/bge-base 105 -> 246 -->
+    <rect x="210" y="72"  width="246" height="22" fill="#86efac" stroke="#15803d"/>
+    <text x="206" y="87" text-anchor="end">bge-base / MedEmbed-base</text>
+    <text x="461" y="88" font-size="10" fill="#15803d">105</text>
+    <!-- MedCPT query 110 -> 258 -->
+    <rect x="210" y="104" width="258" height="22" fill="#86efac" stroke="#15803d"/>
+    <text x="206" y="119" text-anchor="end">MedCPT (query enc.)</text>
+    <text x="473" y="120" font-size="10" fill="#15803d">110</text>
+    <!-- mE5-small 118 -> 277 -->
+    <rect x="210" y="136" width="277" height="22" fill="#fde68a" stroke="#b7791f"/>
+    <text x="206" y="151" text-anchor="end">multilingual-e5-small</text>
+    <text x="492" y="152" font-size="10" fill="#b7791f">118</text>
+    <!-- EmbeddingGemma 184 -> 431 -->
+    <rect x="210" y="168" width="431" height="22" fill="#86efac" stroke="#15803d"/>
+    <text x="206" y="183" text-anchor="end" font-weight="700">EmbeddingGemma-300M</text>
+    <text x="646" y="184" font-size="10" fill="#15803d">184</text>
+    <!-- mE5-base 265 -> 621 -->
+    <rect x="210" y="200" width="621" height="22" fill="#fde68a" stroke="#b7791f"/>
+    <text x="206" y="215" text-anchor="end">multilingual-e5-base</text>
+    <text x="836" y="216" font-size="10" fill="#b7791f">265</text>
+    <!-- arctic 296 -> 694 -->
+    <rect x="210" y="232" width="694" height="22" fill="#fca5a5" stroke="#b91c1c"/>
+    <text x="206" y="247" text-anchor="end">arctic-embed-m-v2.0</text>
+    <text x="909" y="248" font-size="10" fill="#b91c1c">296</text>
+    <!-- gte 305 -> 715 -->
+    <rect x="210" y="264" width="715" height="22" fill="#fca5a5" stroke="#b91c1c"/>
+    <text x="206" y="279" text-anchor="end">gte-multilingual-base</text>
+    <text x="930" y="280" font-size="10" fill="#b91c1c">305</text>
+    <!-- ceilings off chart -->
+    <rect x="210" y="296" width="745" height="22" fill="#e2e8f0" stroke="#64748b"/>
+    <text x="206" y="311" text-anchor="end">bge-m3 / jina-v3</text>
+    <text x="700" y="311" font-size="10" fill="#475569">~560–570 →  off-budget (≥0.6 GB int8)</text>
+    <rect x="210" y="328" width="745" height="22" fill="#e2e8f0" stroke="#64748b"/>
+    <text x="206" y="343" text-anchor="end">Qwen3-8B / NV-Embed (decoder)</text>
+    <text x="700" y="343" font-size="10" fill="#475569">multiple GB → server/GPU only</text>
+  </g>
+</svg>
+<figcaption>Footprint must coexist with the ~4 GB on-device Gemma generator + the ~190 MB vector store. Bar color = LiteRT risk tier (green low / amber medium / red high / grey not-deployable). EmbeddingGemma's MRL lets it drop to the 256-dim build to shrink both the model and the vector store if needed.</figcaption>
+</figure>
+<p class="legend">
+  <span><span class="sw" style="background:#86efac"></span>LOW risk</span>
+  <span><span class="sw" style="background:#fde68a"></span>MEDIUM (spike)</span>
+  <span><span class="sw" style="background:#fca5a5"></span>HIGH (custom arch)</span>
+  <span><span class="sw" style="background:#e2e8f0"></span>Not deployable</span>
+</p>
+
+<h2 id="ceilings">5. Reference ceilings (bound the gap — not candidates)</h2>
+<p>These are API-only or decoder-only multi-GB LLMs. Their value is to measure how much retrieval quality we forgo by staying on-device. <strong>Numbers below span different benchmarks/versions — run one ceiling through the in-house harness for a clean gap.</strong></p>
+<table>
+<tr><th>Model</th><th class="num">Params</th><th>Why off-device</th><th>Retrieval ceiling</th><th>Multiling.</th></tr>
+<tr><td>Qwen3-Embedding-8B <span class="src">Alibaba</span></td><td class="num">8B</td><td>decoder-only LLM (~16 GB)</td><td><strong>MMTEB-R 72.94</strong> (multi); MTEB-R 69.4 (En); MMTEB #1</td><td>100+</td></tr>
+<tr><td>NV-Embed-v2 <span class="src">NVIDIA</span></td><td class="num">7.85B</td><td>decoder-only; CC-BY-NC</td><td><strong>MTEB-R 62.65</strong> (En, #1 v1)</td><td>English</td></tr>
+<tr><td>gte-Qwen2-7B-instruct</td><td class="num">7.6B</td><td>decoder-only (Apache)</td><td>MTEB-EN 70.2; retr ~60.3</td><td>multi</td></tr>
+<tr><td>voyage-3-large <span class="src">Voyage/MongoDB</span></td><td class="num">API</td><td>closed weights</td><td>vendor +9.7% vs OpenAI-3-large (no MTEB)</td><td>26</td></tr>
+<tr><td>OpenAI text-embedding-3-large</td><td class="num">API</td><td>closed weights</td><td>MTEB 64.6%; MIRACL 54.9%</td><td>multi</td></tr>
+</table>
+<p class="callout">Already in this repo's audit as reference points: <strong>voyage strict pool recall 0.768 vs Gecko 0.345</strong> — the concrete headroom an on-device embedder is chasing on the recall axis.</p>
+
+<h2 id="rejected">6. Rejected (with reason)</h2>
+<table>
+<tr><th>Model(s)</th><th>Reason</th></tr>
+<tr><td>SapBERT</td><td>built for entity-linking on short strings (CLS, max-len ~25) — not passage retrieval</td></tr>
+<tr><td>raw Bio_ClinicalBERT / BiomedBERT / ClinicalBERT</td><td>masked-LM, not embedders; MedTEB retrieval 0.06–0.13</td></tr>
+<tr><td>pritamdeka S-BioBert / BioBERT-stsb family</td><td>STS models, ~100-token cap; one is non-commercial</td></tr>
+<tr><td>LaBSE</td><td>weak retrieval (MTEB ~45), 256-token cap, no MRL, vocab-heavy 470 MB</td></tr>
+<tr><td>BMRetriever</td><td>smallest variant 410M decoder-LLM — over budget</td></tr>
+<tr><td>bge-m3 / jina-v3</td><td>~570M / ~0.6 GB int8 — too heavy beside the 4 GB generator (kept as quality references)</td></tr>
+</table>
+
+<h2 id="shortlist">7. Recommended shortlist &amp; the runtime fork</h2>
+<div class="callout good">
+<strong>Take these into G2 (feasibility spike) → offline screen:</strong>
+<ol style="margin:.4rem 0 0">
+<li><strong>EmbeddingGemma-300M</strong> — primary. The only candidate whose LiteRT gate is <em>already cleared by Google</em>; multilingual (a genuine upgrade over English-only Gecko); MRL (768→256) flexes footprint and vector-store size; has a working medical fine-tune precedent. <em>De-risk early:</em> it ships <strong>mixed int4/int8 (not pure int8)</strong> via QAT, has no MediaPipe <code>.task</code> (wire SentencePiece + prefixes yourself), and has two open conversion bugs that silently produce garbage vectors — <strong>validate exported embeddings vs PyTorch (<code>allclose</code>) before trusting any metric.</strong></li>
+<li><strong>MedCPT (query encoder on-device + offline article index)</strong> — the strongest <em>in-domain</em> evidence (only model here with real BioASQ/BEIR-med retrieval numbers). The asymmetric design neutralizes its dual-encoder storage cost. <em>Validate:</em> it was trained on PubMed query–article pairs — confirm transfer to <em>guideline prose</em>; 64-token query cap; English-only.</li>
+<li><strong>MedEmbed-small (bge-small base)</strong> — best footprint (~32 MB int8) with a <em>verified</em> LiteRT conversion, and the cheapest base to medically fine-tune later (R2d). <em>Validate:</em> int8 quality on a 33M model is the most at-risk regime — test ranking after quantization.</li>
+</ol>
+<p style="margin:.5rem 0 0"><em>Hold in reserve:</em> multilingual-e5-small/base if multilingual is re-prioritized <strong>and</strong> the runtime question (below) resolves toward ONNX or a successful LiteRT spike.</p>
+</div>
+
+<div class="callout warn">
+<strong>Decision that gates everything — confirm with the app team before the spike:</strong> is the on-device runtime <strong>strictly LiteRT</strong>, or is <strong>ONNX Runtime Mobile</strong> acceptable?
+<ul style="margin:.4rem 0 0">
+<li><strong>If strictly LiteRT</strong> → EmbeddingGemma is the de-risked path; classic encoders (e5/bge/MedEmbed/MedCPT) are convertible but carry real validation effort, and the custom-arch models (gte/arctic) are high-risk.</li>
+<li><strong>If ONNX Runtime Mobile is allowed</strong> → the entire e5 / bge / MedEmbed / MedCPT family becomes low-risk (it's the proven community path), widening the shortlist considerably and making the multilingual e5 models cheap to try.</li>
+</ul>
+</div>
+
+<h2 id="feeds">8. Feeds-forward (for the next gates)</h2>
+<h3>Per-candidate input formatting (for harness fix #4 — omitting these rigs the comparison)</h3>
+<table>
+<tr><th>Model</th><th>Query input</th><th>Document input</th></tr>
+<tr><td>EmbeddingGemma</td><td><code>task: search result | query: {q}</code></td><td><code>title: none | text: {chunk}</code></td></tr>
+<tr><td>multilingual-e5-*</td><td><code>query: {q}</code> (mandatory)</td><td><code>passage: {chunk}</code> (mandatory)</td></tr>
+<tr><td>bge / MedEmbed</td><td>opt. <code>Represent this sentence for searching relevant passages: {q}</code></td><td>raw chunk</td></tr>
+<tr><td>arctic-embed-v2</td><td><code>query: {q}</code></td><td>raw chunk</td></tr>
+<tr><td>gte-multilingual / BioLORD</td><td>raw query</td><td>raw chunk</td></tr>
+<tr><td>MedCPT</td><td>raw query → <em>query encoder</em></td><td><code>[title, abstract]</code> → <em>article encoder</em></td></tr>
+</table>
+
+<h3>Open risks to close empirically (none resolvable from the literature)</h3>
+<ul>
+<li><strong>int8 LiteRT embedding quality is under-documented</strong> — no public TFLite-int8 retrieval-quality numbers exist except Google's own EmbeddingGemma (which doesn't publish a retention delta). Small models (33M) degrade most. Must measure ranking post-quantization (fall back to int16-activation or fp16 if cosine geometry breaks).</li>
+<li><strong>MedCPT domain transfer</strong> — PubMed literature ≠ clinical guideline prose.</li>
+<li><strong>No biomedical embedder has a LiteRT precedent</strong> — the mechanics are standard BERT, but the domain-on-LiteRT combination is new.</li>
+<li><strong>Cross-benchmark numbers are not comparable</strong> — the only clean gap comes from running candidates + one ceiling through the frozen in-house split.</li>
+<li><strong>Vector-store sizing</strong> — at 768-dim fp32 the store is ~190 MB; a 256-dim MRL build or int8 embeddings cuts it 4–8× and may matter more than model size on the device budget.</li>
+</ul>
+
+<h2 id="method">Method &amp; sources</h2>
+<p class="src">Five parallel research passes (EmbeddingGemma deep-dive; multilingual small encoders; English + medical-domain encoders; heavy models + reference ceilings; LiteRT/AI-Edge conversion feasibility), each source-backed against primary sources (HF model cards, arXiv tech reports, Google AI Edge / LiteRT docs, MTEB/MMTEB/MIRACL/MedTEB leaderboards) with an adversarial verification pass. Quantitative claims are cited in the underlying fact sheets; figures marked "vendor" are self-reported and not independently benchmarked. Baseline Gecko facts confirmed against this repo's <code>latency_eval</code>, <code>retrieval_eval/retrieval.py</code>, and the v0.2 improvement-plan report.</p>
+
+</body>
+</html>

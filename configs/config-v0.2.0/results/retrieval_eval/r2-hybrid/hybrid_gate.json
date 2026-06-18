@@ -1,0 +1,56 @@
+{
+  "created_at_utc": "2026-06-13T12:45:37Z",
+  "source": {
+    "hf_repo": "nmrenyi/mamaretrieval",
+    "revision": "v0.2.0"
+  },
+  "note": "each gate computed on the retriever's native score: gecko cosine, bm25 BM25 score, voyage cosine (API-only ceiling), hybrid RRF fused score. gecko chunk AUC should reproduce R1 \u00a73 (0.572).",
+  "gecko_cosine": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.4771,
+    "hr_at_3": 0.8135,
+    "chunk_auc_grade3": 0.5724,
+    "chunk_auc_grade5": 0.5404,
+    "within_bundle_concordance": 0.6231,
+    "concordance_n_pairs": 4182,
+    "bundle_any_relevant_auc_top1": 0.5744
+  },
+  "bm25": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.4174,
+    "hr_at_3": 0.7542,
+    "chunk_auc_grade3": 0.6461,
+    "chunk_auc_grade5": 0.6358,
+    "within_bundle_concordance": 0.6585,
+    "concordance_n_pairs": 4050,
+    "bundle_any_relevant_auc_top1": 0.6841
+  },
+  "voyage_cosine_ceiling": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.8668,
+    "hr_at_3": 0.9956,
+    "chunk_auc_grade3": 0.734,
+    "chunk_auc_grade5": 0.6129,
+    "within_bundle_concordance": 0.7553,
+    "concordance_n_pairs": 1990,
+    "bundle_any_relevant_auc_top1": 0.7505
+  },
+  "hybrid_rrf": {
+    "n_top3_pairs": 9555,
+    "n_queries": 3185,
+    "p_at_3": 0.5118,
+    "hr_at_3": 0.86,
+    "chunk_auc_grade3": 0.668,
+    "chunk_auc_grade5": 0.6435,
+    "within_bundle_concordance": 0.5963,
+    "concordance_n_pairs": 4360,
+    "bundle_any_relevant_auc_top1": 0.6733,
+    "config": {
+      "alpha": 0.5,
+      "k": 60
+    }
+  }
+}
