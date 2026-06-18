@@ -1,0 +1,16 @@
+{
+  "candidate": "gecko",
+  "dim": 768,
+  "model": "Qwen/Qwen3-32B",
+  "datasets": {
+    "kenya": {
+      "n": 312,
+      "top_k": 20,
+      "p_at_3_lenient": 0.2703,
+      "p_at_3_strict": 0.172,
+      "mean_grade_top3": 1.4402,
+      "hr_at_20_lenient": 0.7147,
+      "hr_at_20_strict": 0.609
+    }
+  }
+}
