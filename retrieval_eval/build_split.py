@@ -17,7 +17,7 @@ presence in the pool is ~99% (near-constant, nothing to balance), and strict
 presence in the *union* pool of all 6 retrievers is ~94% (also near-constant) —
 neither is worth stratifying on. We balance the one variable that is both
 variable and drives the noisy metric. See the R2b report and
-docs/r2c-reranker-literature-review-20260613.md.
+configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-literature-review-20260613.md.
 
 Usage:
   python -m retrieval_eval.build_split \\

@@ -2,7 +2,7 @@
 
 EmbeddingGemma-300M vs deployed Gecko, on-device medical RAG (LiteRT-only, low-mid Zanzibar,
 English-primary). All phases complete. Companion docs: lit-review, test/autonomous plans, and the
-per-phase results docs in `docs/r2c-embedder-*`.
+per-phase results docs in this folder (`configs/config-v0.2.0/reports/r2c-embedder/`).
 
 ## Results by phase
 

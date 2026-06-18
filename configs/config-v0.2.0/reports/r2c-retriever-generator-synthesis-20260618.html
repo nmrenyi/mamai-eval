@@ -38,8 +38,8 @@
 <h1>R2c Synthesis — Where to Invest in Retrieval &amp; Generation</h1>
 <p class="meta">2026-06-18 · config-v0.2.0 · MAM-AI on-device medical assistant (Kenyan nurses/midwives).
 Synthesises two studies: the <strong>reranker</strong> line
-(<code>reports/r2c-rerank/r2c-reranker-results-20260613.html</code>) and the
-<strong>embedder bake-off</strong> (<code>docs/r2c-embedder-report-20260616.html</code>), plus the
+(<code>r2c-rerank/r2c-reranker-results-20260613.html</code>) and the
+<strong>embedder bake-off</strong> (<code>r2c-embedder/r2c-embedder-report-20260616.html</code>), plus the
 unified generator×retriever matrix run 2026-06-18.</p>
 
 <div class="callout good">
@@ -156,7 +156,7 @@ only cell where a retriever clears the no-RAG bar</strong>.</li>
 
 <h3>Could a confidence gate sidestep the problem? No — abstention isn't thresholdable either</h3>
 <p>The obvious mitigation for "RAG sometimes hurts" is an abstention gate: detect a weak retrieval and fall
-back to no-RAG. We tested this head-on for EmbeddingGemma × 3n (<code>docs/r2c-eg-thresholdability-20260618.html</code>).
+back to no-RAG. We tested this head-on for EmbeddingGemma × 3n (<code>r2c-threshold/r2c-eg-thresholdability-20260618.html</code>).
 The headroom is real — a <em>perfect</em> per-query RAG/no-RAG gate would lift kenya recall 0.297 → 0.354 — but
 no available score realizes it: EmbeddingGemma cosine predicts "does RAG help this query?" at
 <strong>AUC 0.50</strong> (chance, Pearson −0.04), and no gated policy beats always-RAG. A fine-tuned reranker
@@ -224,11 +224,11 @@ may help once the generator improves," not as a standalone win.</li>
 
 <h2>Sources</h2>
 <p class="src">
-Reranker study: <code>configs/config-v0.2.0/reports/r2c-rerank/r2c-reranker-results-20260613.html</code>
+Reranker study: <code>r2c-rerank/r2c-reranker-results-20260613.html</code>
 (offline screen, in-domain fine-tune, device parity, value gate, 9-arm generator A/B, generator×retriever matrix).<br>
-Embedder bake-off: <code>docs/r2c-embedder-report-20260616.html</code>
+Embedder bake-off: <code>r2c-embedder/r2c-embedder-report-20260616.html</code>
 (P0 deployability, P2 offline retrieval, P1 corpus coverage, P3 value gate).<br>
-Thresholdability: <code>docs/r2c-eg-thresholdability-20260618.html</code>
+Thresholdability: <code>r2c-threshold/r2c-eg-thresholdability-20260618.html</code>
 (can EmbeddingGemma cosine / reranker score drive an abstention gate? — no; reproducible via
 <code>retrieval_eval/analyze_thresholdability.py</code>).<br>
 Matrix raw outputs (2026-06-18): <code>eval_output/value_gate_eg_3n*</code>, <code>norag_gemma3n</code>,

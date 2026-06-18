@@ -115,6 +115,21 @@ The open-ended tracks are LLM-judged, so the judge itself was validated first:
 |---|---|
 | `improvement-plan-20260611.html` | **Improvement advice for the next cycle**, synthesizing all three pillars. P0: retrieval relevance threshold (stop injecting noise), system-prompt revision (emergency override + deflection fixes, three-arm A/B incl. the G2 structure pilot), corpus expansion with high-quality sources. P1: coverage/completeness of engaged answers (G2), on-device retriever upgrade (hybrid / rerank / multilingual embedder bake-off), evaluation-protocol upgrades (deflection metric, rubric CIs, clinician calibration). P2: query rewriting, MCQ-track instrumentation, corpus-contradiction cleanup. Separates system improvements (§1–4) from evaluation-protocol improvements (§5); every item carries an acceptance gate. Offline simulations from existing audit labels (no new judging) validate the retrieval options before device work. |
 
+### R1 / R2 — retrieval-threshold & retriever-upgrade investigation
+
+Each workstream keeps its report(s), figures, and result JSONs in its own subfolder here.
+**Start with the synthesis** — it ties the retriever and generator findings together.
+
+| Report | What it is |
+|---|---|
+| `r2c-retriever-generator-synthesis-20260618.html` | **Capstone.** Synthesises the reranker + embedder + generator×retriever matrix + thresholdability into ranked recommendations: the **generator is the binding lever** (Gemma 4→3n ~2×), retrieval upgrades win offline but don't convert; adopt EmbeddingGemma (cheap, ~0 online today), don't ship the reranker, no retrieval-side abstention gate. |
+| `r1-threshold/` | R1 — relevance-threshold negative result (Gecko cosine carries no usable threshold signal; `similarity_threshold` stays 0.0). |
+| `r2-hybrid/` | R2a — Gecko+BM25 hybrid (RRF) offline result. |
+| `r2-rerank/` | R2b — rerank-ceiling simulation. |
+| `r2c-rerank/` | R2c reranker line — candidate bake-off, in-domain fine-tune (MiniLM-L6-ft / mxbai-ft), device parity, value gate, the **generator×retriever matrix**, and EG+reranker×3n. |
+| `r2c-embedder/` | R2c embedder bake-off — EmbeddingGemma vs Gecko (P0 deployability → P2 retrieval → P1 corpus coverage → P3 value gate) + per-phase docs. |
+| `r2c-threshold/` | R2c thresholdability — can EmbeddingGemma cosine (or a reranker score) drive an abstention gate? No (chunk AUC 0.69–0.72 < 0.80; answer-quality AUC ≈ 0.50). |
+
 ## One-paragraph synthesis
 
 The v0.2 evidence converges: **the system is safe but unhelpful, and the bottlenecks are
