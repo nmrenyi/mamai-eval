@@ -37,7 +37,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 RUBRIC_DATASETS = {"healthbench_oss_eval", "healthbench_consensus", "healthbench_hard"}
 CHECKPOINT_EVERY = 10
-MAX_WORKERS = 20
+MAX_WORKERS = int(os.environ.get("RUBRIC_WORKERS", "20"))
 
 
 # ── Prompt (ported from openai/simple-evals healthbench_eval.py) ─────────────

@@ -1,0 +1,169 @@
+{
+  "created_at_utc": "2026-06-16T07:49:55Z",
+  "n_test_queries": 491,
+  "device": "cuda",
+  "cells": {
+    "gecko__none": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.4847,
+          "hr_at_3": 0.8269
+        },
+        "strict_ge5": {
+          "p_at_3": 0.1996,
+          "hr_at_3": 0.4623
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.5797,
+        "chunk_auc_grade5": 0.5793,
+        "within_bundle_concordance": 0.6317,
+        "bundle_any_relevant_auc_top1": 0.5
+      }
+    },
+    "bm25__none": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.4046,
+          "hr_at_3": 0.7475
+        },
+        "strict_ge5": {
+          "p_at_3": 0.1514,
+          "hr_at_3": 0.3462
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.6043,
+        "chunk_auc_grade5": 0.5951,
+        "within_bundle_concordance": 0.6756,
+        "bundle_any_relevant_auc_top1": 0.5
+      }
+    },
+    "hybrid__none": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.5058,
+          "hr_at_3": 0.8574
+        },
+        "strict_ge5": {
+          "p_at_3": 0.2023,
+          "hr_at_3": 0.4399
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.679,
+        "chunk_auc_grade5": 0.6675,
+        "within_bundle_concordance": 0.6116,
+        "bundle_any_relevant_auc_top1": 0.6483
+      }
+    },
+    "gecko__minilm_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.7196,
+          "hr_at_3": 0.9409
+        },
+        "strict_ge5": {
+          "p_at_3": 0.368,
+          "hr_at_3": 0.6558
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.7832,
+        "chunk_auc_grade5": 0.7753,
+        "within_bundle_concordance": 0.7392,
+        "bundle_any_relevant_auc_top1": 0.7987
+      }
+    },
+    "bm25__minilm_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.6585,
+          "hr_at_3": 0.8961
+        },
+        "strict_ge5": {
+          "p_at_3": 0.3007,
+          "hr_at_3": 0.5499
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.8334,
+        "chunk_auc_grade5": 0.7986,
+        "within_bundle_concordance": 0.7724,
+        "bundle_any_relevant_auc_top1": 0.8641
+      }
+    },
+    "hybrid__minilm_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.7556,
+          "hr_at_3": 0.9593
+        },
+        "strict_ge5": {
+          "p_at_3": 0.3802,
+          "hr_at_3": 0.6802
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.7833,
+        "chunk_auc_grade5": 0.7566,
+        "within_bundle_concordance": 0.7511,
+        "bundle_any_relevant_auc_top1": 0.7814
+      }
+    },
+    "gecko__mxbai_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.7936,
+          "hr_at_3": 0.9511
+        },
+        "strict_ge5": {
+          "p_at_3": 0.4168,
+          "hr_at_3": 0.7006
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.8621,
+        "chunk_auc_grade5": 0.8543,
+        "within_bundle_concordance": 0.7961,
+        "bundle_any_relevant_auc_top1": 0.8915
+      }
+    },
+    "bm25__mxbai_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.7223,
+          "hr_at_3": 0.9287
+        },
+        "strict_ge5": {
+          "p_at_3": 0.3401,
+          "hr_at_3": 0.5804
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.9039,
+        "chunk_auc_grade5": 0.8933,
+        "within_bundle_concordance": 0.8415,
+        "bundle_any_relevant_auc_top1": 0.8924
+      }
+    },
+    "hybrid__mxbai_ft": {
+      "by_cut": {
+        "lenient_ge3": {
+          "p_at_3": 0.8208,
+          "hr_at_3": 0.9776
+        },
+        "strict_ge5": {
+          "p_at_3": 0.4196,
+          "hr_at_3": 0.721
+        }
+      },
+      "stage1_gate": {
+        "chunk_auc_grade3": 0.8592,
+        "chunk_auc_grade5": 0.857,
+        "within_bundle_concordance": 0.8353,
+        "bundle_any_relevant_auc_top1": 0.9074
+      }
+    }
+  }
+}

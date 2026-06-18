@@ -23,6 +23,8 @@ SAQ_DS="${SAQ_DS:-kenya afrimedqa_saq}"
 # Explicit list of run dirs to judge (each holds <dataset>.json). Defaults to the
 # three arms under OUT_DIR; override to judge arms across multiple OUT_DIRs.
 RUN_DIRS="${RUN_DIRS:-$OUT_DIR/gecko/run $OUT_DIR/hybrid/run $OUT_DIR/hybrid_rerank/run}"
+# rescore_open_v2 (SAQ key-fact recall) or rescore_rubric (healthbench rubric +/-)
+JUDGE_MODULE="${JUDGE_MODULE:-end_to_end_eval.rescore_open_v2}"
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 
 echo "=== INSTALLING DEPENDENCIES ==="
@@ -64,8 +66,8 @@ for RUN in $RUN_DIRS; do
   for DS in $SAQ_DS; do
     f="$RUN/$DS.json"
     [ -f "$f" ] || { echo "SKIP missing $f"; continue; }
-    echo "=== JUDGE $RUN ds=$DS ==="
-    python3 -m end_to_end_eval.rescore_open_v2 --config "$CONFIG" "$f"
+    echo "=== JUDGE $RUN ds=$DS ($JUDGE_MODULE) ==="
+    python3 -m "$JUDGE_MODULE" --config "$CONFIG" "$f"
   done
 done
 

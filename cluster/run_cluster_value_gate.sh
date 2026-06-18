@@ -29,8 +29,10 @@ MODEL="${MODEL:-gemma4-e4b}"   # the on-device generator (app_config llm_model =
 MODEL_DIR="${MODEL_DIR:-/lightscratch/users/yiren/models}"
 ARMS_DIR="${ARMS_DIR:-/lightscratch/users/yiren/eval_output/rag_arms}"
 OUT_DIR="${OUT_DIR:-/lightscratch/users/yiren/eval_output/value_gate}"
-SAQ_DS="${SAQ_DS:-kenya,afrimedqa_saq}"
-MCQ_DS="${MCQ_DS:-afrimedqa}"
+# Use ${VAR-default} (not :-) so an explicitly-passed empty value stays empty
+# (SAQ_DS="" / MCQ_DS="" genuinely disables that block instead of re-defaulting).
+SAQ_DS="${SAQ_DS-kenya,afrimedqa_saq}"
+MCQ_DS="${MCQ_DS-afrimedqa}"
 MCQ_MAX="${MCQ_MAX:-600}"
 ARMS="${ARMS:-gecko hybrid hybrid_rerank}"   # override to run one arm per GPU job
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"

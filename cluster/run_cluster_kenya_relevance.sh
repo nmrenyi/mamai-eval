@@ -19,6 +19,8 @@ REPO_REF="${REPO_REF:-feat/r2-retriever-upgrade-20260613}"
 WORKTREE="${WORKTREE:-/tmp/eval_code}"
 ARMS_ROOT="${ARMS_ROOT:-/lightscratch/users/yiren/eval_output/rag_arms}"
 MXBAI_ARMS="${MXBAI_ARMS:-/lightscratch/users/yiren/eval_output/rag_arms_mxbai}"
+# Flat dir of arm subdirs (the 9-arm matrix); overrides ARMS_ROOT/MXBAI_ARMS when set.
+MATRIX_ROOT="${MATRIX_ROOT:-}"
 DATASETS="${DATASETS:-kenya,afrimedqa_saq}"
 OUT_SCRATCH="${OUT_SCRATCH:-/lightscratch/users/yiren/eval_output/kenya_relevance}"
 HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
@@ -55,8 +57,10 @@ done
 curl -sf "http://localhost:$PORT/health" >/dev/null 2>&1 || { echo "not healthy"; tail -60 "$VLLM_LOG"; exit 1; }
 
 OUT="$OUT_SCRATCH/kenya_relevance.json"
+ARM_ARGS=(--arms-root "$ARMS_ROOT" --mxbai-arms "$MXBAI_ARMS")
+[ -n "$MATRIX_ROOT" ] && ARM_ARGS=(--matrix-root "$MATRIX_ROOT")
 python3 -m retrieval_eval.judge_kenya_relevance \
-  --arms-root "$ARMS_ROOT" --mxbai-arms "$MXBAI_ARMS" \
+  "${ARM_ARGS[@]}" \
   --datasets "$DATASETS" --base-url "http://localhost:$PORT/v1" \
   --model "$JUDGE_MODEL" --out "$OUT"
 
