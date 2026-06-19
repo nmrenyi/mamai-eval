@@ -229,3 +229,6 @@ configs/**/results/generator/**/calibration_rubric.txt
 */.DS_Store
 .venv-r1/
 .venv-rerank/
+
+# G1 3n A/B: large healthbench raw scored rows live on PVC, not git
+configs/**/results/end_to_end_eval/g1-ab-3n-*/arm*/healthbench_oss_eval.json

@@ -1,0 +1,207 @@
+{
+  "experiment": "g1-ab-3n-20260619",
+  "generator": "gemma3n-e4b (Q4_0)",
+  "rag": false,
+  "judge": "gpt-oss-120b @ medium",
+  "arms": {
+    "arm1": "baseline",
+    "arm2": "+G1 levers",
+    "arm3": "+G1+G2 skeleton"
+  },
+  "saq": {
+    "kenya": {
+      "arm1": {
+        "n_judged": 312,
+        "mean_key_fact_recall": 0.2881,
+        "deflection_rate": 0.0192,
+        "harm_rate": 0.2244,
+        "behavior_distribution": {
+          "engage_and_refer": 296,
+          "engage_only": 10,
+          "defer_only": 6
+        },
+        "safety_distribution": {
+          "safe": 205,
+          "potentially_harmful": 66,
+          "minor_concern": 37,
+          "dangerous": 4
+        }
+      },
+      "arm2": {
+        "n_judged": 312,
+        "mean_key_fact_recall": 0.3652,
+        "deflection_rate": 0.0,
+        "harm_rate": 0.3397,
+        "behavior_distribution": {
+          "engage_and_refer": 302,
+          "engage_only": 10
+        },
+        "safety_distribution": {
+          "safe": 170,
+          "dangerous": 7,
+          "potentially_harmful": 99,
+          "minor_concern": 36
+        }
+      },
+      "arm3": {
+        "n_judged": 312,
+        "mean_key_fact_recall": 0.4034,
+        "deflection_rate": 0.0,
+        "harm_rate": 0.3526,
+        "behavior_distribution": {
+          "engage_and_refer": 302,
+          "engage_only": 10
+        },
+        "safety_distribution": {
+          "minor_concern": 33,
+          "dangerous": 9,
+          "potentially_harmful": 101,
+          "safe": 169
+        }
+      }
+    },
+    "afrimedqa_saq": {
+      "arm1": {
+        "n_judged": 37,
+        "mean_key_fact_recall": 0.3413,
+        "deflection_rate": 0.0811,
+        "harm_rate": 0.1081,
+        "behavior_distribution": {
+          "engage_and_refer": 19,
+          "engage_only": 15,
+          "defer_only": 2,
+          "refuse": 1
+        },
+        "safety_distribution": {
+          "safe": 29,
+          "potentially_harmful": 4,
+          "minor_concern": 4
+        }
+      },
+      "arm2": {
+        "n_judged": 37,
+        "mean_key_fact_recall": 0.3777,
+        "deflection_rate": 0.0541,
+        "harm_rate": 0.1351,
+        "behavior_distribution": {
+          "engage_and_refer": 17,
+          "engage_only": 18,
+          "defer_only": 2
+        },
+        "safety_distribution": {
+          "safe": 27,
+          "potentially_harmful": 4,
+          "minor_concern": 5,
+          "dangerous": 1
+        }
+      },
+      "arm3": {
+        "n_judged": 37,
+        "mean_key_fact_recall": 0.4555,
+        "deflection_rate": 0.0541,
+        "harm_rate": 0.1351,
+        "behavior_distribution": {
+          "engage_and_refer": 17,
+          "engage_only": 18,
+          "defer_only": 2
+        },
+        "safety_distribution": {
+          "safe": 21,
+          "minor_concern": 11,
+          "dangerous": 1,
+          "potentially_harmful": 4
+        }
+      }
+    },
+    "whb": {
+      "arm1": {
+        "n_judged": 20,
+        "mean_key_fact_recall": 0.0891,
+        "deflection_rate": 0.5,
+        "harm_rate": 0.25,
+        "behavior_distribution": {
+          "engage_and_refer": 10,
+          "defer_only": 10
+        },
+        "safety_distribution": {
+          "potentially_harmful": 5,
+          "safe": 14,
+          "minor_concern": 1
+        }
+      },
+      "arm2": {
+        "n_judged": 20,
+        "mean_key_fact_recall": 0.1049,
+        "deflection_rate": 0.15,
+        "harm_rate": 0.45,
+        "behavior_distribution": {
+          "engage_and_refer": 17,
+          "defer_only": 3
+        },
+        "safety_distribution": {
+          "potentially_harmful": 8,
+          "minor_concern": 4,
+          "safe": 7,
+          "dangerous": 1
+        }
+      },
+      "arm3": {
+        "n_judged": 20,
+        "mean_key_fact_recall": 0.118,
+        "deflection_rate": 0.3,
+        "harm_rate": 0.25,
+        "behavior_distribution": {
+          "engage_and_refer": 13,
+          "defer_only": 6,
+          "engage_only": 1
+        },
+        "safety_distribution": {
+          "potentially_harmful": 5,
+          "safe": 12,
+          "minor_concern": 3
+        }
+      }
+    }
+  },
+  "rubric": {
+    "arm1": {
+      "n_scored": 1209,
+      "mean_weighted_met": 0.1048,
+      "mean_positive_score": 0.2784,
+      "mean_penalty_rate": 0.3614,
+      "per_axis_mean": {
+        "completeness": -0.0581,
+        "context_awareness": 0.1631,
+        "accuracy": 0.2333,
+        "communication_quality": 0.4358,
+        "instruction_following": 0.3221
+      }
+    },
+    "arm2": {
+      "n_scored": 1209,
+      "mean_weighted_met": 0.1409,
+      "mean_positive_score": 0.3166,
+      "mean_penalty_rate": 0.3655,
+      "per_axis_mean": {
+        "completeness": 0.0263,
+        "context_awareness": 0.1838,
+        "accuracy": 0.225,
+        "communication_quality": 0.4007,
+        "instruction_following": 0.3246
+      }
+    },
+    "arm3": {
+      "n_scored": 1209,
+      "mean_weighted_met": 0.1413,
+      "mean_positive_score": 0.3125,
+      "mean_penalty_rate": 0.3635,
+      "per_axis_mean": {
+        "completeness": 0.0435,
+        "context_awareness": 0.1978,
+        "accuracy": 0.2358,
+        "communication_quality": 0.3557,
+        "instruction_following": 0.3127
+      }
+    }
+  }
+}

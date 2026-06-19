@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G1/G2 Prompt A/B on Gemma 3n (2026-06-19)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.4rem; }
+  p,li { font-size:.93rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .pill { display:inline-block; font-size:.72rem; font-weight:700; padding:.05rem .45rem; border-radius:999px; }
+  .yes { background:var(--good-bg); color:var(--good-edge); border:1px solid var(--good-edge); }
+  .no { background:var(--bad-bg); color:var(--bad-edge); border:1px solid var(--bad-edge); }
+  .mid { background:var(--warn-bg); color:var(--warn-edge); border:1px solid var(--warn-edge); }
+  .up { color:var(--bad-edge); font-weight:600; }
+  .dn { color:var(--good-edge); font-weight:600; }
+  .src { color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+
+<h1>G1/G2 Prompt A/B on Gemma 3n E4B — does the deflection-fix prompt help?</h1>
+<p class="meta">2026-06-19 · config-v0.2.0 prompts · generator <strong>Gemma 3n E4B (Q4_0)</strong> · <strong>no-RAG</strong> ·
+branch <code>feat/g1-prompt-fix-20260611</code> · experiment <code>g1-ab-3n-20260619</code></p>
+
+<div class="callout bad">
+<strong>Bottom line — do not ship G1/G2 as-is on Gemma 3n.</strong> The prompt levers work mechanically
+(kenya key-fact recall <strong>+40% relative</strong>, 0.288 → 0.403; deflection eliminated; HealthBench
+completeness turns positive) — but on the deployment decision set they buy that helpfulness with a
+<strong>monotonic safety regression</strong>: kenya harm-rate 22% → 34% → 35% and <strong>dangerous answers
+4 → 7 → 9</strong>. That fails this repo's mandatory safety gate. And the premise has shifted: the
+Gemma&nbsp;4 → 3n upgrade <em>already</em> drove baseline deflection to ~2%, so G1's original job (fix
+deflection) is largely done — what the prompt now delivers is a <strong>recall-for-safety trade</strong>,
+not a deflection repair.
+</div>
+
+<h2>1. Design</h2>
+<p>Three-arm A/B isolating the effect of the G1 (deflection-fix) and G2-lever-1 (structure) prompt
+revisions from the improvement plan (<code>docs/g1-prompt-fix-plan.md</code>). Only the open-ended system
+prompt varies; generator, params, datasets, and judge are held constant.</p>
+
+<table>
+<tr><th>Arm</th><th>Prompt</th><th>Isolates</th></tr>
+<tr><td><strong>arm1</strong> — baseline</td><td>current <code>system_en.txt</code></td><td>3n no-RAG baseline</td></tr>
+<tr><td><strong>arm2</strong> — +G1</td><td>+ 7 deflection-fix levers (emergency override, both/and, name first-line drugs, no geographic refusal, wider scope, address the midwife, local-resource context)</td><td>arm2 − arm1 = pure deflection-fix effect</td></tr>
+<tr><td><strong>arm3</strong> — +G2</td><td>arm2 + consultation-workflow skeleton (definition → history/exam → tests → dx → plan; branch-not-ask)</td><td>arm3 − arm2 = pure structure effect</td></tr>
+</table>
+
+<ul>
+<li><strong>Generator:</strong> Gemma 3n E4B (the now-deployed model, app v0.3.0), GGUF Q4_0 cluster proxy.</li>
+<li><strong>No RAG</strong> — isolates the prompt from retrieval-triggered behavior.</li>
+<li><strong>Datasets:</strong> kenya 312 (decision set) + afrimedqa_saq 37 + whb 20 (SAQ) + healthbench_oss_eval 1209 (rubric). All three arms generated 1,578 rows each.</li>
+<li><strong>Judge:</strong> pinned <code>gpt-oss-120b</code> @ medium. SAQ via <code>rescore_open_v2</code> (4-value
+<code>behavior</code> tag + key-fact recall + safety enum); rubric via <code>rescore_rubric</code>
+(weighted_met / positive / penalty / 5 axes). 0 judge failures across all SAQ rows.</li>
+</ul>
+
+<h2>2. Headline — the kenya SAQ tradeoff</h2>
+<p>kenya is the physician-authored clinical decision set (n=312) and the experiment's primary readout.
+Recall and harm rise <strong>together and monotonically</strong> with each prompt lever:</p>
+
+<table>
+<tr><th>kenya (n=312)</th><th class="num">arm1 baseline</th><th class="num">arm2 (+G1)</th><th class="num">arm3 (+G1+G2)</th></tr>
+<tr><td>key-fact recall</td><td class="num">0.288</td><td class="num">0.365</td><td class="num"><strong>0.403</strong> <span class="dn">↑</span></td></tr>
+<tr><td>deflection (defer+refuse)</td><td class="num">1.9%</td><td class="num">0%</td><td class="num">0%</td></tr>
+<tr><td>behavior (engage+refer / engage / defer)</td><td class="num">296 / 10 / 6</td><td class="num">302 / 10 / 0</td><td class="num">302 / 10 / 0</td></tr>
+<tr><td>harm rate (pot.harmful + dangerous)</td><td class="num">22.4%</td><td class="num">34.0%</td><td class="num"><strong>35.3%</strong> <span class="up">↑</span></td></tr>
+<tr><td>dangerous (count)</td><td class="num">4</td><td class="num">7</td><td class="num"><strong>9</strong> <span class="up">↑</span></td></tr>
+</table>
+
+<div class="callout warn">
+<strong>Read it as a dose–response curve.</strong> Every lever that adds engagement/completeness
+(recall 0.288 → 0.365 → 0.403) also adds commission (harm 22% → 34% → 35%, dangerous 4 → 7 → 9).
+The most helpful arm (arm3) is the least safe. Recall gain is +7.7 pp (G1) then +3.8 pp (structure),
+cumulative <strong>+11.5 pp (+40% relative)</strong>; harm gain is +11.6 pp then +1.3 pp, cumulative
+<strong>+13.1 pp</strong>; dangerous answers <strong>more than double</strong>.
+</div>
+
+<h3>Robustness</h3>
+<ul>
+<li>The individual recall steps (+7.7, +3.8 pp) sit in the plan's "&lt;10 pp may be judge noise" band — but
+they are <strong>monotonic across three arms</strong>, a consistent signal rather than noise.</li>
+<li>The harm signal is <strong>above the noise floor</strong>: arm1→arm3 harm +13.1 pp and dangerous 4→9 (a
+doubling) — the clearest, most robust effect in the dataset, and it points the wrong way.</li>
+<li>Baseline deflection is already <strong>1.9%</strong> (6 of 312 rows). The Gemma 4 → 3n swap removed the
+deflection problem the plan was written to fix; G1/G2 only close the last ~2%.</li>
+</ul>
+
+<h2>3. SAQ — all three sets</h2>
+<p>The kenya pattern (recall up, harm up) reproduces on afrimedqa_saq. whb (n=20, references known to be
+under-specced) is noisy and kept out of the headline.</p>
+
+<table>
+<tr><th>set</th><th>metric</th><th class="num">arm1</th><th class="num">arm2</th><th class="num">arm3</th></tr>
+<tr><td rowspan="3"><strong>kenya</strong> (312)</td><td>recall</td><td class="num">0.288</td><td class="num">0.365</td><td class="num">0.403</td></tr>
+<tr><td>harm</td><td class="num">22.4%</td><td class="num">34.0%</td><td class="num">35.3%</td></tr>
+<tr><td>dangerous</td><td class="num">4</td><td class="num">7</td><td class="num">9</td></tr>
+<tr><td rowspan="3">afrimedqa_saq (37)</td><td>recall</td><td class="num">0.341</td><td class="num">0.378</td><td class="num">0.456</td></tr>
+<tr><td>harm</td><td class="num">10.8%</td><td class="num">13.5%</td><td class="num">13.5%</td></tr>
+<tr><td>dangerous</td><td class="num">0</td><td class="num">1</td><td class="num">1</td></tr>
+<tr><td rowspan="3">whb (20) <span class="src">indicative only</span></td><td>recall</td><td class="num">0.089</td><td class="num">0.105</td><td class="num">0.118</td></tr>
+<tr><td>harm</td><td class="num">25%</td><td class="num">45%</td><td class="num">25%</td></tr>
+<tr><td>deflection</td><td class="num">50%</td><td class="num">15%</td><td class="num">30%</td></tr>
+</table>
+
+<h2>4. HealthBench rubric — a different, milder story</h2>
+<p>On the rubric track G1/G2 look mildly <em>positive</em>: weighted_met and the completeness axis rise,
+and the penalty rate is flat — no safety regression visible here.</p>
+
+<table>
+<tr><th>healthbench_oss_eval</th><th class="num">arm1</th><th class="num">arm2</th><th class="num">arm3</th></tr>
+<tr><td>n scored</td><td class="num">1209</td><td class="num">1209</td><td class="num">1209</td></tr>
+<tr><td>weighted_met</td><td class="num">0.105</td><td class="num">0.141</td><td class="num">0.141</td></tr>
+<tr><td>positive credit</td><td class="num">0.278</td><td class="num">0.317</td><td class="num">0.313</td></tr>
+<tr><td>penalty rate</td><td class="num">0.361</td><td class="num">0.366</td><td class="num">0.364</td></tr>
+<tr><td>completeness axis</td><td class="num">−0.058</td><td class="num">+0.026</td><td class="num">+0.044</td></tr>
+</table>
+<p class="src">All three arms scored at full n=1209. weighted_met rises with G1 then plateaus (arm2 ≈ arm3);
+the completeness axis rises monotonically (−0.058 → +0.026 → +0.044); penalty stays flat (~0.36).</p>
+
+<div class="callout">
+<strong>Why the two tracks diverge.</strong> They are <em>different question sets</em>, not the same answers
+scored twice. kenya is free-form clinical decision support, where the SAQ <code>safety</code> enum directly
+flags wrong/dangerous management. HealthBench's penalty is criterion-based on a different (largely
+information-seeking) question distribution and does not catch the same commission risk. For a safety gate
+on the deployed product, the <strong>kenya SAQ signal governs</strong> — and it is adverse.
+</div>
+
+<h2>5. Verdict</h2>
+<table>
+<tr><th>Gate (vs arm1 baseline, on 3n)</th><th>arm2 (+G1)</th><th>arm3 (+G1+G2)</th></tr>
+<tr><td>Helpfulness up (recall / completeness)</td><td><span class="pill yes">PASS</span> +7.7 pp</td><td><span class="pill yes">PASS</span> +11.5 pp</td></tr>
+<tr><td>Safety not worse (kenya harm / dangerous)</td><td><span class="pill no">FAIL</span> +11.6 pp, 4→7</td><td><span class="pill no">FAIL</span> +13.1 pp, 4→9</td></tr>
+<tr><td>Faithfulness / commission (proxy: SAQ harm)</td><td><span class="pill no">FAIL</span></td><td><span class="pill no">FAIL</span></td></tr>
+</table>
+
+<p>The three-sided acceptance gate requires <em>all</em> of: recall up, safety not worse, faithfulness not
+worse. Helpfulness passes; <strong>safety fails on the decision set</strong>. Net recommendation:</p>
+<ul>
+<li><strong>Do not ship G1 or G1+G2 as-is on Gemma 3n.</strong></li>
+<li><strong>Re-scope the work.</strong> 3n already eliminated deflection, so the deflection-fix framing is
+obsolete. The remaining value is completeness — pursue it through the levers that do <em>not</em> drive
+commission (structure/skeleton, addressing-the-clinician, local-context) and <strong>drop or heavily guard
+the dose-authorization + forced-engagement levers</strong> that the harm curve implicates.</li>
+<li><strong>The real safety path is grounding, not prompting.</strong> The commission risk is the model
+asserting concrete drugs/doses from parametric memory. That argues for pairing engagement with RAG and
+measuring <em>RAG-context faithfulness</em> (the oracle-track Lynx pass) — the natural next experiment.</li>
+</ul>
+
+<h2>6. Caveats</h2>
+<ul>
+<li><strong>Single run.</strong> No bootstrap CIs yet; recall steps are near the per-run noise floor (the
+harm/dangerous trend is above it). A repeat judge pass on the safety axis would harden the gate decision.</li>
+<li><strong>Faithfulness proxy.</strong> These arms are no-RAG, so the plan's oracle-track Lynx faithfulness
+pass (faithfulness <em>to retrieved context</em>) is not directly applicable; the SAQ <code>safety</code>
+enum (potentially_harmful + dangerous) is used as the commission proxy. A true RAG faithfulness rerun is the
+follow-up if engagement is pursued with retrieval.</li>
+<li><strong>Q4_0 cluster proxy</strong> for the on-device <code>.litertlm</code> int4 — direction is robust,
+absolute magnitudes will shift on-device.</li>
+<li><strong>Absolute harm is high</strong> (22% baseline) partly because 3n is a less-safe base model (flagged
+in the R2c synthesis) and <code>potentially_harmful</code> is a broad category; the governing evidence is the
+<em>delta</em>, not the absolute level.</li>
+<li><strong>All tracks scored at full n</strong> (SAQ 312/37/20; rubric 1209 × 3 arms); 0 judge failures.</li>
+</ul>
+
+<h2>7. Provenance</h2>
+<ul>
+<li>Prompts: <code>g1-ab-3n-20260619/prompts/arm2_system_en.txt</code>, <code>arm3_system_en.txt</code>; arm1 = unmodified <code>config-v0.2.0/system_en.txt</code>.</li>
+<li>Generation: <code>run_cluster_g1_arm.sh</code> (no-RAG, <code>gemma3n-e4b</code>, <code>--system-prompt</code> override). arm1 on H200 (won GPU race), arm2 H100, arm3 A100.</li>
+<li>Judging: <code>run_cluster_g1_judge.sh</code> — one gpt-oss-120b vLLM boot per arm, both tracks, verdicts in-place.</li>
+<li>PVC: <code>/lightscratch/users/yiren/eval_output/g1_ab_3n_20260619/{arm1,arm2,arm3}/run/</code>.</li>
+<li>Code: branch <code>feat/g1-prompt-fix-20260611</code> (<code>--system-prompt</code> override <code>9a73eee</code>; judge runner; 4-value behavior judge).</li>
+</ul>
+
+</body>
+</html>
