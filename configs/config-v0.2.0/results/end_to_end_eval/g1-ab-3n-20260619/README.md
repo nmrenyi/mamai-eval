@@ -31,6 +31,25 @@ question set; the free-form kenya `safety` enum governs the gate. See `report.ht
 verdict + recommendations (re-scope to non-commission levers; pursue RAG grounding + RAG-context
 faithfulness as the real safety path).
 
+## Faithfulness (oracle, Option B) — [`report-faithfulness.html`](report-faithfulness.html)
+
+The no-RAG arms can't measure faithfulness (no context), so a parallel **oracle-context** A/B
+re-ran the Track-3 pipeline (mamaretrieval v0.2.0, top-3, n=2989 → Lynx-70B → gpt-5 categorize +
+calibrate) with 3n + the three prompts. Calibrated true-hallucination:
+
+| | calibrated | (Lynx miss) |
+|---|--:|--:|
+| Gemma 4 (prior) | 9.05% | 8% |
+| arm1 baseline | **27.1%** | 26% |
+| arm2 +G1 | **45.7%** | 46% |
+| arm3 +G1+G2 | **47.2%** | 46% |
+
+**3n is ~3× less faithful to context than Gemma 4 even at baseline**, and **G1 nearly doubles it**
+(27→46%; G2 adds little). The categorized rate stayed ≈flat (6.3→6.7%) — only the calibration
+(Lynx-miss correction) revealed the effect. This is the faithfulness gate the SAQ `safety` enum could
+only proxy, and it **fails for G1/G2 on 3n** — consistent with the SAQ harm signal. Numbers:
+`faith/faith-summary.json`; per-arm provenance: `faith/arm{1,2,3}/`. Plan: `docs/g1-faithfulness-plan.md`.
+
 ## Files
 - `report.html` — full writeup. `summary.json` — every aggregate (incl. healthbench).
 - `arm{1,2,3}/{kenya,afrimedqa_saq,whb}.json` — scored SAQ result rows (behavior + recall + safety).

@@ -1,0 +1,13 @@
+{
+  "experiment": "g1-faith-3n-20260619",
+  "method": "oracle (mamaretrieval v0.2.0, top-3, n=2989) -> Lynx-70B -> gpt-5 categorize+calibrate (Option B)",
+  "generator": "gemma3n-e4b (Q4_0)",
+  "rates_true_hallucination": {
+    "gemma4_prior":  {"raw_lynx_fail": 0.0582, "categorized": 0.0251, "calibrated": 0.0905, "lynx_miss_rate": 0.08},
+    "arm1_baseline": {"raw_lynx_fail": 0.0860, "categorized": 0.0626, "calibrated": 0.2710, "lynx_miss_rate": 0.26, "n_fail": 257},
+    "arm2_g1":       {"raw_lynx_fail": 0.1111, "categorized": 0.0646, "calibrated": 0.4570, "lynx_miss_rate": 0.46, "n_fail": 332},
+    "arm3_g1g2":     {"raw_lynx_fail": 0.1084, "categorized": 0.0672, "calibrated": 0.4720, "lynx_miss_rate": 0.46, "n_fail": 324}
+  },
+  "calibration_sample_n": "~96-99 per arm; wide CIs (arm1 miss 0.14-0.38, arm2/arm3 0.32-0.60)",
+  "verdict": "3n ~3x less faithful to context than G4 at baseline; G1 nearly doubles calibrated hallucination (27->46%), G2 structure adds little (->47%). Faithfulness gate FAILS for G1/G2 on 3n."
+}

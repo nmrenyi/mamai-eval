@@ -1,0 +1,19 @@
+{
+  "categories_file": "lynx_fail_categories.json",
+  "n_fail": 257,
+  "n_responses": 2989,
+  "distribution": {
+    "contradiction": 91,
+    "unsupported_addition": 96,
+    "omission": 47,
+    "refusal": 14,
+    "unclear": 9
+  },
+  "true_hallucination_count": 187,
+  "true_hallucination_rate_of_all": 0.0626,
+  "raw_fail_rate_of_all": 0.086,
+  "lynx_verdict_tally": {
+    "questionable": 60,
+    "sound": 197
+  }
+}

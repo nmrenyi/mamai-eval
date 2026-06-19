@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G1/G2 Faithfulness (oracle) on Gemma 3n (2026-06-19)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.4rem; }
+  p,li { font-size:.93rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .up { color:var(--bad-edge); font-weight:600; }
+  .src { color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+
+<h1>G1/G2 Generator Faithfulness (oracle context) — Gemma 3n E4B × arm1/2/3</h1>
+<p class="meta">2026-06-19 · config-v0.2.0 · generator <strong>Gemma 3n E4B (Q4_0)</strong> · oracle mamaretrieval v0.2.0
+(score ≥ 5, top-3, 2,989 q) · scorer Patronus Lynx 70B · categorize+calibrate gpt-5 Batch.
+Parallels <code>reports/oracle-v0.2.0-faithfulness.html</code> (which measured Gemma 4).</p>
+
+<div class="callout bad">
+<strong>Bottom line.</strong> Two findings, both adverse and both consistent with the no-RAG SAQ result.
+(1) <strong>Gemma 3n is far less faithful to retrieved context than Gemma 4</strong> — calibrated
+true-hallucination <strong>~27% (arm1 baseline) vs Gemma 4's 9.05%</strong>. (2) <strong>The G1 prompt makes
+it worse</strong>: calibrated <strong>27% → 46% (arm2) → 47% (arm3)</strong> — G1 is the hit, the +G2 structure
+adds little — driven by Lynx's miss-rate nearly doubling (26% → 46%) — i.e. G1 adds <em>stealth</em> unfaithful
+content Lynx passes but the strict gpt-5 rubric catches. The categorized rate alone hid this
+(≈flat 6.3% → 6.5% → 6.7%); only the Option-B calibration revealed it.
+This is the faithfulness leg of the gate the no-RAG SAQ harm metric could only proxy — and it fails.
+</div>
+
+<h2>1. Method (identical to the Gemma-4 oracle report, new variables)</h2>
+<p>Each arm's prompt generates one answer per oracle query <em>given the top-3 known-relevant guideline
+chunks</em>, so any unfaithfulness is the generator's (not retrieval's). Lynx 70B gives a holistic PASS/FAIL;
+gpt-5 then (a) <strong>categorizes</strong> the FAILs (only <em>contradiction</em> + <em>unsupported_addition</em>
+are real hallucination; omission/refusal are not) and (b) <strong>calibrates</strong> Lynx on a stratified
+blind sample (PASS + FAIL) to correct both false alarms <em>and</em> Lynx's misses, yielding a population
+estimate. Three rates per arm: raw Lynx FAIL · categorized true-hallucination · calibrated true-hallucination.</p>
+
+<h2>2. Results — three rates × three arms</h2>
+<table>
+<tr><th>arm</th><th class="num">raw Lynx FAIL</th><th class="num">categorized true-hallucination</th><th class="num">calibrated true-hallucination</th><th class="num">Lynx miss rate</th></tr>
+<tr><td><strong>Gemma 4</strong> (prior report, deployed prompt)</td><td class="num">5.82%</td><td class="num">2.51%</td><td class="num">9.05%</td><td class="num">8.0%</td></tr>
+<tr><td><strong>arm1</strong> — 3n baseline</td><td class="num">8.60% (257)</td><td class="num">6.26% (187)</td><td class="num"><strong>27.1%</strong></td><td class="num">26%</td></tr>
+<tr><td><strong>arm2</strong> — 3n +G1</td><td class="num">11.11% (332)</td><td class="num">6.46% (193)</td><td class="num"><strong>45.7%</strong> <span class="up">↑</span></td><td class="num">46%</td></tr>
+<tr><td><strong>arm3</strong> — 3n +G1+G2</td><td class="num">10.84% (324)</td><td class="num">6.72% (201)</td><td class="num"><strong>47.2%</strong> <span class="up">↑</span></td><td class="num">46%</td></tr>
+</table>
+<p class="src">Calibrated rates from n≈96–99 stratified blind samples per arm (gpt-5 high-reasoning); wide CIs
+(arm1 miss 14–38%, arm2 32–60%) — point estimates carry real uncertainty and partially overlap. Raw/categorized
+are over the full 2,989. 0 categorize failures; calibrate re-run at 16,384 max-tokens to avoid high-reasoning
+truncation.</p>
+
+<h2>3. Why the categorized and calibrated numbers diverge — and why it matters</h2>
+<p>Reading <strong>raw Lynx alone</strong> (8.6% → 11.1%) would say "G1 hurts faithfulness," but most of that
+jump is the <em>refusal</em> bucket (14 → 103 FAILs), not hallucination. Reading <strong>categorized alone</strong>
+(6.26% → 6.46%) would say "G1 barely changes hallucination." Both are wrong. The <strong>calibration</strong>
+is decisive: G1 roughly <em>doubles</em> Lynx's miss rate (26% → 46%), meaning the extra content G1 elicits
+(drugs, management, escalation, referral not in the context) includes a large share of unsupported additions
+that Lynx's holistic judge waves through but gpt-5's strict §3.1 rubric flags. Net calibrated hallucination
+27% → 46%.</p>
+
+<div class="callout warn">
+<strong>An oracle-vs-SAQ contrast worth noting.</strong> In the no-RAG SAQ A/B, G1 <em>eliminated</em>
+deflection. Here, with context, G1 <em>increased</em> the refusal-flagged FAILs (14 → 103). The likely
+mechanism: G1's "manage-then-refer / escalate / address-the-clinician" levers make 3n append referral and
+escalation that isn't grounded in the provided chunk, which the context-faithfulness judge penalizes. So the
+very levers that make answers more engaging also make them less grounded.</p>
+</div>
+
+<h2>4. Verdict</h2>
+<p>The faithfulness gate — previously only proxied by the SAQ <code>safety</code> enum — is now measured, and
+it <strong>fails for G1 on 3n</strong>, consistent with every other signal (SAQ harm 22%→35%, dangerous 4→9).
+Two layered conclusions:</p>
+<ul>
+<li><strong>3n itself has a grounding problem.</strong> Even the baseline prompt hallucinates against
+known-good context at ~3× the Gemma-4 rate (27% vs 9% calibrated). This is a property of the deployed
+generator, independent of the A/B — and the strongest evidence yet that <strong>generator RAG-grounding is the
+real lever</strong> (the R2c synthesis recommendation), not retrieval or prompting.</li>
+<li><strong>G1/G2 make grounding worse, not better.</strong> Pushing 3n to engage more adds unsupported
+content. Combined with the SAQ harm regression, this confirms: <strong>do not ship G1/G2 as-is on 3n.</strong></li>
+</ul>
+
+<h2>5. Caveats</h2>
+<ul>
+<li>Calibration samples are small (n≈96–99) → wide CIs; treat the calibrated point estimates as directional,
+not precise. The categorized rates (full n) are tighter and show ≈flat real-hallucination — the disagreement
+between "flat categorized" and "rising calibrated" is itself the finding (Lynx-miss growth).</li>
+<li>Different distribution from the no-RAG SAQ arms: this is the with-context oracle set, the only setting in
+which faithfulness is defined. It complements, not replaces, the SAQ safety signal.</li>
+<li>Gemma 3n is the Q4_0 cluster proxy for on-device int4. gpt-5 is the calibration judge (the prior G4 report
+used the same methodology with a gpt-5 calibrator, so the 3n-vs-G4 comparison is apples-to-apples).</li>
+</ul>
+
+<h2>6. Provenance</h2>
+<ul>
+<li>Generation: <code>generator_eval/eval_faithfulness.py</code> (<code>--system-prompt</code> override), <code>--model gemma3n-e4b</code>, oracle top-3, raced across H200/H100/A100.</li>
+<li>Lynx: <code>cluster/run_cluster_g1_faith_lynx.sh</code> (Lynx-70B, TP=2), one 2-GPU job per arm, raced.</li>
+<li>Categorize/calibrate: <code>analyze_lynx_fails</code> + <code>calibrate</code> + <code>score_openai_batch_judge</code> (gpt-5 Batch, ~10-min turnaround).</li>
+<li>PVC: <code>/lightscratch/users/yiren/eval_output/g1_faith_3n_20260619/arm{1,2,3}/</code>.</li>
+<li>Plan: <code>docs/g1-faithfulness-plan.md</code>. Companion: <code>report.html</code> (the no-RAG SAQ + rubric A/B).</li>
+</ul>
+
+</body>
+</html>
