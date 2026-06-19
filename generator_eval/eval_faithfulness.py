@@ -174,7 +174,26 @@ def main():
                         help="Fixed output dir (reused across restarts for auto-resume).")
     parser.add_argument("--resume", default=None,
                         help="Previous run dir to resume from if --run-dir output is empty.")
+    parser.add_argument("--system-prompt", default=None,
+                        help="Path to an alternate open-ended system prompt (A/B prompt arms). "
+                             "Overrides the config's system_en.txt without mutating the config; "
+                             "affects the oracle-context generation. Provenance recorded in metadata.")
     args = parser.parse_args()
+
+    # ── Optional system-prompt override (A/B prompt arms) ────────────────────
+    # build_rag_open_{prompt,messages} resolve OPEN_SYSTEM_PROMPT from
+    # shared.prompts at call time, so reassigning the module global here takes
+    # effect for the faithfulness generation.
+    system_prompt_override = None
+    override_sha256 = None
+    if args.system_prompt:
+        import hashlib as _hashlib
+        import shared.prompts as _prompts_mod
+        _sp = Path(args.system_prompt)
+        _prompts_mod.OPEN_SYSTEM_PROMPT = _sp.read_text(encoding="utf-8").rstrip("\n")
+        system_prompt_override = str(_sp.resolve())
+        override_sha256 = _hashlib.sha256(_sp.read_bytes()).hexdigest()
+        print(f"System-prompt override: {system_prompt_override} (sha256={override_sha256[:12]})")
 
     from shared.prompts import _params as _active_params
     max_tokens = args.max_tokens or _active_params["generation"]["max_tokens"]
@@ -247,7 +266,8 @@ def main():
         "timestamp": run_timestamp,
         "protocol_version": PROTOCOL_VERSION,
         "prompt_version": PROMPT_VERSION,
-        "spec_sha256": SPEC_SHA256,
+        "spec_sha256": override_sha256 or SPEC_SHA256,
+        "system_prompt_override": system_prompt_override,
         "generation_params": {
             "temperature": TEMPERATURE,
             "top_p": TOP_P,

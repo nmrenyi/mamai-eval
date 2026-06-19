@@ -40,6 +40,7 @@ N_GPU_LAYERS="${N_GPU_LAYERS:-}"
 RUN_DIR="${RUN_DIR:-}"
 LOG_DIR="${LOG_DIR:-}"
 RESUME="${RESUME:-}"
+SYSTEM_PROMPT="${SYSTEM_PROMPT:-}"   # A/B prompt arms: repo-relative path to an arm's system_en.txt
 
 mkdir -p "$HF_CACHE_DIR"
 export HF_HOME="$HF_CACHE_DIR"
@@ -95,6 +96,11 @@ if [ -n "$N_GPU_LAYERS" ]; then
 fi
 if [ -n "$RESUME" ]; then
   CMD_ARGS+=(--resume "$RESUME")
+fi
+if [ -n "$SYSTEM_PROMPT" ]; then
+  if [ ! -f "$SYSTEM_PROMPT" ]; then echo "ERROR: SYSTEM_PROMPT not found in repo: $SYSTEM_PROMPT"; exit 1; fi
+  CMD_ARGS+=(--system-prompt "$SYSTEM_PROMPT")
+  echo "SYSTEM_PROMPT override: $SYSTEM_PROMPT"
 fi
 
 echo "=== STARTING FAITHFULNESS GENERATION ==="
