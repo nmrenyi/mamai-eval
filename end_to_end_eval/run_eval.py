@@ -393,7 +393,28 @@ def main():
                         help="Path to previous run dir to resume incomplete datasets from")
     parser.add_argument("--run-dir", default=None,
                         help="Fixed output dir (reused across restarts for auto-resume).")
+    parser.add_argument("--system-prompt", default=None,
+                        help="Path to an alternate open-ended system prompt file. Overrides "
+                             "the config's system_en.txt for this run (A/B prompt arms) without "
+                             "mutating the config. Provenance (path + sha256) recorded in metadata. "
+                             "Only affects open_ended / open_ended_rubric; MCQ keeps mcq_system.txt.")
     args = parser.parse_args()
+
+    # ── Optional system-prompt override (A/B prompt arms) ────────────────────
+    # The build_* functions resolve OPEN_SYSTEM_PROMPT from shared.prompts at
+    # call time, so reassigning the module global here takes effect for the
+    # single-turn, multi-turn, and RAG open-ended paths alike — no config edit.
+    system_prompt_override = None
+    override_sha256 = None
+    if args.system_prompt:
+        import shared.prompts as _prompts_mod
+        _override_path = Path(args.system_prompt)
+        _override_text = _override_path.read_text(encoding="utf-8").rstrip("\n")
+        _prompts_mod.OPEN_SYSTEM_PROMPT = _override_text
+        system_prompt_override = str(_override_path.resolve())
+        override_sha256 = hashlib.sha256(_override_path.read_bytes()).hexdigest()
+        print(f"System-prompt override: {system_prompt_override}")
+        print(f"  sha256={override_sha256}  chars={len(_override_text)}")
 
     from shared.prompts import _params as _active_params
     max_tokens = args.max_tokens or _active_params["generation"]["max_tokens"]
@@ -488,7 +509,8 @@ def main():
             "timestamp": run_timestamp,
             "protocol_version": PROTOCOL_VERSION,
             "prompt_version": PROMPT_VERSION,
-            "spec_sha256": SPEC_SHA256,
+            "spec_sha256": override_sha256 or SPEC_SHA256,
+            "system_prompt_override": system_prompt_override,
             "rag": rag_contexts is not None,
             "generation_params": {
                 "temperature": TEMPERATURE,
