@@ -104,6 +104,7 @@ now-deployed **Gemma 3n E4B**, no-RAG. Data + provenance: `../results/end_to_end
 | Report | What it is |
 |---|---|
 | `g1-g2-prompt-ab-3n-20260619.html` (this dir) | **Headline G1/G2 result (SAQ + rubric).** kenya recall rises 0.288→0.365→0.403 (+40% rel) and deflection is eliminated — but **safety fails monotonically**: harm 22%→34%→35%, dangerous **4→7→9**. Crucially, **3n's baseline deflection is already ~2%** (the Gemma 4→3n upgrade already fixed deflection), so the prompt's net effect is a **recall-for-safety trade**, not a deflection repair. **Verdict: do not ship G1/G2 as-is on 3n.** Faithfulness leg in §2 (`g1-g2-faithfulness-3n-20260619.html`) agrees. |
+| `generator-prompt-matrix-20260622.html` (this dir) | **Capstone: generator × prompt matrix (G4 + 3n, both tracks, +RAG).** Extends the 3n-only A/B into a 2×3 matrix and lands the key cross-track result: **the two generators split on helpfulness vs safety** — 3n more helpful (recall 0.30–0.39, ~2× HealthBench) but far less safe/faithful (dangerous **4/11/15** vs G4 **0/1/0**; oracle hallucination 6.3–6.7% vs 2.6–3.6%). **The same prompt has opposite value per generator:** G4 *needs* G1 (fixes its 33% deflection, doubles recall, stays safe) while 3n is *harmed* by it (already non-deflecting; prompts only buy recall by spending safety). **RAG did not rescue 3n** (dangerous 4/11/15 *worse* than no-RAG 4/7/9). Lever = generator RAG-grounding (G-RAG), not prompts/retrieval. *(Qwen-397B ceiling row pending.)* Data: `../results/end_to_end_eval/gen-prompt-matrix-20260622/`. |
 
 ---
 

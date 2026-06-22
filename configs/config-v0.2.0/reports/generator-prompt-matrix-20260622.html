@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generator × prompt matrix — Gemma 4 vs 3n, both tracks (2026-06-22)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1040px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.6rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.84rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .5rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .up { color:var(--bad-edge); font-weight:600; }
+  .dn { color:var(--good-edge); font-weight:600; }
+  .src { color:var(--muted); font-size:.8rem; }
+  .g4 { background:#eef6f8; }
+  .g3n { background:#fdf3ee; }
+  .bar { display:inline-block; height:.7rem; border-radius:2px; vertical-align:middle; }
+  .bar-g4 { background:var(--accent); } .bar-g3n { background:var(--warn-edge); }
+  .bar-bad { background:var(--bad-edge); }
+  .small { font-size:.8rem; color:var(--muted); }
+  ul { margin:.4rem 0; } li { margin:.25rem 0; }
+  .best { color:var(--good-edge); font-weight:600; } .worst { color:var(--bad-edge); font-weight:600; }
+</style>
+</head>
+<body>
+
+<h1>Generator × prompt matrix: Gemma&nbsp;4 vs Gemma&nbsp;3n, end-to-end and faithfulness</h1>
+<p class="meta">2026-06-22 · config-v0.2.0 · generators <strong>Gemma&nbsp;4&nbsp;E4B (Q4_0)</strong> &amp;
+<strong>Gemma&nbsp;3n&nbsp;E4B (Q4_0)</strong> · prompts <strong>baseline / +G1 / +G1+G2</strong> · English ·
+Track&nbsp;A = end-to-end <strong>+RAG (EmbeddingGemma)</strong> on kenya SAQ &amp; HealthBench-oss · Track&nbsp;B =
+oracle faithfulness · judges gpt-oss-120b (Track&nbsp;A), Lynx-70B→gpt-5 (Track&nbsp;B)</p>
+
+<div class="callout warn">
+<strong>Scope.</strong> This is the <strong>Gemma&nbsp;4 / Gemma&nbsp;3n</strong> half of the planned 3-generator
+matrix. The <strong>Qwen3.5-397B capability ceiling</strong> is generating now and will be appended as a third
+generator block; every conclusion below is about the two deployable on-device candidates and is complete on its own.
+</div>
+
+<div class="callout bad">
+<strong>Bottom line.</strong>
+<ul>
+<li><strong>The two generators split on a single axis — helpfulness vs. safety — and the split is large.</strong>
+Gemma&nbsp;3n is the more <em>helpful</em> model (higher recall 0.30–0.39 vs G4 0.14–0.34; ~2× HealthBench), but the
+less <em>safe and faithful</em> one (end-to-end <strong>dangerous answers 4/11/15 vs G4 0/1/0</strong>; oracle
+hallucination 6.3–6.7% vs 2.6–3.6%). Choosing the generator decides this trade; the prompt only moves you along it.</li>
+<li><strong>The same prompt has opposite value on the two models.</strong> <strong>Gemma&nbsp;4 needs G1</strong> —
+its baseline deflects on 33% of questions (recall 0.14, HealthBench ≈ 0); G1 cuts deflection to 3% and doubles recall
+at almost no safety cost (0→1 dangerous). <strong>Gemma&nbsp;3n is harmed by it</strong> — it already barely deflects
+(1.9%), so G1/G2 buy little and push dangerous answers 4→11→15. A prompt is not good or bad in isolation; it is good
+or bad <em>for a given generator's starting failure mode</em>.</li>
+<li><strong>RAG did not rescue 3n's safety</strong> — these with-RAG dangerous counts (4/11/15) are <em>worse</em> than
+the earlier no-RAG run (4/7/9). Grounding context doesn't help a generator that doesn't faithfully use it.</li>
+<li><strong>Two tracks, one story.</strong> 3n's end-to-end danger is its oracle-faithfulness deficit made visible:
+poor grounding → confident un-supported claims → harm. The lever is <strong>generator RAG-grounding (G-RAG)</strong>,
+not prompt tuning.</li>
+</ul>
+</div>
+
+<h2>1 · The matrix</h2>
+<p>Six cells = 2 generators × 3 prompts. Track A is the deployed configuration (with RAG); Track B isolates grounding
+on gold context. <span class="best">Green</span> = best in column-group, <span class="worst">red</span> = worst.</p>
+
+<table>
+<tr>
+  <th rowspan="2">Generator · prompt</th>
+  <th colspan="5" style="text-align:center">Track A — end-to-end, +RAG</th>
+  <th colspan="2" style="text-align:center">Track B — faithfulness (oracle)</th>
+</tr>
+<tr>
+  <th class="num">kenya<br>recall</th>
+  <th class="num">deflection</th>
+  <th class="num">harm<br>rate</th>
+  <th class="num">dangerous<br>(n/312)</th>
+  <th class="num">HealthBench<br>weighted_met</th>
+  <th class="num">categorized<br>halluc.</th>
+  <th class="num">calibrated<br>halluc.</th>
+</tr>
+
+<tr class="g4"><td><strong>G4</strong> · baseline</td>
+  <td class="num worst">0.139</td><td class="num worst">32.7%</td>
+  <td class="num best">12.8%</td><td class="num best">0</td><td class="num worst">0.0001</td>
+  <td class="num best">2.64%</td><td class="num best">19.1%</td></tr>
+<tr class="g4"><td><strong>G4</strong> · +G1</td>
+  <td class="num">0.279</td><td class="num">3.2%</td>
+  <td class="num">16.0%</td><td class="num">1</td><td class="num">0.038</td>
+  <td class="num">3.31%</td><td class="num">23.1%</td></tr>
+<tr class="g4"><td><strong>G4</strong> · +G1+G2</td>
+  <td class="num">0.338</td><td class="num">1.6%</td>
+  <td class="num">17.0%</td><td class="num best">0</td><td class="num">0.052</td>
+  <td class="num">3.55%</td><td class="num">53.9% †</td></tr>
+
+<tr class="g3n"><td><strong>3n</strong> · baseline</td>
+  <td class="num">0.297</td><td class="num">1.9%</td>
+  <td class="num">25.6%</td><td class="num">4</td><td class="num">0.083</td>
+  <td class="num">6.26%</td><td class="num">27.1%</td></tr>
+<tr class="g3n"><td><strong>3n</strong> · +G1</td>
+  <td class="num">0.351</td><td class="num">0.6%</td>
+  <td class="num worst">34.9%</td><td class="num">11</td><td class="num">0.110</td>
+  <td class="num">6.46%</td><td class="num">45.7%</td></tr>
+<tr class="g3n"><td><strong>3n</strong> · +G1+G2</td>
+  <td class="num best">0.389</td><td class="num best">0.0%</td>
+  <td class="num">33.7%</td><td class="num worst">15</td><td class="num best">0.119</td>
+  <td class="num worst">6.72%</td><td class="num">47.2%</td></tr>
+</table>
+<p class="src">n=312 (kenya), 1,208–1,209 (HealthBench-oss), 2,989 (oracle). <strong>recall</strong> = mean
+key_fact_recall · <strong>deflection</strong> = defer_only + refuse · <strong>harm rate</strong> =
+potentially_harmful + dangerous · <strong>categorized/calibrated</strong> = true-hallucination over oracle context
+(see the dedicated faithfulness report). † g4_g1g2's 53.9% is a known high-miss-rate sampling outlier driven by the
+G2 template against a narrow top-3 context — read categorized (3.55%) as the metric of record.</p>
+
+<h2>2 · Reading 1 — the generators split: 3n is more helpful, G4 is safer &amp; more faithful</h2>
+<table>
+<tr><th>Axis</th><th>Gemma 4 (range over prompts)</th><th>Gemma 3n (range over prompts)</th><th>winner</th></tr>
+<tr><td>kenya recall (helpfulness)</td><td class="num">0.139 – 0.338</td><td class="num">0.297 – 0.389</td><td><strong>3n</strong> (higher at every arm)</td></tr>
+<tr><td>HealthBench weighted_met</td><td class="num">0.000 – 0.052</td><td class="num">0.083 – 0.119</td><td><strong>3n</strong> (~2×)</td></tr>
+<tr><td>harm rate</td><td class="num">12.8 – 17.0%</td><td class="num">25.6 – 34.9%</td><td><strong>G4</strong> (~half)</td></tr>
+<tr><td>dangerous answers (/312)</td><td class="num">0 – 1</td><td class="num">4 – 15</td><td><strong>G4</strong> (near-zero)</td></tr>
+<tr><td>oracle hallucination (categorized)</td><td class="num">2.6 – 3.6%</td><td class="num">6.3 – 6.7%</td><td><strong>G4</strong> (~½)</td></tr>
+</table>
+<p>The two on-device candidates are not "better vs worse" — they are <strong>helpful vs safe</strong>. 3n is the more
+capable model (it answers more, deflects less, scores higher on the open rubric), which is exactly why the device was
+moved to it. But every safety/faithfulness column favours G4 by roughly 2×, and the danger end (clearly wrong dose,
+wrong drug, missed red-flag referral) is almost exclusively a 3n phenomenon: <strong>G4 produced 0–1 dangerous answers
+across all three prompts; 3n produced 4, 11, and 15.</strong></p>
+
+<h2>3 · Reading 2 — the prompt's value is generator-dependent</h2>
+<p>The G1 (deflection/scope fix) and G2 (consultation-workflow structure) prompts were written to repair a deflection
+reflex. Whether that helps depends entirely on whether the generator <em>has</em> that reflex.</p>
+
+<h3>Gemma 4 — G1 is a clear win (it has the disease the prompt cures)</h3>
+<ul>
+<li>Baseline G4 <strong>deflects on 32.7%</strong> of kenya questions — recall 0.139, HealthBench essentially 0.
+This is the "safe but useless" failure: it rarely says anything wrong because it rarely says anything.</li>
+<li>G1 collapses deflection <strong>32.7% → 3.2%</strong> and <strong>doubles recall (0.139 → 0.279)</strong>; +G2
+adds structure for a further lift to 0.338. The safety cost is negligible: dangerous stays 0→1→0, harm creeps
+12.8→17.0%. <strong>On G4 the deflection fix does exactly what it was designed to do, safely.</strong></li>
+</ul>
+
+<h3>Gemma 3n — the prompt is a recall-for-safety trade that fails the gate</h3>
+<ul>
+<li>3n already barely deflects at baseline (<strong>1.9%</strong>) — the G4→3n upgrade had <em>already</em> solved
+deflection. So G1/G2 have little deflection to repair; they mostly just push the model to assert more.</li>
+<li>Recall does rise (0.297 → 0.351 → 0.389), but <strong>dangerous answers rise with it: 4 → 11 → 15</strong>, and
+harm jumps to ~34%. The recovered "helpfulness" is partly confident, un-grounded, occasionally dangerous content.
+<strong>On 3n the same prompts buy recall by spending safety — and fail the safety gate.</strong></li>
+</ul>
+
+<div class="callout">
+The matrix resolves an apparent contradiction in the branch history. The G1 prompt-A/B on 3n looked like a failure
+(harm up, dangerous up); yet G1 is a sound idea. Both are true: <strong>G1 is right for a deflecting generator (G4)
+and wrong for a non-deflecting one (3n).</strong> The deployed generator changed the prompt's sign.
+</div>
+
+<h2>4 · Reading 3 — RAG didn't rescue 3n, and the two tracks agree</h2>
+<p><strong>RAG is not the fix for 3n's safety.</strong> These Track-A numbers are <em>with</em> EmbeddingGemma
+retrieval, and 3n's dangerous count under the prompts (4/11/15) is actually <em>higher</em> than the earlier no-RAG
+A/B (4/7/9). Handing a poor grounder more context, plus a prompt that suppresses its one safe instinct (deflection),
+produces more confident wrong answers, not fewer.</p>
+<p><strong>The end-to-end danger and the oracle faithfulness deficit are the same fact.</strong> 3n hallucinates
+against gold context 2× more than G4 (categorized 6.3–6.7% vs 2.6–3.6%); under live RAG that ungrounded-assertion
+tendency surfaces as 2× the harm rate and the cluster of dangerous answers. G4's faithfulness is why it stays safe
+even when G1 makes it talk more. <strong>So the binding lever is the generator's grounding, addressable by
+generator-side RAG-grounding (G-RAG) — not by retrieval swaps or prompt edits, both of which leave the grounding
+deficit intact.</strong></p>
+
+<h2>5 · Safety detail</h2>
+<p>Full safety (kenya, n=312) and behavior distributions behind the harm/dangerous/deflection columns:</p>
+<table>
+<tr><th>Cell</th>
+  <th class="num">safe</th><th class="num">minor<br>concern</th>
+  <th class="num">potentially<br>harmful</th><th class="num">dangerous</th>
+  <th class="num">engage<br>&amp;refer</th><th class="num">engage<br>only</th>
+  <th class="num">defer<br>only</th><th class="num">refuse</th></tr>
+<tr class="g4"><td>G4 · baseline</td><td class="num">248</td><td class="num">24</td><td class="num">40</td><td class="num">0</td><td class="num">192</td><td class="num">18</td><td class="num">90</td><td class="num">12</td></tr>
+<tr class="g4"><td>G4 · +G1</td><td class="num">234</td><td class="num">28</td><td class="num">49</td><td class="num">1</td><td class="num">274</td><td class="num">28</td><td class="num">8</td><td class="num">2</td></tr>
+<tr class="g4"><td>G4 · +G1+G2</td><td class="num">231</td><td class="num">28</td><td class="num">53</td><td class="num">0</td><td class="num">285</td><td class="num">22</td><td class="num">4</td><td class="num">1</td></tr>
+<tr class="g3n"><td>3n · baseline</td><td class="num">184</td><td class="num">48</td><td class="num">76</td><td class="num">4</td><td class="num">291</td><td class="num">15</td><td class="num">6</td><td class="num">0</td></tr>
+<tr class="g3n"><td>3n · +G1</td><td class="num">159</td><td class="num">44</td><td class="num">98</td><td class="num">11</td><td class="num">295</td><td class="num">15</td><td class="num">0</td><td class="num">2</td></tr>
+<tr class="g3n"><td>3n · +G1+G2</td><td class="num">172</td><td class="num">35</td><td class="num">90</td><td class="num">15</td><td class="num">299</td><td class="num">13</td><td class="num">0</td><td class="num">0</td></tr>
+</table>
+<div class="callout warn">
+<strong>On the dangerous counts.</strong> The earlier 3n A/B adjudication read its dangerous cases as <em>largely
+genuine</em> (wrong-dose / wrong-drug / missed-emergency, not judge over-flagging), so the 4→11→15 trajectory should
+be taken at face value, not discounted. The single G4 dangerous case (g4_g1) is the lone blemish on an otherwise clean
+G4 safety record. <span class="small">A per-case re-adjudication of the new RAG dangerous set is the recommended
+follow-up before any ship decision.</span>
+</div>
+
+<h2>6 · Implication for the device decision</h2>
+<div class="callout good">
+<ul>
+<li><strong>If staying on Gemma&nbsp;3n</strong> (the current device model, chosen for capability): <strong>do not ship
+G1/G2 as-is.</strong> They raise recall but fail the safety gate (dangerous 4→15). 3n already doesn't deflect, so the
+prompt's intended benefit is mostly already banked; what remains is downside. The real work is grounding 3n's
+generation (G-RAG), then re-testing safety.</li>
+<li><strong>Gemma&nbsp;4 + G1 is the safe-but-modest alternative</strong>: near-zero dangerous, deflection fixed,
+recall doubled — but its capability ceiling (recall ≤0.34, HealthBench ≤0.05) sits below 3n's. It is the choice if
+safety dominates and the helpfulness bar is low.</li>
+<li><strong>The frontier comparison still pending</strong> (Qwen-397B ceiling) will show how much of 3n's
+helpfulness/faithfulness gap is model-size-bound vs addressable on-device.</li>
+</ul>
+</div>
+
+<h2>7 · Method</h2>
+<ul>
+<li><strong>Track A (end-to-end, +RAG).</strong> Each cell generated with EmbeddingGemma top-3 retrieval, then judged
+by gpt-oss-120b: kenya SAQ via the behavior judge (key_fact_recall + 4-level safety + 4-level behavior/deflection);
+HealthBench-oss via the rubric judge (weighted_met = Σ points·met / Σ max(points,0)). Aggregated from the judged
+run-dirs with the pipeline's own <code>_agg_dataset</code>.</li>
+<li><strong>Track B (faithfulness).</strong> Oracle context (mamaretrieval v0.2.0, score≥5, top-3, n=2,989) →
+Lynx-70B PASS/FAIL → gpt-5 categorize (genuine hallucination = contradiction + unsupported addition) + calibrate
+(50-PASS-sample miss-rate extrapolation, wide CIs). Detail in the companion faithfulness report.</li>
+<li><strong>Both generators</strong> Q4_0 GGUF (on-device quantization), config-pinned decoding; identical prompts,
+retrieval, oracle, and judges across cells — every difference is the generator or the prompt.</li>
+<li><strong>Provenance.</strong> Track A + G4 Track B generated 2026-06-22
+(<code>gen-prompt-matrix-20260622</code>); 3n Track B from <code>g1-ab-3n-20260619</code>, identical pipeline.</li>
+</ul>
+
+<h2>8 · Caveats</h2>
+<ul>
+<li><strong>English only;</strong> Swahili untested.</li>
+<li><strong>Single judge family per semantic step</strong> (gpt-oss-120b for Track A, Lynx→gpt-5 for Track B); the
+physician-ground-truth judge validation still applies before these rates are treated as absolute.</li>
+<li><strong>Calibrated faithfulness is a noisy 50-sample extrapolation</strong> (see †); categorized is the metric of
+record.</li>
+<li><strong>Dangerous counts are small integers</strong> on n=312 — directionally clear (0–1 vs 4–15) but individual
+counts carry sampling noise; the recommended per-case re-adjudication will firm them up.</li>
+<li><strong>Qwen-397B ceiling row pending</strong> — to be appended; does not affect any G4/3n conclusion here.</li>
+</ul>
+
+<p class="src">Data:
+<code>configs/config-v0.2.0/results/end_to_end_eval/gen-prompt-matrix-20260622/{trackA,faith}</code> ·
+3n Track B <code>…/g1-ab-3n-20260619/faith</code>. Companion: faithfulness deep-dive
+<code>faithfulness-g4-vs-3n-prompts-20260622.html</code>; 3n end-to-end A/B
+<code>g1-g2-prompt-ab-3n-20260619.html</code>.</p>
+
+</body>
+</html>
