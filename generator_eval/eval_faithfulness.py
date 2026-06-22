@@ -21,6 +21,7 @@ import json
 import os
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -82,6 +83,33 @@ def _load_oracle_manifest(oracle_path: Path) -> dict | None:
     return None
 
 
+def _gen_responses(model, payloads, max_tokens, workers):
+    """One response per payload, order-preserving. Concurrent for API/endpoint
+    models when workers>1 (needed for a slow cluster-served model like Qwen-397B).
+    Returns list aligned to payloads of (response, elapsed_s); None on error."""
+    out: list = [None] * len(payloads)
+
+    def work(idx):
+        t0 = time.time()
+        try:
+            return idx, _model_call(model, payloads[idx], max_tokens), round(time.time() - t0, 2)
+        except Exception as e:
+            print(f"  ERROR payload {idx}: generate() failed: {e}")
+            return idx, None, 0.0
+
+    if workers > 1 and getattr(model, "is_api", False):
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = [ex.submit(work, i) for i in range(len(payloads))]
+            for f in tqdm(as_completed(futs), total=len(futs), desc=f"Faithfulness gen x{workers}"):
+                idx, resp, el = f.result()
+                out[idx] = (resp, el)
+    else:
+        for i in tqdm(range(len(payloads)), desc="Faithfulness gen"):
+            _, resp, el = work(i)
+            out[i] = (resp, el)
+    return out
+
+
 def _save(output_path: Path, metadata: dict, results: list[dict]) -> None:
     data = {"metadata": metadata, "results": results}
     output_path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
@@ -89,13 +117,11 @@ def _save(output_path: Path, metadata: dict, results: list[dict]) -> None:
 
 def run(model, oracle_rows: list[dict], top_k: int, max_tokens: int,
         output_path: Path, metadata: dict,
-        resume_results: list[dict] | None) -> list[dict]:
+        resume_results: list[dict] | None, workers: int = 1) -> list[dict]:
     """Generate one response per oracle query and write a single JSON file.
 
-    Resume semantics: identified by query_id, not row index. A generation
-    error on row N leaves no placeholder; on restart that query is retried.
-    Resuming by `len(resume_results)` would silently skip an error'd query
-    AND double-process a later row — fixed per the score_lynx pattern.
+    Resume semantics: identified by query_id, not row index. `workers>1`
+    concurrently generates against an API/endpoint model (e.g. Qwen via vLLM).
     """
     done_ids = {r["query_id"] for r in resume_results} if resume_results else set()
     results = list(resume_results) if resume_results else []
@@ -109,43 +135,37 @@ def run(model, oracle_rows: list[dict], top_k: int, max_tokens: int,
     )
 
     pending = [r for r in oracle_rows if r["query_id"] not in done_ids]
-    for i, row in enumerate(tqdm(pending, desc="Faithfulness gen",
-                                 initial=len(done_ids),
-                                 total=len(oracle_rows)), 1):
-        all_chunks = row["chunks"]
-        used_chunks = all_chunks[:top_k]
+    payloads, ctxs = [], []
+    for row in pending:
+        used_chunks = row["chunks"][:top_k]
         context = "\n\n".join(c["text"] for c in used_chunks)
+        ctxs.append((used_chunks, context))
+        payloads.append(build_rag_open_messages(row["query_text"], context) if uses_messages
+                        else build_rag_open_prompt(row["query_text"], context))
 
-        if uses_messages:
-            payload = build_rag_open_messages(row["query_text"], context)
-        else:
-            payload = build_rag_open_prompt(row["query_text"], context)
+    gen = _gen_responses(model, payloads, max_tokens, workers)
 
-        t0 = time.time()
-        try:
-            response = _model_call(model, payload, max_tokens)
-        except Exception as e:
-            print(f"  ERROR query {row['query_id']}: generate() failed: {e}")
+    for k, row in enumerate(pending):
+        response, elapsed = gen[k]
+        if response is None:
             continue
-        elapsed = time.time() - t0
-
+        used_chunks, context = ctxs[k]
         results.append({
             "query_id": row["query_id"],
             "query_text": row["query_text"],
-            "n_chunks_available": len(all_chunks),
+            "n_chunks_available": len(row["chunks"]),
             "n_chunks_used": len(used_chunks),
             "chunk_ids": [c["chunk_id"] for c in used_chunks],
             "chunk_scores": [c["score"] for c in used_chunks],
             "context": context,
             "context_chars": len(context),
             "model_response": response,
-            "inference_time_s": round(elapsed, 2),
+            "inference_time_s": elapsed,
         })
-
-        if i % CHECKPOINT_INTERVAL == 0:
+        if (k + 1) % CHECKPOINT_INTERVAL == 0:
             _save(output_path, metadata, results)
-            print(f"  Checkpoint saved at {len(done_ids) + i}/{len(oracle_rows)}")
 
+    _save(output_path, metadata, results)
     return results
 
 
@@ -178,6 +198,9 @@ def main():
                         help="Path to an alternate open-ended system prompt (A/B prompt arms). "
                              "Overrides the config's system_en.txt without mutating the config; "
                              "affects the oracle-context generation. Provenance recorded in metadata.")
+    parser.add_argument("--workers", type=int, default=1,
+                        help="Concurrent generation requests for API/endpoint models "
+                             "(e.g. cluster-served Qwen via vLLM). Ignored for GGUF.")
     args = parser.parse_args()
 
     # ── Optional system-prompt override (A/B prompt arms) ────────────────────
@@ -279,7 +302,7 @@ def main():
 
     t0 = time.time()
     results = run(model, oracle_rows, args.top_k, max_tokens, output_path,
-                  metadata, resume_results=resume_results)
+                  metadata, resume_results=resume_results, workers=args.workers)
     elapsed = time.time() - t0
     metadata["total_inference_time_s"] = round(elapsed, 1)
     metadata["avg_time_per_question_s"] = (
