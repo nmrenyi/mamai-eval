@@ -120,6 +120,9 @@ MODEL_REGISTRY = {
     # OpenAI API models
     "gpt-5": ("openai", "gpt-5"),
     "gpt-4o": ("openai", "gpt-4o"),
+    # OpenAI-compatible local vLLM endpoints (set OPENAI_BASE_URL=http://localhost:PORT/v1,
+    # OPENAI_API_KEY=EMPTY before run). Used as the cluster-served capability ceiling.
+    "qwen-397b": ("openai", "Qwen/Qwen3.5-397B-A17B-FP8"),
 }
 
 
