@@ -76,10 +76,12 @@ identical pipeline for clean apples-to-apples, with the old number as a sanity c
 ## Execution phases (ordered)
 - **Phase 0 — prereqs** *(needs VPN)*: confirm G4 / 3n / Qwen-397B on PVC; verify or precompute EmbeddingGemma
   retrievals (kenya + hb); stand up the Qwen vLLM serving recipe + the run_eval base-url generator path.
-- **Phase 1 — Track A generation (+RAG), 9 cells**: G4×3 + 3n×3 on GGUF (cheap, raced in parallel); Qwen×3 on the
-  big vLLM serving job (one boot, 3 prompts sequential).
-- **Phase 2 — Track A judging**: `gpt-oss-120b` (one boot) over all 9 cells — SAQ behavior + recall + safety, rubric.
-- **Phase 3 — Track B generation (oracle), 6 cells**: G4×3 + Qwen×3 (3n reused).
+- **Phase 1 — Track A generation (+RAG)**: **wave 1 = G4×3 + 3n×3** on GGUF (cheap, raced in parallel across
+  H200/H100/A100 — do these *first*); **wave 2 = Qwen×3** on the big vLLM serving job (one boot, 3 prompts
+  sequential), *after* the G4/3n wave is generating.
+- **Phase 2 — Track A judging**: `gpt-oss-120b` (one boot) — judge G4/3n cells as soon as they finish (don't wait
+  for Qwen); re-use the same boot for the Qwen cells when they land.
+- **Phase 3 — Track B generation (oracle), 6 cells**: **wave 1 = G4×3** (GGUF, raced) first; **wave 2 = Qwen×3** after.
 - **Phase 4 — Track B scoring**: Lynx-70B (one boot) over the 6 new cells → gpt-5 categorize + calibrate (drivers).
 - **Phase 5 — analysis**: assemble generator×prompt tables per axis (kenya recall / deflection / harm / **dangerous
   count**; hb weighted_met / completeness / penalty; Track-B raw / categorized / **calibrated** + CI / Lynx-miss).
@@ -88,6 +90,23 @@ identical pipeline for clean apples-to-apples, with the old number as a sanity c
 - **Phase 6 — report**: a combined **generator×prompt matrix** report under `configs/config-v0.2.0/reports/`
   (e.g. `generator-prompt-matrix-3n-g4-qwen-202606xx.html`), folding in the existing SAQ/rubric + faithfulness
   results; index it in `reports/README.md`.
+
+## Execution priority & GPU scheduling (principle)
+
+1. **Deployable generators first.** Finish **G4 and 3n** (both tracks) *before* Qwen. They are the
+   deployment-relevant comparison and they're cheap (1-GPU GGUF) — get the real answer fast and don't let the
+   heavy 397B ceiling block it. **Qwen runs last**, after G4/3n are in.
+2. **Maximize cluster utilization.** Run the G4 and 3n cells **in parallel across pools** (one job per
+   generator×prompt cell where useful) — keep GPUs busy rather than serializing.
+3. **GPU pool priority: H200 > H100 > default (A100).** Submit to the highest tier first (via the race pattern:
+   submit to multiple pools, keep the first to reach Running, kill the losers during deps — see
+   [[cluster-gpu-priority]]).
+4. **Pending → move down.** If a job sits **Pending** on a higher pool, move it to a lower pool **when that gets
+   it Running sooner** — a slower GPU running now beats a faster GPU queued. (A100 is the reliable fallback; it
+   has scheduled instantly all session.) Confirm the new pool is Running *before* killing the old submission.
+5. **Qwen is the exception to "down-move freely."** The 397B-FP8 needs a ~5–6× 80 GB slice; that only lands on
+   H200/H100. Race it across the big-GPU pools, but it won't fit A100-default at TP that low — plan its
+   allocation deliberately and don't preempt the G4/3n work for it.
 
 ## Cost
 - **API: ~$10 total** — only the gpt-5 faithfulness categorize/calibrate on the 6 new Track-B cells. (GPT-5 as a
