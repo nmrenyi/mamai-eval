@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faithfulness: Gemma 4 vs Gemma 3n × prompts (2026-06-22)</title>
+<style>
+  :root { --ink:#1a1a2e; --muted:#5a5a72; --accent:#0b5563; --accent-light:#e8f4f6;
+    --warn-bg:#fff4e5; --warn-edge:#d97706; --good-bg:#ecfdf3; --good-edge:#15803d;
+    --bad-bg:#fef2f2; --bad-edge:#b91c1c; --rule:#d8d8e4; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); max-width:1000px; margin:0 auto; padding:2rem 1.5rem 6rem; line-height:1.55; }
+  h1 { font-size:1.7rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem; }
+  h2 { font-size:1.3rem; color:var(--accent); margin-top:2.3rem; border-bottom:1px solid var(--rule); padding-bottom:.25rem; }
+  h3 { font-size:1.05rem; margin-top:1.6rem; }
+  .meta { color:var(--muted); font-size:.85rem; margin-top:-.5rem; }
+  table { border-collapse:collapse; margin:1rem 0; font-size:.85rem; width:100%; }
+  th,td { border:1px solid var(--rule); padding:.35rem .55rem; text-align:left; vertical-align:top; }
+  th { background:var(--accent-light); }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .callout { border-left:4px solid var(--accent); background:var(--accent-light); padding:.7rem 1rem; margin:1rem 0; font-size:.92rem; }
+  .good { border-left:4px solid var(--good-edge); background:var(--good-bg); }
+  .warn { border-left:4px solid var(--warn-edge); background:var(--warn-bg); }
+  .bad  { border-left:4px solid var(--bad-edge); background:var(--bad-bg); }
+  code { background:#f1f1f6; padding:.1rem .3rem; border-radius:3px; font-size:.85em; }
+  .up { color:var(--bad-edge); font-weight:600; }
+  .dn { color:var(--good-edge); font-weight:600; }
+  .src { color:var(--muted); font-size:.8rem; }
+  .g4 { background:#eef6f8; }
+  .g3n { background:#fdf3ee; }
+  .bar { display:inline-block; height:.72rem; border-radius:2px; vertical-align:middle; }
+  .bar-g4 { background:var(--accent); }
+  .bar-g3n { background:var(--warn-edge); }
+  ul { margin:.4rem 0; } li { margin:.25rem 0; }
+  .small { font-size:.8rem; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>Generator faithfulness to context: Gemma&nbsp;4 vs Gemma&nbsp;3n, across prompt arms</h1>
+<p class="meta">2026-06-22 · config-v0.2.0 · oracle <strong>mamaretrieval&nbsp;v0.2.0</strong> (score≥5, top-3, n=2989) ·
+generators <strong>Gemma&nbsp;4&nbsp;E4B (Q4_0)</strong> &amp; <strong>Gemma&nbsp;3n&nbsp;E4B (Q4_0)</strong> ·
+judge pipeline <strong>Patronus&nbsp;Lynx-70B → gpt-5 categorize+calibrate (Option&nbsp;B)</strong> · English</p>
+
+<div class="callout">
+<strong>What this measures.</strong> Each model was handed the <em>gold</em> guideline passages (oracle retrieval,
+not live RAG) for 2,989 maternal/neonatal questions, and asked to answer. <em>Faithfulness</em> = does the answer
+stay inside what the context supports? A failure is a <strong>contradiction</strong> (wrong dose / threshold / claim)
+or an <strong>unsupported addition</strong> (clinical claim not in the context). Incompleteness and refusals are
+<em>not</em> faithfulness failures. This isolates the generator's grounding behaviour from retrieval quality.
+</div>
+
+<div class="callout bad">
+<strong>Bottom line.</strong>
+<ul>
+<li><strong>Gemma&nbsp;4 is ~2× more faithful than Gemma&nbsp;3n at every prompt level.</strong> On the conservative,
+full-population <em>categorized</em> rate: G4 sits at <strong>2.6–3.6%</strong> true-hallucination vs 3n's
+<strong>6.3–6.7%</strong> — a 1.9–2.4× gap that holds for baseline, +G1, and +G1+G2.</li>
+<li><strong>The prompt's faithfulness cost is generator-dependent.</strong> The deflection-fix prompts (G1, then
++G2 structure) push <em>both</em> models to add more un-grounded content, but Gemma&nbsp;4 absorbs it (categorized
+2.64→3.55%) while Gemma&nbsp;3n was already the weaker grounder and stays high (6.26→6.72%).</li>
+<li><strong>Both prompts trade refusals for unsupported additions.</strong> G1 does what it was designed to do —
+fewer deflections — but the recovered answers include more claims beyond the document. That is the mechanism behind
+the faithfulness cost.</li>
+<li>This corroborates the earlier branch finding (<code>g1-prompt-ab-outcome</code>) that prompt-only deflection
+fixes hit a grounding ceiling on 3n, and reframes the lever as <strong>RAG-grounding, not prompt tuning</strong>.</li>
+</ul>
+</div>
+
+<h2>1 · The faithfulness matrix (generator × prompt)</h2>
+
+<table>
+<tr>
+  <th>Generator</th><th>Prompt</th>
+  <th class="num">raw Lynx FAIL</th>
+  <th class="num">categorized<br>true-halluc <span class="small">(primary)</span></th>
+  <th class="num">calibrated<br>true-halluc <span class="small">(noisy)</span></th>
+  <th class="num">Lynx precision<br><span class="small">95% CI</span></th>
+  <th class="num">Lynx miss rate<br><span class="small">95% CI</span></th>
+</tr>
+<tr class="g4"><td rowspan="3"><strong>Gemma&nbsp;4</strong> E4B</td><td>baseline</td>
+  <td class="num">6.09% (182)</td><td class="num"><strong>2.64%</strong> (79)</td><td class="num">19.1%</td>
+  <td class="num">0.36 <span class="small">[.24–.50]</span></td><td class="num">0.18 <span class="small">[.08–.30]</span></td></tr>
+<tr class="g4"><td>+G1</td>
+  <td class="num">4.72% (141)</td><td class="num"><strong>3.31%</strong> (99)</td><td class="num">23.1%</td>
+  <td class="num">0.46 <span class="small">[.30–.61]</span></td><td class="num">0.22 <span class="small">[.12–.34]</span></td></tr>
+<tr class="g4"><td>+G1+G2</td>
+  <td class="num">5.62% (168)</td><td class="num"><strong>3.55%</strong> (106)</td><td class="num">53.9% †</td>
+  <td class="num">0.52 <span class="small">[.37–.67]</span></td><td class="num">0.54 <span class="small">[.42–.68]</span></td></tr>
+<tr class="g3n"><td rowspan="3"><strong>Gemma&nbsp;3n</strong> E4B</td><td>baseline</td>
+  <td class="num">8.60% (257)</td><td class="num"><strong>6.26%</strong> (187)</td><td class="num">27.1%</td>
+  <td class="num">0.39 <span class="small">[.24–.53]</span></td><td class="num">0.26 <span class="small">[.14–.38]</span></td></tr>
+<tr class="g3n"><td>+G1</td>
+  <td class="num">11.11% (332)</td><td class="num"><strong>6.46%</strong> (193)</td><td class="num">45.7%</td>
+  <td class="num">0.43 <span class="small">[.30–.59]</span></td><td class="num">0.46 <span class="small">[.32–.60]</span></td></tr>
+<tr class="g3n"><td>+G1+G2</td>
+  <td class="num">10.84% (324)</td><td class="num"><strong>6.72%</strong> (201)</td><td class="num">47.2%</td>
+  <td class="num">0.57 <span class="small">[.43–.71]</span></td><td class="num">0.46 <span class="small">[.32–.60]</span></td></tr>
+</table>
+<p class="src">Counts in parentheses are out of n=2,989. <strong>raw Lynx FAIL</strong> = Lynx's verdict before
+de-confounding. <strong>categorized</strong> = the FAILs that gpt-5 confirms are genuine hallucinations
+(contradiction + unsupported addition), as a fraction of all 2,989 — deterministic over the full population.
+<strong>calibrated</strong> = population estimate that also adds the hallucinations Lynx <em>missed</em>
+(miss-rate × Lynx-PASS count), from an n≈96–100 stratified blind re-judge. † g4_g1g2's 53.9% rests on an
+unusually high miss-rate point estimate (0.54) — see §4; read it as a wide-CI upper bound, not a point fact.</p>
+
+<h2>2 · The defensible metric: categorized true-hallucination</h2>
+<p>The <em>categorized</em> rate is the number to trust: it is computed over <strong>all</strong> 2,989 responses
+(no extrapolation), and it strips out the things Lynx over-flags — incompleteness and refusals — keeping only real
+contradictions and unsupported additions. On this metric the ranking is unambiguous and stable across prompts:</p>
+
+<table>
+<tr><th>Prompt arm</th><th class="num">Gemma 4</th><th class="num">Gemma 3n</th><th class="num">3n ÷ G4</th><th>categorized rate (bars to scale, max 7%)</th></tr>
+<tr><td>baseline</td><td class="num">2.64%</td><td class="num">6.26%</td><td class="num">2.37×</td>
+  <td><span class="bar bar-g4" style="width:38px"></span> G4 &nbsp; <span class="bar bar-g3n" style="width:89px"></span> 3n</td></tr>
+<tr><td>+G1</td><td class="num">3.31%</td><td class="num">6.46%</td><td class="num">1.95×</td>
+  <td><span class="bar bar-g4" style="width:47px"></span> G4 &nbsp; <span class="bar bar-g3n" style="width:92px"></span> 3n</td></tr>
+<tr><td>+G1+G2</td><td class="num">3.55%</td><td class="num">6.72%</td><td class="num">1.89×</td>
+  <td><span class="bar bar-g4" style="width:51px"></span> G4 &nbsp; <span class="bar bar-g3n" style="width:96px"></span> 3n</td></tr>
+</table>
+
+<div class="callout warn">
+Both models drift <em>upward</em> as the prompt asks for more clinical substance — G4 by +0.9pp (2.64→3.55),
+3n by +0.5pp (6.26→6.72) — but the increments are small and the <strong>generator gap dwarfs the prompt
+effect</strong>. Choosing the on-device generator matters roughly 4× more for faithfulness than choosing the prompt.
+</div>
+
+<h2>3 · What kind of unfaithfulness — and how the prompts change it</h2>
+<p>Splitting every Lynx FAIL into its primary cause shows <em>why</em> the rates move. Genuine hallucinations
+(<strong>contradiction</strong> + <strong>unsupported addition</strong>) are bold; the rest are not faithfulness
+failures.</p>
+
+<table>
+<tr><th>Generator · prompt</th>
+  <th class="num">contradiction</th><th class="num">unsupported<br>addition</th>
+  <th class="num">omission</th><th class="num">refusal</th><th class="num">unclear</th>
+  <th class="num">FAILs</th></tr>
+<tr class="g4"><td>G4 · baseline</td><td class="num"><strong>51</strong></td><td class="num"><strong>28</strong></td><td class="num">63</td><td class="num">27</td><td class="num">13</td><td class="num">182</td></tr>
+<tr class="g4"><td>G4 · +G1</td><td class="num"><strong>44</strong></td><td class="num"><strong>55</strong></td><td class="num">26</td><td class="num">7</td><td class="num">9</td><td class="num">141</td></tr>
+<tr class="g4"><td>G4 · +G1+G2</td><td class="num"><strong>48</strong></td><td class="num"><strong>58</strong></td><td class="num">36</td><td class="num">20</td><td class="num">6</td><td class="num">168</td></tr>
+<tr class="g3n"><td>3n · baseline</td><td class="num"><strong>91</strong></td><td class="num"><strong>96</strong></td><td class="num">47</td><td class="num">14</td><td class="num">9</td><td class="num">257</td></tr>
+<tr class="g3n"><td>3n · +G1</td><td class="num"><strong>88</strong></td><td class="num"><strong>105</strong></td><td class="num">30</td><td class="num">103</td><td class="num">6</td><td class="num">332</td></tr>
+<tr class="g3n"><td>3n · +G1+G2</td><td class="num"><strong>88</strong></td><td class="num"><strong>113</strong></td><td class="num">44</td><td class="num">70</td><td class="num">9</td><td class="num">324</td></tr>
+</table>
+
+<ul>
+<li><strong>G1 converts refusals into unsupported additions.</strong> For Gemma&nbsp;4, refusal FAILs fall 27→7
+while unsupported additions rise 28→55: the prompt successfully stops the model deflecting, and the substance it now
+volunteers sometimes reaches beyond the document. This is the deflection-fix working <em>and</em> its price, in one row.</li>
+<li><strong>3n carries a much larger contradiction load at baseline</strong> (91 vs G4's 51) — it gets clinical facts
+wrong against the very context it was given almost twice as often. That is the core grounding deficit, present before
+any prompt change.</li>
+<li><strong>3n's raw FAIL inflation under G1 is mostly non-hallucination.</strong> 3n's raw rate jumps 8.6→11.1%, but
+much of that is a surge in <em>refusal</em>-category FAILs (14→103) that Lynx penalises — not genuine hallucination.
+That is exactly why 3n's <em>categorized</em> rate barely moves (6.26→6.46%) even as its raw rate climbs sharply, and
+why the raw number is misleading on its own.</li>
+</ul>
+
+<h2>4 · The calibrated estimate — and why it is the noisy column</h2>
+<p>Lynx is a high-recall / low-precision detector: it both over-flags (precision 0.36–0.57) and under-detects.
+The <em>calibrated</em> rate corrects for the under-detection by sampling 50 Lynx-PASS answers per arm, re-judging
+them with gpt-5, and extrapolating the miss-rate across the ~2,700–2,850 PASS population. Because that population is
+huge, the estimate is <strong>dominated by a miss-rate measured on only 50 cases</strong> — so its confidence
+intervals are wide and a few sampled cases swing it a lot.</p>
+
+<div class="callout warn">
+<strong>Two reasons to treat calibrated rates as an upper-bound band, not a point estimate:</strong>
+<ul>
+<li><strong>The g4_g1g2 outlier (†).</strong> Its 53.9% comes from a miss-rate point estimate of 0.54
+(27 of 50 PASS cases re-judged FAIL) — far above its neighbours (0.18, 0.22) and with a CI of [0.42–0.68]. One
+unusually strict 50-case draw, not a 2.5× collapse in grounding between +G1 and +G1+G2.</li>
+<li><strong>Same model, same data, calibrated rate moved 9%→19%.</strong> An <em>earlier</em> Gemma&nbsp;4 oracle run
+(<code>oracle-v0.2.0-faithfulness</code>) scored categorized 2.51% / calibrated 9.05% (miss-rate 0.08); this run's
+baseline scored categorized 2.64% / calibrated 19.1% (miss-rate 0.18). The <em>categorized</em> numbers agree to
+within 0.1pp; the <em>calibrated</em> numbers differ 2× purely from the 50-sample miss-rate draw. The categorized
+metric is reproducible; the calibrated metric is not, at this sample size.</li>
+</ul>
+</div>
+
+<p>What the calibrated column <em>does</em> robustly show — surviving its noise — is the same two facts as the
+categorized column: <strong>(a) Gemma&nbsp;3n &gt; Gemma&nbsp;4 in hallucination at every arm</strong>
+(27→46→47% vs 19→23%, ignoring the g1g2 spike), and <strong>(b) prompts push the rate up, more so on 3n.</strong>
+It simply states them with wider error bars and a larger amplitude. Where the two metrics disagree is magnitude: the
+calibrated view makes "+G1 nearly doubles 3n's hallucination" (27→46%), whereas the categorized view says the
+genuine-hallucination increase is mild (6.26→6.46%). <strong>The mild reading is the trustworthy one;</strong> the
+doubling is largely Lynx-miss-rate noise plus the refusal surge of §3.</p>
+
+<h2>5 · Interpretation</h2>
+<div class="callout good">
+<strong>For the device decision.</strong> On faithfulness alone, Gemma&nbsp;4 is the safer grounder by a clear
+~2× margin, and it tolerates the deflection-fix prompts without a meaningful grounding penalty. Gemma&nbsp;3n —
+the currently-deployed generator — pays for its size with roughly double the genuine-hallucination rate against gold
+context, independent of prompt. No prompt in this study closes that gap; G1/G2 modestly widen it.</div>
+
+<p>This is the faithfulness half of the picture. It must be read against the end-to-end track (recall / safety /
+rubric, +RAG on kenya &amp; healthbench), where G1's deflection fix <em>raises clinical recall</em> — the upside that
+motivated it. The faithfulness cost quantified here is the counterweight: the extra substance G1 elicits is partly
+un-grounded. The path that improves recall <em>without</em> the grounding tax is <strong>RAG-grounding of the
+generator (G-RAG)</strong>, not further prompt tuning — consistent with the retriever/generator synthesis and the
+G1 prompt-A/B outcome on this branch.</p>
+
+<h2>6 · Method</h2>
+<ul>
+<li><strong>Stimulus.</strong> Oracle context = mamaretrieval v0.2.0, relevance score ≥5, top-3 passages,
+n=2,989 questions. Identical context fed to both generators and all three prompt arms, so any difference is the
+generator/prompt, never retrieval.</li>
+<li><strong>Generators.</strong> Gemma&nbsp;4 E4B and Gemma&nbsp;3n E4B, both Q4_0 GGUF (the on-device quantization),
+greedy/config-pinned decoding. Prompts: baseline (deployed), +G1 (deflection/scope fix), +G1+G2 (G1 plus
+consultation-workflow structure) — the same three arm prompts used elsewhere on this branch.</li>
+<li><strong>Detector.</strong> Patronus Lynx-70B (TP=2) → PASS/FAIL with reasoning.</li>
+<li><strong>Categorize (gpt-5, Option B).</strong> Every FAIL re-judged by gpt-5 against a frozen rubric into
+contradiction / unsupported-addition / omission / refusal / unclear; the first two are counted as true hallucination.
+Full-population, deterministic.</li>
+<li><strong>Calibrate (gpt-5).</strong> Per arm, a seeded stratified blind sample (50 PASS + up to 10 per FAIL
+category, n≈96–100) re-judged from first principles → Lynx precision, miss-rate, and a population estimate with
+bootstrap 95% CIs.</li>
+<li><strong>Provenance.</strong> 3n arms from <code>g1-ab-3n-20260619/faith</code> (2026-06-19); G4 arms generated
+2026-06-22 (<code>gen-prompt-matrix-20260622/faith</code>) on the EPFL cluster; identical pipeline.</li>
+</ul>
+
+<h2>7 · Caveats &amp; scope</h2>
+<ul>
+<li><strong>Oracle, not RAG.</strong> This is faithfulness-to-gold-context — an upper bound on grounding behaviour.
+Under live retrieval, missing/wrong passages add a separate error mode not measured here.</li>
+<li><strong>English only;</strong> Swahili faithfulness untested.</li>
+<li><strong>Calibrated rates are 50-PASS-sample extrapolations</strong> with wide CIs (§4) — directional, not precise.
+Treat categorized as the metric of record.</li>
+<li><strong>"unclear" cases</strong> (6–13 per arm) are excluded from true-hallucination by construction; they are a
+small, bounded source of undercount.</li>
+<li><strong>Single judge family for the semantic steps</strong> (gpt-5). The judge-validation plan
+(<code>judge-validation-plan</code>) against physician ground truth still applies before these rates are pinned as
+absolute.</li>
+</ul>
+
+<p class="src">Data: <code>configs/config-v0.2.0/results/end_to_end_eval/gen-prompt-matrix-20260622/faith/g4_*</code>
+(Gemma 4) · <code>…/g1-ab-3n-20260619/faith/arm{1,2,3}</code> (Gemma 3n). Pipeline:
+<code>generator_eval/{analyze_lynx_fails,calibrate,score_openai_batch_judge}.py</code>,
+<code>cluster/run_cluster_faith_gpt5.sh</code>.</p>
+
+</body>
+</html>
