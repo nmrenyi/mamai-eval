@@ -49,12 +49,17 @@ for c in CELLS:
         }
     except Exception as e:
         out["kenya"] = {"error": repr(e)}
-    # healthbench rubric — weighted_met
+    # healthbench rubric — overall + positive/negative split + per-axis
     try:
         hd = json.load(open(f"{A}/{c}/run/healthbench_oss_eval.json"))
         a = agg_rubric(hd.get("results", []))
-        out["healthbench"] = {"n": a.get("n_scored") or a.get("n"),
-                              "mean_weighted_met": a.get("mean_weighted_met")}
+        out["healthbench"] = {
+            "n": a.get("n_scored"),
+            "mean_weighted_met": a.get("mean_weighted_met"),
+            "mean_positive_score": a.get("mean_positive_score"),  # completeness (+ criteria)
+            "mean_penalty_rate": a.get("mean_penalty_rate"),      # harm/penalty (- criteria triggered) ↓ better
+            "per_axis_mean": a.get("per_axis_mean"),
+        }
     except Exception as e:
         out["healthbench"] = {"error": repr(e)}
     matrix[c] = out

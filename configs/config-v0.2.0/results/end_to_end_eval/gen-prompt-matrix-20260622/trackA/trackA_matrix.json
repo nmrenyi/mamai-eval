@@ -21,7 +21,16 @@
     },
     "healthbench": {
       "n": 1209,
-      "mean_weighted_met": 0.0001
+      "mean_weighted_met": 0.0001,
+      "mean_positive_score": 0.1824,
+      "mean_penalty_rate": 0.3773,
+      "per_axis_mean": {
+        "completeness": -0.189,
+        "context_awareness": 0.1103,
+        "accuracy": 0.142,
+        "communication_quality": 0.3328,
+        "instruction_following": 0.1963
+      }
     }
   },
   "g4_g1": {
@@ -47,7 +56,16 @@
     },
     "healthbench": {
       "n": 1209,
-      "mean_weighted_met": 0.0378
+      "mean_weighted_met": 0.0378,
+      "mean_positive_score": 0.2214,
+      "mean_penalty_rate": 0.3732,
+      "per_axis_mean": {
+        "completeness": -0.1468,
+        "context_awareness": 0.1199,
+        "accuracy": 0.1813,
+        "communication_quality": 0.3491,
+        "instruction_following": 0.179
+      }
     }
   },
   "g4_g1g2": {
@@ -72,7 +90,16 @@
     },
     "healthbench": {
       "n": 1209,
-      "mean_weighted_met": 0.052
+      "mean_weighted_met": 0.052,
+      "mean_positive_score": 0.2333,
+      "mean_penalty_rate": 0.3847,
+      "per_axis_mean": {
+        "completeness": -0.1151,
+        "context_awareness": 0.1291,
+        "accuracy": 0.1939,
+        "communication_quality": 0.2669,
+        "instruction_following": 0.2105
+      }
     }
   },
   "3n_baseline": {
@@ -97,7 +124,16 @@
     },
     "healthbench": {
       "n": 1209,
-      "mean_weighted_met": 0.0832
+      "mean_weighted_met": 0.0832,
+      "mean_positive_score": 0.262,
+      "mean_penalty_rate": 0.3727,
+      "per_axis_mean": {
+        "completeness": -0.075,
+        "context_awareness": 0.1432,
+        "accuracy": 0.1965,
+        "communication_quality": 0.4086,
+        "instruction_following": 0.3399
+      }
     }
   },
   "3n_g1": {
@@ -122,7 +158,16 @@
     },
     "healthbench": {
       "n": 1208,
-      "mean_weighted_met": 0.1099
+      "mean_weighted_met": 0.1099,
+      "mean_positive_score": 0.2885,
+      "mean_penalty_rate": 0.3666,
+      "per_axis_mean": {
+        "completeness": 0.0044,
+        "context_awareness": 0.1455,
+        "accuracy": 0.1984,
+        "communication_quality": 0.3597,
+        "instruction_following": 0.331
+      }
     }
   },
   "3n_g1g2": {
@@ -146,7 +191,16 @@
     },
     "healthbench": {
       "n": 1208,
-      "mean_weighted_met": 0.1192
+      "mean_weighted_met": 0.1192,
+      "mean_positive_score": 0.2931,
+      "mean_penalty_rate": 0.3647,
+      "per_axis_mean": {
+        "completeness": 0.0334,
+        "context_awareness": 0.17,
+        "accuracy": 0.2039,
+        "communication_quality": 0.3295,
+        "instruction_following": 0.2859
+      }
     }
   }
 }

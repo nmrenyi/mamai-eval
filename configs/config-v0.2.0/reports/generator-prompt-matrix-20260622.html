@@ -137,6 +137,38 @@ moved to it. But every safety/faithfulness column favours G4 by roughly 2×, and
 wrong drug, missed red-flag referral) is almost exclusively a 3n phenomenon: <strong>G4 produced 0–1 dangerous answers
 across all three prompts; 3n produced 4, 11, and 15.</strong></p>
 
+<h3>2a · HealthBench, decomposed — the gap is completeness, not penalties</h3>
+<p>HealthBench's <code>weighted_met = Σ(points·met) / Σ(max(points,0))</code> nets two opposing things. Splitting
+them: <strong>positive score</strong> = fraction of the <em>reward</em> criteria earned (completeness — got the right
+guidance in); <strong>penalty rate</strong> = fraction of the <em>negative-point</em> criteria triggered (active harm
+/ wrong content — lower is better).</p>
+<table>
+<tr><th>Cell</th>
+  <th class="num">weighted_met<br><span class="small">(overall)</span></th>
+  <th class="num">positive score (+)<br><span class="small">completeness ↑</span></th>
+  <th class="num">penalty rate (−)<br><span class="small">harm triggered ↓</span></th></tr>
+<tr class="g4"><td>G4 · baseline</td><td class="num worst">0.0001</td><td class="num worst">0.182</td><td class="num">0.377</td></tr>
+<tr class="g4"><td>G4 · +G1</td><td class="num">0.038</td><td class="num">0.221</td><td class="num best">0.373</td></tr>
+<tr class="g4"><td>G4 · +G1+G2</td><td class="num">0.052</td><td class="num">0.233</td><td class="num worst">0.385</td></tr>
+<tr class="g3n"><td>3n · baseline</td><td class="num">0.083</td><td class="num">0.262</td><td class="num">0.373</td></tr>
+<tr class="g3n"><td>3n · +G1</td><td class="num">0.110</td><td class="num">0.289</td><td class="num">0.367</td></tr>
+<tr class="g3n"><td>3n · +G1+G2</td><td class="num best">0.119</td><td class="num best">0.293</td><td class="num best">0.365</td></tr>
+</table>
+<ul>
+<li><strong>The overall gap is almost entirely the positive (completeness) side.</strong> 3n's positive score is
+higher at every arm (0.26–0.29 vs G4 0.18–0.23), and both prompts raise it (G4 0.18→0.23, 3n 0.26→0.29). That is 3n
+being the more capable model — it fits more of the rubric's required guidance into its answers.</li>
+<li><strong>The penalty rate is strikingly flat (~0.365–0.385) across all six cells.</strong> On HealthBench-oss's
+negative-criteria axis, neither the generator nor the prompt moves active-harm much — everyone trips a similar
+fraction of the penalty items. So the headline weighted_met ordering (3n &gt; G4) is a <em>completeness</em> ranking,
+not a safety one.</li>
+<li><strong>Instrument note.</strong> This means the "3n is less safe" signal lives in the targeted instruments —
+the kenya dangerous count (4/11/15 vs 0/1/0) and oracle faithfulness (6.3% vs 2.6%) — <em>not</em> in HealthBench-oss
+penalties, whose negative items (generic caveats / communication) both weak models miss similarly. The instruments
+agree on helpfulness (3n higher) and simply differ in sensitivity to the danger tail; the kenya safety judge is the
+sharper probe for it.</li>
+</ul>
+
 <h2>3 · Reading 2 — the prompt's value is generator-dependent</h2>
 <p>The G1 (deflection/scope fix) and G2 (consultation-workflow structure) prompts were written to repair a deflection
 reflex. Whether that helps depends entirely on whether the generator <em>has</em> that reflex.</p>

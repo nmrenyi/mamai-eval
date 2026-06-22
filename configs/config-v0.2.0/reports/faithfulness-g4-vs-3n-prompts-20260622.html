@@ -169,11 +169,16 @@ intervals are wide and a few sampled cases swing it a lot.</p>
 <li><strong>The g4_g1g2 outlier (†).</strong> Its 53.9% comes from a miss-rate point estimate of 0.54
 (27 of 50 PASS cases re-judged FAIL) — far above its neighbours (0.18, 0.22) and with a CI of [0.42–0.68]. One
 unusually strict 50-case draw, not a 2.5× collapse in grounding between +G1 and +G1+G2.</li>
-<li><strong>Same model, same data, calibrated rate moved 9%→19%.</strong> An <em>earlier</em> Gemma&nbsp;4 oracle run
-(<code>oracle-v0.2.0-faithfulness</code>) scored categorized 2.51% / calibrated 9.05% (miss-rate 0.08); this run's
-baseline scored categorized 2.64% / calibrated 19.1% (miss-rate 0.18). The <em>categorized</em> numbers agree to
-within 0.1pp; the <em>calibrated</em> numbers differ 2× purely from the 50-sample miss-rate draw. The categorized
-metric is reproducible; the calibrated metric is not, at this sample size.</li>
+<li><strong>Same model, same context, calibrated rate moved 9%→19%.</strong> An <em>earlier</em> Gemma&nbsp;4 oracle
+run (<code>oracle-v0.2.0-faithfulness</code>) used the <em>identical</em> stimulus — top-3 oracle chunks, deploy
+params — and scored categorized 2.51% / raw FAIL 5.82% / calibrated <strong>9.05%</strong>; this run's baseline scored
+categorized 2.64% / raw FAIL 6.09% / calibrated <strong>19.1%</strong>. Everything stable agrees (categorized within
+0.13pp, raw within 0.27pp). The 2× calibrated gap is one number: the <strong>Lynx miss-rate, estimated from
+50 Lynx-PASS cases — 4/50 (8%) then vs 9/50 (18%) now</strong>. Those CIs overlap heavily ([2–16%] vs [8–30%]) — 4
+versus 9 events is ordinary sampling jitter — but because the missed-FAIL term is miss-rate × ~2,810 PASS answers,
+that jitter swings the population estimate from ≈271 to ≈571 hallucinations. (The two runs are separate G4
+generations, so a sliver is generation difference, but the categorized agreement shows the model behaviour is
+essentially unchanged.) The categorized metric is reproducible; the calibrated metric, at n=50 PASS, is not.</li>
 </ul>
 </div>
 
