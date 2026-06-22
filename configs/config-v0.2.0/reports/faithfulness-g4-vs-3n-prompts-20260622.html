@@ -177,6 +177,53 @@ metric is reproducible; the calibrated metric is not, at this sample size.</li>
 </ul>
 </div>
 
+<h3>4a · Dissecting the 53.9%: what the 27 flagged answers actually are</h3>
+<p>The g1g2 spike is concrete enough to open up. We pulled the 27 Lynx-PASS answers that gpt-5 re-judged FAIL (the
+cases that <em>are</em> the 0.54 miss-rate) and read gpt-5's reasoning on each. The story is not "Gemma 4 started
+hallucinating" — it is the <strong>G2 consultation-workflow template interacting with a deliberately narrow
+context</strong>:</p>
+
+<ul>
+<li><strong>The additions are the G2 section headers.</strong> Almost every flagged answer is laid out in G2's
+scaffold — <code>Definition/Grading:</code>, <code>History &amp; Examination:</code>, management, referral/escalation
+— and gets faulted precisely for the sections the 3-chunk context can't fill. gpt-5's verbatim reasons read like:
+<em>"adds definition of breech, history/exam steps, and referral advice not in the context"</em>;
+<em>"adds management steps (monitoring for hypoglycemia/respiratory distress, escalation protocols) not present"</em>;
+<em>"adds diagnostic microscopy … not contained in the provided context."</em> The template <em>demands</em> content
+the oracle passage doesn't supply, and the model fills it with standard-of-care knowledge.</li>
+
+<li><strong>Answer length tracks the miss-rate almost perfectly.</strong> The G2 scaffold makes answers ~60% longer,
+and longer answers have more surface area to exceed a 3-chunk context:
+<table>
+<tr><th>Arm</th><th class="num">median PASS-answer length</th><th class="num">Lynx miss-rate</th><th class="num">→ calibrated</th></tr>
+<tr class="g4"><td>baseline</td><td class="num">742 chars</td><td class="num">0.18</td><td class="num">19.1%</td></tr>
+<tr class="g4"><td>+G1</td><td class="num">770 chars</td><td class="num">0.22</td><td class="num">23.1%</td></tr>
+<tr class="g4"><td>+G1+G2</td><td class="num"><strong>1,193 chars</strong></td><td class="num"><strong>0.54</strong></td><td class="num"><strong>53.9%</strong></td></tr>
+</table>
+More template → more sections → more claims beyond the 3 chunks → higher 50-sample miss-rate → ×2,821 PASS answers →
+the 53.9%.</li>
+
+<li><strong>The rubric is strict by design, and the context is narrow by design.</strong> The calibration rubric says
+<em>"judge only against the provided context, not outside medical knowledge."</em> So clinically-correct elaboration
+that simply isn't in the top-3 passages is counted as an <em>unsupported addition</em>. Much of this would flip to
+"supported" under fuller retrieval — so a large part of the 53.9% is an <strong>artifact of the narrow top-3 oracle
+context</strong>, not a model defect.</li>
+
+<li><strong>But a real minority are genuine.</strong> Not all 27 are benign template-fill: e.g. one answer
+<em>contradicts the context's proteinuria requirement</em> for diagnosing pre-eclampsia; another <em>makes
+metronidazole "optional"</em> where the context mandates the ampicillin + gentamicin + metronidazole triple regimen.
+These are true contradictions — the non-artifactual core, and the concrete reason G2's structure isn't free.</li>
+</ul>
+
+<div class="callout warn">
+<strong>So what happened at 53.9%?</strong> Three things stacked: G2's verbose template generates content the narrow
+3-chunk context can't support, the strict context-only rubric counts that (mostly sound) content as unsupported, and
+the calibrated estimator multiplies a single high 50-case draw across 2,821 answers. The number is <em>not</em>
+"Gemma 4 is unfaithful on half its answers" — the full-population <strong>categorized rate is 3.55%</strong>, still
+second-lowest in the matrix. The genuine signal underneath is narrower and worth keeping: <strong>the G2 scaffold
+mechanically increases unsupported additions, and a small slice of those are real contradictions.</strong>
+</div>
+
 <p>What the calibrated column <em>does</em> robustly show — surviving its noise — is the same two facts as the
 categorized column: <strong>(a) Gemma&nbsp;3n &gt; Gemma&nbsp;4 in hallucination at every arm</strong>
 (27→46→47% vs 19→23%, ignoring the g1g2 spike), and <strong>(b) prompts push the rate up, more so on 3n.</strong>
