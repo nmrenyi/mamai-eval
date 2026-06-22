@@ -190,9 +190,12 @@ on the deployed product, the <strong>kenya SAQ signal governs</strong> — and i
 </table>
 
 <p>The three-sided acceptance gate requires <em>all</em> of: recall up, safety not worse, faithfulness not
-worse. Helpfulness passes; <strong>safety fails on the decision set</strong>. Net recommendation:</p>
+worse. Helpfulness passes; <strong>safety fails on the decision set</strong>. <strong>Scope of this verdict:
+it is measured no-RAG, so it judges the prompt on the bare generator — see the §6 caveat. The deployment-grade
+verdict requires the RAG re-run, which may soften the lever-3 finding.</strong> Net recommendation:</p>
 <ul>
-<li><strong>Do not ship G1 or G1+G2 as-is on Gemma 3n.</strong></li>
+<li><strong>Do not ship G1 or G1+G2 as-is on Gemma 3n on the strength of the no-RAG evidence</strong> — and
+confirm on the deployed RAG config before a final call (the dose errors may ground out under retrieval).</li>
 <li><strong>Re-scope the work.</strong> 3n already eliminated deflection, so the deflection-fix framing is
 obsolete. The remaining value is completeness — pursue it through the levers that do <em>not</em> drive
 commission (structure/skeleton, addressing-the-clinician, local-context) and <strong>drop or heavily guard
@@ -203,6 +206,18 @@ measuring <em>RAG-context faithfulness</em> (the oracle-track Lynx pass) — the
 </ul>
 
 <h2>6. Caveats</h2>
+<div class="callout warn">
+<strong>This A/B is no-RAG; the deployed config is RAG — so the safety conclusions are about the bare
+generator, not the shipped system.</strong> No-RAG was a deliberate choice to isolate the prompt's effect
+without retrieval noise, but the deployed v0.3.0 app runs 3n <em>with EmbeddingGemma retrieval</em>. This
+matters most for §2b: the dangerous cases are <strong>dose fabrications from parametric memory</strong>
+(oxytocin units, benzathine-penicillin dose, ceftriaxone-in-neonate). With RAG the model is handed the
+guideline chunk that usually contains the correct dose, so it is plausible that <strong>RAG grounds those
+doses and removes most of those 5 errors</strong> — which would soften or flip the lever-3 conclusion. So
+treat the lever-3 danger as <strong>plausibly no-RAG-inflated</strong>, pending a RAG re-run (±RAG, deployed
+EmbeddingGemma config) that re-adjudicates these cases. Counter-caution: the faithfulness report shows 3n
+still adds unsupported content <em>even with</em> good context (27→46% calibrated), so RAG may fix the
+retrievable dose errors without fully disciplining the model — measure, don't assume.</div>
 <ul>
 <li><strong>Single run.</strong> No bootstrap CIs yet; recall steps are near the per-run noise floor (the
 harm/dangerous trend is above it). A repeat judge pass on the safety axis would harden the gate decision.</li>
