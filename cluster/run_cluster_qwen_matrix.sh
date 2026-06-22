@@ -43,7 +43,11 @@ PFX="$WORKTREE/configs/$CONFIG/results/end_to_end_eval/g1-ab-3n-20260619/prompts
 
 VLLM_LOG=/tmp/vllm.log
 export VLLM_ENGINE_READY_TIMEOUT_S="${VLLM_ENGINE_READY_TIMEOUT_S:-3600}"
-echo "=== SERVE Qwen ($MODEL_ID, TP=$TP_SIZE) ==="
+# The pip-only container has runtime CUDA but no nvcc, so DeepGEMM's JIT FP8
+# kernels fail to compile ("NVCC compilation failed"). Disable DeepGEMM and use
+# vLLM's prebuilt FP8 kernels (CUTLASS/Triton). Hardware is Hopper, so FP8 is fine.
+export VLLM_USE_DEEP_GEMM="${VLLM_USE_DEEP_GEMM:-0}"
+echo "=== SERVE Qwen ($MODEL_ID, TP=$TP_SIZE, VLLM_USE_DEEP_GEMM=$VLLM_USE_DEEP_GEMM) ==="
 python3 -m vllm.entrypoints.openai.api_server --model "$MODEL_ID" --tensor-parallel-size "$TP_SIZE" \
   --host 0.0.0.0 --port "$PORT" --gpu-memory-utilization "$GPU_MEMORY_UTIL" --trust-remote-code \
   --max-model-len "$MAX_MODEL_LEN" --reasoning-parser qwen3 > "$VLLM_LOG" 2>&1 &
