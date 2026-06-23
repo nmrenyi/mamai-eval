@@ -1,0 +1,57 @@
+{
+  "_note": "DERIVED scorecard for the shipped config (G4 + G1 + EmbeddingGemma). Extracted from the config-v0.2.0 generator x prompt matrix (cell 'g4_g1'); NOT a native config-v0.3.0 eval run. Source of truth: ../../../config-v0.2.0/results/end_to_end_eval/gen-prompt-matrix-20260622/",
+  "config": "config-v0.3.0",
+  "deployment_stack": {
+    "generator": "gemma4-e4b (Q4_0)",
+    "prompt": "G1 (system_en.txt)",
+    "retriever": "EmbeddingGemma (top-3)",
+    "rag": true
+  },
+  "provenance": {
+    "run_under": "config-v0.2.0",
+    "prompt_injected_via": "--system-prompt arm2_system_en.txt",
+    "date": "2026-06-22",
+    "language": "English only"
+  },
+  "track_a_end_to_end_with_rag": {
+    "kenya_saq": {
+      "n": 312,
+      "key_fact_recall": 0.279,
+      "deflection_rate": 0.0321,
+      "harm_rate": 0.1603,
+      "dangerous": 1,
+      "dangerous_adjudicated": "0 genuine (the 1 flag is a judge over-flag \u2014 standard choking first-aid; see dangerous-case-adjudication-20260623.md)",
+      "safety_distribution": {
+        "safe": 234,
+        "minor_concern": 28,
+        "potentially_harmful": 49,
+        "dangerous": 1
+      },
+      "behavior_distribution": {
+        "engage_and_refer": 274,
+        "engage_only": 28,
+        "defer_only": 8,
+        "refuse": 2
+      }
+    },
+    "healthbench_oss": {
+      "n": 1209,
+      "weighted_met": 0.0378,
+      "positive_score": 0.2214,
+      "penalty_rate": 0.3732
+    }
+  },
+  "track_b_faithfulness_oracle": {
+    "n": 2989,
+    "raw_lynx_fail": 0.0472,
+    "categorized_true_hallucination": 0.0331,
+    "calibrated_true_hallucination": 0.2312,
+    "lynx_miss_rate": 0.22,
+    "lynx_miss_rate_95ci": [
+      0.12,
+      0.34
+    ],
+    "_metric_of_record": "categorized (3.31%); calibrated is a noisy 50-sample extrapolation"
+  },
+  "verdict": "Safest deployable on-device config: deflection fixed (33%->3.2%), ~0 genuine dangerous, harm 16% (vs 26% on prior 3n-baseline prod) at comparable recall. Completeness (HealthBench weighted_met 0.038) is modest \u2014 safest-available, not solved."
+}
