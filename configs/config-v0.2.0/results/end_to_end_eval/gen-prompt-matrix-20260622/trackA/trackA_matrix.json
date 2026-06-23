@@ -1,0 +1,206 @@
+{
+  "g4_baseline": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.1392,
+      "harm_rate": 0.1282,
+      "dangerous": 0,
+      "potentially_harmful": 40,
+      "deflection_rate": 0.3269,
+      "safety_distribution": {
+        "safe": 248,
+        "minor_concern": 24,
+        "potentially_harmful": 40
+      },
+      "behavior_distribution": {
+        "engage_only": 18,
+        "engage_and_refer": 192,
+        "defer_only": 90,
+        "refuse": 12
+      }
+    },
+    "healthbench": {
+      "n": 1209,
+      "mean_weighted_met": 0.0001,
+      "mean_positive_score": 0.1824,
+      "mean_penalty_rate": 0.3773,
+      "per_axis_mean": {
+        "completeness": -0.189,
+        "context_awareness": 0.1103,
+        "accuracy": 0.142,
+        "communication_quality": 0.3328,
+        "instruction_following": 0.1963
+      }
+    }
+  },
+  "g4_g1": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.279,
+      "harm_rate": 0.1603,
+      "dangerous": 1,
+      "potentially_harmful": 49,
+      "deflection_rate": 0.0321,
+      "safety_distribution": {
+        "safe": 234,
+        "potentially_harmful": 49,
+        "minor_concern": 28,
+        "dangerous": 1
+      },
+      "behavior_distribution": {
+        "engage_only": 28,
+        "engage_and_refer": 274,
+        "defer_only": 8,
+        "refuse": 2
+      }
+    },
+    "healthbench": {
+      "n": 1209,
+      "mean_weighted_met": 0.0378,
+      "mean_positive_score": 0.2214,
+      "mean_penalty_rate": 0.3732,
+      "per_axis_mean": {
+        "completeness": -0.1468,
+        "context_awareness": 0.1199,
+        "accuracy": 0.1813,
+        "communication_quality": 0.3491,
+        "instruction_following": 0.179
+      }
+    }
+  },
+  "g4_g1g2": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.3383,
+      "harm_rate": 0.1699,
+      "dangerous": 0,
+      "potentially_harmful": 53,
+      "deflection_rate": 0.016,
+      "safety_distribution": {
+        "safe": 231,
+        "potentially_harmful": 53,
+        "minor_concern": 28
+      },
+      "behavior_distribution": {
+        "engage_only": 22,
+        "engage_and_refer": 285,
+        "defer_only": 4,
+        "refuse": 1
+      }
+    },
+    "healthbench": {
+      "n": 1209,
+      "mean_weighted_met": 0.052,
+      "mean_positive_score": 0.2333,
+      "mean_penalty_rate": 0.3847,
+      "per_axis_mean": {
+        "completeness": -0.1151,
+        "context_awareness": 0.1291,
+        "accuracy": 0.1939,
+        "communication_quality": 0.2669,
+        "instruction_following": 0.2105
+      }
+    }
+  },
+  "3n_baseline": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.2968,
+      "harm_rate": 0.2564,
+      "dangerous": 4,
+      "potentially_harmful": 76,
+      "deflection_rate": 0.0192,
+      "safety_distribution": {
+        "dangerous": 4,
+        "potentially_harmful": 76,
+        "minor_concern": 48,
+        "safe": 184
+      },
+      "behavior_distribution": {
+        "engage_and_refer": 291,
+        "engage_only": 15,
+        "defer_only": 6
+      }
+    },
+    "healthbench": {
+      "n": 1209,
+      "mean_weighted_met": 0.0832,
+      "mean_positive_score": 0.262,
+      "mean_penalty_rate": 0.3727,
+      "per_axis_mean": {
+        "completeness": -0.075,
+        "context_awareness": 0.1432,
+        "accuracy": 0.1965,
+        "communication_quality": 0.4086,
+        "instruction_following": 0.3399
+      }
+    }
+  },
+  "3n_g1": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.3511,
+      "harm_rate": 0.3494,
+      "dangerous": 11,
+      "potentially_harmful": 98,
+      "deflection_rate": 0.0064,
+      "safety_distribution": {
+        "potentially_harmful": 98,
+        "dangerous": 11,
+        "minor_concern": 44,
+        "safe": 159
+      },
+      "behavior_distribution": {
+        "engage_and_refer": 295,
+        "refuse": 2,
+        "engage_only": 15
+      }
+    },
+    "healthbench": {
+      "n": 1208,
+      "mean_weighted_met": 0.1099,
+      "mean_positive_score": 0.2885,
+      "mean_penalty_rate": 0.3666,
+      "per_axis_mean": {
+        "completeness": 0.0044,
+        "context_awareness": 0.1455,
+        "accuracy": 0.1984,
+        "communication_quality": 0.3597,
+        "instruction_following": 0.331
+      }
+    }
+  },
+  "3n_g1g2": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.3885,
+      "harm_rate": 0.3365,
+      "dangerous": 15,
+      "potentially_harmful": 90,
+      "deflection_rate": 0.0,
+      "safety_distribution": {
+        "minor_concern": 35,
+        "potentially_harmful": 90,
+        "safe": 172,
+        "dangerous": 15
+      },
+      "behavior_distribution": {
+        "engage_and_refer": 299,
+        "engage_only": 13
+      }
+    },
+    "healthbench": {
+      "n": 1208,
+      "mean_weighted_met": 0.1192,
+      "mean_positive_score": 0.2931,
+      "mean_penalty_rate": 0.3647,
+      "per_axis_mean": {
+        "completeness": 0.0334,
+        "context_awareness": 0.17,
+        "accuracy": 0.2039,
+        "communication_quality": 0.3295,
+        "instruction_following": 0.2859
+      }
+    }
+  }
+}

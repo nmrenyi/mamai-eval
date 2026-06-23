@@ -1,0 +1,51 @@
+{
+  "verdicts_file": "calibration_verdicts.json",
+  "n_sample": 99,
+  "confusion_matrix": {
+    "lynx_PASS_ref_PASS": 27,
+    "lynx_PASS_ref_FAIL": 23,
+    "lynx_FAIL_ref_PASS": 21,
+    "lynx_FAIL_ref_FAIL": 28
+  },
+  "lynx_precision": 0.5714,
+  "lynx_precision_95ci": [
+    0.4286,
+    0.7143
+  ],
+  "lynx_miss_rate": 0.46,
+  "lynx_miss_rate_95ci": [
+    0.32,
+    0.6
+  ],
+  "fail_stratum_n": 49,
+  "pass_stratum_n": 50,
+  "per_fail_category_confirmation": {
+    "contradiction": {
+      "n": 10,
+      "confirmed_fail": 7
+    },
+    "unsupported_addition": {
+      "n": 10,
+      "confirmed_fail": 9
+    },
+    "omission": {
+      "n": 10,
+      "confirmed_fail": 5
+    },
+    "refusal": {
+      "n": 10,
+      "confirmed_fail": 0
+    },
+    "unclear": {
+      "n": 9,
+      "confirmed_fail": 7
+    }
+  },
+  "population": {
+    "n_total": 2989,
+    "n_lynx_pass": 2665,
+    "n_lynx_fail": 324
+  },
+  "estimated_true_hallucinations": 1411.0,
+  "estimated_true_hallucination_rate": 0.4721
+}

@@ -46,6 +46,8 @@ independent of the generator's behavioral problems.
 | Report | What it is |
 |---|---|
 | `oracle-v0.2.0-faithfulness.html` (this dir) | **Headline faithfulness result** on the v0.2.0 oracle (top-20 union, score ≥ 5; 2,989 queries). Lynx raw PASS 94.2%; gpt-5-calibrated true-hallucination estimate ~9%. |
+| `g1-g2-faithfulness-3n-20260619.html` (this dir) | **Gemma 3n re-run** of the oracle faithfulness pipeline across the G1/G2 prompt arms (n=2,989; Lynx → gpt-5 categorize+calibrate). Calibrated true-hallucination: **3n baseline 27% (vs Gemma 4's 9% — 3n ~3× less faithful to context), +G1 46%, +G1+G2 47%.** Categorized rate stayed flat (~6.3–6.7%); only the calibration's Lynx-miss correction (26→46%) revealed G1's effect. Faithfulness gate **fails for G1/G2 on 3n**; deeper signal is that 3n's grounding is the bottleneck. |
+| `faithfulness-g4-vs-3n-prompts-20260622.html` (this dir) | **Head-to-head G4 vs 3n × 3 prompts (identical pipeline).** Completes the matrix by running Gemma 4 through the same oracle faithfulness arms. On the defensible **categorized** rate, **G4 is ~2× more faithful than 3n at every arm** (G4 2.6/3.3/3.6% vs 3n 6.3/6.5/6.7%) — the generator gap dwarfs the prompt effect (~4×). Both prompts trade refusals for unsupported additions (the faithfulness cost of the deflection fix), but **G4 absorbs it; 3n was already the weaker grounder.** Shows the calibrated metric is the noisy column (same G4 data scored 9%→19% calibrated across two runs while categorized held at 2.5–2.6%) and that "+G1 doubles 3n hallucination" is largely a Lynx-miss-rate/refusal artifact — the mild categorized reading is the trustworthy one. Reframes the lever as **RAG-grounding, not prompt tuning.** |
 | `oracle-self-contradictions-v0.2.0.html` (this dir) | Audit of contradiction-bucket FAILs: 16 are corpus-quality false-FAILs (conflicting facts *inside* the oracle context, mostly cross-guideline retrieval). |
 | `../../../docs/faithfulness-eval-v0.2.0.md` | Methodology + v0.1.0-oracle results (2,659 queries; Lynx 94.55% PASS; Claude-calibrated true-hallucination ~0.3%). Explains the verification ladder and why raw Lynx FAIL ≠ hallucination. |
 | `../../../docs/oracle-self-contradictions-v0.1.0.md` | The original 6-case corpus-conflict audit (prose-vs-table dosing conflicts, etc.). |
@@ -93,6 +95,16 @@ HealthBench-style conversations scored against weighted per-response criteria, i
 | Report | What it is |
 |---|---|
 | `phase-b-rubric-result-20260609.html` | **Headline rubric result.** weighted_met: oss_eval **−0.016**, consensus 0.512, hard −0.178 (no-RAG; report per-subset, never pooled). 61% of failures are **deflection**; active commission of wrong/harmful content ≈ 2%. RAG effect < 1 pp. Same diagnosis as SAQ: safe but unhelpful. |
+
+### 3d. G1/G2 prompt A/B on Gemma 3n — execution of the improvement plan (2026-06-19)
+
+Three-arm prompt A/B (arm1 baseline / arm2 +G1 deflection levers / arm3 +G1+G2 structure) on the
+now-deployed **Gemma 3n E4B**, no-RAG. Data + provenance: `../results/end_to_end_eval/g1-ab-3n-20260619/`.
+
+| Report | What it is |
+|---|---|
+| `g1-g2-prompt-ab-3n-20260619.html` (this dir) | **Headline G1/G2 result (SAQ + rubric).** kenya recall rises 0.288→0.365→0.403 (+40% rel) and deflection is eliminated — but **safety fails monotonically**: harm 22%→34%→35%, dangerous **4→7→9**. Crucially, **3n's baseline deflection is already ~2%** (the Gemma 4→3n upgrade already fixed deflection), so the prompt's net effect is a **recall-for-safety trade**, not a deflection repair. **Verdict: do not ship G1/G2 as-is on 3n.** Faithfulness leg in §2 (`g1-g2-faithfulness-3n-20260619.html`) agrees. |
+| `generator-prompt-matrix-20260622.html` (this dir) | **Capstone: generator × prompt matrix — G4 + 3n + Qwen-397B ceiling, both tracks, +RAG (3×3, 9 cells).** Lands the key cross-track result: **generators split on helpfulness vs safety** — 3n more helpful (recall 0.30–0.39) but far less safe/faithful (dangerous **4/11/15** vs G4 **0/1/0**; halluc 6.3–6.7% vs 2.6–3.6%). **The same prompt has opposite value per generator, scaling with capability:** G4 *needs* G1 (fixes 33% deflection, stays safe); 3n is *harmed* (dangerous 4→15); **Qwen is win-win** (+G1+G2 = best cell: recall 0.553 / harm 4.2% / dangerous 0 / halluc 0.97%). So **the prompts are good and 3n's grounding capacity is the gate** → lever = generator RAG-grounding (G-RAG), not prompts/retrieval. Also: Qwen's calibrated faith 48→84→96% (most-verbose gen) vs categorized 2.5/3.7/0.97% is the definitive proof calibrated tracks verbosity not faithfulness. Data: `../results/end_to_end_eval/gen-prompt-matrix-20260622/`. |
 
 ---
 

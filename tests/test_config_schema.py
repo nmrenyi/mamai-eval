@@ -85,16 +85,23 @@ def test_params_judge_model_nonempty():
 
 # ── Prompt files ──────────────────────────────────────────────────────────────
 
+# system_sw.txt is optional — English-only configs (config-v0.3.0+) intentionally
+# ship no Swahili prompt. Only the English app prompt and the MCQ prompt are required.
+_REQUIRED_PROMPT_FILES = ("system_en.txt", "mcq_system.txt")
+
+
 def test_prompt_files_exist():
     for cfg in _versioned_configs():
-        for fname in ("system_en.txt", "system_sw.txt", "mcq_system.txt"):
+        for fname in _REQUIRED_PROMPT_FILES:
             path = cfg / fname
             assert path.exists(), f"{cfg.name}/{fname} is missing"
 
 
 def test_prompt_files_nonempty():
     for cfg in _versioned_configs():
-        for fname in ("system_en.txt", "system_sw.txt", "mcq_system.txt"):
+        # Validate the required files plus any optional ones that are present.
+        present = [f for f in (*_REQUIRED_PROMPT_FILES, "system_sw.txt") if (cfg / f).exists()]
+        for fname in present:
             content = (cfg / fname).read_text(encoding="utf-8").strip()
             assert len(content) > 50, f"{cfg.name}/{fname} looks suspiciously short ({len(content)} chars)"
 
@@ -110,6 +117,7 @@ def test_results_subdirs_exist():
     for cfg in _versioned_configs():
         results = cfg / "results"
         assert results.exists(), f"{cfg.name}/results/ directory is missing"
-        expected = v02_subdirs if cfg.name.startswith("config-v0.2") else v01_subdirs
+        # v0.1 is the frozen per-metric layout; v0.2 and later use the per-track layout.
+        expected = v01_subdirs if cfg.name.startswith("config-v0.1") else v02_subdirs
         for subdir in expected:
             assert (results / subdir).exists(), f"{cfg.name}/results/{subdir}/ directory is missing"

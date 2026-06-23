@@ -32,6 +32,7 @@ os.environ["MAMAI_EVAL_CONFIG"] = _pre_args.config
 import hashlib
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -70,6 +71,39 @@ def _model_call(model, messages_or_prompt, max_tokens: int):
     if hasattr(model, "supports_chat") and model.supports_chat:
         return model.generate_chat(messages_or_prompt, max_tokens=max_tokens)
     return model.generate(messages_or_prompt, max_tokens=max_tokens)
+
+
+def _gen_responses(model, payloads, max_tokens, workers):
+    """Generate one response per payload, order-preserving.
+
+    Concurrent (ThreadPoolExecutor) for API/endpoint models when workers>1 —
+    essential for a slow cluster-served model (e.g. Qwen-397B) where the
+    sequential loop would take days. Sequential otherwise (GGUF path is a
+    single non-thread-safe model object). Returns a list aligned to `payloads`
+    of (response, elapsed_s); the response is None on error (caller skips).
+    """
+    out: list = [None] * len(payloads)
+
+    def work(idx):
+        t0 = time.time()
+        try:
+            return idx, _model_call(model, payloads[idx], max_tokens), round(time.time() - t0, 2)
+        except Exception as e:
+            print(f"  ERROR payload {idx}: generate() failed: {e}")
+            return idx, None, 0.0
+
+    concurrent = workers > 1 and getattr(model, "is_api", False)
+    if concurrent:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = [ex.submit(work, i) for i in range(len(payloads))]
+            for f in tqdm(as_completed(futs), total=len(futs), desc=f"gen x{workers}"):
+                idx, resp, el = f.result()
+                out[idx] = (resp, el)
+    else:
+        for i in tqdm(range(len(payloads)), desc="gen"):
+            _, resp, el = work(i)
+            out[i] = (resp, el)
+    return out
 
 
 def _flatten_turns_for_prompt(turns: list[dict]) -> str:
@@ -180,10 +214,12 @@ def _open_scores(judgments, n_failed=0):
 
 
 def run_open(model, rows, max_tokens, judge_client, judge_model,
-             output_path=None, metadata=None, rag_contexts=None, resume_results=None):
+             output_path=None, metadata=None, rag_contexts=None, resume_results=None,
+             workers=1):
     """Run open-ended inference. Optional v0.1 single-judge scoring inline.
 
     For v0.2 the canonical scoring path is post-hoc via rescore_open_v2.py.
+    `workers>1` concurrently generates against an API/endpoint model.
     """
     n_skip = len(resume_results) if resume_results else 0
     results = list(resume_results) if resume_results else []
@@ -197,49 +233,39 @@ def run_open(model, rows, max_tokens, judge_client, judge_model,
     if n_skip:
         print(f"  Resuming from checkpoint: skipping {n_skip} already-completed rows")
 
-    for i, row in enumerate(tqdm(rows, total=len(rows), desc="Open inference",
-                                 initial=n_skip), 1):
-        if i <= n_skip:
-            continue
+    pending = rows[n_skip:]
+    uses_messages = (
+        (hasattr(model, "is_api") and model.is_api)
+        or (hasattr(model, "supports_chat") and model.supports_chat)
+    )
+    payloads = []
+    for j, row in enumerate(pending):
+        gi = n_skip + j
+        context_str = ("\n\n".join(rag_contexts[gi].get("chunks", []))
+                       if rag_contexts and gi < len(rag_contexts) else "")
+        q = row["question"]
+        if context_str:
+            payloads.append(build_rag_open_messages(q, context_str) if uses_messages
+                            else build_rag_open_prompt(q, context_str))
+        else:
+            payloads.append(build_open_messages(q) if uses_messages else build_open_prompt(q))
 
+    gen = _gen_responses(model, payloads, max_tokens, workers)
+
+    for j, row in enumerate(pending):
+        response, elapsed = gen[j]
+        if response is None:
+            continue
         question = row["question"]
         reference = row.get("reference", "")
-        key_facts = row.get("key_facts", [])
-
-        context_str = ""
-        if rag_contexts and (i - 1) < len(rag_contexts):
-            chunks = rag_contexts[i - 1].get("chunks", [])
-            context_str = "\n\n".join(chunks)
-
-        t0 = time.time()
-        try:
-            uses_messages = (
-                (hasattr(model, "is_api") and model.is_api)
-                or (hasattr(model, "supports_chat") and model.supports_chat)
-            )
-            if context_str:
-                payload = (build_rag_open_messages(question, context_str)
-                           if uses_messages else
-                           build_rag_open_prompt(question, context_str))
-            else:
-                payload = (build_open_messages(question)
-                           if uses_messages else
-                           build_open_prompt(question))
-            response = _model_call(model, payload, max_tokens)
-        except Exception as e:
-            print(f"  ERROR row {i}: generate() failed: {e}")
-            continue
-        elapsed = time.time() - t0
-
         result = {
             "id": row["id"],
             "question": question,
             "reference": reference,
-            "key_facts": key_facts,
+            "key_facts": row.get("key_facts", []),
             "model_response": response,
-            "inference_time_s": round(elapsed, 2),
+            "inference_time_s": elapsed,
         }
-
         if judge_client is not None and reference:
             judgment = judge_response(question, response, reference, judge_client,
                                       judge_model, temperature=JUDGE_TEMPERATURE)
@@ -250,86 +276,76 @@ def run_open(model, rows, max_tokens, judge_client, judge_model,
                 judgments.append(judgment)
             else:
                 n_judge_failed += 1
-
         results.append(result)
-
-        if output_path and i % CHECKPOINT_INTERVAL == 0:
+        if output_path and (n_skip + j + 1) % CHECKPOINT_INTERVAL == 0:
             save_checkpoint(output_path, metadata or {},
                             _open_scores(judgments, n_judge_failed), results)
-            print(f"  Checkpoint saved at {i}/{len(rows)}")
 
+    if output_path:
+        save_checkpoint(output_path, metadata or {},
+                        _open_scores(judgments, n_judge_failed), results)
     return results, _open_scores(judgments, n_judge_failed)
 
 
 # ── Rubric runner ────────────────────────────────────────────────────────────
 
 def run_rubric(model, rows, max_tokens, output_path=None, metadata=None,
-               rag_contexts=None, resume_results=None):
+               rag_contexts=None, resume_results=None, workers=1):
     """Generate responses for HealthBench-style rubric rows.
 
     No inline scoring — feed the saved result file to rescore_rubric.py.
+    `workers>1` concurrently generates against an API/endpoint model.
     """
     n_skip = len(resume_results) if resume_results else 0
     results = list(resume_results) if resume_results else []
     if n_skip:
         print(f"  Resuming from checkpoint: skipping {n_skip} already-completed rows")
 
-    for i, row in enumerate(tqdm(rows, total=len(rows), desc="Rubric inference",
-                                 initial=n_skip), 1):
-        if i <= n_skip:
-            continue
-
+    pending = rows[n_skip:]
+    uses_messages = (
+        (hasattr(model, "is_api") and model.is_api)
+        or (hasattr(model, "supports_chat") and model.supports_chat)
+    )
+    payloads = []
+    for j, row in enumerate(pending):
+        gi = n_skip + j
+        context_str = ("\n\n".join(rag_contexts[gi].get("chunks", []))
+                       if rag_contexts and gi < len(rag_contexts) else "")
         question = row["question"]
         is_multiturn = isinstance(question, list)
-        rubrics = row.get("rubrics", [])
+        if is_multiturn and uses_messages:
+            p = (build_rag_open_messages_multiturn(question, context_str)
+                 if context_str else build_open_messages_multiturn(question))
+        elif is_multiturn:
+            flat = _flatten_turns_for_prompt(question)
+            p = (build_rag_open_prompt(flat, context_str) if context_str
+                 else build_open_prompt(flat))
+        elif uses_messages:
+            p = (build_rag_open_messages(question, context_str) if context_str
+                 else build_open_messages(question))
+        else:
+            p = (build_rag_open_prompt(question, context_str) if context_str
+                 else build_open_prompt(question))
+        payloads.append(p)
 
-        context_str = ""
-        if rag_contexts and (i - 1) < len(rag_contexts):
-            chunks = rag_contexts[i - 1].get("chunks", [])
-            context_str = "\n\n".join(chunks)
+    gen = _gen_responses(model, payloads, max_tokens, workers)
 
-        t0 = time.time()
-        try:
-            uses_messages = (
-                (hasattr(model, "is_api") and model.is_api)
-                or (hasattr(model, "supports_chat") and model.supports_chat)
-            )
-            if is_multiturn and uses_messages:
-                payload = (build_rag_open_messages_multiturn(question, context_str)
-                           if context_str else
-                           build_open_messages_multiturn(question))
-            elif is_multiturn:
-                # Gemma prompt-format fallback: flatten the conversation into a single user turn.
-                flat = _flatten_turns_for_prompt(question)
-                payload = (build_rag_open_prompt(flat, context_str)
-                           if context_str else
-                           build_open_prompt(flat))
-            elif uses_messages:
-                payload = (build_rag_open_messages(question, context_str)
-                           if context_str else
-                           build_open_messages(question))
-            else:
-                payload = (build_rag_open_prompt(question, context_str)
-                           if context_str else
-                           build_open_prompt(question))
-            response = _model_call(model, payload, max_tokens)
-        except Exception as e:
-            print(f"  ERROR row {i}: generate() failed: {e}")
+    for j, row in enumerate(pending):
+        response, elapsed = gen[j]
+        if response is None:
             continue
-        elapsed = time.time() - t0
-
         results.append({
             "id": row["id"],
-            "question": question,
-            "rubrics": rubrics,
+            "question": row["question"],
+            "rubrics": row.get("rubrics", []),
             "model_response": response,
-            "inference_time_s": round(elapsed, 2),
+            "inference_time_s": elapsed,
         })
-
-        if output_path and i % CHECKPOINT_INTERVAL == 0:
+        if output_path and (n_skip + j + 1) % CHECKPOINT_INTERVAL == 0:
             save_checkpoint(output_path, metadata or {}, {}, results)
-            print(f"  Checkpoint saved at {i}/{len(rows)}")
 
+    if output_path:
+        save_checkpoint(output_path, metadata or {}, {}, results)
     return results, {}
 
 
@@ -393,7 +409,32 @@ def main():
                         help="Path to previous run dir to resume incomplete datasets from")
     parser.add_argument("--run-dir", default=None,
                         help="Fixed output dir (reused across restarts for auto-resume).")
+    parser.add_argument("--system-prompt", default=None,
+                        help="Path to an alternate open-ended system prompt file. Overrides "
+                             "the config's system_en.txt for this run (A/B prompt arms) without "
+                             "mutating the config. Provenance (path + sha256) recorded in metadata. "
+                             "Only affects open_ended / open_ended_rubric; MCQ keeps mcq_system.txt.")
+    parser.add_argument("--workers", type=int, default=1,
+                        help="Concurrent generation requests for API/endpoint models (e.g. a "
+                             "cluster-served Qwen via vLLM). >1 dispatches open-ended/rubric "
+                             "generation in parallel (order-preserving). Ignored for GGUF.")
     args = parser.parse_args()
+
+    # ── Optional system-prompt override (A/B prompt arms) ────────────────────
+    # The build_* functions resolve OPEN_SYSTEM_PROMPT from shared.prompts at
+    # call time, so reassigning the module global here takes effect for the
+    # single-turn, multi-turn, and RAG open-ended paths alike — no config edit.
+    system_prompt_override = None
+    override_sha256 = None
+    if args.system_prompt:
+        import shared.prompts as _prompts_mod
+        _override_path = Path(args.system_prompt)
+        _override_text = _override_path.read_text(encoding="utf-8").rstrip("\n")
+        _prompts_mod.OPEN_SYSTEM_PROMPT = _override_text
+        system_prompt_override = str(_override_path.resolve())
+        override_sha256 = hashlib.sha256(_override_path.read_bytes()).hexdigest()
+        print(f"System-prompt override: {system_prompt_override}")
+        print(f"  sha256={override_sha256}  chars={len(_override_text)}")
 
     from shared.prompts import _params as _active_params
     max_tokens = args.max_tokens or _active_params["generation"]["max_tokens"]
@@ -488,7 +529,8 @@ def main():
             "timestamp": run_timestamp,
             "protocol_version": PROTOCOL_VERSION,
             "prompt_version": PROMPT_VERSION,
-            "spec_sha256": SPEC_SHA256,
+            "spec_sha256": override_sha256 or SPEC_SHA256,
+            "system_prompt_override": system_prompt_override,
             "rag": rag_contexts is not None,
             "generation_params": {
                 "temperature": TEMPERATURE,
@@ -552,11 +594,11 @@ def main():
         elif set_type == "open_ended":
             results, scores = run_open(model, rows, max_tokens, judge_client, judge_model,
                                        output_path, metadata, rag_contexts=rag_contexts,
-                                       resume_results=resume_results)
+                                       resume_results=resume_results, workers=args.workers)
         elif set_type == "open_ended_rubric":
             results, scores = run_rubric(model, rows, max_tokens, output_path, metadata,
                                          rag_contexts=rag_contexts,
-                                         resume_results=resume_results)
+                                         resume_results=resume_results, workers=args.workers)
         else:
             print(f"  ERROR: unknown set_type {set_type}")
             continue
