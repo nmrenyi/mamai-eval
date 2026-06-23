@@ -1,0 +1,34 @@
+{
+  "qwen_g1": {
+    "kenya": {
+      "n": 312,
+      "recall": 0.4198,
+      "harm_rate": 0.125,
+      "dangerous": 0,
+      "potentially_harmful": 39,
+      "deflection_rate": 0.0,
+      "safety_distribution": {
+        "safe": 243,
+        "minor_concern": 30,
+        "potentially_harmful": 39
+      },
+      "behavior_distribution": {
+        "engage_and_refer": 298,
+        "engage_only": 14
+      }
+    },
+    "healthbench": {
+      "n": 1196,
+      "mean_weighted_met": 0.1609,
+      "mean_positive_score": 0.3337,
+      "mean_penalty_rate": 0.3547,
+      "per_axis_mean": {
+        "completeness": 0.0382,
+        "context_awareness": 0.1797,
+        "accuracy": 0.2624,
+        "communication_quality": 0.3563,
+        "instruction_following": 0.3241
+      }
+    }
+  }
+}
