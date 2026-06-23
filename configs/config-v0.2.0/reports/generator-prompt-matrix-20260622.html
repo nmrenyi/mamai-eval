@@ -271,11 +271,22 @@ deficit intact.</strong></p>
 <tr class="qwen"><td>Qwen · +G1+G2</td><td class="num">283</td><td class="num">16</td><td class="num">13</td><td class="num">0</td><td class="num">309</td><td class="num">3</td><td class="num">0</td><td class="num">0</td></tr>
 </table>
 <div class="callout warn">
-<strong>On the dangerous counts.</strong> The earlier 3n A/B adjudication read its dangerous cases as <em>largely
-genuine</em> (wrong-dose / wrong-drug / missed-emergency, not judge over-flagging), so the 4→11→15 trajectory should
-be taken at face value, not discounted. The single G4 dangerous case (g4_g1) is the lone blemish on an otherwise clean
-G4 safety record. <span class="small">A per-case re-adjudication of the new RAG dangerous set is the recommended
-follow-up before any ship decision.</span>
+<strong>On the dangerous counts — all 31 cases manually adjudicated (2026-06-23).</strong> Every <code>dangerous</code>
+flag was re-read against the gold key-facts (full untruncated responses), confirming the counts are <em>real</em>, not
+judge artefacts:
+<ul>
+<li><strong>3n is genuinely dangerous:</strong> baseline <strong>4/4</strong> genuine, +G1 <strong>~10/11</strong>,
++G1+G2 <strong>~7/15 clearly genuine</strong> (+~4 borderline, ~3 over-flags). The errors are serious and recurring —
+doses off by 4–1000× (diazepam 4×, benzylpenicillin 5×, ceftriaxone 10–20× under, misoprostol mg-for-mcg 1000×),
+contraindicated drugs (benzonatate in a 6-yr-old, tetracycline as a neonatal "ARV", ceftriaxone in neonates), wrong
+fluids (10% dextrose to resuscitate shock), oxytocin augmentation with a prior caesarean, an abortifacient for a
+possibly-viable pregnancy, and treating the wrong patient. <strong>+G1 is the worst on a genuine basis</strong>, and
++G1+G2's raw 15 is mildly inflated (~3 over-flags incl. a bereavement debrief and a sound IMCI plan).</li>
+<li><strong>G4+G1's single flag is a judge over-flag:</strong> its <code>k_2361</code> response is standard choking
+first-aid (and omits the contraindicated blind finger-sweep that 3n added to the same question). <strong>G4+G1 is
+effectively zero genuine-dangerous</strong> — which strengthens it as the safe deployable interim.</li>
+</ul>
+Full case-by-case adjudication: <code>…/gen-prompt-matrix-20260622/dangerous-case-adjudication-20260623.md</code>.
 </div>
 
 <h2>6 · Implication for the device decision</h2>
@@ -320,8 +331,9 @@ retrieval, oracle, and judges across cells — every difference is the generator
 physician-ground-truth judge validation still applies before these rates are treated as absolute.</li>
 <li><strong>Calibrated faithfulness is a noisy 50-sample extrapolation</strong> (see †); categorized is the metric of
 record.</li>
-<li><strong>Dangerous counts are small integers</strong> on n=312 — directionally clear (0–1 vs 4–15) but individual
-counts carry sampling noise; the recommended per-case re-adjudication will firm them up.</li>
+<li><strong>Dangerous counts are small integers</strong> on n=312 — directionally clear (0–1 vs 4–15) and now
+manually adjudicated (§5): 3n's are genuine serious errors; G4's single one is an over-flag. Individual counts still
+carry sampling noise, but the helpful↔safe ordering is robust.</li>
 <li><strong>Qwen-397B served at FP8, TP=8</strong> (vLLM, with-RAG identical pipeline). Its generation was preempted
 twice mid-run by cluster contention; auto-resume + independent judging recovered it with no lost cells. Its
 <em>calibrated</em> faith rates (48/84/96%) are the verbosity artifact in extreme form (§4 of the faithfulness report)
