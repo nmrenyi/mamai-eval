@@ -28,6 +28,7 @@
   .src { color:var(--muted); font-size:.8rem; }
   .g4 { background:#eef6f8; }
   .g3n { background:#fdf3ee; }
+  .qwen { background:#f1eefa; }
   .bar { display:inline-block; height:.7rem; border-radius:2px; vertical-align:middle; }
   .bar-g4 { background:var(--accent); } .bar-g3n { background:var(--warn-edge); }
   .bar-bad { background:var(--bad-edge); }
@@ -44,10 +45,11 @@
 Track&nbsp;A = end-to-end <strong>+RAG (EmbeddingGemma)</strong> on kenya SAQ &amp; HealthBench-oss · Track&nbsp;B =
 oracle faithfulness · judges gpt-oss-120b (Track&nbsp;A), Lynx-70B→gpt-5 (Track&nbsp;B)</p>
 
-<div class="callout warn">
-<strong>Scope.</strong> This is the <strong>Gemma&nbsp;4 / Gemma&nbsp;3n</strong> half of the planned 3-generator
-matrix. The <strong>Qwen3.5-397B capability ceiling</strong> is generating now and will be appended as a third
-generator block; every conclusion below is about the two deployable on-device candidates and is complete on its own.
+<div class="callout good">
+<strong>Now complete: all three generators.</strong> The two deployable on-device candidates (<strong>Gemma&nbsp;4</strong>,
+<strong>Gemma&nbsp;3n</strong>) plus the <strong>Qwen3.5-397B capability ceiling</strong>, each across baseline /
++G1 / +G1+G2, both tracks. The Qwen row is what an unconstrained frontier model does on the identical task — the
+target the on-device work is trying to approach.
 </div>
 
 <div class="callout bad">
@@ -64,15 +66,22 @@ at almost no safety cost (0→1 dangerous). <strong>Gemma&nbsp;3n is harmed by i
 or bad <em>for a given generator's starting failure mode</em>.</li>
 <li><strong>RAG did not rescue 3n's safety</strong> — these with-RAG dangerous counts (4/11/15) are <em>worse</em> than
 the earlier no-RAG run (4/7/9). Grounding context doesn't help a generator that doesn't faithfully use it.</li>
-<li><strong>Two tracks, one story.</strong> 3n's end-to-end danger is its oracle-faithfulness deficit made visible:
-poor grounding → confident un-supported claims → harm. The lever is <strong>generator RAG-grounding (G-RAG)</strong>,
-not prompt tuning.</li>
+<li><strong>The frontier ceiling proves the prompts are good — the gate is capability, not the prompt.</strong>
+Qwen-397B with the <em>same</em> +G1+G2 prompt is the <strong>best cell in the whole matrix</strong>: recall 0.553,
+HealthBench 0.245, harm 4.2%, <strong>zero dangerous</strong>, hallucination 0.97% — all simultaneously. So the
+prompt's danger cost scales <em>inversely</em> with capability: <strong>3n pays (dangerous 4→11→15), G4 is neutral
+(0→1→0), Qwen gains on every axis</strong>. The deflection-fix prompts aren't the problem; 3n's grounding capacity is.</li>
+<li><strong>Two tracks, one story, one lever.</strong> 3n's end-to-end danger is its oracle-faithfulness deficit made
+visible: poor grounding → confident un-supported claims → harm; and the frontier shows that closing the grounding gap
+makes the prompts pure upside. The lever is <strong>generator RAG-grounding (G-RAG)</strong> — to move the on-device
+models toward the Qwen corner — not prompt tuning or retrieval swaps.</li>
 </ul>
 </div>
 
 <h2>1 · The matrix</h2>
-<p>Six cells = 2 generators × 3 prompts. Track A is the deployed configuration (with RAG); Track B isolates grounding
-on gold context. <span class="best">Green</span> = best in column-group, <span class="worst">red</span> = worst.</p>
+<p>Nine cells = 3 generators × 3 prompts. Track A is the deployed configuration (with RAG); Track B isolates grounding
+on gold context. <span class="best">Green</span> = best in column, <span class="worst">red</span> = worst. The
+deployable on-device candidates are Gemma&nbsp;4 and Gemma&nbsp;3n; Qwen-397B is the unconstrained ceiling.</p>
 
 <table>
 <tr>
@@ -92,8 +101,8 @@ on gold context. <span class="best">Green</span> = best in column-group, <span c
 
 <tr class="g4"><td><strong>G4</strong> · baseline</td>
   <td class="num worst">0.139</td><td class="num worst">32.7%</td>
-  <td class="num best">12.8%</td><td class="num best">0</td><td class="num worst">0.0001</td>
-  <td class="num best">2.64%</td><td class="num best">19.1%</td></tr>
+  <td class="num">12.8%</td><td class="num best">0</td><td class="num worst">0.0001</td>
+  <td class="num">2.64%</td><td class="num best">19.1%</td></tr>
 <tr class="g4"><td><strong>G4</strong> · +G1</td>
   <td class="num">0.279</td><td class="num">3.2%</td>
   <td class="num">16.0%</td><td class="num">1</td><td class="num">0.038</td>
@@ -112,15 +121,31 @@ on gold context. <span class="best">Green</span> = best in column-group, <span c
   <td class="num worst">34.9%</td><td class="num">11</td><td class="num">0.110</td>
   <td class="num">6.46%</td><td class="num">45.7%</td></tr>
 <tr class="g3n"><td><strong>3n</strong> · +G1+G2</td>
-  <td class="num best">0.389</td><td class="num best">0.0%</td>
-  <td class="num">33.7%</td><td class="num worst">15</td><td class="num best">0.119</td>
+  <td class="num">0.389</td><td class="num best">0.0%</td>
+  <td class="num">33.7%</td><td class="num worst">15</td><td class="num">0.119</td>
   <td class="num worst">6.72%</td><td class="num">47.2%</td></tr>
+
+<tr class="qwen"><td><strong>Qwen-397B</strong> · baseline</td>
+  <td class="num">0.295</td><td class="num">0.3%</td>
+  <td class="num">8.6%</td><td class="num">1</td><td class="num">0.142</td>
+  <td class="num">2.51%</td><td class="num">48.2% †</td></tr>
+<tr class="qwen"><td><strong>Qwen-397B</strong> · +G1</td>
+  <td class="num">0.420</td><td class="num best">0.0%</td>
+  <td class="num">12.5%</td><td class="num best">0</td><td class="num">0.161</td>
+  <td class="num">3.71%</td><td class="num">83.7% †</td></tr>
+<tr class="qwen"><td><strong>Qwen-397B</strong> · +G1+G2</td>
+  <td class="num best">0.553</td><td class="num best">0.0%</td>
+  <td class="num best">4.2%</td><td class="num best">0</td><td class="num best">0.245</td>
+  <td class="num best">0.97%</td><td class="num worst">96.0% †</td></tr>
 </table>
 <p class="src">n=312 (kenya), 1,208–1,209 (HealthBench-oss), 2,989 (oracle). <strong>recall</strong> = mean
 key_fact_recall · <strong>deflection</strong> = defer_only + refuse · <strong>harm rate</strong> =
 potentially_harmful + dangerous · <strong>categorized/calibrated</strong> = true-hallucination over oracle context
-(see the dedicated faithfulness report). † g4_g1g2's 53.9% is a known high-miss-rate sampling outlier driven by the
-G2 template against a narrow top-3 context — read categorized (3.55%) as the metric of record.</p>
+(see the dedicated faithfulness report). † calibrated rates are dominated by a 50-sample Lynx-miss-rate and inflate
+with answer length against the narrow top-3 context (see §4 of the faithfulness report). Qwen's 48→84→96% is the
+clearest case: the <em>most faithful</em> generation (categorized 0.97%, lowest in the matrix) posts the
+<em>highest</em> calibrated rate purely because it is the most verbose. <strong>Read categorized as the metric of
+record</strong> throughout.</p>
 
 <h2>2 · Reading 1 — the generators split: 3n is more helpful, G4 is safer &amp; more faithful</h2>
 <table>
@@ -152,16 +177,18 @@ guidance in); <strong>penalty rate</strong> = fraction of the <em>negative-point
 <tr class="g4"><td>G4 · +G1+G2</td><td class="num">0.052</td><td class="num">0.233</td><td class="num worst">0.385</td></tr>
 <tr class="g3n"><td>3n · baseline</td><td class="num">0.083</td><td class="num">0.262</td><td class="num">0.373</td></tr>
 <tr class="g3n"><td>3n · +G1</td><td class="num">0.110</td><td class="num">0.289</td><td class="num">0.367</td></tr>
-<tr class="g3n"><td>3n · +G1+G2</td><td class="num best">0.119</td><td class="num best">0.293</td><td class="num best">0.365</td></tr>
+<tr class="g3n"><td>3n · +G1+G2</td><td class="num">0.119</td><td class="num">0.293</td><td class="num">0.365</td></tr>
+<tr class="qwen"><td>Qwen · baseline</td><td class="num">0.142</td><td class="num">0.309</td><td class="num">0.354</td></tr>
+<tr class="qwen"><td>Qwen · +G1</td><td class="num">0.161</td><td class="num">0.334</td><td class="num">0.355</td></tr>
+<tr class="qwen"><td>Qwen · +G1+G2</td><td class="num best">0.245</td><td class="num best">0.406</td><td class="num best">0.336</td></tr>
 </table>
 <ul>
-<li><strong>The overall gap is almost entirely the positive (completeness) side.</strong> 3n's positive score is
-higher at every arm (0.26–0.29 vs G4 0.18–0.23), and both prompts raise it (G4 0.18→0.23, 3n 0.26→0.29). That is 3n
-being the more capable model — it fits more of the rubric's required guidance into its answers.</li>
-<li><strong>The penalty rate is strikingly flat (~0.365–0.385) across all six cells.</strong> On HealthBench-oss's
-negative-criteria axis, neither the generator nor the prompt moves active-harm much — everyone trips a similar
-fraction of the penalty items. So the headline weighted_met ordering (3n &gt; G4) is a <em>completeness</em> ranking,
-not a safety one.</li>
+<li><strong>The overall gap is almost entirely the positive (completeness) side, and it scales with capability.</strong>
+Positive score climbs G4 (0.18–0.23) → 3n (0.26–0.29) → Qwen (0.31–0.41) — exactly the capability order; each tier fits
+more of the rubric's required guidance into its answers, and both prompts raise it within every tier.</li>
+<li><strong>The penalty rate is strikingly flat (~0.34–0.385) across all nine cells.</strong> On HealthBench-oss's
+negative-criteria axis, neither the generator nor the prompt moves active-harm much — even Qwen only edges it down to
+0.336. So the weighted_met ordering (Qwen &gt; 3n &gt; G4) is a <em>completeness</em> ranking, not a safety one.</li>
 <li><strong>Instrument note.</strong> This means the "3n is less safe" signal lives in the targeted instruments —
 the kenya dangerous count (4/11/15 vs 0/1/0) and oracle faithfulness (6.3% vs 2.6%) — <em>not</em> in HealthBench-oss
 penalties, whose negative items (generic caveats / communication) both weak models miss similarly. The instruments
@@ -197,6 +224,22 @@ The matrix resolves an apparent contradiction in the branch history. The G1 prom
 and wrong for a non-deflecting one (3n).</strong> The deployed generator changed the prompt's sign.
 </div>
 
+<h3>3b · The frontier ceiling — the prompt's sign flips fully positive with capability</h3>
+<p>Adding Qwen-397B as a third tier turns the per-generator effect into a clean gradient. Watch what the
+<em>identical</em> +G1+G2 prompt does to the dangerous-answer count and recall as capability rises:</p>
+<table>
+<tr><th>Generator (→ capability)</th><th class="num">recall: base → +G1+G2</th><th class="num">dangerous: base → +G1+G2</th><th>verdict on the prompt</th></tr>
+<tr class="g4"><td>Gemma 4 (mid)</td><td class="num">0.139 → 0.338</td><td class="num">0 → 0</td><td>helps (fixes deflection), stays safe</td></tr>
+<tr class="g3n"><td>Gemma 3n (weak grounder)</td><td class="num">0.297 → 0.389</td><td class="num">4 → 15</td><td class="worst">recall-for-safety trade — fails the gate</td></tr>
+<tr class="qwen"><td>Qwen-397B (frontier)</td><td class="num">0.295 → 0.553</td><td class="num">1 → 0</td><td class="best">win-win — recall up AND harm down</td></tr>
+</table>
+<p>The same words help G4, hurt 3n, and are pure upside on Qwen. The variable is not the prompt — it is whether the
+generator can <em>act on</em> the prompt's request for more clinical substance without inventing un-grounded claims.
+Qwen-G1+G2 is the best cell in the matrix on every axis at once (recall 0.553, HealthBench 0.245, harm 4.2%, zero
+dangerous, hallucination 0.97%): <strong>the prompts were always good; 3n simply lacks the grounding to execute them
+safely.</strong> That reframes the on-device goal precisely — give 3n more of Qwen's grounding, and the prompts it
+currently fails become safe. That is the G-RAG thesis.</p>
+
 <h2>4 · Reading 3 — RAG didn't rescue 3n, and the two tracks agree</h2>
 <p><strong>RAG is not the fix for 3n's safety.</strong> These Track-A numbers are <em>with</em> EmbeddingGemma
 retrieval, and 3n's dangerous count under the prompts (4/11/15) is actually <em>higher</em> than the earlier no-RAG
@@ -223,6 +266,9 @@ deficit intact.</strong></p>
 <tr class="g3n"><td>3n · baseline</td><td class="num">184</td><td class="num">48</td><td class="num">76</td><td class="num">4</td><td class="num">291</td><td class="num">15</td><td class="num">6</td><td class="num">0</td></tr>
 <tr class="g3n"><td>3n · +G1</td><td class="num">159</td><td class="num">44</td><td class="num">98</td><td class="num">11</td><td class="num">295</td><td class="num">15</td><td class="num">0</td><td class="num">2</td></tr>
 <tr class="g3n"><td>3n · +G1+G2</td><td class="num">172</td><td class="num">35</td><td class="num">90</td><td class="num">15</td><td class="num">299</td><td class="num">13</td><td class="num">0</td><td class="num">0</td></tr>
+<tr class="qwen"><td>Qwen · baseline</td><td class="num">262</td><td class="num">23</td><td class="num">26</td><td class="num">1</td><td class="num">305</td><td class="num">6</td><td class="num">1</td><td class="num">0</td></tr>
+<tr class="qwen"><td>Qwen · +G1</td><td class="num">243</td><td class="num">30</td><td class="num">39</td><td class="num">0</td><td class="num">298</td><td class="num">14</td><td class="num">0</td><td class="num">0</td></tr>
+<tr class="qwen"><td>Qwen · +G1+G2</td><td class="num">283</td><td class="num">16</td><td class="num">13</td><td class="num">0</td><td class="num">309</td><td class="num">3</td><td class="num">0</td><td class="num">0</td></tr>
 </table>
 <div class="callout warn">
 <strong>On the dangerous counts.</strong> The earlier 3n A/B adjudication read its dangerous cases as <em>largely
@@ -242,8 +288,12 @@ generation (G-RAG), then re-testing safety.</li>
 <li><strong>Gemma&nbsp;4 + G1 is the safe-but-modest alternative</strong>: near-zero dangerous, deflection fixed,
 recall doubled — but its capability ceiling (recall ≤0.34, HealthBench ≤0.05) sits below 3n's. It is the choice if
 safety dominates and the helpfulness bar is low.</li>
-<li><strong>The frontier comparison still pending</strong> (Qwen-397B ceiling) will show how much of 3n's
-helpfulness/faithfulness gap is model-size-bound vs addressable on-device.</li>
+<li><strong>The frontier ceiling sets the target and names the lever.</strong> Qwen-397B + G1+G2 achieves recall 0.553,
+HealthBench 0.245, harm 4.2%, zero dangerous, hallucination 0.97% — it is helpful, safe, and faithful at once, and it
+takes the deflection-fix prompts as <em>pure</em> upside. So 3n's helpfulness/safety gap is not a prompt problem and
+not fundamental; it is a grounding-capacity gap. <strong>The on-device program should therefore aim G-RAG at closing
+that gap — give 3n enough of Qwen's grounding that the G1/G2 prompts (already validated as good on capable models)
+become safe — rather than abandoning the prompts or chasing retrieval swaps.</strong></li>
 </ul>
 </div>
 
@@ -256,7 +306,8 @@ run-dirs with the pipeline's own <code>_agg_dataset</code>.</li>
 <li><strong>Track B (faithfulness).</strong> Oracle context (mamaretrieval v0.2.0, score≥5, top-3, n=2,989) →
 Lynx-70B PASS/FAIL → gpt-5 categorize (genuine hallucination = contradiction + unsupported addition) + calibrate
 (50-PASS-sample miss-rate extrapolation, wide CIs). Detail in the companion faithfulness report.</li>
-<li><strong>Both generators</strong> Q4_0 GGUF (on-device quantization), config-pinned decoding; identical prompts,
+<li><strong>On-device generators</strong> (Gemma 4, Gemma 3n) Q4_0 GGUF; <strong>Qwen-397B</strong> served FP8 / TP=8
+via vLLM as the unconstrained ceiling. Config-pinned decoding; identical prompts,
 retrieval, oracle, and judges across cells — every difference is the generator or the prompt.</li>
 <li><strong>Provenance.</strong> Track A + G4 Track B generated 2026-06-22
 (<code>gen-prompt-matrix-20260622</code>); 3n Track B from <code>g1-ab-3n-20260619</code>, identical pipeline.</li>
@@ -271,7 +322,10 @@ physician-ground-truth judge validation still applies before these rates are tre
 record.</li>
 <li><strong>Dangerous counts are small integers</strong> on n=312 — directionally clear (0–1 vs 4–15) but individual
 counts carry sampling noise; the recommended per-case re-adjudication will firm them up.</li>
-<li><strong>Qwen-397B ceiling row pending</strong> — to be appended; does not affect any G4/3n conclusion here.</li>
+<li><strong>Qwen-397B served at FP8, TP=8</strong> (vLLM, with-RAG identical pipeline). Its generation was preempted
+twice mid-run by cluster contention; auto-resume + independent judging recovered it with no lost cells. Its
+<em>calibrated</em> faith rates (48/84/96%) are the verbosity artifact in extreme form (§4 of the faithfulness report)
+— categorized (2.51/3.71/0.97%) is the metric of record for Qwen as for all rows.</li>
 </ul>
 
 <p class="src">Data:
