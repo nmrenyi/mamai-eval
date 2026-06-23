@@ -42,7 +42,13 @@ _params = json.loads((_CONFIG_DIR / "params.json").read_text())
 # --- System prompts ---
 
 APP_SYSTEM_PROMPT: str = (_CONFIG_DIR / "system_en.txt").read_text(encoding="utf-8").rstrip("\n")
-APP_SYSTEM_PROMPT_SW: str = (_CONFIG_DIR / "system_sw.txt").read_text(encoding="utf-8").rstrip("\n")
+# Swahili is optional: English-only configs (e.g. config-v0.3.0) ship no
+# system_sw.txt. This global is loaded for completeness but is not consumed
+# anywhere in the harness, so its absence is harmless.
+_sw_path = _CONFIG_DIR / "system_sw.txt"
+APP_SYSTEM_PROMPT_SW: str | None = (
+    _sw_path.read_text(encoding="utf-8").rstrip("\n") if _sw_path.exists() else None
+)
 
 # NOT the app prompt. Required because the app prompt produces clinical prose,
 # which breaks single-letter extraction. MCQ scores are a knowledge proxy,
