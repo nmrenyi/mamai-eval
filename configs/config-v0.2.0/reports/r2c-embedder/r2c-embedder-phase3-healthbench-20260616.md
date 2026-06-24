@@ -16,8 +16,10 @@ The no-RAG (k=0) HealthBench arm was **not re-run** — an identical no-RAG gene
 already existed: `../../results/end_to_end_eval/gemma4-e4b/20260521T123051-cluster-norag-rubric/healthbench_oss_eval.json`
 (gemma4-e4b, config-v0.2.0, temp 1.0 / top_p 0.95 / top_k 64, n=1209, `rag: false`,
 scored by the same pinned `gpt-oss-120b` rubric judge — it is a default target in
-`cluster/rescore_rubric.sh`). A no-RAG run has no retriever, so it is directly
-comparable to the gecko/EmbeddingGemma arms regardless of bake-off. That file's stored
+`cluster/rescore_rubric.sh`). It comes from a parallel app-parity batch, not the r2c
+bake-off batch — that batch's own gecko-RAG arm scores −0.0017 vs the r2c −0.0039 shown
+here, so the cross-batch comparison is approximate (all arms are ≈0, so the "retrieval
+does not convert into answer quality" conclusion holds either way). That file's stored
 `mean_weighted_met` is 0.0033 but predates the +/- split, so all three arms were
 **recomputed from their per-criterion verdicts with the current `_row_score`**: gecko
 and EmbeddingGemma reproduced their published aggregates to the digit
