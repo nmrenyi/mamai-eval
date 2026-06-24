@@ -5,11 +5,28 @@ n=1209 (full oss_eval test split). EmbeddingGemma vs gecko arms (top-3 contexts)
 through the same generate+judge pipeline. Raw: `configs/config-v0.2.0/results/retrieval_eval/r2c-embedder/healthbench/`.*
 
 ## Rubric scores (n=1209)
-| metric | gecko | **EmbeddingGemma** | Δ |
-|---|---|---|---|
-| **combined `weighted_met`** | −0.0039 | **+0.0119** | +0.016 |
-| positive — completeness side (got the right guidance in) | 0.1750 | **0.1891** | +0.014 |
-| penalty rate — negative (harmful/incorrect triggered) | 0.3722 | **0.3683** | −0.004 |
+| metric | no-RAG | gecko | **EmbeddingGemma** | Δ (EG−gecko) |
+|---|---|---|---|---|
+| **combined `weighted_met`** | +0.0033 | −0.0039 | **+0.0119** | +0.016 |
+| positive — completeness side (got the right guidance in) | 0.1843 | 0.1750 | **0.1891** | +0.014 |
+| penalty rate — negative (harmful/incorrect triggered) | 0.3787 | 0.3722 | **0.3683** | −0.004 |
+
+### no-RAG arm (added 2026-06-24)
+The no-RAG (k=0) HealthBench arm was **not re-run** — an identical no-RAG generation
+already existed: `../../results/end_to_end_eval/gemma4-e4b/20260521T123051-cluster-norag-rubric/healthbench_oss_eval.json`
+(gemma4-e4b, config-v0.2.0, temp 1.0 / top_p 0.95 / top_k 64, n=1209, `rag: false`,
+scored by the same pinned `gpt-oss-120b` rubric judge — it is a default target in
+`cluster/rescore_rubric.sh`). A no-RAG run has no retriever, so it is directly
+comparable to the gecko/EmbeddingGemma arms regardless of bake-off. That file's stored
+`mean_weighted_met` is 0.0033 but predates the +/- split, so all three arms were
+**recomputed from their per-criterion verdicts with the current `_row_score`**: gecko
+and EmbeddingGemma reproduced their published aggregates to the digit
+(−0.0039 / 0.1750 / 0.3722 and +0.0119 / 0.1891 / 0.3683), validating the recompute;
+the no-RAG split (+0.0033 / 0.1843 / 0.3787) is read off the same pass. no-RAG sits
+**between** the two RAG arms on `weighted_met` and slightly **ahead of gecko** —
+reinforcing that on this generator, retrieval quality does not convert into answer
+quality. (Fills the previously-blank no-RAG → HealthBench cell in the personal-site
+Table 2.)
 
 ### Per-axis mean (signed)
 | axis | gecko | EmbeddingGemma |
