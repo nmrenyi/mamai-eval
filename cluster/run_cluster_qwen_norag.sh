@@ -36,6 +36,7 @@ HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 echo "=== DEPS ==="
 apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git curl > /dev/null
 ln -sf /usr/bin/python3.10 /usr/bin/python3
+export PIP_ONLY_BINARY="numpy,pyarrow"   # avoid from-source numpy/pyarrow builds (killed 397B deps)
 pip3 install --no-cache-dir -q --retries 10 --upgrade pip > /dev/null
 pip3 install --no-cache-dir -q --retries 10 --extra-index-url https://download.pytorch.org/whl/cu124 \
   vllm openai datasets huggingface_hub tqdm numpy > /dev/null

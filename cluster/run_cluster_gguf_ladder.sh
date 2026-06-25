@@ -30,6 +30,7 @@ HF_CACHE_DIR="${HF_CACHE_DIR:-/lightscratch/users/yiren/hf_cache}"
 echo "=== DEPS ==="
 apt-get update -qq && apt-get install -y -qq python3.10 python3-pip git cmake build-essential ninja-build > /dev/null
 ln -sf /usr/bin/python3.10 /usr/bin/python3
+export PIP_ONLY_BINARY="numpy,pyarrow"   # avoid from-source numpy/pyarrow builds
 CMAKE_ARGS="-DGGML_CUDA=on" FORCE_CMAKE=1 pip3 install --no-cache-dir -q --retries 10 \
   llama-cpp-python numpy datasets huggingface_hub tqdm > /dev/null
 echo "=== DEPS DONE ==="
