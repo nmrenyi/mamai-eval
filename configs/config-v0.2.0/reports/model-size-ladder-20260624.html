@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset=utf-8><title>Model-size / precision / RAG ladder — MAM-AI</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:1080px;margin:2rem auto;padding:0 1rem;color:#1a1a2e;line-height:1.5}
+h1{font-size:1.5rem} h2{margin-top:2.2rem;border-bottom:2px solid #0b5563;padding-bottom:.2rem;color:#0b5563}
+table{border-collapse:collapse;width:100%;font-size:.84rem;margin:.6rem 0}
+th,td{border:1px solid #e2e2ec;padding:.32rem .5rem;text-align:right} th{background:#f1f5f6}
+td.lab,td.dev{text-align:left} td.na{text-align:center;color:#aaa}
+tr:nth-child(even){background:#fafbfc} .pos{color:#0a7d33} .neg{color:#b91c1c}
+.part{color:#d97706;font-size:.7rem} .dev{font-size:.78rem} tr.accent{background:#e8f4f6}
+.k{background:#fbf6ee} .h{background:#eef4fb}
+.note{color:#5a5a72;font-size:.82rem} .big{font-size:1.05rem;font-weight:700;color:#0b5563}
+ul{font-size:.9rem} code{background:#eee;padding:.05em .3em;border-radius:3px}
+</style></head><body>
+<h1>MAM-AI — model-size × precision × RAG ladder</h1>
+<p class=note><b>2026-06-24.</b> Generator ladder from on-device 2–4B to a 397B frontier MoE, all at the <b>deployed G1 prompt</b>,
+evaluated on <b>kenya</b> (312 nurse-written primary-care vignettes; recall = key-fact recall, harm = harm rate, defl = deflection)
+and <b>HealthBench-oss</b> (1,209 items; <code>weighted_met</code> nets completeness (pos) against penalties (pen)).
+Judge: pinned <b>gpt-oss-120b</b> (kenya via <code>rescore_open_v2</code>, HealthBench via <code>rescore_rubric</code>) — same pipeline as the matrix.
+Gemma rungs are GGUF via llama.cpp (on-device-faithful); Qwen rungs are vLLM FP8/bf16 (server reference).</p>
+<p class=note><b>Research questions:</b> (1) does a bigger model carry better medical knowledge (no-RAG)? (2) how much does precision matter at the deployed size? (3) does RAG still help as the model scales? (4) does the offline Gecko→EmbeddingGemma retrieval win convert to online answer gains?</p>
+
+<h2>1 · Size axis — no retrieval (parametric knowledge)</h2>
+<table><thead><tr><th>generator</th><th>total B</th><th>active B</th><th>precision</th><th>deploy</th>
+<th class=k>kenya recall</th><th class=k>harm</th><th class=k>defl</th><th class=h>HB w_met</th><th class=h>HB pos</th><th class=h>HB pen</th></tr></thead><tbody>
+<tr><td class=lab>Gemma 4 E2B</td><td>2</td><td>2</td><td>Q4_0</td><td class=dev>🟢 on-device</td><td>0.265</td><td>0.260</td><td>0.010</td><td><b>0.104</b></td><td>0.281</td><td>0.370</td></tr><tr><td class=lab>Gemma 4 E4B</td><td>4</td><td>4</td><td>Q4_0 (int4, deployed)</td><td class=dev>🟢 on-device</td><td>0.328</td><td>0.164</td><td>0.019</td><td><b>0.054</b></td><td>0.229</td><td>0.371</td></tr><tr><td class=lab>Gemma 4 E4B</td><td>4</td><td>4</td><td>Q8_0</td><td class=dev>server</td><td>0.331</td><td>0.157</td><td>0.016</td><td><b>0.067</b></td><td>0.243</td><td>0.369</td></tr><tr><td class=lab>Gemma 4 E4B</td><td>4</td><td>4</td><td>BF16</td><td class=dev>server</td><td>0.320</td><td>0.154</td><td>0.022</td><td><b>0.071</b></td><td>0.244</td><td>0.368</td></tr><tr><td class=lab>Gemma 4 26B-A4B</td><td>26.5</td><td>4</td><td>bf16</td><td class=dev>server</td><td>0.440</td><td>0.093</td><td>0.000</td><td><b>0.229</b></td><td>0.391</td><td>0.337</td></tr><tr><td class=lab>Gemma 4 31B</td><td>32.7</td><td>32.7</td><td>bf16</td><td class=dev>server</td><td>0.449</td><td>0.064</td><td>0.000</td><td><b>0.261</b></td><td>0.413</td><td>0.323</td></tr><tr><td class=lab>Qwen 3.6 27B</td><td>27.8</td><td>27.8</td><td>bf16</td><td class=dev>server</td><td>0.472</td><td>0.119</td><td>0.000</td><td><b>0.260</b></td><td>0.425</td><td>0.336</td></tr><tr><td class=lab>Qwen 3.6 35B-A3B</td><td>36</td><td>3</td><td>FP8</td><td class=dev>server</td><td>0.471</td><td>0.099</td><td>0.000</td><td><b>0.273</b></td><td>0.433</td><td>0.335</td></tr><tr><td class=lab>Qwen 3.5 122B-A10B</td><td>125</td><td>10</td><td>FP8</td><td class=dev>server</td><td>0.421</td><td>0.122</td><td>0.000</td><td><b>0.191</b></td><td>0.358</td><td>0.352</td></tr><tr><td class=lab>Qwen 3.5 397B-A17B</td><td>397</td><td>17</td><td>FP8</td><td class=dev>server</td><td>0.438</td><td>0.112</td><td>0.000</td><td><b>0.226</b></td><td>0.384</td><td>0.330</td></tr></tbody></table>
+<p class=note>kenya columns shaded tan, HealthBench blue. "partial" = a few HB rows still unscored at render time.</p>
+
+<h2>2 · Precision axis at E4B (deployed size)</h2>
+<table><thead><tr><th>variant</th><th>retrieval</th><th class=k>kenya recall</th><th class=k>harm</th><th class=k>defl</th><th class=h>HB w_met</th><th class=h>HB pos</th><th class=h>HB pen</th></tr></thead><tbody>
+<tr><td class=lab>E4B Q4_0 (int4, deployed)</td><td>no-RAG</td><td>0.328</td><td>0.164</td><td>0.019</td><td><b>0.054</b></td><td>0.229</td><td>0.371</td></tr><tr><td class=lab>E4B Q8_0</td><td>no-RAG</td><td>0.331</td><td>0.157</td><td>0.016</td><td><b>0.067</b></td><td>0.243</td><td>0.369</td></tr><tr><td class=lab>E4B Q8_0</td><td>+RAG (EG)</td><td>0.299</td><td>0.167</td><td>0.013</td><td><b>0.054</b></td><td>0.239</td><td>0.385</td></tr><tr><td class=lab>E4B BF16</td><td>no-RAG</td><td>0.320</td><td>0.154</td><td>0.022</td><td><b>0.071</b></td><td>0.244</td><td>0.368</td></tr><tr><td class=lab>E4B BF16</td><td>+RAG (EG)</td><td>0.290</td><td>0.179</td><td>0.010</td><td><b>0.050</b></td><td>0.235</td><td>0.379</td></tr></tbody></table>
+
+<h2>3 · Does RAG still help? (Gemma ±RAG, EmbeddingGemma)</h2>
+<table><thead><tr><th>rung</th><th>kenya no-RAG</th><th>kenya +RAG</th><th>Δ recall</th><th>HB no-RAG</th><th>HB +RAG</th><th>Δ w_met</th></tr></thead><tbody>
+<tr><td class=lab>E2B Q4_0</td><td>0.265</td><td>0.245</td><td class=neg>-0.020</td><td>0.104</td><td>0.061</td><td class=neg>-0.044</td></tr><tr><td class=lab>E4B Q8_0</td><td>0.331</td><td>0.299</td><td class=neg>-0.031</td><td>0.067</td><td>0.054</td><td class=neg>-0.013</td></tr><tr><td class=lab>E4B BF16</td><td>0.320</td><td>0.290</td><td class=neg>-0.030</td><td>0.071</td><td>0.050</td><td class=neg>-0.021</td></tr><tr><td class=lab>26B-A4B bf16</td><td>0.440</td><td>0.402</td><td class=neg>-0.037</td><td>0.229</td><td>0.167</td><td class=neg>-0.062</td></tr><tr><td class=lab>31B bf16</td><td>0.449</td><td>0.403</td><td class=neg>-0.046</td><td>0.261</td><td>0.164</td><td class=neg>-0.097</td></tr></tbody></table>
+
+<h2>4 · Gecko → EmbeddingGemma conversion (E4B-int4 + G1)</h2>
+<p class=note>Offline, EmbeddingGemma beats Gecko by ~+12–13pp P@3. Does that reach the answers?</p>
+<table><thead><tr><th>setup</th><th class=k>kenya recall</th><th class=k>harm</th><th class=h>HB w_met</th><th class=h>HB pos</th><th class=h>HB pen</th></tr></thead><tbody>
+<tr><td class=lab>no retrieval</td><td>0.328</td><td>0.164</td><td><b>0.054</b></td><td>0.229</td><td>0.371</td></tr><tr><td class=lab>Gecko RAG (former on-device)</td><td>0.268</td><td>0.170</td><td><b>0.029</b></td><td>0.216</td><td>0.390</td></tr><tr class=accent><td class=lab>EmbeddingGemma RAG (deployed)</td><td>0.279</td><td>0.160</td><td><b>0.038</b></td><td>0.221</td><td>0.373</td></tr></tbody></table>
+<p class=note>EmbeddingGemma row = deployed config-v0.3.0 (same judge). Gecko vs EG HealthBench Δ w_met = <b>-0.009</b>.</p>
+
+<h2>Takeaways</h2>
+<ul>
+<li><b>Bigger → better, but it peaks at ~30B and then plateaus/dips.</b> HealthBench <code>weighted_met</code> climbs from ~0.05–0.10 (2–4B) to a peak <b>~0.26–0.27 at 27–35B</b>, then <i>declines</i> at 122B (0.19) and 397B (0.23). Kenya recall likewise peaks at 27–35B (~0.47) and dips at 122–397B (0.42–0.44). <span class=note>Caveat: 122/397B are Qwen&nbsp;3.5 while 27/35B are Qwen&nbsp;3.6 — a generation boundary confounds the very top — but the practical message holds: a ~30B model is the sweet spot; the 397B frontier is not better for this task.</span></li>
+<li><b>Safety improves monotonically with size.</b> Kenya harm rate falls 0.26 (E2B) → 0.16 (E4B) → 0.06–0.09 (26–31B) and deflection collapses to ~0. Bigger models are safer even where the recall plateaus.</li>
+<li><b>Precision barely matters at the deployed size.</b> E4B Q4→Q8→BF16 is flat on kenya (0.33/0.33/0.32) and only +0.017 on HealthBench (0.054→0.071). <b>int4 deployment loses almost nothing</b> — a hospital server gains far more from a bigger model than from de-quantizing the 4B.</li>
+<li><b>RAG is net-negative, and increasingly so as the model grows.</b> Every Gemma rung scores <i>lower</i> with EmbeddingGemma RAG than no-RAG, and the gap widens with size (E4B −0.02, <b>31B −0.10</b> on HealthBench; kenya recall drops at every size). The generator's parametric knowledge already exceeds what retrieved context adds, and the context distracts the more capable models more.</li>
+<li><b>The offline Gecko→EmbeddingGemma retrieval win does NOT convert to answers.</b> Despite EG's +12–13pp offline P@3, at the deployed E4B-int4+G1 the online gain over Gecko is tiny (kenya recall +0.011, HealthBench +0.009), and <b>both retrievers underperform no-RAG</b> (recall 0.279/0.268 vs 0.328; HB 0.038/0.029 vs 0.054). Retrieval quality is not the binding constraint — the generator's ability to use context is.</li>
+<li><b>Bottom line for MAM-AI:</b> the lever is <b>generator capability</b>, not retrieval or precision. The deployed 4B-int4 is a safe floor; a <b>~30B server-class model is the single biggest upgrade</b> (HealthBench ~5×, kenya recall +0.14, harm halved) and you'd stop well before 397B. On-device, neither a better embedder nor higher precision moves open-ended quality much.</li>
+</ul>
+<p class=note>Raw scored JSONs on PVC under <code>eval_output/size_ladder_20260624/</code>, <code>e4b_gecko_g1_20260624/</code>; aggregation via the repo's <code>_agg_dataset</code> functions.</p>
+</body></html>
