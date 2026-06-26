@@ -113,6 +113,10 @@ MODEL_REGISTRY = {
     # Local GGUF models (backend, path, use_chat)
     # use_chat=True uses llama-cpp's built-in chat template instead of manual Gemma IT formatting
     "gemma4-e4b": ("gguf", "gemma-4/google_gemma-4-E4B-it-Q4_0.gguf", False),
+    # Size/precision-ladder GGUF rungs (downloaded on-cluster by the gguf launcher).
+    "gemma4-e2b-q4": ("gguf", "gemma-4-E2B-gguf/gemma-4-E2B-it-Q4_0.gguf", False),
+    "gemma4-e4b-q8": ("gguf", "gemma-4-E4B-gguf/gemma-4-E4B-it-Q8_0.gguf", False),
+    "gemma4-e4b-bf16": ("gguf", "gemma-4-E4B-gguf/gemma-4-E4B-it-BF16.gguf", False),
     "gemma3n-e4b": ("gguf", "gemma-3n/gemma-3n-E4B-it-Q4_0.gguf", False),
     "gemma3n-e2b": ("gguf", "gemma-3n/gemma-3n-E2B-it-Q4_0.gguf", False),
     "medgemma-gguf": ("gguf", "medgemma-4b/medgemma-4b-it-Q4_0.gguf", False),
@@ -121,8 +125,14 @@ MODEL_REGISTRY = {
     "gpt-5": ("openai", "gpt-5"),
     "gpt-4o": ("openai", "gpt-4o"),
     # OpenAI-compatible local vLLM endpoints (set OPENAI_BASE_URL=http://localhost:PORT/v1,
-    # OPENAI_API_KEY=EMPTY before run). Used as the cluster-served capability ceiling.
+    # OPENAI_API_KEY=EMPTY before run). Capability ceiling + model-size scaling ladder
+    # (no-RAG answer quality vs parameter count). Registry id == served HF id.
     "qwen-397b": ("openai", "Qwen/Qwen3.5-397B-A17B-FP8"),
+    "qwen35-122b": ("openai", "Qwen/Qwen3.5-122B-A10B-FP8"),
+    "qwen36-35b-a3b": ("openai", "Qwen/Qwen3.6-35B-A3B-FP8"),
+    "qwen36-27b": ("openai", "Qwen/Qwen3.6-27B"),
+    "gemma4-31b": ("openai", "google/gemma-4-31B-it"),
+    "gemma4-26b-a4b": ("openai", "google/gemma-4-26B-A4B-it"),
 }
 
 
